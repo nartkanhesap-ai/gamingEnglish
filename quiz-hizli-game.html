@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Hızlı - İngilizce Oyunu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --theme-primary: #667eea;
+      --theme-secondary: #764ba2;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: background 0.4s ease;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      padding: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      transition: background 0.4s ease;
+    }
+
+    .title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .home-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .home-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .score-box {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .stat {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px 16px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .difficulty-selector {
+      display: flex;
+      gap: 8px;
+    }
+
+    .diff-btn {
+      padding: 8px 16px;
+      border: 2px solid white;
+      background: transparent;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .diff-btn.active {
+      background: white;
+      color: var(--theme-primary);
+    }
+
+    .diff-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .game-area {
+      padding: 40px 30px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      transition: width 0.3s;
+    }
+
+    .question-display {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .instruction {
+      color: #999;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .question-text {
+      background: #f5f5f5;
+      padding: 25px;
+      border-radius: 12px;
+      font-size: 18px;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      border-left: 4px solid var(--theme-primary);
+    }
+
+    .timer {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .option-btn {
+      background: white;
+      border: 2px solid #e0e0e0;
+      padding: 15px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .option-btn:hover {
+      border-color: var(--theme-primary);
+      background: #f9f9f9;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .option-btn.selected {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      border-color: var(--theme-primary);
+    }
+
+    .option-btn.correct {
+      animation: correctPulse 0.6s ease-out;
+    }
+
+    @keyframes correctPulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .option-btn.wrong {
+      animation: wrongShake 0.4s ease-out;
+    }
+
+    @keyframes wrongShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--theme-primary);
+      border: 2px solid var(--theme-primary);
+    }
+
+    .btn-secondary:hover {
+      background: #f5f5f5;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      text-align: center;
+      max-width: 400px;
+      animation: bounceIn 0.5s ease-out;
+    }
+
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .modal-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--theme-primary);
+    }
+
+    .modal-text {
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .feedback-text {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .title {
+        font-size: 24px;
+      }
+
+      .header {
+        padding: 20px;
+      }
+
+      .game-area {
+        padding: 20px;
+      }
+
+      .question-text {
+        font-size: 16px;
+      }
+    }
+
+    * {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .header, .btn-primary {
+      transition: background 0.4s ease, background-color 0.4s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">⚡ Quiz Hızlı</div>
+      <a href="index.html" class="home-btn">← Ana Sayfa</a>
+      <div class="score-box">
+        <div class="stat">
+          <div class="stat-label">Skor</div>
+          <div class="stat-value" id="score">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Doğru</div>
+          <div class="stat-value" id="correct">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Yanlış</div>
+          <div class="stat-value" id="wrong">0</div>
+        </div>
+        <div class="difficulty-selector">
+          <button class="diff-btn active" onclick="setDifficulty('easy')">Easy</button>
+          <button class="diff-btn" onclick="setDifficulty('medium')">Med</button>
+          <button class="diff-btn" onclick="setDifficulty('hard')">Hard</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-area">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+
+      <div class="question-display">
+        <div class="instruction">Hızlı cevap ver, puan kazan!</div>
+        <div class="timer" id="timer">⏱️ 30s</div>
+      </div>
+
+      <div class="question-text" id="questionText">
+        What is the opposite of "big"?
+      </div>
+
+      <div class="options-grid" id="optionsGrid">
+        <!-- Seçenekler buraya gelecek -->
+      </div>
+
+      <div class="button-group">
+        <button class="btn-secondary" onclick="skipQuestion()">Atla</button>
+        <button class="btn-secondary" onclick="resetGame()">Sıfırla</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="resultModal">
+    <div class="modal-content">
+      <span class="modal-icon" id="resultIcon">✅</span>
+      <div class="modal-title" id="resultTitle">Harika!</div>
+      <div class="modal-text" id="resultText">Doğru cevap!</div>
+      <div class="feedback-text">+<span id="pointsEarned">10</span> Puan</div>
+      <button class="btn-primary" onclick="nextQuestion()" style="width: 100%;">Sonraki Soru</button>
+    </div>
+  </div>
+
+  <script>
+    const quizDatabase = {
+      easy: [
+        { question: 'What is the opposite of "big"?', options: ['small', 'large', 'huge', 'tall'], correct: 'small', type: 'vocabulary' },
+        { question: 'Choose the correct form: "She _____ to school every day."', options: ['go', 'goes', 'going', 'went'], correct: 'goes', type: 'grammar' },
+        { question: 'What does "happy" mean?', options: ['sad', 'joyful', 'angry', 'tired'], correct: 'joyful', type: 'vocabulary' },
+        { question: 'Fill in: "I _____ a student."', options: ['am', 'is', 'are', 'be'], correct: 'am', type: 'grammar' },
+        { question: 'What is the synonym of "fast"?', options: ['slow', 'quick', 'lazy', 'heavy'], correct: 'quick', type: 'vocabulary' },
+        { question: 'Choose: "They _____ playing football."', options: ['are', 'is', 'am', 'be'], correct: 'are', type: 'grammar' },
+        { question: 'What does "cold" mean?', options: ['warm', 'hot', 'cool', 'freezing'], correct: 'cool', type: 'vocabulary' },
+        { question: 'Which is correct? "He _____ a doctor."', options: ['are', 'is', 'am', 'be'], correct: 'is', type: 'grammar' },
+        { question: 'What is the opposite of "day"?', options: ['night', 'morning', 'evening', 'afternoon'], correct: 'night', type: 'vocabulary' },
+        { question: 'Fill in: "We _____ friends."', options: ['is', 'am', 'are', 'be'], correct: 'are', type: 'grammar' },
+        { question: 'What does "beautiful" mean?', options: ['ugly', 'pretty', 'bad', 'old'], correct: 'pretty', type: 'vocabulary' },
+        { question: 'Choose: "I _____ a pizza yesterday."', options: ['eat', 'ate', 'eats', 'eating'], correct: 'ate', type: 'grammar' },
+        { question: 'What is the opposite of "clean"?', options: ['dirty', 'wet', 'dry', 'white'], correct: 'dirty', type: 'vocabulary' },
+        { question: 'Complete: "She _____ to music every day."', options: ['listen', 'listens', 'listening', 'listened'], correct: 'listens', type: 'grammar' },
+        { question: 'What does "kind" mean?', options: ['mean', 'nice', 'angry', 'sad'], correct: 'nice', type: 'vocabulary' },
+      ],
+      medium: [
+        { question: 'What is the opposite of "beginning"?', options: ['start', 'end', 'middle', 'first'], correct: 'end', type: 'vocabulary' },
+        { question: 'Choose the correct tense: "If I _____ him tomorrow, I will tell him."', options: ['see', 'saw', 'sees', 'seeing'], correct: 'see', type: 'grammar' },
+        { question: 'What does "ancient" mean?', options: ['new', 'modern', 'very old', 'recent'], correct: 'very old', type: 'vocabulary' },
+        { question: 'Fill in: "She _____ been to Paris three times."', options: ['has', 'have', 'had', 'having'], correct: 'has', type: 'grammar' },
+        { question: 'What is the synonym of "difficult"?', options: ['easy', 'hard', 'simple', 'light'], correct: 'hard', type: 'vocabulary' },
+        { question: 'Choose: "They _____ the project by next week."', options: ['will complete', 'completes', 'completing', 'completed'], correct: 'will complete', type: 'grammar' },
+        { question: 'What does "scarce" mean?', options: ['plenty', 'abundant', 'rare', 'common'], correct: 'rare', type: 'vocabulary' },
+        { question: 'Complete: "Unless you study, you _____."', options: ['will fail', 'fails', 'failing', 'failed'], correct: 'will fail', type: 'grammar' },
+        { question: 'Which sentence is correct? "Reading the article..."', options: ['...I understood the topic.', '...the topic was understood by me.', '...understood the topic.', '...the topic is understood.'], correct: '...I understood the topic.', type: 'reading' },
+        { question: 'What is the opposite of "temporary"?', options: ['short', 'permanent', 'quick', 'lasting'], correct: 'permanent', type: 'vocabulary' },
+        { question: 'Choose the best option: "_____ the weather is nice, we should go out."', options: ['Because', 'Although', 'Since', 'Despite'], correct: 'Since', type: 'grammar' },
+        { question: 'What does "resilient" mean?', options: ['weak', 'flexible', 'strong and able to recover', 'fragile'], correct: 'strong and able to recover', type: 'vocabulary' },
+        { question: 'Which is grammatically correct? "Neither the cats nor the dog _____."', options: ['are here', 'is here', 'be here', 'being here'], correct: 'is here', type: 'grammar' },
+        { question: 'Read: "The conference was postponed." What does this mean?', options: ['It happened earlier.', 'It was delayed.', 'It was cancelled.', 'It was planned.'], correct: 'It was delayed.', type: 'reading' },
+        { question: 'What is the synonym of "brilliant"?', options: ['dull', 'bright', 'dark', 'boring'], correct: 'bright', type: 'vocabulary' },
+      ],
+      hard: [
+        { question: 'What does "ambiguous" mean?', options: ['clear', 'unclear or having more than one meaning', 'obvious', 'certain'], correct: 'unclear or having more than one meaning', type: 'vocabulary' },
+        { question: 'Choose: "Had I known, I _____ differently."', options: ['would act', 'would have acted', 'will act', 'act'], correct: 'would have acted', type: 'grammar' },
+        { question: 'What is the opposite of "verbose"?', options: ['talkative', 'concise', 'loud', 'quiet'], correct: 'concise', type: 'vocabulary' },
+        { question: 'Fill in: "The delegation _____ divided on the issue."', options: ['is', 'are', 'was', 'were'], correct: 'is', type: 'grammar' },
+        { question: 'What does "meticulous" mean?', options: ['careless', 'very careful and precise', 'lazy', 'reckless'], correct: 'very careful and precise', type: 'vocabulary' },
+        { question: 'Complete: "Scarcely _____ I left when it started raining."', options: ['had', 'have', 'did', 'do'], correct: 'had', type: 'grammar' },
+        { question: 'Read: "The policy was implemented despite widespread opposition." This suggests...', options: ['Everyone agreed.', 'People supported it.', 'It was forced through anyway.', 'It was rejected.'], correct: 'It was forced through anyway.', type: 'reading' },
+        { question: 'What is the synonym of "ephemeral"?', options: ['permanent', 'lasting', 'temporary or short-lived', 'eternal'], correct: 'temporary or short-lived', type: 'vocabulary' },
+        { question: 'Choose the correct form: "If she _____ harder, she would pass."', options: ['studied', 'studies', 'study', 'has studied'], correct: 'studied', type: 'grammar' },
+        { question: 'What does "pragmatic" mean?', options: ['theoretical', 'practical and realistic', 'idealistic', 'abstract'], correct: 'practical and realistic', type: 'vocabulary' },
+        { question: 'Fill in: "The phenomena _____ been thoroughly analyzed."', options: ['has', 'have', 'is', 'are'], correct: 'have', type: 'grammar' },
+        { question: 'Read: "The author employs a paradoxical narrative technique." What is suggested?', options: ['The narrative is simple.', 'The narrative contains contradictory elements intentionally.', 'The narrative is linear.', 'The narrative is chronological.'], correct: 'The narrative contains contradictory elements intentionally.', type: 'reading' },
+        { question: 'What is the opposite of "conventional"?', options: ['traditional', 'customary', 'unconventional', 'normal'], correct: 'unconventional', type: 'vocabulary' },
+        { question: 'Choose: "Rarely _____ such eloquence heard in political discourse."', options: ['is', 'are', 'have', 'has'], correct: 'is', type: 'grammar' },
+        { question: 'What does "obfuscate" mean?', options: ['clarify', 'make clear', 'confuse or obscure', 'explain'], correct: 'confuse or obscure', type: 'vocabulary' },
+      ]
+    };
+
+    let gameState = {
+      difficulty: 'easy',
+      currentQuestionIndex: 0,
+      score: 0,
+      correct: 0,
+      wrong: 0,
+      selectedAnswer: null,
+      questionList: [],
+      isAnswered: false,
+      timeLeft: 30,
+      timerInterval: null
+    };
+
+    function init() {
+      const savedTheme = localStorage.getItem('gamingEnglishTheme') || 'default';
+      applyThemeToGame(savedTheme);
+
+      gameState.questionList = [...quizDatabase.easy];
+      gameState.currentQuestionIndex = 0;
+      gameState.score = 0;
+      gameState.correct = 0;
+      gameState.wrong = 0;
+      loadQuestion();
+    }
+
+    function applyThemeToGame(themeName) {
+      const themes = {
+        default: { primary: '#667eea', secondary: '#764ba2' },
+        candy: { primary: '#FFB3E6', secondary: '#FF85D0' },
+        ocean: { primary: '#4FC3F7', secondary: '#0288D1' },
+        jungle: { primary: '#81C784', secondary: '#2E7D32' }
+      };
+
+      const theme = themes[themeName] || themes.default;
+      document.documentElement.style.setProperty('--theme-primary', theme.primary);
+      document.documentElement.style.setProperty('--theme-secondary', theme.secondary);
+      document.querySelector('.header').style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+    }
+
+    function setDifficulty(level) {
+      document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      gameState.difficulty = level;
+      gameState.questionList = [...quizDatabase[level]];
+      gameState.currentQuestionIndex = 0;
+      gameState.score = 0;
+      gameState.correct = 0;
+      gameState.wrong = 0;
+      updateUI();
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      if (gameState.currentQuestionIndex >= gameState.questionList.length) {
+        showCompletion();
+        return;
+      }
+
+      const question = gameState.questionList[gameState.currentQuestionIndex];
+      document.getElementById('questionText').textContent = question.question;
+      gameState.selectedAnswer = null;
+      gameState.isAnswered = false;
+      gameState.timeLeft = 30;
+
+      let options = [...question.options].sort(() => Math.random() - 0.5);
+
+      const grid = document.getElementById('optionsGrid');
+      grid.innerHTML = options.map(option => `
+        <button class="option-btn" onclick="selectAnswer(this, '${option}')">${option}</button>
+      `).join('');
+
+      updateProgress();
+      startTimer();
+    }
+
+    function selectAnswer(element, answer) {
+      if (gameState.isAnswered) return;
+
+      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+      element.classList.add('selected');
+      gameState.selectedAnswer = answer;
+      submitAnswer();
+    }
+
+    function submitAnswer() {
+      if (gameState.isAnswered) return;
+
+      const question = gameState.questionList[gameState.currentQuestionIndex];
+      const isCorrect = gameState.selectedAnswer === question.correct;
+
+      gameState.isAnswered = true;
+      clearInterval(gameState.timerInterval);
+
+      if (isCorrect) {
+        gameState.correct++;
+        const points = gameState.difficulty === 'easy' ? 10 : gameState.difficulty === 'medium' ? 20 : 30;
+        gameState.score += points;
+        showResult(true, points);
+        document.querySelectorAll('.option-btn').forEach(btn => {
+          if (btn.textContent.trim() === question.correct) {
+            btn.classList.add('correct');
+          }
+        });
+      } else {
+        gameState.wrong++;
+        showResult(false, 0);
+        document.querySelectorAll('.option-btn').forEach(btn => {
+          if (btn.textContent.trim() === question.correct) {
+            btn.classList.add('correct');
+          } else if (btn.classList.contains('selected')) {
+            btn.classList.add('wrong');
+          }
+        });
+      }
+
+      updateUI();
+    }
+
+    function startTimer() {
+      clearInterval(gameState.timerInterval);
+      gameState.timerInterval = setInterval(() => {
+        gameState.timeLeft--;
+        document.getElementById('timer').textContent = `⏱️ ${gameState.timeLeft}s`;
+
+        if (gameState.timeLeft <= 0) {
+          clearInterval(gameState.timerInterval);
+          if (!gameState.isAnswered) {
+            gameState.isAnswered = true;
+            gameState.wrong++;
+            const question = gameState.questionList[gameState.currentQuestionIndex];
+            showResult(false, 0);
+            document.querySelectorAll('.option-btn').forEach(btn => {
+              if (btn.textContent.trim() === question.correct) {
+                btn.classList.add('correct');
+              }
+            });
+            updateUI();
+          }
+        }
+      }, 1000);
+    }
+
+    function showResult(isCorrect, points) {
+      const modal = document.getElementById('resultModal');
+      const icon = document.getElementById('resultIcon');
+      const title = document.getElementById('resultTitle');
+      const text = document.getElementById('resultText');
+      const pointsElem = document.getElementById('pointsEarned');
+
+      if (isCorrect) {
+        icon.textContent = '✅';
+        title.textContent = 'Harika!';
+        text.textContent = 'Doğru cevap!';
+        pointsElem.textContent = points;
+      } else {
+        icon.textContent = '❌';
+        title.textContent = 'Yanlış!';
+        const question = gameState.questionList[gameState.currentQuestionIndex];
+        text.textContent = `Doğru cevap: ${question.correct}`;
+        pointsElem.textContent = '0';
+      }
+
+      modal.classList.add('active');
+    }
+
+    function nextQuestion() {
+      document.getElementById('resultModal').classList.remove('active');
+      gameState.currentQuestionIndex++;
+      loadQuestion();
+    }
+
+    function skipQuestion() {
+      nextQuestion();
+    }
+
+    function resetGame() {
+      clearInterval(gameState.timerInterval);
+      init();
+    }
+
+    function showCompletion() {
+      const modal = document.getElementById('resultModal');
+      const icon = document.getElementById('resultIcon');
+      const title = document.getElementById('resultTitle');
+      const text = document.getElementById('resultText');
+
+      icon.textContent = '🏆';
+      title.textContent = 'Tebrikler!';
+      text.textContent = `${gameState.score} puan kazandın! Doğru: ${gameState.correct}, Yanlış: ${gameState.wrong}`;
+
+      const btn = document.querySelector('#resultModal .btn-primary');
+      btn.textContent = 'Yeniden Başla';
+      btn.onclick = resetGame;
+
+      modal.classList.add('active');
+    }
+
+    function updateUI() {
+      document.getElementById('score').textContent = gameState.score;
+      document.getElementById('correct').textContent = gameState.correct;
+      document.getElementById('wrong').textContent = gameState.wrong;
+    }
+
+    function updateProgress() {
+      const total = gameState.questionList.length;
+      const progress = ((gameState.currentQuestionIndex + 1) / total) * 100;
+      document.getElementById('progressFill').style.width = progress + '%';
+    }
+
+    init();
+  </script>
+</body>
+</html>

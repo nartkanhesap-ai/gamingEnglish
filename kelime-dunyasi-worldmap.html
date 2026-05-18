@@ -1,0 +1,2743 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gaming English — Dünya Haritası</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+
+<style>
+/* WorldMap — global styles */
+:root {
+  --ocean-1: #BEE3F0;
+  --ocean-2: #8FCDE5;
+  --ocean-3: #5FAFD0;
+  --ocean-deep: #2E7A9A;
+  --sand: #F4D9A4;
+  --ink: #1F3144;
+  --ink-soft: #4A5E73;
+  --paper: #FFF8EC;
+  --gold: #F2B544;
+  --coral: #E87A6E;
+  --leaf: #6FB87A;
+  --berry: #B66BB0;
+  --sky: #7EBEE0;
+  --snow: #EAF4FB;
+  --shadow: rgba(15, 50, 80, 0.18);
+  --shadow-deep: rgba(15, 50, 80, 0.32);
+  --font-display: "Fredoka", "Baloo 2", system-ui, sans-serif;
+  --font-body: "Nunito", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: var(--font-body);
+  color: var(--ink);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  background: var(--ocean-1);
+}
+
+#root { width: 100vw; height: 100vh; }
+
+/* The ocean backdrop — gradient + soft radial spots that suggest depth */
+.ocean {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(1200px 700px at 20% 15%, rgba(255,255,255,0.35), transparent 60%),
+    radial-gradient(900px 600px at 85% 80%, rgba(46, 122, 154, 0.20), transparent 60%),
+    linear-gradient(180deg, var(--ocean-1) 0%, var(--ocean-2) 50%, var(--ocean-3) 100%);
+  overflow: hidden;
+}
+
+/* Subtle wave texture using SVG noise-like stripes */
+.ocean::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  background-image:
+    radial-gradient(2px 2px at 30% 40%, rgba(255,255,255,0.25), transparent 50%),
+    radial-gradient(2px 2px at 70% 70%, rgba(255,255,255,0.20), transparent 50%),
+    radial-gradient(1px 1px at 50% 20%, rgba(255,255,255,0.18), transparent 50%);
+  background-size: 400px 400px, 300px 300px, 200px 200px;
+  opacity: 0.6;
+  animation: drift 60s linear infinite;
+}
+
+@keyframes drift {
+  0% { transform: translate(0,0); }
+  100% { transform: translate(-200px,-150px); }
+}
+
+/* Clouds */
+.cloud {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.85;
+  filter: drop-shadow(0 6px 14px rgba(31, 49, 68, 0.10));
+  animation: cloudDrift linear infinite;
+}
+@keyframes cloudDrift {
+  from { transform: translateX(-12vw); }
+  to   { transform: translateX(112vw); }
+}
+
+/* Stage holds the SVG map */
+.stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Continent base style */
+.continent {
+  cursor: pointer;
+  transition: transform 320ms cubic-bezier(.2,.9,.3,1.25),
+              filter 280ms ease,
+              opacity 280ms ease;
+  transform-box: fill-box;
+  transform-origin: center;
+  filter: drop-shadow(0 8px 12px var(--shadow));
+}
+
+.continent:hover {
+  filter: drop-shadow(0 18px 22px var(--shadow-deep))
+          drop-shadow(0 0 0 rgba(255,255,255,0));
+}
+
+/* Dim non-hovered when one is hovered */
+.map[data-hover="true"] .continent:not(.is-hover):not(.is-active) {
+  opacity: 0.45;
+  filter: drop-shadow(0 4px 6px var(--shadow)) saturate(0.7);
+}
+
+/* Active (clicked) continent */
+.continent.is-active {
+  filter: drop-shadow(0 22px 28px var(--shadow-deep));
+}
+
+/* Name label that floats over each continent */
+.continent-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  fill: var(--ink);
+  text-anchor: middle;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: rgba(255, 248, 236, 0.85);
+  stroke-width: 6;
+  stroke-linejoin: round;
+  letter-spacing: 0.02em;
+  transition: opacity 220ms ease, transform 320ms ease;
+}
+
+.map[data-active="true"] .continent-label:not(.is-active) { opacity: 0.0; }
+
+/* Magnifier lens */
+.lens-circle {
+  fill: none;
+  stroke: rgba(255,255,255,0.9);
+  stroke-width: 3;
+  filter: drop-shadow(0 8px 18px rgba(15,50,80,0.35));
+  pointer-events: none;
+}
+.lens-handle {
+  stroke: rgba(255,255,255,0.95);
+  stroke-width: 6;
+  stroke-linecap: round;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 10px rgba(15,50,80,0.35));
+}
+
+/* Top chrome */
+.chrome {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 30;
+  pointer-events: none;
+  gap: 16px;
+}
+.chrome > * { pointer-events: auto; }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 248, 236, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 10px 16px 10px 12px;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(15, 50, 80, 0.12);
+}
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--coral));
+  display: grid; place-items: center;
+  color: white;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.12);
+}
+.brand-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.brand-sub {
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-weight: 600;
+  margin-top: -2px;
+}
+
+.hud {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hud-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 248, 236, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 9px 14px;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(15, 50, 80, 0.12);
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 14px;
+}
+.hud-chip svg { display: block; }
+.hud-chip-val { font-variant-numeric: tabular-nums; }
+
+.avatar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 248, 236, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 6px 16px 6px 6px;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(15, 50, 80, 0.12);
+}
+.avatar-ring {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFE0A8, #FFB07A);
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: white;
+  font-size: 18px;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.10);
+}
+.avatar-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.1;
+}
+.avatar-meta { font-size: 11px; color: var(--ink-soft); font-weight: 600; }
+
+.xp-bar {
+  width: 100px; height: 7px; border-radius: 999px;
+  background: rgba(31, 49, 68, 0.10);
+  overflow: hidden; margin-top: 4px;
+}
+.xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--coral));
+  border-radius: 999px;
+  transition: width 600ms ease;
+}
+
+/* Bottom hint */
+.hint {
+  position: absolute;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 248, 236, 0.9);
+  backdrop-filter: blur(6px);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--ink);
+  font-size: 14px;
+  box-shadow: 0 6px 18px rgba(15, 50, 80, 0.12);
+  z-index: 20;
+  display: flex; align-items: center; gap: 10px;
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+.hint .kbd {
+  font-family: var(--font-body);
+  font-size: 11px;
+  padding: 2px 8px;
+  background: rgba(31, 49, 68, 0.08);
+  border-radius: 6px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+/* Country panel — radiating cards */
+.country-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 25;
+}
+.country-layer.is-open { pointer-events: auto; }
+
+.country-backdrop {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 50% at var(--ox, 50%) var(--oy, 50%), transparent 0%, rgba(15, 50, 80, 0.28) 80%);
+  opacity: 0;
+  transition: opacity 360ms ease;
+  pointer-events: none;
+}
+.country-layer.is-open .country-backdrop {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.country-card {
+  position: absolute;
+  width: 200px;
+  background: var(--paper);
+  border-radius: 22px;
+  padding: 14px 14px 16px;
+  box-shadow: 0 14px 32px rgba(15, 50, 80, 0.22);
+  transform: translate(-50%, -50%) scale(0.4);
+  opacity: 0;
+  transition:
+    transform 560ms cubic-bezier(.2, .9, .3, 1.25),
+    opacity 380ms ease;
+  cursor: pointer;
+  border: 2px solid rgba(31, 49, 68, 0.06);
+}
+.country-layer.is-open .country-card {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.country-card:hover {
+  transform: translate(-50%, -50%) scale(1.06) !important;
+  box-shadow: 0 20px 40px rgba(15, 50, 80, 0.30);
+  z-index: 2;
+}
+.country-card.is-locked { cursor: not-allowed; }
+.country-card.is-locked:hover {
+  transform: translate(-50%, -50%) scale(1.02) !important;
+}
+.country-card.is-dragging {
+  transition: none !important;
+  box-shadow: 0 28px 50px rgba(15, 50, 80, 0.40) !important;
+  transform: translate(-50%, -50%) scale(1.04) !important;
+}
+.country-card.is-dragging:hover {
+  transform: translate(-50%, -50%) scale(1.04) !important;
+}
+
+.cc-illo {
+  height: 86px;
+  border-radius: 14px;
+  background: var(--snow);
+  display: grid; place-items: center;
+  margin-bottom: 10px;
+  overflow: hidden;
+  position: relative;
+}
+.cc-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.cc-row {
+  display: flex; align-items: center; gap: 6px;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.cc-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--ink-soft); opacity: 0.45; }
+.cc-lock {
+  position: absolute; top: 8px; right: 8px;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(31, 49, 68, 0.85);
+  display: grid; place-items: center;
+  color: white;
+  font-size: 13px;
+  z-index: 2;
+}
+.cc-card.is-locked .cc-illo,
+.country-card.is-locked .cc-illo,
+.country-card.is-locked .cc-name {
+  filter: grayscale(0.6) opacity(0.7);
+}
+
+.cc-difficulty {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.cc-difficulty .pip {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(31, 49, 68, 0.15);
+}
+.cc-difficulty .pip.on { background: var(--gold); }
+
+/* Close button */
+.close-btn {
+  position: absolute;
+  top: 86px;
+  right: 32px;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 248, 236, 0.92);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 18px rgba(15, 50, 80, 0.18);
+  cursor: pointer;
+  font-size: 20px;
+  color: var(--ink);
+  display: grid; place-items: center;
+  z-index: 40;
+}
+.close-btn:hover { background: white; }
+
+/* Ambient idle motion */
+.idle-bob {
+  animation: bob 4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.idle-bob.delay-1 { animation-delay: -1s; }
+.idle-bob.delay-2 { animation-delay: -2s; }
+.idle-bob.delay-3 { animation-delay: -3s; }
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50%      { transform: translateY(-3px) rotate(1deg); }
+}
+
+/* Hover intensity variants */
+.hover-subtle .continent.is-hover { transform: scale(1.03) translateY(-6px); }
+.hover-medium .continent.is-hover { transform: scale(1.06) translateY(-12px); }
+.hover-dramatic .continent.is-hover { transform: scale(1.10) translateY(-20px); }
+
+/* In rearrange mode, suppress hover lift so dragging feels stable */
+.continent.is-editable.is-hover { transform: none !important; }
+.continent.is-editable {
+  filter: drop-shadow(0 14px 18px rgba(15, 50, 80, 0.28));
+}
+.map[data-hover="true"] .continent.is-editable:not(.is-hover) {
+  opacity: 1 !important;
+  filter: drop-shadow(0 8px 12px var(--shadow)) !important;
+}
+
+/* Continent glow accent (a radial in the SVG handles this) */
+
+
+@keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
+@keyframes toastIn {
+  0%   { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+  20%  { transform: translate(-50%, -50%) scale(1.04); opacity: 1; }
+  80%  { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.96); opacity: 0; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+<script type="text/babel">
+
+// tweaks-panel.jsx
+// Reusable Tweaks shell + form-control helpers.
+//
+// Owns the host protocol (listens for __activate_edit_mode / __deactivate_edit_mode,
+// posts __edit_mode_available / __edit_mode_set_keys / __edit_mode_dismissed) so
+// individual prototypes don't re-roll it. Ships a consistent set of controls so you
+// don't hand-draw <input type="range">, segmented radios, steppers, etc.
+//
+// Usage (in an HTML file that loads React + Babel):
+//
+//   const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+//     "primaryColor": "#D97757",
+//     "palette": ["#D97757", "#29261b", "#f6f4ef"],
+//     "fontSize": 16,
+//     "density": "regular",
+//     "dark": false
+//   }/*EDITMODE-END*/;
+//
+//   function App() {
+//     const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+//     return (
+//       <div style={{ fontSize: t.fontSize, color: t.primaryColor }}>
+//         Hello
+//         <TweaksPanel>
+//           <TweakSection label="Typography" />
+//           <TweakSlider label="Font size" value={t.fontSize} min={10} max={32} unit="px"
+//                        onChange={(v) => setTweak('fontSize', v)} />
+//           <TweakRadio  label="Density" value={t.density}
+//                        options={['compact', 'regular', 'comfy']}
+//                        onChange={(v) => setTweak('density', v)} />
+//           <TweakSection label="Theme" />
+//           <TweakColor  label="Primary" value={t.primaryColor}
+//                        options={['#D97757', '#2A6FDB', '#1F8A5B', '#7A5AE0']}
+//                        onChange={(v) => setTweak('primaryColor', v)} />
+//           <TweakColor  label="Palette" value={t.palette}
+//                        options={[['#D97757', '#29261b', '#f6f4ef'],
+//                                  ['#475569', '#0f172a', '#f1f5f9']]}
+//                        onChange={(v) => setTweak('palette', v)} />
+//           <TweakToggle label="Dark mode" value={t.dark}
+//                        onChange={(v) => setTweak('dark', v)} />
+//         </TweaksPanel>
+//       </div>
+//     );
+//   }
+//
+// ─────────────────────────────────────────────────────────────────────────────
+
+const __TWEAKS_STYLE = `
+  .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
+    max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+    transform:scale(var(--dc-inv-zoom,1));transform-origin:bottom right;
+    background:rgba(250,249,247,.78);color:#29261b;
+    -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);
+    border:.5px solid rgba(255,255,255,.6);border-radius:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 12px 40px rgba(0,0,0,.18);
+    font:11.5px/1.4 ui-sans-serif,system-ui,-apple-system,sans-serif;overflow:hidden}
+  .twk-hd{display:flex;align-items:center;justify-content:space-between;
+    padding:10px 8px 10px 14px;cursor:move;user-select:none}
+  .twk-hd b{font-size:12px;font-weight:600;letter-spacing:.01em}
+  .twk-x{appearance:none;border:0;background:transparent;color:rgba(41,38,27,.55);
+    width:22px;height:22px;border-radius:6px;cursor:default;font-size:13px;line-height:1}
+  .twk-x:hover{background:rgba(0,0,0,.06);color:#29261b}
+  .twk-body{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;
+    overflow-y:auto;overflow-x:hidden;min-height:0;
+    scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.15) transparent}
+  .twk-body::-webkit-scrollbar{width:8px}
+  .twk-body::-webkit-scrollbar-track{background:transparent;margin:2px}
+  .twk-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px;
+    border:2px solid transparent;background-clip:content-box}
+  .twk-body::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.25);
+    border:2px solid transparent;background-clip:content-box}
+  .twk-row{display:flex;flex-direction:column;gap:5px}
+  .twk-row-h{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+  .twk-lbl{display:flex;justify-content:space-between;align-items:baseline;
+    color:rgba(41,38,27,.72)}
+  .twk-lbl>span:first-child{font-weight:500}
+  .twk-val{color:rgba(41,38,27,.5);font-variant-numeric:tabular-nums}
+
+  .twk-sect{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:rgba(41,38,27,.45);padding:10px 0 0}
+  .twk-sect:first-child{padding-top:0}
+
+  .twk-field{appearance:none;box-sizing:border-box;width:100%;min-width:0;height:26px;padding:0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;
+    background:rgba(255,255,255,.6);color:inherit;font:inherit;outline:none}
+  .twk-field:focus{border-color:rgba(0,0,0,.25);background:rgba(255,255,255,.85)}
+  select.twk-field{padding-right:22px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='rgba(0,0,0,.5)' d='M0 0h10L5 6z'/></svg>");
+    background-repeat:no-repeat;background-position:right 8px center}
+
+  .twk-slider{appearance:none;-webkit-appearance:none;width:100%;height:4px;margin:6px 0;
+    border-radius:999px;background:rgba(0,0,0,.12);outline:none}
+  .twk-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+    width:14px;height:14px;border-radius:50%;background:#fff;
+    border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+  .twk-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
+    background:#fff;border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+
+  .twk-seg{position:relative;display:flex;padding:2px;border-radius:8px;
+    background:rgba(0,0,0,.06);user-select:none}
+  .twk-seg-thumb{position:absolute;top:2px;bottom:2px;border-radius:6px;
+    background:rgba(255,255,255,.9);box-shadow:0 1px 2px rgba(0,0,0,.12);
+    transition:left .15s cubic-bezier(.3,.7,.4,1),width .15s}
+  .twk-seg.dragging .twk-seg-thumb{transition:none}
+  .twk-seg button{appearance:none;position:relative;z-index:1;flex:1;border:0;
+    background:transparent;color:inherit;font:inherit;font-weight:500;min-height:22px;
+    border-radius:6px;cursor:default;padding:4px 6px;line-height:1.2;
+    overflow-wrap:anywhere}
+
+  .twk-toggle{position:relative;width:32px;height:18px;border:0;border-radius:999px;
+    background:rgba(0,0,0,.15);transition:background .15s;cursor:default;padding:0}
+  .twk-toggle[data-on="1"]{background:#34c759}
+  .twk-toggle i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+  .twk-toggle[data-on="1"] i{transform:translateX(14px)}
+
+  .twk-num{display:flex;align-items:center;box-sizing:border-box;min-width:0;height:26px;padding:0 0 0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;background:rgba(255,255,255,.6)}
+  .twk-num-lbl{font-weight:500;color:rgba(41,38,27,.6);cursor:ew-resize;
+    user-select:none;padding-right:8px}
+  .twk-num input{flex:1;min-width:0;height:100%;border:0;background:transparent;
+    font:inherit;font-variant-numeric:tabular-nums;text-align:right;padding:0 8px 0 0;
+    outline:none;color:inherit;-moz-appearance:textfield}
+  .twk-num input::-webkit-inner-spin-button,.twk-num input::-webkit-outer-spin-button{
+    -webkit-appearance:none;margin:0}
+  .twk-num-unit{padding-right:8px;color:rgba(41,38,27,.45)}
+
+  .twk-btn{appearance:none;height:26px;padding:0 12px;border:0;border-radius:7px;
+    background:rgba(0,0,0,.78);color:#fff;font:inherit;font-weight:500;cursor:default}
+  .twk-btn:hover{background:rgba(0,0,0,.88)}
+  .twk-btn.secondary{background:rgba(0,0,0,.06);color:inherit}
+  .twk-btn.secondary:hover{background:rgba(0,0,0,.1)}
+
+  .twk-swatch{appearance:none;-webkit-appearance:none;width:56px;height:22px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:6px;padding:0;cursor:default;
+    background:transparent;flex-shrink:0}
+  .twk-swatch::-webkit-color-swatch-wrapper{padding:0}
+  .twk-swatch::-webkit-color-swatch{border:0;border-radius:5.5px}
+  .twk-swatch::-moz-color-swatch{border:0;border-radius:5.5px}
+
+  .twk-chips{display:flex;gap:6px}
+  .twk-chip{position:relative;appearance:none;flex:1;min-width:0;height:46px;
+    padding:0;border:0;border-radius:6px;overflow:hidden;cursor:default;
+    box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.06);
+    transition:transform .12s cubic-bezier(.3,.7,.4,1),box-shadow .12s}
+  .twk-chip:hover{transform:translateY(-1px);
+    box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.12)}
+  .twk-chip[data-on="1"]{box-shadow:0 0 0 1.5px rgba(0,0,0,.85),
+    0 2px 6px rgba(0,0,0,.15)}
+  .twk-chip>span{position:absolute;top:0;bottom:0;right:0;width:34%;
+    display:flex;flex-direction:column;box-shadow:-1px 0 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i{flex:1;box-shadow:0 -1px 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i:first-child{box-shadow:none}
+  .twk-chip svg{position:absolute;top:6px;left:6px;width:13px;height:13px;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+`;
+
+// ── useTweaks ───────────────────────────────────────────────────────────────
+// Single source of truth for tweak values. setTweak persists via the host
+// (__edit_mode_set_keys → host rewrites the EDITMODE block on disk).
+function useTweaks(defaults) {
+  const [values, setValues] = React.useState(defaults);
+  // Accepts either setTweak('key', value) or setTweak({ key: value, ... }) so a
+  // useState-style call doesn't write a "[object Object]" key into the persisted
+  // JSON block.
+  const setTweak = React.useCallback((keyOrEdits, val) => {
+    const edits = typeof keyOrEdits === 'object' && keyOrEdits !== null
+      ? keyOrEdits : { [keyOrEdits]: val };
+    setValues((prev) => ({ ...prev, ...edits }));
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
+    // Same-window signal so in-page listeners (deck-stage rail thumbnails)
+    // can react — the parent message only reaches the host, not peers.
+    window.dispatchEvent(new CustomEvent('tweakchange', { detail: edits }));
+  }, []);
+  return [values, setTweak];
+}
+
+// ── TweaksPanel ─────────────────────────────────────────────────────────────
+// Floating shell. Registers the protocol listener BEFORE announcing
+// availability — if the announce ran first, the host's activate could land
+// before our handler exists and the toolbar toggle would silently no-op.
+// The close button posts __edit_mode_dismissed so the host's toolbar toggle
+// flips off in lockstep; the host echoes __deactivate_edit_mode back which
+// is what actually hides the panel.
+function TweaksPanel({ title = 'Tweaks', noDeckControls = false, children }) {
+  const [open, setOpen] = React.useState(false);
+  const dragRef = React.useRef(null);
+  // Auto-inject a rail toggle when a <deck-stage> is on the page. The
+  // toggle drives the deck's per-viewer _railVisible via window message;
+  // state is mirrored from the same localStorage key the deck reads so
+  // the control reflects reality across reloads. The mechanism is the
+  // message — authors who want custom placement can post it directly
+  // and pass noDeckControls to suppress this one.
+  const hasDeckStage = React.useMemo(
+    () => typeof document !== 'undefined' && !!document.querySelector('deck-stage'),
+    [],
+  );
+  // deck-stage enables its rail in connectedCallback, but this panel can
+  // mount before that element has upgraded. The initial read catches the
+  // common case; the listener covers mounting first. (Older deck-stage.js
+  // copies still wait for the host's __omelette_rail_enabled postMessage —
+  // same listener handles those.)
+  const [railEnabled, setRailEnabled] = React.useState(
+    () => hasDeckStage && !!document.querySelector('deck-stage')?._railEnabled,
+  );
+  React.useEffect(() => {
+    if (!hasDeckStage || railEnabled) return undefined;
+    const onMsg = (e) => {
+      if (e.data && e.data.type === '__omelette_rail_enabled') setRailEnabled(true);
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, [hasDeckStage, railEnabled]);
+  const [railVisible, setRailVisible] = React.useState(() => {
+    try { return localStorage.getItem('deck-stage.railVisible') !== '0'; } catch (e) { return true; }
+  });
+  const toggleRail = (on) => {
+    setRailVisible(on);
+    window.postMessage({ type: '__deck_rail_visible', on }, '*');
+  };
+  const offsetRef = React.useRef({ x: 16, y: 16 });
+  const PAD = 16;
+
+  const clampToViewport = React.useCallback(() => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const maxRight = Math.max(PAD, window.innerWidth - w - PAD);
+    const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
+    offsetRef.current = {
+      x: Math.min(maxRight, Math.max(PAD, offsetRef.current.x)),
+      y: Math.min(maxBottom, Math.max(PAD, offsetRef.current.y)),
+    };
+    panel.style.right = offsetRef.current.x + 'px';
+    panel.style.bottom = offsetRef.current.y + 'px';
+  }, []);
+
+  React.useEffect(() => {
+    if (!open) return;
+    clampToViewport();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', clampToViewport);
+      return () => window.removeEventListener('resize', clampToViewport);
+    }
+    const ro = new ResizeObserver(clampToViewport);
+    ro.observe(document.documentElement);
+    return () => ro.disconnect();
+  }, [open, clampToViewport]);
+
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      const t = e?.data?.type;
+      if (t === '__activate_edit_mode') setOpen(true);
+      else if (t === '__deactivate_edit_mode') setOpen(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const dismiss = () => {
+    setOpen(false);
+    window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
+  };
+
+  const onDragStart = (e) => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY;
+    const startRight = window.innerWidth - r.right;
+    const startBottom = window.innerHeight - r.bottom;
+    const move = (ev) => {
+      offsetRef.current = {
+        x: startRight - (ev.clientX - sx),
+        y: startBottom - (ev.clientY - sy),
+      };
+      clampToViewport();
+    };
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+  };
+
+  if (!open) return null;
+  return (
+    <>
+      <style>{__TWEAKS_STYLE}</style>
+      <div ref={dragRef} className="twk-panel" data-noncommentable=""
+           style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+        <div className="twk-hd" onMouseDown={onDragStart}>
+          <b>{title}</b>
+          <button className="twk-x" aria-label="Close tweaks"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={dismiss}>✕</button>
+        </div>
+        <div className="twk-body">
+          {children}
+          {hasDeckStage && railEnabled && !noDeckControls && (
+            <TweakSection label="Deck">
+              <TweakToggle label="Thumbnail rail" value={railVisible} onChange={toggleRail} />
+            </TweakSection>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── Layout helpers ──────────────────────────────────────────────────────────
+
+function TweakSection({ label, children }) {
+  return (
+    <>
+      <div className="twk-sect">{label}</div>
+      {children}
+    </>
+  );
+}
+
+function TweakRow({ label, value, children, inline = false }) {
+  return (
+    <div className={inline ? 'twk-row twk-row-h' : 'twk-row'}>
+      <div className="twk-lbl">
+        <span>{label}</span>
+        {value != null && <span className="twk-val">{value}</span>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+// ── Controls ────────────────────────────────────────────────────────────────
+
+function TweakSlider({ label, value, min = 0, max = 100, step = 1, unit = '', onChange }) {
+  return (
+    <TweakRow label={label} value={`${value}${unit}`}>
+      <input type="range" className="twk-slider" min={min} max={max} step={step}
+             value={value} onChange={(e) => onChange(Number(e.target.value))} />
+    </TweakRow>
+  );
+}
+
+function TweakToggle({ label, value, onChange }) {
+  return (
+    <div className="twk-row twk-row-h">
+      <div className="twk-lbl"><span>{label}</span></div>
+      <button type="button" className="twk-toggle" data-on={value ? '1' : '0'}
+              role="switch" aria-checked={!!value}
+              onClick={() => onChange(!value)}><i /></button>
+    </div>
+  );
+}
+
+function TweakRadio({ label, value, options, onChange }) {
+  const trackRef = React.useRef(null);
+  const [dragging, setDragging] = React.useState(false);
+  // The active value is read by pointer-move handlers attached for the lifetime
+  // of a drag — ref it so a stale closure doesn't fire onChange for every move.
+  const valueRef = React.useRef(value);
+  valueRef.current = value;
+
+  // Segments wrap mid-word once per-segment width runs out. The track is
+  // ~248px (280 panel − 28 body pad − 4 seg pad), each button loses 12px
+  // to its own padding, and 11.5px system-ui averages ~6.3px/char — so 2
+  // options fit ~16 chars each, 3 fit ~10. Past that (or >3 options), fall
+  // back to a dropdown rather than wrap.
+  const labelLen = (o) => String(typeof o === 'object' ? o.label : o).length;
+  const maxLen = options.reduce((m, o) => Math.max(m, labelLen(o)), 0);
+  const fitsAsSegments = maxLen <= ({ 2: 16, 3: 10 }[options.length] ?? 0);
+  if (!fitsAsSegments) {
+    // <select> emits strings — map back to the original option value so the
+    // fallback stays type-preserving (numbers, booleans) like the segment path.
+    const resolve = (s) => {
+      const m = options.find((o) => String(typeof o === 'object' ? o.value : o) === s);
+      return m === undefined ? s : typeof m === 'object' ? m.value : m;
+    };
+    return <TweakSelect label={label} value={value} options={options}
+                        onChange={(s) => onChange(resolve(s))} />;
+  }
+  const opts = options.map((o) => (typeof o === 'object' ? o : { value: o, label: o }));
+  const idx = Math.max(0, opts.findIndex((o) => o.value === value));
+  const n = opts.length;
+
+  const segAt = (clientX) => {
+    const r = trackRef.current.getBoundingClientRect();
+    const inner = r.width - 4;
+    const i = Math.floor(((clientX - r.left - 2) / inner) * n);
+    return opts[Math.max(0, Math.min(n - 1, i))].value;
+  };
+
+  const onPointerDown = (e) => {
+    setDragging(true);
+    const v0 = segAt(e.clientX);
+    if (v0 !== valueRef.current) onChange(v0);
+    const move = (ev) => {
+      if (!trackRef.current) return;
+      const v = segAt(ev.clientX);
+      if (v !== valueRef.current) onChange(v);
+    };
+    const up = () => {
+      setDragging(false);
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+
+  return (
+    <TweakRow label={label}>
+      <div ref={trackRef} role="radiogroup" onPointerDown={onPointerDown}
+           className={dragging ? 'twk-seg dragging' : 'twk-seg'}>
+        <div className="twk-seg-thumb"
+             style={{ left: `calc(2px + ${idx} * (100% - 4px) / ${n})`,
+                      width: `calc((100% - 4px) / ${n})` }} />
+        {opts.map((o) => (
+          <button key={o.value} type="button" role="radio" aria-checked={o.value === value}>
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </TweakRow>
+  );
+}
+
+function TweakSelect({ label, value, options, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <select className="twk-field" value={value} onChange={(e) => onChange(e.target.value)}>
+        {options.map((o) => {
+          const v = typeof o === 'object' ? o.value : o;
+          const l = typeof o === 'object' ? o.label : o;
+          return <option key={v} value={v}>{l}</option>;
+        })}
+      </select>
+    </TweakRow>
+  );
+}
+
+function TweakText({ label, value, placeholder, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <input className="twk-field" type="text" value={value} placeholder={placeholder}
+             onChange={(e) => onChange(e.target.value)} />
+    </TweakRow>
+  );
+}
+
+function TweakNumber({ label, value, min, max, step = 1, unit = '', onChange }) {
+  const clamp = (n) => {
+    if (min != null && n < min) return min;
+    if (max != null && n > max) return max;
+    return n;
+  };
+  const startRef = React.useRef({ x: 0, val: 0 });
+  const onScrubStart = (e) => {
+    e.preventDefault();
+    startRef.current = { x: e.clientX, val: value };
+    const decimals = (String(step).split('.')[1] || '').length;
+    const move = (ev) => {
+      const dx = ev.clientX - startRef.current.x;
+      const raw = startRef.current.val + dx * step;
+      const snapped = Math.round(raw / step) * step;
+      onChange(clamp(Number(snapped.toFixed(decimals))));
+    };
+    const up = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+  return (
+    <div className="twk-num">
+      <span className="twk-num-lbl" onPointerDown={onScrubStart}>{label}</span>
+      <input type="number" value={value} min={min} max={max} step={step}
+             onChange={(e) => onChange(clamp(Number(e.target.value)))} />
+      {unit && <span className="twk-num-unit">{unit}</span>}
+    </div>
+  );
+}
+
+// Relative-luminance contrast pick — checkmarks drawn over a swatch need to
+// read on both #111 and #fafafa without per-option configuration. Hex input
+// only (#rgb / #rrggbb); named or rgb()/hsl() colors fall through to "light".
+function __twkIsLight(hex) {
+  const h = String(hex).replace('#', '');
+  const x = h.length === 3 ? h.replace(/./g, (c) => c + c) : h.padEnd(6, '0');
+  const n = parseInt(x.slice(0, 6), 16);
+  if (Number.isNaN(n)) return true;
+  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  return r * 299 + g * 587 + b * 114 > 148000;
+}
+
+const __TwkCheck = ({ light }) => (
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <path d="M3 7.2 5.8 10 11 4.2" fill="none" strokeWidth="2.2"
+          strokeLinecap="round" strokeLinejoin="round"
+          stroke={light ? 'rgba(0,0,0,.78)' : '#fff'} />
+  </svg>
+);
+
+// TweakColor — curated color/palette picker. Each option is either a single
+// hex string or an array of 1-5 hex strings; the card adapts — a lone color
+// renders solid, a palette renders colors[0] as the hero (left ~2/3) with the
+// rest stacked in a sharp column on the right. onChange emits the
+// option in the shape it was passed (string stays string, array stays array).
+// Without options it falls back to the native color input for back-compat.
+function TweakColor({ label, value, options, onChange }) {
+  if (!options || !options.length) {
+    return (
+      <div className="twk-row twk-row-h">
+        <div className="twk-lbl"><span>{label}</span></div>
+        <input type="color" className="twk-swatch" value={value}
+               onChange={(e) => onChange(e.target.value)} />
+      </div>
+    );
+  }
+  // Native <input type=color> emits lowercase hex per the HTML spec, so
+  // compare case-insensitively. String() guards JSON.stringify(undefined),
+  // which returns the primitive undefined (no .toLowerCase).
+  const key = (o) => String(JSON.stringify(o)).toLowerCase();
+  const cur = key(value);
+  return (
+    <TweakRow label={label}>
+      <div className="twk-chips" role="radiogroup">
+        {options.map((o, i) => {
+          const colors = Array.isArray(o) ? o : [o];
+          const [hero, ...rest] = colors;
+          const sup = rest.slice(0, 4);
+          const on = key(o) === cur;
+          return (
+            <button key={i} type="button" className="twk-chip" role="radio"
+                    aria-checked={on} data-on={on ? '1' : '0'}
+                    aria-label={colors.join(', ')} title={colors.join(' · ')}
+                    style={{ background: hero }}
+                    onClick={() => onChange(o)}>
+              {sup.length > 0 && (
+                <span>
+                  {sup.map((c, j) => <i key={j} style={{ background: c }} />)}
+                </span>
+              )}
+              {on && <__TwkCheck light={__twkIsLight(hero)} />}
+            </button>
+          );
+        })}
+      </div>
+    </TweakRow>
+  );
+}
+
+function TweakButton({ label, onClick, secondary = false }) {
+  return (
+    <button type="button" className={secondary ? 'twk-btn secondary' : 'twk-btn'}
+            onClick={onClick}>{label}</button>
+  );
+}
+
+Object.assign(window, {
+  useTweaks, TweaksPanel, TweakSection, TweakRow,
+  TweakSlider, TweakToggle, TweakRadio, TweakSelect,
+  TweakText, TweakNumber, TweakColor, TweakButton,
+});
+
+</script>
+
+<script type="text/babel">
+/* Flat illustrated SVG icons — built from simple primitives (circles, rounded rects, paths).
+   Each renders inside its parent SVG at the given (x,y) center, ~36px wide by default. */
+
+function withTransform(x, y, scale, children, idle, idleDelay) {
+  const cls = idle ? `idle-bob delay-${idleDelay || 0}` : '';
+  // Outer g handles positioning (SVG transform attr); inner g handles idle bob via CSS
+  // — keeping them on separate elements prevents the CSS keyframe from clobbering
+  // the positioning transform.
+  return (
+    <g transform={`translate(${x},${y}) scale(${scale})`}>
+      <g className={cls}>{children}</g>
+    </g>
+  );
+}
+
+// === AFRICA ===
+function IcoPyramid({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <path d="M-22,16 L0,-20 L22,16 Z" fill="#E8B26B"/>
+      <path d="M0,-20 L22,16 L8,16 Z" fill="#C98F4E"/>
+      <path d="M-22,16 L22,16 L22,19 L-22,19 Z" fill="#7B6A4A" opacity="0.35"/>
+    </g>
+  ), idle, d);
+}
+function IcoLion({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <circle r="20" fill="#D88A3E"/>
+      {[0,45,90,135,180,225,270,315].map(a => {
+        const rad = a * Math.PI / 180;
+        return <circle key={a} cx={Math.cos(rad)*20} cy={Math.sin(rad)*20} r="7" fill="#B66828"/>;
+      })}
+      <circle r="14" fill="#F5C68A"/>
+      <circle cx="-5" cy="-2" r="2" fill="#1F3144"/>
+      <circle cx="5" cy="-2" r="2" fill="#1F3144"/>
+      <path d="M-3,5 Q0,8 3,5" stroke="#1F3144" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+      <ellipse cx="0" cy="3" rx="2.5" ry="2" fill="#1F3144"/>
+    </g>
+  ), idle, d);
+}
+function IcoElephant({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <ellipse cx="2" cy="2" rx="22" ry="16" fill="#8E9AAB"/>
+      <circle cx="-16" cy="-4" r="14" fill="#9BA7B7"/>
+      <ellipse cx="-23" cy="-12" rx="6" ry="7" fill="#7E8B9D"/>
+      <path d="M-22,4 Q-30,12 -26,20 Q-22,22 -20,16" stroke="#9BA7B7" strokeWidth="6" fill="none" strokeLinecap="round"/>
+      <circle cx="-12" cy="-4" r="1.6" fill="#1F3144"/>
+      <rect x="-2" y="14" width="4" height="6" rx="1" fill="#7E8B9D"/>
+      <rect x="10" y="14" width="4" height="6" rx="1" fill="#7E8B9D"/>
+    </g>
+  ), idle, d);
+}
+function IcoGiraffe({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <rect x="-3" y="-22" width="8" height="28" rx="3" fill="#E8B25C"/>
+      <ellipse cx="0" cy="10" rx="14" ry="9" fill="#E8B25C"/>
+      <ellipse cx="6" cy="-22" rx="6" ry="5" fill="#E8B25C"/>
+      <circle cx="4" cy="-18" r="3" fill="#C98F4E"/>
+      <circle cx="-1" cy="-12" r="2.5" fill="#C98F4E"/>
+      <circle cx="3" cy="-4" r="2.5" fill="#C98F4E"/>
+      <circle cx="-3" cy="4" r="2.5" fill="#C98F4E"/>
+      <circle cx="6" cy="6" r="2.5" fill="#C98F4E"/>
+      <circle cx="-7" cy="9" r="2.5" fill="#C98F4E"/>
+      <rect x="-7" y="16" width="3" height="6" fill="#C98F4E"/>
+      <rect x="5" y="16" width="3" height="6" fill="#C98F4E"/>
+      <circle cx="9" cy="-23" r="0.8" fill="#1F3144"/>
+    </g>
+  ), idle, d);
+}
+
+// === ASIA ===
+function IcoPanda({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <circle cx="-12" cy="-12" r="6" fill="#1F3144"/>
+      <circle cx="12" cy="-12" r="6" fill="#1F3144"/>
+      <circle r="18" fill="#FCFCFC"/>
+      <ellipse cx="-7" cy="-3" rx="5" ry="6" fill="#1F3144"/>
+      <ellipse cx="7" cy="-3" rx="5" ry="6" fill="#1F3144"/>
+      <circle cx="-7" cy="-3" r="2" fill="#FFFFFF"/>
+      <circle cx="7" cy="-3" r="2" fill="#FFFFFF"/>
+      <ellipse cx="0" cy="7" rx="3" ry="2.4" fill="#1F3144"/>
+      <path d="M-4,11 Q0,14 4,11" stroke="#1F3144" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+    </g>
+  ), idle, d);
+}
+function IcoTiger({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <circle r="18" fill="#F08D3E"/>
+      <path d="M-18,-8 L-12,-4 M-16,4 L-10,2 M16,-8 L10,-4 M14,4 L8,2 M-3,-18 L-1,-12 M3,-18 L1,-12" stroke="#1F3144" strokeWidth="2.5" strokeLinecap="round"/>
+      <ellipse cx="-12" cy="-14" rx="5" ry="6" fill="#F08D3E"/>
+      <ellipse cx="12" cy="-14" rx="5" ry="6" fill="#F08D3E"/>
+      <circle cx="-12" cy="-14" r="2" fill="#FCE0BA"/>
+      <circle cx="12" cy="-14" r="2" fill="#FCE0BA"/>
+      <circle cx="-6" cy="-2" r="2" fill="#1F3144"/>
+      <circle cx="6" cy="-2" r="2" fill="#1F3144"/>
+      <ellipse cx="0" cy="6" rx="3" ry="2" fill="#1F3144"/>
+      <path d="M-5,10 Q0,13 5,10" stroke="#1F3144" strokeWidth="1.5" fill="none"/>
+    </g>
+  ), idle, d);
+}
+function IcoBlossom({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      {[0,72,144,216,288].map(a => {
+        const r = a * Math.PI / 180;
+        return <ellipse key={a} cx={Math.cos(r)*8} cy={Math.sin(r)*8} rx="7" ry="9" fill="#F8B7CB" transform={`rotate(${a})`}/>;
+      })}
+      <circle r="5" fill="#FBD96B"/>
+    </g>
+  ), idle, d);
+}
+function IcoBamboo({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <rect x="-4" y="-22" width="8" height="44" rx="3" fill="#7AB58A"/>
+      <rect x="-5" y="-12" width="10" height="3" fill="#4F8C63"/>
+      <rect x="-5" y="0" width="10" height="3" fill="#4F8C63"/>
+      <rect x="-5" y="12" width="10" height="3" fill="#4F8C63"/>
+      <ellipse cx="-10" cy="-16" rx="6" ry="3" fill="#8FC79B" transform="rotate(-20)"/>
+      <ellipse cx="10" cy="-6" rx="6" ry="3" fill="#8FC79B" transform="rotate(25)"/>
+    </g>
+  ), idle, d);
+}
+
+// === EUROPE ===
+function IcoCastle({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <rect x="-22" y="-4" width="44" height="22" fill="#D4D0C4"/>
+      <rect x="-22" y="-12" width="6" height="10" fill="#D4D0C4"/>
+      <rect x="-10" y="-12" width="6" height="10" fill="#D4D0C4"/>
+      <rect x="4" y="-12" width="6" height="10" fill="#D4D0C4"/>
+      <rect x="16" y="-12" width="6" height="10" fill="#D4D0C4"/>
+      <rect x="-18" y="-22" width="8" height="20" fill="#BEB7A6"/>
+      <polygon points="-18,-22 -10,-22 -14,-30" fill="#C75D5D"/>
+      <rect x="10" y="-22" width="8" height="20" fill="#BEB7A6"/>
+      <polygon points="10,-22 18,-22 14,-30" fill="#C75D5D"/>
+      <rect x="-4" y="4" width="8" height="14" rx="4" fill="#5C3F2A"/>
+      <rect x="-15" y="2" width="4" height="5" fill="#FBD96B"/>
+      <rect x="11" y="2" width="4" height="5" fill="#FBD96B"/>
+    </g>
+  ), idle, d);
+}
+function IcoWindmill({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <polygon points="-12,18 12,18 8,-6 -8,-6" fill="#E8E1D0"/>
+      <polygon points="-10,-6 10,-6 6,-14 -6,-14" fill="#C75D5D"/>
+      <rect x="-3" y="6" width="6" height="12" rx="1" fill="#5C3F2A"/>
+      <g transform="translate(0,-8)">
+        <g style={{animation: 'spin 8s linear infinite', transformOrigin: '0 0'}}>
+          <rect x="-2" y="-22" width="4" height="20" rx="1.5" fill="#FBF5E0"/>
+          <rect x="2" y="-2" width="20" height="4" rx="1.5" fill="#FBF5E0"/>
+          <rect x="-2" y="2" width="4" height="20" rx="1.5" fill="#FBF5E0"/>
+          <rect x="-22" y="-2" width="20" height="4" rx="1.5" fill="#FBF5E0"/>
+          <circle r="2.5" fill="#5C3F2A"/>
+        </g>
+      </g>
+    </g>
+  ), idle, d);
+}
+function IcoHouse({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <rect x="-14" y="-2" width="28" height="18" fill="#FCEACB"/>
+      <polygon points="-16,-2 16,-2 0,-18" fill="#C75D5D"/>
+      <rect x="-4" y="5" width="8" height="11" rx="1" fill="#5C3F2A"/>
+      <rect x="-11" y="2" width="5" height="5" fill="#7DB3CC"/>
+      <rect x="6" y="2" width="5" height="5" fill="#7DB3CC"/>
+    </g>
+  ), idle, d);
+}
+
+// === NORTH AMERICA ===
+function IcoBear({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <circle cx="-12" cy="-12" r="6" fill="#6B4226"/>
+      <circle cx="12" cy="-12" r="6" fill="#6B4226"/>
+      <circle cx="-12" cy="-12" r="2.5" fill="#8B5A33"/>
+      <circle cx="12" cy="-12" r="2.5" fill="#8B5A33"/>
+      <circle r="18" fill="#8B5A33"/>
+      <ellipse cx="0" cy="6" rx="11" ry="8" fill="#C49977"/>
+      <circle cx="-6" cy="-3" r="2" fill="#1F3144"/>
+      <circle cx="6" cy="-3" r="2" fill="#1F3144"/>
+      <ellipse cx="0" cy="4" rx="2.5" ry="2" fill="#1F3144"/>
+      <path d="M-3,8 Q0,11 3,8" stroke="#1F3144" strokeWidth="1.5" fill="none"/>
+    </g>
+  ), idle, d);
+}
+function IcoEagle({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <ellipse cx="0" cy="2" rx="14" ry="9" fill="#5C3F2A"/>
+      <circle cx="0" cy="-10" r="8" fill="#FCFCFC"/>
+      <path d="M-4,-8 L4,-8 L0,-2 Z" fill="#F2B544"/>
+      <circle cx="-3" cy="-11" r="1.5" fill="#1F3144"/>
+      <circle cx="3" cy="-11" r="1.5" fill="#1F3144"/>
+      <path d="M-14,4 Q-22,-2 -24,8 Q-18,8 -14,10 Z" fill="#5C3F2A"/>
+      <path d="M14,4 Q22,-2 24,8 Q18,8 14,10 Z" fill="#5C3F2A"/>
+    </g>
+  ), idle, d);
+}
+function IcoTree({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <rect x="-3" y="6" width="6" height="14" rx="1" fill="#5C3F2A"/>
+      <polygon points="0,-22 -14,0 14,0" fill="#4F8C63"/>
+      <polygon points="0,-14 -16,6 16,6" fill="#5FA176"/>
+      <polygon points="0,-6 -18,12 18,12" fill="#6FB87A"/>
+    </g>
+  ), idle, d);
+}
+
+// === SOUTH AMERICA ===
+function IcoParrot({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <ellipse cx="-2" cy="2" rx="13" ry="16" fill="#E04F3A"/>
+      <path d="M-2,-10 a10 10 0 1 1 0,-0.1" fill="#3FA3DC"/>
+      <circle cx="-2" cy="-12" r="9" fill="#3FA3DC"/>
+      <circle cx="3" cy="-13" r="1.6" fill="#1F3144"/>
+      <path d="M6,-10 L14,-8 L6,-5 Z" fill="#F2B544"/>
+      <path d="M-12,2 Q-22,-2 -18,12 Q-12,12 -10,8 Z" fill="#F2B544"/>
+      <path d="M8,12 L10,22 M-4,16 L-4,22" stroke="#5C3F2A" strokeWidth="2" strokeLinecap="round"/>
+    </g>
+  ), idle, d);
+}
+function IcoLlama({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <ellipse cx="0" cy="4" rx="16" ry="12" fill="#F2E6D0"/>
+      <rect x="6" y="-14" width="8" height="14" rx="3" fill="#F2E6D0"/>
+      <ellipse cx="12" cy="-14" rx="7" ry="6" fill="#F2E6D0"/>
+      <polygon points="8,-19 10,-23 12,-19" fill="#F2E6D0"/>
+      <polygon points="14,-19 16,-23 18,-19" fill="#F2E6D0"/>
+      <circle cx="14" cy="-14" r="1.4" fill="#1F3144"/>
+      <ellipse cx="16" cy="-12" rx="1.5" ry="1" fill="#1F3144"/>
+      <rect x="-12" y="14" width="4" height="6" fill="#D4C8B0"/>
+      <rect x="-2" y="14" width="4" height="6" fill="#D4C8B0"/>
+      <rect x="8" y="14" width="4" height="6" fill="#D4C8B0"/>
+      <rect x="-14" y="-4" width="22" height="3" fill="#C75D5D"/>
+      <rect x="-14" y="2" width="22" height="2" fill="#3FA3DC"/>
+    </g>
+  ), idle, d);
+}
+function IcoPalm({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <path d="M0,20 Q-4,4 -2,-12" stroke="#5C3F2A" strokeWidth="5" fill="none" strokeLinecap="round"/>
+      <ellipse cx="-12" cy="-14" rx="14" ry="5" fill="#4F8C63" transform="rotate(-15 -12 -14)"/>
+      <ellipse cx="12" cy="-14" rx="14" ry="5" fill="#4F8C63" transform="rotate(15 12 -14)"/>
+      <ellipse cx="-8" cy="-22" rx="12" ry="4" fill="#6FB87A" transform="rotate(-40 -8 -22)"/>
+      <ellipse cx="8" cy="-22" rx="12" ry="4" fill="#6FB87A" transform="rotate(40 8 -22)"/>
+      <circle cx="-2" cy="-12" r="3" fill="#A86A3D"/>
+      <circle cx="3" cy="-11" r="2.5" fill="#A86A3D"/>
+    </g>
+  ), idle, d);
+}
+
+// === AUSTRALIA / OCEANIA ===
+function IcoKangaroo({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <ellipse cx="-2" cy="6" rx="14" ry="10" fill="#C9794A"/>
+      <path d="M10,12 Q22,16 26,4" stroke="#C9794A" strokeWidth="7" fill="none" strokeLinecap="round"/>
+      <rect x="-8" y="-12" width="7" height="12" rx="2.5" fill="#C9794A"/>
+      <ellipse cx="-4" cy="-14" rx="6" ry="5" fill="#C9794A"/>
+      <ellipse cx="-7" cy="-22" rx="2" ry="5" fill="#C9794A"/>
+      <ellipse cx="-1" cy="-22" rx="2" ry="5" fill="#C9794A"/>
+      <circle cx="-2" cy="-14" r="1.5" fill="#1F3144"/>
+      <path d="M-14,12 L-14,20 M-6,12 L-6,20" stroke="#A05F38" strokeWidth="4" strokeLinecap="round"/>
+    </g>
+  ), idle, d);
+}
+function IcoKoala({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <circle cx="-16" cy="-10" r="8" fill="#A0A8B0"/>
+      <circle cx="16" cy="-10" r="8" fill="#A0A8B0"/>
+      <circle cx="-16" cy="-10" r="4" fill="#D9B0AC"/>
+      <circle cx="16" cy="-10" r="4" fill="#D9B0AC"/>
+      <circle r="18" fill="#A0A8B0"/>
+      <circle cx="-7" cy="-2" r="2" fill="#1F3144"/>
+      <circle cx="7" cy="-2" r="2" fill="#1F3144"/>
+      <ellipse cx="0" cy="6" rx="5" ry="4" fill="#1F3144"/>
+    </g>
+  ), idle, d);
+}
+function IcoReef({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <path d="M-16,12 Q-16,0 -12,-2 Q-10,-8 -6,-4 Q-4,-12 0,-8 Q4,-14 8,-6 Q12,-10 14,-2 Q18,2 16,12 Z" fill="#F4A2B6"/>
+      <circle cx="-8" cy="6" r="3" fill="#F2B544"/>
+      <circle cx="6" cy="2" r="3" fill="#3FA3DC"/>
+      <circle cx="0" cy="8" r="2.5" fill="#FCFCFC"/>
+      <path d="M-14,16 L14,16 Z" stroke="#E08CA0" strokeWidth="2"/>
+    </g>
+  ), idle, d);
+}
+
+// === ANTARCTICA ===
+function IcoPenguin({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <ellipse cx="0" cy="2" rx="14" ry="18" fill="#1F3144"/>
+      <ellipse cx="0" cy="4" rx="9" ry="12" fill="#FCFCFC"/>
+      <circle cx="0" cy="-12" r="9" fill="#1F3144"/>
+      <circle cx="-3" cy="-13" r="1.5" fill="#FCFCFC"/>
+      <circle cx="3" cy="-13" r="1.5" fill="#FCFCFC"/>
+      <circle cx="-3" cy="-13" r="0.8" fill="#1F3144"/>
+      <circle cx="3" cy="-13" r="0.8" fill="#1F3144"/>
+      <polygon points="-2,-8 2,-8 0,-4" fill="#F2B544"/>
+      <ellipse cx="-12" cy="2" rx="3" ry="9" fill="#1F3144" transform="rotate(-20 -12 2)"/>
+      <ellipse cx="12" cy="2" rx="3" ry="9" fill="#1F3144" transform="rotate(20 12 2)"/>
+      <ellipse cx="-4" cy="20" rx="5" ry="2" fill="#F2B544"/>
+      <ellipse cx="4" cy="20" rx="5" ry="2" fill="#F2B544"/>
+    </g>
+  ), idle, d);
+}
+function IcoIceberg({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <polygon points="-18,14 -8,-18 8,-12 18,14" fill="#EAF4FB"/>
+      <polygon points="-8,-18 -3,-8 8,-12" fill="#C9E0EE"/>
+      <polygon points="-18,14 -8,-18 -10,4" fill="#B7D4E6" opacity="0.6"/>
+    </g>
+  ), idle, d);
+}
+function IcoAurora({ x, y, s = 1, idle = true, d = 0 }) {
+  return withTransform(x, y, s, (
+    <g>
+      <path d="M-22,8 Q-10,-14 0,-2 Q10,-18 22,4" stroke="#7AE0BF" strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.85"/>
+      <path d="M-22,14 Q-10,-6 0,4 Q10,-10 22,10" stroke="#A78CE0" strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.7"/>
+      <path d="M-22,20 Q-10,2 0,10 Q10,-2 22,16" stroke="#F4A2B6" strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.7"/>
+    </g>
+  ), idle, d);
+}
+
+// HUD ICONS
+function IcoStreak() {
+  return (
+    <svg width="18" height="18" viewBox="-12 -12 24 24">
+      <path d="M0,-10 Q-8,-2 -6,4 Q-4,10 0,10 Q4,10 6,4 Q8,-2 0,-10 Z" fill="#F2B544"/>
+      <path d="M0,-2 Q-3,2 -2,6 Q0,8 2,6 Q3,2 0,-2 Z" fill="#FBD96B"/>
+    </svg>
+  );
+}
+function IcoGem() {
+  return (
+    <svg width="16" height="16" viewBox="-12 -12 24 24">
+      <polygon points="-8,-2 -4,-8 4,-8 8,-2 0,10" fill="#7BC4D6"/>
+      <polygon points="-8,-2 0,-2 -4,-8" fill="#9CD9E8"/>
+      <polygon points="0,-2 8,-2 4,-8" fill="#5EAFC5"/>
+    </svg>
+  );
+}
+function IcoStar() {
+  return (
+    <svg width="16" height="16" viewBox="-12 -12 24 24">
+      <polygon points="0,-9 2.8,-2.8 9.5,-2.8 4.3,1.2 6.2,7.6 0,3.8 -6.2,7.6 -4.3,1.2 -9.5,-2.8 -2.8,-2.8" fill="#F2B544"/>
+    </svg>
+  );
+}
+
+// LOCK
+function IcoLock({ size = 14 }) {
+  return (
+    <svg width={size} height={size} viewBox="-12 -12 24 24">
+      <rect x="-7" y="-2" width="14" height="12" rx="2" fill="#FFF8EC"/>
+      <path d="M-4,-2 V-6 a4 4 0 0 1 8,0 V-2" stroke="#FFF8EC" strokeWidth="2" fill="none"/>
+      <circle cx="0" cy="4" r="1.5" fill="#1F3144"/>
+    </svg>
+  );
+}
+
+// CLOUD SHAPE
+function CloudShape({ scale = 1 }) {
+  return (
+    <svg width={120 * scale} height={60 * scale} viewBox="0 0 120 60">
+      <g fill="#FFFFFF">
+        <circle cx="30" cy="38" r="20"/>
+        <circle cx="55" cy="28" r="22"/>
+        <circle cx="82" cy="34" r="20"/>
+        <circle cx="100" cy="42" r="14"/>
+        <rect x="20" y="38" width="84" height="18" rx="9"/>
+      </g>
+    </svg>
+  );
+}
+
+Object.assign(window, {
+  IcoPyramid, IcoLion, IcoElephant, IcoGiraffe,
+  IcoPanda, IcoTiger, IcoBlossom, IcoBamboo,
+  IcoCastle, IcoWindmill, IcoHouse,
+  IcoBear, IcoEagle, IcoTree,
+  IcoParrot, IcoLlama, IcoPalm,
+  IcoKangaroo, IcoKoala, IcoReef,
+  IcoPenguin, IcoIceberg, IcoAurora,
+  IcoStreak, IcoGem, IcoStar, IcoLock,
+  CloudShape
+});
+
+</script>
+
+<script type="text/babel">
+/* Continent definitions — multi-path silhouettes with offshore islands.
+   All paths use the 1600x1000 viewBox. Each continent has:
+   - paths: [mainland, ...islands] — drawn together as one tinted landmass
+   - hitPaths: [mainland, ...islands] — same paths, used as transparent hit targets
+*/
+
+const CONTINENTS = [
+  {
+    id: 'na',
+    name: 'North America',
+    label: 'North America',
+    tint: '#7FC79A',
+    tintDeep: '#4F9F70',
+    cx: 270, cy: 340,
+    labelX: 270, labelY: 110, labelSize: 26,
+    paths: [
+      // Mainland: Alaska bump NW, wide Canada top, Florida bump SE, Mexico narrowing south
+      `M 70,250
+       C 60,210 80,178 115,178
+       C 138,150 175,160 200,178
+       C 215,188 208,202 196,210
+       C 220,194 260,180 305,178
+       C 360,170 420,180 465,200
+       C 498,212 510,242 488,260
+       C 478,278 495,300 480,316
+       C 488,342 472,365 450,372
+       C 462,395 448,422 420,425
+       C 408,428 398,420 393,408
+       C 385,420 378,432 372,448
+       C 364,470 360,498 378,510
+       C 396,515 396,478 380,460
+       C 360,438 328,428 298,440
+       C 260,455 215,452 180,438
+       C 130,422 88,392 78,348
+       C 68,318 62,282 70,250 Z`,
+      // Greenland (separate landmass NE of NA)
+      `M 555,120
+       C 585,108 625,118 632,148
+       C 638,180 618,210 585,215
+       C 558,218 542,200 540,175
+       C 538,150 545,128 555,120 Z`,
+      // Caribbean dot (Cuba-ish)
+      `M 405,475
+       C 425,470 445,478 442,490
+       C 435,498 415,498 405,490
+       C 398,485 398,478 405,475 Z`,
+    ],
+    icons: [
+      { type: 'Tree',  x: 200, y: 280, s: 0.85, d: 0 },
+      { type: 'Bear',  x: 280, y: 340, s: 0.95, d: 1 },
+      { type: 'Eagle', x: 370, y: 260, s: 0.9,  d: 2 },
+      { type: 'Tree',  x: 410, y: 370, s: 0.8,  d: 3 },
+      { type: 'Tree',  x: 160, y: 340, s: 0.7,  d: 1 },
+    ],
+    extraIcons: [
+      { type: 'Tree',  x: 320, y: 410, s: 0.6,  d: 2 },
+      { type: 'Eagle', x: 230, y: 220, s: 0.7,  d: 0 },
+      { type: 'Bear',  x: 350, y: 310, s: 0.65, d: 3 },
+    ],
+    countries: [
+      { name: 'USA',     desc: 'New York · LA', diff: 1, locked: false, illoColor: '#E27F7F' },
+      { name: 'Canada',  desc: 'Toronto',        diff: 2, locked: false, illoColor: '#E04F3A' },
+      { name: 'Mexico',  desc: 'Mexico City',    diff: 1, locked: false, illoColor: '#7FC79A' },
+      { name: 'Cuba',    desc: 'Havana',         diff: 2, locked: true,  illoColor: '#F2B544' },
+      { name: 'Jamaica', desc: 'Kingston',       diff: 3, locked: true,  illoColor: '#7BC47F' },
+    ],
+  },
+
+  {
+    id: 'sa',
+    name: 'South America',
+    label: 'South America',
+    tint: '#A8D77A',
+    tintDeep: '#6FAE52',
+    cx: 410, cy: 700,
+    labelX: 410, labelY: 870, labelSize: 24,
+    paths: [
+      // Banana / kidney shape, wide NW, narrowing south
+      `M 380,535
+       C 415,520 460,520 488,545
+       C 510,568 510,602 488,620
+       C 510,650 498,690 472,712
+       C 495,740 478,778 452,798
+       C 425,822 392,832 372,810
+       C 352,795 348,772 358,748
+       C 338,725 348,692 365,675
+       C 345,650 342,615 360,595
+       C 365,575 365,552 380,535 Z`,
+      // Falklands (small island SE)
+      `M 470,820
+       C 480,818 488,826 484,834
+       C 478,838 470,834 468,828
+       C 466,824 466,820 470,820 Z`,
+    ],
+    icons: [
+      { type: 'Parrot', x: 420, y: 590, s: 0.85, d: 0 },
+      { type: 'Llama',  x: 410, y: 690, s: 0.9,  d: 1 },
+      { type: 'Palm',   x: 440, y: 780, s: 0.85, d: 2 },
+      { type: 'Palm',   x: 380, y: 660, s: 0.75, d: 3 },
+    ],
+    extraIcons: [
+      { type: 'Parrot', x: 380, y: 740, s: 0.7, d: 1 },
+      { type: 'Palm',   x: 460, y: 590, s: 0.6, d: 0 },
+      { type: 'Llama',  x: 450, y: 660, s: 0.6, d: 2 },
+    ],
+    countries: [
+      { name: 'Brazil',    desc: 'Rio · São Paulo', diff: 1, locked: false, illoColor: '#6FB87A' },
+      { name: 'Argentina', desc: 'Buenos Aires',    diff: 2, locked: false, illoColor: '#7DB3CC' },
+      { name: 'Peru',      desc: 'Lima · Cusco',    diff: 2, locked: false, illoColor: '#E27F7F' },
+      { name: 'Colombia',  desc: 'Bogotá',          diff: 1, locked: true,  illoColor: '#F2B544' },
+      { name: 'Chile',     desc: 'Santiago',        diff: 3, locked: true,  illoColor: '#E04F3A' },
+    ],
+  },
+
+  {
+    id: 'eu',
+    name: 'Europe',
+    label: 'Europe',
+    tint: '#C3A7E0',
+    tintDeep: '#8B6BB8',
+    cx: 770, cy: 280,
+    labelX: 760, labelY: 175, labelSize: 22,
+    paths: [
+      // Mainland: Iberia tip SW, Scandinavia N, Italy boot SE
+      `M 700,265
+       C 690,240 720,215 752,215
+       C 772,212 790,222 795,238
+       C 815,228 832,215 852,212
+       C 875,210 882,228 870,245
+       C 882,258 870,278 850,278
+       C 858,292 848,302 832,302
+       C 822,322 802,332 778,330
+       C 770,356 750,366 728,358
+       C 716,344 700,335 696,315
+       C 690,295 695,278 700,265 Z`,
+      // UK (Great Britain)
+      `M 660,212
+       C 680,208 692,220 686,238
+       C 678,244 666,244 660,236
+       C 655,228 654,218 660,212 Z`,
+      // Ireland
+      `M 642,222
+       C 652,220 658,228 654,238
+       C 646,242 638,238 638,228
+       C 638,224 640,222 642,222 Z`,
+      // Iceland
+      `M 620,170
+       C 635,165 648,175 645,185
+       C 638,192 624,190 620,182
+       C 618,178 618,172 620,170 Z`,
+      // Scandinavia tip detail
+      `M 838,180
+       C 848,175 862,182 860,195
+       C 856,205 848,208 842,200
+       C 838,194 836,185 838,180 Z`,
+    ],
+    icons: [
+      { type: 'Castle',   x: 730, y: 270, s: 0.78, d: 0 },
+      { type: 'Windmill', x: 820, y: 280, s: 0.78, d: 1 },
+      { type: 'House',    x: 855, y: 248, s: 0.7,  d: 2 },
+      { type: 'House',    x: 700, y: 312, s: 0.65, d: 3 },
+    ],
+    extraIcons: [
+      { type: 'House',  x: 778, y: 312, s: 0.6, d: 0 },
+      { type: 'Castle', x: 795, y: 252, s: 0.55, d: 2 },
+    ],
+    countries: [
+      { name: 'UK',      desc: 'London',  diff: 1, locked: false, illoColor: '#E27F7F' },
+      { name: 'France',  desc: 'Paris',   diff: 1, locked: false, illoColor: '#7DB3CC' },
+      { name: 'Spain',   desc: 'Madrid',  diff: 2, locked: false, illoColor: '#F2B544' },
+      { name: 'Germany', desc: 'Berlin',  diff: 2, locked: true,  illoColor: '#1F3144' },
+      { name: 'Italy',   desc: 'Rome',    diff: 2, locked: true,  illoColor: '#7BC47F' },
+    ],
+  },
+
+  {
+    id: 'af',
+    name: 'Africa',
+    label: 'Africa',
+    tint: '#F2C66B',
+    tintDeep: '#C99230',
+    cx: 875, cy: 560,
+    labelX: 875, labelY: 410, labelSize: 26,
+    paths: [
+      // Mainland: Mediterranean coast N, NW bulge (West Africa), Horn E, taper to Cape Town S
+      `M 770,420
+       C 790,408 832,402 875,408
+       C 912,400 952,412 980,425
+       C 1000,435 995,460 975,470
+       C 998,488 1014,500 1005,525
+       C 988,545 952,548 945,568
+       C 962,608 956,650 940,680
+       C 928,720 906,748 878,762
+       C 850,772 822,765 802,745
+       C 780,720 770,688 766,656
+       C 758,618 752,580 750,545
+       C 740,512 738,482 758,460
+       C 760,442 765,428 770,420 Z`,
+      // Madagascar (oval east of Africa)
+      `M 1020,612
+       C 1035,608 1048,628 1042,652
+       C 1038,682 1022,690 1010,680
+       C 1000,665 1006,628 1020,612 Z`,
+    ],
+    icons: [
+      { type: 'Pyramid',  x: 870, y: 460, s: 0.95, d: 0 },
+      { type: 'Lion',     x: 880, y: 560, s: 1.0,  d: 1 },
+      { type: 'Elephant', x: 832, y: 650, s: 0.92, d: 2 },
+      { type: 'Giraffe',  x: 935, y: 580, s: 0.88, d: 3 },
+    ],
+    extraIcons: [
+      { type: 'Lion',    x: 820, y: 510, s: 0.7,  d: 2 },
+      { type: 'Pyramid', x: 935, y: 480, s: 0.55, d: 1 },
+      { type: 'Giraffe', x: 870, y: 700, s: 0.6,  d: 0 },
+    ],
+    countries: [
+      { name: 'Egypt',        desc: 'Cairo',     diff: 2, locked: false, illoColor: '#F2B544' },
+      { name: 'Kenya',        desc: 'Nairobi',   diff: 2, locked: false, illoColor: '#E04F3A' },
+      { name: 'South Africa', desc: 'Cape Town', diff: 3, locked: false, illoColor: '#7BC47F' },
+      { name: 'Morocco',      desc: 'Marrakech', diff: 1, locked: true,  illoColor: '#E27F7F' },
+      { name: 'Nigeria',      desc: 'Lagos',     diff: 2, locked: true,  illoColor: '#3FA3DC' },
+    ],
+  },
+
+  {
+    id: 'as',
+    name: 'Asia',
+    label: 'Asia',
+    tint: '#F4A2B6',
+    tintDeep: '#D26A85',
+    cx: 1170, cy: 360,
+    labelX: 1170, labelY: 175, labelSize: 28,
+    paths: [
+      // Mainland: huge, with Arabian peninsula SW, India peninsula S, SE Asia tail
+      `M 870,265
+       C 882,228 942,208 992,212
+       C 1042,202 1102,208 1172,202
+       C 1232,202 1292,212 1352,228
+       C 1410,238 1472,250 1482,290
+       C 1492,332 1450,348 1408,342
+       C 1432,368 1410,398 1380,398
+       C 1392,422 1372,442 1340,432
+       C 1342,458 1320,472 1296,468
+       C 1302,490 1280,512 1252,500
+       C 1232,524 1202,532 1180,520
+       C 1170,542 1148,540 1140,520
+       C 1122,505 1118,476 1132,460
+       C 1118,440 1090,440 1075,462
+       C 1058,472 1036,460 1030,440
+       C 1022,472 1004,500 982,488
+       C 970,462 988,442 1002,425
+       C 982,420 962,425 945,415
+       C 932,395 942,375 925,360
+       C 905,355 885,350 875,328
+       C 866,310 866,285 870,265 Z`,
+      // Japan (curved islands east of Asia)
+      `M 1492,358
+       C 1508,352 1522,372 1512,392
+       C 1502,408 1486,402 1486,388
+       C 1486,374 1486,362 1492,358 Z`,
+      `M 1500,402
+       C 1512,398 1520,410 1514,422
+       C 1506,428 1496,422 1498,412
+       C 1498,408 1498,404 1500,402 Z`,
+      // Indonesia / Philippines (small archipelago)
+      `M 1278,540
+       C 1295,535 1308,548 1300,560
+       C 1290,565 1276,560 1276,550
+       C 1276,545 1276,542 1278,540 Z`,
+      `M 1320,560
+       C 1336,556 1346,568 1338,578
+       C 1328,582 1318,575 1318,566
+       C 1318,562 1318,560 1320,560 Z`,
+      `M 1370,556
+       C 1382,552 1392,562 1386,572
+       C 1376,576 1366,570 1368,562
+       C 1368,558 1368,556 1370,556 Z`,
+      `M 1230,532
+       C 1242,528 1252,538 1246,548
+       C 1238,552 1228,546 1228,538
+       C 1228,534 1228,532 1230,532 Z`,
+    ],
+    icons: [
+      { type: 'Panda',   x: 1100, y: 340, s: 0.95, d: 0 },
+      { type: 'Tiger',   x: 1230, y: 388, s: 0.95, d: 1 },
+      { type: 'Blossom', x: 1320, y: 308, s: 0.9,  d: 2 },
+      { type: 'Bamboo',  x: 1180, y: 275, s: 0.85, d: 3 },
+      { type: 'Blossom', x: 1040, y: 280, s: 0.7,  d: 0 },
+    ],
+    extraIcons: [
+      { type: 'Bamboo',  x: 1378, y: 368, s: 0.7, d: 1 },
+      { type: 'Blossom', x: 1235, y: 450, s: 0.6, d: 2 },
+      { type: 'Panda',   x: 1340, y: 430, s: 0.6, d: 3 },
+    ],
+    countries: [
+      { name: 'Japan',       desc: 'Tokyo',   diff: 3, locked: false, illoColor: '#E04F3A' },
+      { name: 'China',       desc: 'Beijing', diff: 3, locked: false, illoColor: '#F2B544' },
+      { name: 'India',       desc: 'Delhi',   diff: 2, locked: false, illoColor: '#F08D3E' },
+      { name: 'South Korea', desc: 'Seoul',   diff: 2, locked: true,  illoColor: '#7DB3CC' },
+      { name: 'Thailand',    desc: 'Bangkok', diff: 1, locked: true,  illoColor: '#7BC47F' },
+    ],
+  },
+
+  {
+    id: 'oc',
+    name: 'Oceania',
+    label: 'Australia & Oceania',
+    tint: '#F2A56B',
+    tintDeep: '#C77638',
+    cx: 1330, cy: 720,
+    labelX: 1330, labelY: 850, labelSize: 22,
+    paths: [
+      // Australia mainland with Cape York peninsula N and Gulf indent
+      `M 1250,712
+       C 1245,690 1270,678 1295,684
+       C 1308,664 1322,664 1326,684
+       C 1338,664 1358,666 1362,686
+       C 1392,676 1422,686 1442,712
+       C 1458,732 1452,772 1432,792
+       C 1402,812 1352,818 1302,806
+       C 1268,800 1248,778 1248,752
+       C 1242,738 1246,722 1250,712 Z`,
+      // New Zealand (two islands SE)
+      `M 1480,752
+       C 1494,748 1504,762 1496,778
+       C 1488,786 1478,776 1480,752 Z`,
+      `M 1486,792
+       C 1498,788 1506,800 1498,812
+       C 1490,816 1482,806 1486,792 Z`,
+      // Tasmania (small island SE of Australia)
+      `M 1352,820
+       C 1364,818 1372,828 1366,838
+       C 1358,842 1350,834 1350,826
+       C 1350,822 1350,820 1352,820 Z`,
+      // Pacific dots (small Fiji-ish)
+      `M 1502,720
+       C 1510,718 1516,724 1512,732
+       C 1504,734 1500,728 1502,720 Z`,
+    ],
+    icons: [
+      { type: 'Kangaroo', x: 1295, y: 730, s: 0.9,  d: 0 },
+      { type: 'Koala',    x: 1380, y: 730, s: 0.9,  d: 1 },
+      { type: 'Reef',     x: 1340, y: 778, s: 0.85, d: 2 },
+    ],
+    extraIcons: [
+      { type: 'Reef',  x: 1265, y: 770, s: 0.55, d: 1 },
+      { type: 'Koala', x: 1425, y: 705, s: 0.55, d: 0 },
+    ],
+    countries: [
+      { name: 'Australia',   desc: 'Sydney',       diff: 1, locked: false, illoColor: '#F08D3E' },
+      { name: 'New Zealand', desc: 'Auckland',     diff: 2, locked: false, illoColor: '#4F8C63' },
+      { name: 'Fiji',        desc: 'Suva',         diff: 1, locked: false, illoColor: '#3FA3DC' },
+      { name: 'Papua N.G.',  desc: 'Port Moresby', diff: 3, locked: true,  illoColor: '#7BC47F' },
+    ],
+  },
+
+  {
+    id: 'an',
+    name: 'Antarctica',
+    label: 'Antarctica',
+    tint: '#E6F1F8',
+    tintDeep: '#A8C8DA',
+    cx: 800, cy: 920,
+    labelX: 800, labelY: 985, labelSize: 18,
+    paths: [
+      // Long horizontal landmass with wavy coastline
+      `M 200,920
+       C 320,888 480,878 640,880
+       C 800,876 960,884 1120,894
+       C 1240,902 1360,914 1430,930
+       C 1465,945 1452,962 1410,968
+       C 1280,978 1100,978 920,970
+       C 740,978 540,975 360,962
+       C 240,952 160,942 180,930
+       C 185,925 192,922 200,920 Z`,
+    ],
+    icons: [
+      { type: 'Penguin', x: 700, y: 925, s: 0.7,  d: 0 },
+      { type: 'Iceberg', x: 820, y: 925, s: 0.8,  d: 1 },
+      { type: 'Penguin', x: 920, y: 925, s: 0.7,  d: 2 },
+      { type: 'Aurora',  x: 580, y: 920, s: 0.75, d: 3 },
+      { type: 'Aurora',  x: 1050, y: 920, s: 0.75, d: 1 },
+    ],
+    extraIcons: [
+      { type: 'Iceberg', x: 760, y: 950, s: 0.55, d: 0 },
+      { type: 'Penguin', x: 1000, y: 945, s: 0.5,  d: 2 },
+      { type: 'Aurora',  x: 350, y: 920, s: 0.6,  d: 0 },
+    ],
+    countries: [
+      { name: 'Penguin Coast', desc: 'McMurdo',      diff: 2, locked: false, illoColor: '#7DB3CC' },
+      { name: 'Aurora Bay',    desc: 'South Pole',   diff: 3, locked: true,  illoColor: '#A78CE0' },
+      { name: 'Iceberg Isle',  desc: 'Ross Sea',     diff: 3, locked: true,  illoColor: '#EAF4FB' },
+      { name: 'Glacier Pass',  desc: 'East Plateau', diff: 2, locked: true,  illoColor: '#7AE0BF' },
+    ],
+  },
+];
+
+window.CONTINENTS = CONTINENTS;
+
+</script>
+
+<script type="text/babel">
+/* WorldMap — SVG renderer with hover, magnifier lens, and camera zoom */
+
+const ICON_BY_NAME = {
+  Pyramid: IcoPyramid, Lion: IcoLion, Elephant: IcoElephant, Giraffe: IcoGiraffe,
+  Panda: IcoPanda, Tiger: IcoTiger, Blossom: IcoBlossom, Bamboo: IcoBamboo,
+  Castle: IcoCastle, Windmill: IcoWindmill, House: IcoHouse,
+  Bear: IcoBear, Eagle: IcoEagle, Tree: IcoTree,
+  Parrot: IcoParrot, Llama: IcoLlama, Palm: IcoPalm,
+  Kangaroo: IcoKangaroo, Koala: IcoKoala, Reef: IcoReef,
+  Penguin: IcoPenguin, Iceberg: IcoIceberg, Aurora: IcoAurora,
+};
+
+function ContinentContent({ c, density, animate = true }) {
+  const icons = density === 'sparse'
+    ? c.icons.slice(0, Math.max(2, c.icons.length - 2))
+    : density === 'rich'
+      ? [...c.icons, ...(c.extraIcons || [])]
+      : c.icons;
+  // c.paths is an array — mainland first, then islands
+  return (
+    <g style={{ pointerEvents: 'none' }}>
+      {/* under-shadow for depth */}
+      {c.paths.map((d, i) => (
+        <path key={`s${i}`} d={d} fill={c.tintDeep} opacity="0.22" transform="translate(0,5)"/>
+      ))}
+      {/* tint fill */}
+      {c.paths.map((d, i) => (
+        <path key={`f${i}`} d={d} fill={c.tint}/>
+      ))}
+      {/* light rim */}
+      {c.paths.map((d, i) => (
+        <path key={`r${i}`} d={d} fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="2"/>
+      ))}
+      {/* subtle inner highlight on mainland only */}
+      <path d={c.paths[0]} fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="6" transform="translate(0,-3)" style={{ mixBlendMode: 'overlay' }}/>
+      {/* icons */}
+      {icons.map((it, idx) => {
+        const Ico = ICON_BY_NAME[it.type];
+        if (!Ico) return null;
+        return <Ico key={idx} x={it.x} y={it.y} s={it.s} d={it.d} idle={animate}/>;
+      })}
+    </g>
+  );
+}
+
+function WorldMap({
+  activeId, hoverId, onHover, onClick,
+  hoverIntensity, density, theme, projection,
+  showLens, lensPos, setLensPos,
+  ambient,
+  editMode, offsets, onOffsetsChange,
+}) {
+  const svgRef = React.useRef(null);
+  const cameraRef = React.useRef(null);
+  const offsetGroupRefs = React.useRef({});
+  const dragRef = React.useRef(null);
+  const LENS_R = 90;
+
+  const handleMouseMove = (e) => {
+    if (!svgRef.current) return;
+    const pt = svgRef.current.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    const ctm = svgRef.current.getScreenCTM();
+    if (!ctm) return;
+    const svgP = pt.matrixTransform(ctm.inverse());
+    setLensPos({ x: svgP.x, y: svgP.y });
+  };
+
+  // ── Drag-to-rearrange ──────────────────────────────────────────────────────
+  // While editMode is on, mousedown on a continent starts a drag that updates
+  // the continent's offset group's transform in SVG coords. On mouseup we
+  // commit the final offset to the tweak so it persists across reload.
+  const screenDeltaToSvg = (dxScreen, dyScreen) => {
+    if (!svgRef.current) return { dx: 0, dy: 0 };
+    const ctm = svgRef.current.getScreenCTM();
+    if (!ctm) return { dx: 0, dy: 0 };
+    // SVG-units per screen-pixel = 1 / scale factor of getScreenCTM
+    return { dx: dxScreen / ctm.a, dy: dyScreen / ctm.d };
+  };
+
+  const onContinentMouseDown = (e, c) => {
+    if (!editMode) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const initial = offsets[c.id] || { dx: 0, dy: 0 };
+    dragRef.current = {
+      id: c.id,
+      startX: e.clientX,
+      startY: e.clientY,
+      initial,
+      currentDx: initial.dx,
+      currentDy: initial.dy,
+      moved: false,
+    };
+  };
+
+  React.useEffect(() => {
+    if (!editMode) return;
+    const onMove = (e) => {
+      const d = dragRef.current;
+      if (!d) return;
+      const { dx, dy } = screenDeltaToSvg(e.clientX - d.startX, e.clientY - d.startY);
+      d.currentDx = d.initial.dx + dx;
+      d.currentDy = d.initial.dy + dy;
+      if (Math.abs(dx) > 2 || Math.abs(dy) > 2) d.moved = true;
+      const node = offsetGroupRefs.current[d.id];
+      if (node) node.setAttribute('transform', `translate(${d.currentDx},${d.currentDy})`);
+    };
+    const onUp = () => {
+      const d = dragRef.current;
+      if (!d) return;
+      if (d.moved && onOffsetsChange) {
+        onOffsetsChange({
+          ...offsets,
+          [d.id]: { dx: d.currentDx, dy: d.currentDy },
+        });
+      }
+      dragRef.current = null;
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+  }, [editMode, offsets, onOffsetsChange]);
+
+  const handleContinentClick = (c) => {
+    // Suppress the zoom-in click if we're in edit mode (or just finished a drag)
+    if (editMode) return;
+    onClick(c.id);
+  };
+
+  // Camera transform for zoom-in on active continent. We use the SVG `transform`
+  // attribute (not CSS transform) — Chromium has rendering issues applying CSS
+  // transform to SVG <g> elements that live under a viewBox-scaled SVG, and
+  // also breaks `transition: transform` on the same node. Driving the attribute
+  // via rAF gives us a smooth animated zoom that actually paints.
+  const active = activeId ? CONTINENTS.find(c => c.id === activeId) : null;
+  const ZOOM = 1.5;
+  const activeOff = active ? (offsets[active.id] || { dx: 0, dy: 0 }) : { dx: 0, dy: 0 };
+  const targetCam = active
+    ? {
+        x: 800 - (active.cx + activeOff.dx) * ZOOM,
+        y: 500 - (active.cy + activeOff.dy) * ZOOM,
+        s: ZOOM,
+      }
+    : { x: 0, y: 0, s: 1 };
+  const prevCamRef = React.useRef({ x: 0, y: 0, s: 1 });
+
+  React.useLayoutEffect(() => {
+    if (!cameraRef.current) return;
+    const node = cameraRef.current;
+    const from = prevCamRef.current;
+    const to = targetCam;
+    if (from.x === to.x && from.y === to.y && from.s === to.s) return;
+
+    const DURATION = 720;
+    const ease = (t) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    const start = performance.now();
+    let timer = null;
+    let tickCount = 0;
+    const tick = () => {
+      tickCount++;
+      const now = performance.now();
+      const t = Math.min(1, (now - start) / DURATION);
+      const e = ease(t);
+      const x = from.x + (to.x - from.x) * e;
+      const y = from.y + (to.y - from.y) * e;
+      const s = from.s + (to.s - from.s) * e;
+      node.setAttribute('transform', `translate(${x},${y}) scale(${s})`);
+      if (t < 1) timer = setTimeout(tick, 16);
+    };
+    timer = setTimeout(tick, 0);
+    prevCamRef.current = { ...to };
+    return () => { if (timer) clearTimeout(timer); };
+  }, [targetCam.x, targetCam.y, targetCam.s]);
+
+  const hovered = hoverId ? CONTINENTS.find(c => c.id === hoverId) : null;
+
+  // Projection variants — apply per-continent translate/scale offsets
+  const projOffset = (c) => {
+    if (projection === 'islands') {
+      // amplify spread + small bob already on parent .continent
+      const dx = (c.cx - 800) * 0.04;
+      const dy = (c.cy - 500) * 0.04;
+      return { tx: dx, ty: dy };
+    }
+    return { tx: 0, ty: 0 };
+  };
+
+  return (
+    <svg
+      ref={svgRef}
+      className="map-svg"
+      viewBox="0 0 1600 1000"
+      preserveAspectRatio="xMidYMid slice"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => onHover(null)}
+    >
+      <defs>
+        <clipPath id="lens-clip">
+          <circle cx={lensPos.x} cy={lensPos.y} r={LENS_R} />
+        </clipPath>
+        <radialGradient id="lens-bg" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#F4FAFE"/>
+          <stop offset="100%" stopColor="#D4E8F2"/>
+        </radialGradient>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="white" stopOpacity="0.55"/>
+          <stop offset="60%" stopColor="white" stopOpacity="0.0"/>
+        </radialGradient>
+      </defs>
+
+      {/* Camera-transformed map — transform attribute is driven imperatively
+          via cameraRef so the rAF animation isn't clobbered by React re-renders
+          (which happen continuously due to mouse-move lens tracking). */}
+      <g
+        ref={cameraRef}
+        className={`map hover-${hoverIntensity}`}
+        data-hover={hoverId ? 'true' : 'false'}
+        data-active={activeId ? 'true' : 'false'}
+      >
+        {/* Ambient hover glow under the hovered continent */}
+        {hovered && (
+          <ellipse
+            cx={hovered.cx} cy={hovered.cy + 40}
+            rx={150} ry={40}
+            fill="url(#glow)"
+            style={{ transition: 'opacity 240ms ease', pointerEvents: 'none' }}
+          />
+        )}
+
+        {CONTINENTS.map(c => {
+          const isHover = hoverId === c.id;
+          const isActive = activeId === c.id;
+          const { tx, ty } = projOffset(c);
+          const userOffset = offsets[c.id] || { dx: 0, dy: 0 };
+          return (
+            <g
+              key={c.id}
+              ref={(el) => { offsetGroupRefs.current[c.id] = el; }}
+              transform={`translate(${userOffset.dx},${userOffset.dy})`}
+            >
+              <g
+                className={[
+                  'continent',
+                  isHover ? 'is-hover' : '',
+                  isActive ? 'is-active' : '',
+                  editMode ? 'is-editable' : '',
+                ].join(' ')}
+                style={{
+                  transformBox: 'fill-box',
+                  transformOrigin: 'center',
+                  ...(tx || ty ? { transform: `translate(${tx}px, ${ty}px)` } : {}),
+                  cursor: editMode ? 'grab' : 'pointer',
+                }}
+                onMouseEnter={() => onHover(c.id)}
+                onMouseDown={(e) => onContinentMouseDown(e, c)}
+                onClick={() => handleContinentClick(c)}
+              >
+                <ContinentContent c={c} density={density} animate={ambient}/>
+                {/* Transparent hit-area drawn last so it sits above icons and reliably catches clicks */}
+                {c.paths.map((d, i) => (
+                  <path
+                    key={`hit${i}`}
+                    d={d}
+                    fill="rgba(255,255,255,0.001)"
+                    style={{ pointerEvents: 'all', cursor: editMode ? 'grab' : 'pointer' }}
+                  />
+                ))}
+                {!activeId && (
+                  <text
+                    className={`continent-label ${isActive ? 'is-active' : ''}`}
+                    x={c.labelX} y={c.labelY}
+                    style={{ fontSize: c.labelSize, pointerEvents: 'none' }}
+                  >
+                    {c.label}
+                  </text>
+                )}
+                {editMode && (
+                  <g pointerEvents="none">
+                    {/* Subtle drag affordance: dashed outline + small handle dot */}
+                    <path d={c.paths[0]} fill="none" stroke="rgba(31,49,68,0.55)" strokeWidth="2" strokeDasharray="6 5"/>
+                    <g transform={`translate(${c.cx},${c.cy})`}>
+                      <circle r="18" fill="rgba(255,248,236,0.95)" stroke="rgba(31,49,68,0.6)" strokeWidth="1.5"/>
+                      <g stroke="rgba(31,49,68,0.85)" strokeWidth="2" strokeLinecap="round" fill="none">
+                        <path d="M-7,0 L7,0 M0,-7 L0,7 M-7,-3 L-10,0 L-7,3 M7,-3 L10,0 L7,3 M-3,-7 L0,-10 L3,-7 M-3,7 L0,10 L3,7"/>
+                      </g>
+                    </g>
+                  </g>
+                )}
+              </g>
+            </g>
+          );
+        })}
+      </g>
+
+      {/* Magnifier lens — drawn last, outside the camera */}
+      {showLens && hovered && !activeId && (
+        <g style={{ pointerEvents: 'none' }}>
+          {/* Magnified content clipped to circle */}
+          <g clipPath="url(#lens-clip)">
+            <circle cx={lensPos.x} cy={lensPos.y} r={LENS_R} fill="url(#lens-bg)"/>
+            <g
+              transform={`translate(${lensPos.x},${lensPos.y}) scale(2.1) translate(${-lensPos.x},${-lensPos.y})`}
+            >
+              <ContinentContent c={hovered} density={density} animate={false}/>
+            </g>
+          </g>
+          {/* Lens ring + handle */}
+          <circle className="lens-circle" cx={lensPos.x} cy={lensPos.y} r={LENS_R}/>
+          <circle cx={lensPos.x} cy={lensPos.y} r={LENS_R + 4} fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2"/>
+          <line
+            className="lens-handle"
+            x1={lensPos.x + 0.72 * LENS_R}
+            y1={lensPos.y + 0.72 * LENS_R}
+            x2={lensPos.x + 1.4 * LENS_R}
+            y2={lensPos.y + 1.4 * LENS_R}
+          />
+        </g>
+      )}
+    </svg>
+  );
+}
+
+window.WorldMap = WorldMap;
+window.ContinentContent = ContinentContent;
+
+</script>
+
+<script type="text/babel">
+/* CountryPanel — cards in an elliptical ring around screen center; each card
+   is independently draggable inside the panel. Drag commits to a tweak so the
+   custom layout persists across reload. Quick-click still triggers the lesson;
+   movement > 4 px upgrades the gesture to a drag. */
+
+const COUNTRY_ICON_BY_NAME = {
+  'USA': 'Eagle', 'Canada': 'Bear', 'Mexico': 'Tree', 'Cuba': 'Palm', 'Jamaica': 'Palm',
+  'Brazil': 'Parrot', 'Argentina': 'Llama', 'Peru': 'Llama', 'Colombia': 'Parrot', 'Chile': 'Palm',
+  'UK': 'Castle', 'France': 'House', 'Spain': 'House', 'Germany': 'Castle', 'Italy': 'House',
+  'Egypt': 'Pyramid', 'Kenya': 'Lion', 'South Africa': 'Elephant', 'Morocco': 'Pyramid', 'Nigeria': 'Giraffe',
+  'Japan': 'Blossom', 'China': 'Panda', 'India': 'Tiger', 'South Korea': 'Blossom', 'Thailand': 'Bamboo',
+  'Australia': 'Kangaroo', 'New Zealand': 'Koala', 'Fiji': 'Reef', 'Papua N.G.': 'Reef',
+  'Penguin Coast': 'Penguin', 'Aurora Bay': 'Aurora', 'Iceberg Isle': 'Iceberg', 'Glacier Pass': 'Iceberg',
+};
+
+const ICON_MAP = {
+  Pyramid: IcoPyramid, Lion: IcoLion, Elephant: IcoElephant, Giraffe: IcoGiraffe,
+  Panda: IcoPanda, Tiger: IcoTiger, Blossom: IcoBlossom, Bamboo: IcoBamboo,
+  Castle: IcoCastle, Windmill: IcoWindmill, House: IcoHouse,
+  Bear: IcoBear, Eagle: IcoEagle, Tree: IcoTree,
+  Parrot: IcoParrot, Llama: IcoLlama, Palm: IcoPalm,
+  Kangaroo: IcoKangaroo, Koala: IcoKoala, Reef: IcoReef,
+  Penguin: IcoPenguin, Iceberg: IcoIceberg, Aurora: IcoAurora,
+};
+
+function CountryCard({ country, basePos, customPos, open, delay, onPick, onCommitPosition }) {
+  const cardRef = React.useRef(null);
+  const dragRef = React.useRef(null);
+  const [isDragging, setIsDragging] = React.useState(false);
+
+  const pos = customPos || basePos;
+
+  const onMouseDown = (e) => {
+    // Only left button
+    if (e.button !== 0) return;
+    e.preventDefault();
+    e.stopPropagation();
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      baseX: pos.x,
+      baseY: pos.y,
+      hasMoved: false,
+    };
+
+    const onMove = (mv) => {
+      const d = dragRef.current;
+      if (!d) return;
+      const dx = mv.clientX - d.startX;
+      const dy = mv.clientY - d.startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+        if (!d.hasMoved) {
+          d.hasMoved = true;
+          setIsDragging(true);
+        }
+      }
+      if (d.hasMoved && cardRef.current) {
+        cardRef.current.style.left = `${d.baseX + dx}px`;
+        cardRef.current.style.top = `${d.baseY + dy}px`;
+      }
+    };
+    const onUp = (uu) => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      const d = dragRef.current;
+      if (!d) return;
+      if (d.hasMoved) {
+        const newX = d.baseX + (uu.clientX - d.startX);
+        const newY = d.baseY + (uu.clientY - d.startY);
+        onCommitPosition && onCommitPosition({ x: newX, y: newY });
+        setIsDragging(false);
+      } else {
+        if (!country.locked) onPick && onPick(country);
+      }
+      dragRef.current = null;
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  };
+
+  const iconName = COUNTRY_ICON_BY_NAME[country.name] || 'Tree';
+  const IconComp = ICON_MAP[iconName];
+
+  return (
+    <div
+      ref={cardRef}
+      className={`country-card ${country.locked ? 'is-locked' : ''} ${isDragging ? 'is-dragging' : ''}`}
+      style={{
+        left: `${pos.x}px`,
+        top: `${pos.y}px`,
+        transitionDelay: open && !isDragging ? `${delay}ms` : '0ms',
+        cursor: country.locked ? 'not-allowed' : (isDragging ? 'grabbing' : 'grab'),
+        zIndex: isDragging ? 100 : undefined,
+      }}
+      onMouseDown={onMouseDown}
+    >
+      {country.locked && (
+        <div className="cc-lock"><IcoLock size={14}/></div>
+      )}
+      <div className="cc-illo" style={{ background: `${country.illoColor}22` }}>
+        <svg width="84" height="84" viewBox="-42 -42 84 84">
+          <circle r="34" fill={country.illoColor} opacity="0.18"/>
+          {IconComp && <IconComp x={0} y={0} s={1.4} idle={open && !country.locked && !isDragging} d={0}/>}
+        </svg>
+      </div>
+      <div className="cc-name">{country.name}</div>
+      <div className="cc-row">
+        <span>{country.desc}</span>
+        <span className="cc-dot"></span>
+        <span className="cc-difficulty">
+          {[1,2,3].map(i => (
+            <span key={i} className={`pip ${i <= country.diff ? 'on' : ''}`}></span>
+          ))}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function CountryPanel({ activeId, onClose, onPickCountry, countryPositions, onCountryPositionsChange }) {
+  const c = activeId ? CONTINENTS.find(x => x.id === activeId) : null;
+  const open = !!c;
+
+  const [vp, setVp] = React.useState({ w: window.innerWidth, h: window.innerHeight });
+  React.useEffect(() => {
+    const onResize = () => setVp({ w: window.innerWidth, h: window.innerHeight });
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const countries = c ? c.countries : [];
+  const n = countries.length;
+
+  const CARD_W = 200;
+  const CARD_H = 200;
+  const TOP_SAFE = 100;
+  const BOT_SAFE = 80;
+  const SIDE_SAFE = 24;
+
+  const ringCx = vp.w / 2;
+  const ringCy = vp.h / 2 + 30;
+  const maxRx = (vp.w - SIDE_SAFE * 2 - CARD_W) / 2;
+  const maxRyUp = ringCy - TOP_SAFE - CARD_H / 2;
+  const maxRyDown = vp.h - BOT_SAFE - ringCy - CARD_H / 2;
+  const maxRy = Math.min(maxRyUp, maxRyDown);
+  const targetRx = Math.min(maxRx, 380);
+  const targetRy = Math.min(maxRy, 270);
+
+  const angles = Array.from({ length: n }, (_, i) => -Math.PI / 2 + (2 * Math.PI / n) * i);
+  const basePositions = angles.map(a => ({
+    x: ringCx + Math.cos(a) * targetRx,
+    y: ringCy + Math.sin(a) * targetRy,
+  }));
+
+  const titleY = Math.max(TOP_SAFE - 18, ringCy - targetRy - 80);
+
+  const commitPosition = (countryName, pos) => {
+    if (!onCountryPositionsChange) return;
+    onCountryPositionsChange({
+      ...countryPositions,
+      [`${c.id}.${countryName}`]: pos,
+    });
+  };
+
+  return (
+    <div className={`country-layer ${open ? 'is-open' : ''}`}>
+      <div className="country-backdrop" onClick={onClose}></div>
+      {c && countries.map((country, i) => {
+        const key = `${c.id}.${country.name}`;
+        const customPos = countryPositions && countryPositions[key];
+        return (
+          <CountryCard
+            key={country.name}
+            country={country}
+            basePos={basePositions[i]}
+            customPos={customPos}
+            delay={120 + i * 80}
+            open={open}
+            onPick={onPickCountry}
+            onCommitPosition={(p) => commitPosition(country.name, p)}
+          />
+        );
+      })}
+      {c && (
+        <div
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: `${titleY}px`,
+            transform: 'translateX(-50%)',
+            opacity: open ? 1 : 0,
+            transition: `opacity 380ms ease ${open ? 280 : 0}ms`,
+            background: 'rgba(255, 248, 236, 0.92)',
+            backdropFilter: 'blur(8px)',
+            padding: '10px 24px',
+            borderRadius: '999px',
+            fontFamily: 'var(--font-display)',
+            fontSize: 22,
+            fontWeight: 600,
+            color: 'var(--ink)',
+            boxShadow: '0 8px 20px rgba(15, 50, 80, 0.18)',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {c.label} <span style={{ opacity: 0.5 }}>·</span> Pick a country
+          <span style={{ marginLeft: 14, fontSize: 12, fontWeight: 500, color: 'var(--ink-soft)', opacity: 0.75 }}>
+            (drag cards to rearrange)
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+window.CountryPanel = CountryPanel;
+
+</script>
+
+<script type="text/babel">
+/* App — top chrome, map, panel, tweaks */
+
+const { useState, useEffect, useMemo, useRef } = React;
+
+const PALETTES = {
+  classic: {
+    label: 'Sunny Sky',
+    ocean1: '#BEE3F0', ocean2: '#8FCDE5', ocean3: '#5FAFD0',
+    paper: '#FFF8EC', ink: '#1F3144', accent: '#F2B544', accent2: '#E87A6E',
+    chips: ['#7FC79A','#A8D77A','#C3A7E0','#F2C66B','#F4A2B6','#F2A56B','#E6F1F8'],
+  },
+  meadow: {
+    label: 'Meadow Pop',
+    ocean1: '#FFE9C7', ocean2: '#F9CFA2', ocean3: '#F2B070',
+    paper: '#FFFBF2', ink: '#3D2A1F', accent: '#E27F4A', accent2: '#9CCC65',
+    chips: ['#9CCC65','#7BC4A8','#A78CE0','#F4C84B','#F08D7A','#F2A56B','#F0E6DA'],
+  },
+  dusk: {
+    label: 'Cosmic Dusk',
+    ocean1: '#3D4E78', ocean2: '#2A3D5C', ocean3: '#1B2A44',
+    paper: '#FFF5E1', ink: '#FFF5E1', accent: '#FFD166', accent2: '#EF476F',
+    chips: ['#06D6A0','#9CE0B3','#A78CE0','#FFD166','#EF476F','#FF8C42','#EAF4FB'],
+  },
+};
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "palette": "classic",
+  "hoverIntensity": "medium",
+  "projection": "blobs",
+  "density": "rich",
+  "showChrome": true,
+  "showLens": true,
+  "ambient": true,
+  "sound": false,
+  "rearrangeMode": false,
+  "continentOffsets": {
+    "na": { "dx": -5.91, "dy": 0 },
+    "sa": { "dx": 5.91, "dy": -2.96 },
+    "eu": { "dx": 22.17, "dy": 14.78 },
+    "as": { "dx": 47.30, "dy": -16.26 }
+  },
+  "countryPositions": {}
+}/*EDITMODE-END*/;
+
+function Cloud({ top, duration, delay, scale }) {
+  return (
+    <div
+      className="cloud"
+      style={{
+        top: `${top}vh`,
+        animationDuration: `${duration}s`,
+        animationDelay: `${delay}s`,
+      }}
+    >
+      <CloudShape scale={scale}/>
+    </div>
+  );
+}
+
+function TopChrome({ show, paletteVars }) {
+  return (
+    <div
+      className="chrome"
+      style={{
+        opacity: show ? 1 : 0,
+        transform: show ? 'translateY(0)' : 'translateY(-12px)',
+        transition: 'opacity 320ms ease, transform 320ms ease',
+        pointerEvents: show ? 'auto' : 'none',
+      }}
+    >
+      <div className="brand">
+        <div className="brand-mark">L</div>
+        <div>
+          <div className="brand-name">Gaming English</div>
+          <div className="brand-sub">Dünya'yı Keşfet · Öğren</div>
+        </div>
+      </div>
+
+      <div className="hud">
+        <div className="hud-chip">
+          <IcoStreak/>
+          <span className="hud-chip-val">14</span>
+          <span style={{ color: 'var(--ink-soft)', fontWeight: 500, fontSize: 12 }}>day streak</span>
+        </div>
+        <div className="hud-chip">
+          <IcoGem/>
+          <span className="hud-chip-val">238</span>
+        </div>
+        <div className="hud-chip">
+          <IcoStar/>
+          <span className="hud-chip-val">1,820</span>
+        </div>
+        <div className="avatar">
+          <div className="avatar-ring">A</div>
+          <div>
+            <div className="avatar-name">Ava · Lv 12</div>
+            <div className="avatar-meta">Globe Trotter</div>
+            <div className="xp-bar"><div className="xp-fill" style={{ width: '62%' }}></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const palette = PALETTES[t.palette] || PALETTES.classic;
+
+  const [hoverId, setHoverId] = useState(null);
+  const [activeId, setActiveId] = useState(null);
+  const [lensPos, setLensPos] = useState({ x: 800, y: 500 });
+
+  // Apply palette as CSS variables on root
+  useEffect(() => {
+    const r = document.documentElement;
+    r.style.setProperty('--ocean-1', palette.ocean1);
+    r.style.setProperty('--ocean-2', palette.ocean2);
+    r.style.setProperty('--ocean-3', palette.ocean3);
+    r.style.setProperty('--paper', palette.paper);
+    r.style.setProperty('--ink', palette.ink);
+    r.style.setProperty('--gold', palette.accent);
+    r.style.setProperty('--coral', palette.accent2);
+  }, [t.palette]);
+
+  // Esc closes the country panel
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape' && activeId) setActiveId(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [activeId]);
+
+  const handleContinentClick = (id) => {
+    if (activeId === id) return;
+    setActiveId(id);
+    setHoverId(null);
+  };
+
+  const handlePickCountry = (country) => {
+    // For prototype, just briefly flash a toast
+    // Gaming English siteye yönlendir
+    const continent = CONTINENTS.find(c => c.countries.some(x => x.name === country.name));
+    const continentMap = {
+      'na': 'NorthAmerica', 'sa': 'SouthAmerica', 'eu': 'Europe',
+      'af': 'Africa', 'as': 'Asia', 'oc': 'Oceania', 'an': null
+    };
+    const continentId = continent ? continentMap[continent.id] : null;
+
+    const el = document.createElement('div');
+    el.textContent = `Starting lesson: ${country.name} →`;
+    el.style.cssText = `
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: var(--ink); color: var(--paper);
+      padding: 14px 22px; border-radius: 999px;
+      font-family: var(--font-display); font-weight: 600; font-size: 18px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.3);
+      z-index: 1000; pointer-events: none;
+      animation: toastIn 1600ms ease forwards;
+    `;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1600);
+  };
+
+  const clouds = useMemo(() => [
+    { top: 8,  duration: 80,  delay: -10, scale: 0.7 },
+    { top: 22, duration: 110, delay: -40, scale: 1.0 },
+    { top: 60, duration: 95,  delay: -20, scale: 0.55 },
+    { top: 78, duration: 130, delay: -60, scale: 0.85 },
+  ], []);
+
+  return (
+    <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
+      <div className="ocean">
+        {t.ambient && clouds.map((c, i) => <Cloud key={i} {...c}/>)}
+      </div>
+
+      <TopChrome show={t.showChrome} />
+
+      <div className="stage">
+        <WorldMap
+          activeId={activeId}
+          hoverId={hoverId}
+          onHover={setHoverId}
+          onClick={handleContinentClick}
+          hoverIntensity={t.hoverIntensity}
+          density={t.density}
+          theme={t.palette}
+          projection={t.projection}
+          showLens={t.showLens && !activeId && !t.rearrangeMode}
+          lensPos={lensPos}
+          setLensPos={setLensPos}
+          ambient={t.ambient}
+          editMode={t.rearrangeMode}
+          offsets={t.continentOffsets || {}}
+          onOffsetsChange={(o) => setTweak('continentOffsets', o)}
+        />
+      </div>
+
+      <CountryPanel
+        activeId={activeId}
+        onClose={() => setActiveId(null)}
+        onPickCountry={handlePickCountry}
+        countryPositions={t.countryPositions || {}}
+        onCountryPositionsChange={(p) => setTweak('countryPositions', p)}
+      />
+
+      {activeId && (
+        <button className="close-btn" onClick={() => setActiveId(null)} aria-label="Close">
+          ←
+        </button>
+      )}
+
+      {/* Ana sayfa butonu */}
+      <a href="index.html" style={{
+        position:'absolute', top:20, right:20,
+        background:'rgba(255,248,236,0.85)', backdropFilter:'blur(8px)',
+        padding:'10px 18px', borderRadius:999, textDecoration:'none',
+        fontFamily:'var(--font-display)', fontWeight:600, fontSize:13,
+        color:'var(--ink)', boxShadow:'0 6px 18px rgba(15,50,80,0.12)',
+        zIndex:30, letterSpacing:'0.02em', textTransform:'uppercase'
+      }}>
+        ← Ana Sayfa
+      </a>
+
+      {!activeId && (
+        <div className="hint">
+          <span>Bir kıtanın üzerine gel</span>
+          <span className="kbd">click</span>
+          <span>→ ülkeleri gör</span>
+        </div>
+      )}
+
+      <TweaksPanel>
+        <TweakSection label="Theme" />
+        <TweakColor
+          label="Palette"
+          value={
+            t.palette === 'classic' ? ['#BEE3F0', '#7FC79A', '#F2C66B']
+            : t.palette === 'meadow' ? ['#F9CFA2', '#9CCC65', '#F08D7A']
+            : ['#2A3D5C', '#06D6A0', '#FFD166']
+          }
+          options={[
+            ['#BEE3F0', '#7FC79A', '#F2C66B'],
+            ['#F9CFA2', '#9CCC65', '#F08D7A'],
+            ['#2A3D5C', '#06D6A0', '#FFD166'],
+          ]}
+          onChange={(v) => {
+            const name = v[0] === '#BEE3F0' ? 'classic' : v[0] === '#F9CFA2' ? 'meadow' : 'dusk';
+            setTweak('palette', name);
+          }}
+        />
+
+        <TweakSection label="Interaction" />
+        <TweakRadio
+          label="Hover lift"
+          value={t.hoverIntensity}
+          options={['subtle','medium','dramatic']}
+          onChange={(v) => setTweak('hoverIntensity', v)}
+        />
+        <TweakToggle
+          label="Magnifying lens"
+          value={t.showLens}
+          onChange={(v) => setTweak('showLens', v)}
+        />
+        <TweakToggle
+          label="Ambient motion"
+          value={t.ambient}
+          onChange={(v) => setTweak('ambient', v)}
+        />
+
+        <TweakSection label="Map" />
+        <TweakRadio
+          label="Projection"
+          value={t.projection}
+          options={['blobs','islands']}
+          onChange={(v) => setTweak('projection', v)}
+        />
+        <TweakRadio
+          label="Icon density"
+          value={t.density}
+          options={['sparse','normal','rich']}
+          onChange={(v) => setTweak('density', v)}
+        />
+
+        <TweakSection label="Rearrange" />
+        <TweakToggle
+          label="Drag continents"
+          value={t.rearrangeMode}
+          onChange={(v) => setTweak('rearrangeMode', v)}
+        />
+        <TweakButton
+          label="Reset continent positions"
+          onClick={() => setTweak('continentOffsets', {})}
+        />
+        <TweakButton
+          label="Reset country card positions"
+          onClick={() => setTweak('countryPositions', {})}
+        />
+
+        <TweakSection label="Chrome" />
+        <TweakToggle
+          label="Show top HUD"
+          value={t.showChrome}
+          onChange={(v) => setTweak('showChrome', v)}
+        />
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+
+</script>
+
+</body>
+</html>

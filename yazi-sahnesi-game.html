@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yazı Sahnesi - İngilizce Oyunu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --theme-primary: #667eea;
+      --theme-secondary: #764ba2;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: background 0.4s ease;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      padding: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      transition: background 0.4s ease;
+    }
+
+    .title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .home-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .home-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .score-box {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .stat {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px 16px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .difficulty-selector {
+      display: flex;
+      gap: 8px;
+    }
+
+    .diff-btn {
+      padding: 8px 16px;
+      border: 2px solid white;
+      background: transparent;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .diff-btn.active {
+      background: white;
+      color: var(--theme-primary);
+    }
+
+    .diff-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .game-area {
+      padding: 40px 30px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      transition: width 0.3s;
+    }
+
+    .instruction {
+      color: #999;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .dialogue-box {
+      background: #f5f5f5;
+      padding: 25px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      border-left: 4px solid var(--theme-primary);
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .dialogue-line {
+      margin-bottom: 15px;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .speaker {
+      font-weight: 600;
+      color: var(--theme-primary);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .dialogue-text {
+      color: #555;
+    }
+
+    .blank-input {
+      background: white;
+      border: 2px solid var(--theme-primary);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      min-width: 120px;
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      color: var(--theme-primary);
+    }
+
+    .blank-input:focus {
+      outline: none;
+      box-shadow: 0 0 8px rgba(102, 126, 234, 0.4);
+    }
+
+    .input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .input-group input {
+      margin: 0;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--theme-primary);
+      border: 2px solid var(--theme-primary);
+    }
+
+    .btn-secondary:hover {
+      background: #f5f5f5;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      text-align: center;
+      max-width: 400px;
+      animation: bounceIn 0.5s ease-out;
+    }
+
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .modal-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--theme-primary);
+    }
+
+    .modal-text {
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .feedback-text {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .speed-info {
+      font-size: 12px;
+      color: #999;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .title {
+        font-size: 24px;
+      }
+
+      .header {
+        padding: 20px;
+      }
+
+      .game-area {
+        padding: 20px;
+      }
+
+      .input-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .blank-input {
+        min-width: auto;
+        width: 100%;
+      }
+    }
+
+    * {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .header, .submit-btn, .btn-primary {
+      transition: background 0.4s ease, background-color 0.4s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">🎭 Yazı Sahnesi</div>
+      <a href="index.html" class="home-btn">← Ana Sayfa</a>
+      <div class="score-box">
+        <div class="stat">
+          <div class="stat-label">Skor</div>
+          <div class="stat-value" id="score">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Doğru</div>
+          <div class="stat-value" id="correct">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Yanlış</div>
+          <div class="stat-value" id="wrong">0</div>
+        </div>
+        <div class="difficulty-selector">
+          <button class="diff-btn active" onclick="setDifficulty('easy')">Easy</button>
+          <button class="diff-btn" onclick="setDifficulty('medium')">Med</button>
+          <button class="diff-btn" onclick="setDifficulty('hard')">Hard</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-area">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+
+      <div class="instruction">Diyalogları tamamla - Boşlukları doldur ve hızlı cevap ver</div>
+
+      <div class="dialogue-box" id="dialogueBox">
+        <!-- Diyalog buraya gelecek -->
+      </div>
+
+      <div class="input-group" id="inputGroup">
+        <!-- Input alanları buraya gelecek -->
+      </div>
+
+      <div style="text-align: center;">
+        <button class="submit-btn" onclick="submitAnswer()">Cevapla</button>
+        <div class="speed-info" id="speedInfo"></div>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-secondary" onclick="skipQuestion()">Atla</button>
+        <button class="btn-secondary" onclick="resetGame()">Sıfırla</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="resultModal">
+    <div class="modal-content">
+      <span class="modal-icon" id="resultIcon">✅</span>
+      <div class="modal-title" id="resultTitle">Harika!</div>
+      <div class="modal-text" id="resultText">Doğru cevap!</div>
+      <div class="feedback-text">+<span id="pointsEarned">10</span> Puan</div>
+      <button class="btn-primary" onclick="nextQuestion()" style="width: 100%;">Sonraki Soru</button>
+    </div>
+  </div>
+
+  <script>
+    const dialogueDatabase = {
+      easy: [
+        { dialogue: [
+          { speaker: 'A', text: 'Hello! How are _____?' },
+          { speaker: 'B', text: 'I am fine, thank you. And _____?' }
+        ], answers: ['you', 'you'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'What is your _____?' },
+          { speaker: 'B', text: 'My name is John.' }
+        ], answers: ['name'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'Do you like _____?' },
+          { speaker: 'B', text: 'Yes, I like pizza.' }
+        ], answers: ['pizza'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'Where do _____ live?' },
+          { speaker: 'B', text: 'I live in London.' }
+        ], answers: ['you'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'What is your job?' },
+          { speaker: 'B', text: 'I am a _____.' }
+        ], answers: ['teacher', 'doctor', 'engineer'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'Can I _____ some water?' },
+          { speaker: 'B', text: 'Of course!' }
+        ], answers: ['have'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'When is your _____?' },
+          { speaker: 'B', text: 'My birthday is in June.' }
+        ], answers: ['birthday'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'I like _____ very much.' },
+          { speaker: 'B', text: 'Me too!' }
+        ], answers: ['books', 'music', 'sports'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'How many _____ do you have?' },
+          { speaker: 'B', text: 'I have three brothers.' }
+        ], answers: ['brothers', 'siblings'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'What is your _____ subject?' },
+          { speaker: 'B', text: 'Mathematics is my favorite.' }
+        ], answers: ['favorite'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'Do you _____ sports?' },
+          { speaker: 'B', text: 'Yes, I play football.' }
+        ], answers: ['play'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'What time do you _____ up?' },
+          { speaker: 'B', text: 'I wake up at 7 AM.' }
+        ], answers: ['wake'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'Where did you _____ yesterday?' },
+          { speaker: 'B', text: 'I went to the park.' }
+        ], answers: ['go'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'Can you _____ English?' },
+          { speaker: 'B', text: 'Yes, I speak English.' }
+        ], answers: ['speak'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'What is _____ weather like?' },
+          { speaker: 'B', text: 'It is sunny today.' }
+        ], answers: ['the'], type: 'dialogue' },
+      ],
+      medium: [
+        { dialogue: [
+          { speaker: 'A', text: 'I believe we should _____ more about this.' },
+          { speaker: 'B', text: 'I agree, but we need more _____.' }
+        ], answers: ['discuss', 'information', 'data'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'The meeting was _____ due to technical issues.' },
+          { speaker: 'B', text: 'Yes, we will _____ it for next week.' }
+        ], answers: ['postponed', 'reschedule'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'I am _____ with the progress we\'ve made.' },
+          { speaker: 'B', text: 'We should _____ our efforts.' }
+        ], answers: ['satisfied', 'intensify'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'Can you _____ me the report?' },
+          { speaker: 'B', text: 'I will _____ it to you by tomorrow.' }
+        ], answers: ['send', 'email'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'The project _____ several challenges.' },
+          { speaker: 'B', text: 'Nevertheless, we must _____ forward.' }
+        ], answers: ['faced', 'move'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'I think we should _____ a different approach.' },
+          { speaker: 'B', text: 'That is a good _____.' }
+        ], answers: ['consider', 'suggestion'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'The results _____ our expectations.' },
+          { speaker: 'B', text: 'We should _____ our strategy.' }
+        ], answers: ['exceeded', 'maintain'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'I appreciate your _____ on this matter.' },
+          { speaker: 'B', text: 'I hope my _____ was helpful.' }
+        ], answers: ['input', 'feedback'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'We need to _____ the budget for next year.' },
+          { speaker: 'B', text: 'I will _____ the figures.' }
+        ], answers: ['plan', 'analyze'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'The client _____ about the quality.' },
+          { speaker: 'B', text: 'We will _____ this issue immediately.' }
+        ], answers: ['complained', 'address'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'Your _____ solution impressed the team.' },
+          { speaker: 'B', text: 'Thank you, I will _____ on it.' }
+        ], answers: ['innovative', 'elaborate'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'The conference will _____ valuable insights.' },
+          { speaker: 'B', text: 'I am _____ to attend.' }
+        ], answers: ['provide', 'eager'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'We have _____ all the criteria.' },
+          { speaker: 'B', text: 'Excellent, let\'s _____ ahead.' }
+        ], answers: ['met', 'proceed'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'The proposal _____ several issues.' },
+          { speaker: 'B', text: 'We need to _____ them.' }
+        ], answers: ['raised', 'resolve'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'I will _____ the documentation by Friday.' },
+          { speaker: 'B', text: 'That would be _____.' }
+        ], answers: ['prepare', 'ideal', 'perfect'], type: 'dialogue' },
+      ],
+      hard: [
+        { dialogue: [
+          { speaker: 'A', text: 'The _____ ramifications of this decision require careful _____.' },
+          { speaker: 'B', text: 'Indeed, we must _____ all perspectives.' }
+        ], answers: ['far-reaching', 'consideration', 'contemplate'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'Your _____ approach demonstrates exceptional _____.' },
+          { speaker: 'B', text: 'Thank you. I believe _____ is essential.' }
+        ], answers: ['pragmatic', 'acumen', 'diligence'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'The _____ discrepancies necessitate immediate _____.' },
+          { speaker: 'B', text: 'I concur. We must _____ this systematically.' }
+        ], answers: ['apparent', 'rectification', 'address'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'This _____ proposal merits serious _____.' },
+          { speaker: 'B', text: 'Absolutely. I will _____ the implications.' }
+        ], answers: ['compelling', 'deliberation', 'elucidate'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'The _____ methodology ensures _____.' },
+          { speaker: 'B', text: 'Precisely. _____ is paramount.' }
+        ], answers: ['rigorous', 'reliability', 'Accuracy'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'Your _____ analysis _____ our assumptions.' },
+          { speaker: 'B', text: 'We should _____ our strategy accordingly.' }
+        ], answers: ['comprehensive', 'challenges', 'recalibrate'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'The _____ implementation demonstrates our _____.' },
+          { speaker: 'B', text: 'Indeed, this _____ our capabilities.' }
+        ], answers: ['seamless', 'commitment', 'showcases'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'We must _____ this _____.' },
+          { speaker: 'B', text: 'I propose we _____ an alternative framework.' }
+        ], answers: ['circumvent', 'impasse', 'develop'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'The _____ of this initiative is _____.' },
+          { speaker: 'B', text: 'We must ensure _____ throughout.' }
+        ], answers: ['magnitude', 'unprecedented', 'transparency'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'Your _____ to excellence is truly _____.' },
+          { speaker: 'B', text: 'Thank you. I believe _____ yields superior results.' }
+        ], answers: ['commitment', 'commendable', 'meticulousness'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'This _____ requires _____ scrutiny.' },
+          { speaker: 'B', text: 'Agreed. We must _____ every detail.' }
+        ], answers: ['initiative', 'meticulous', 'scrutinize'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'The _____ implications _____ reassessment.' },
+          { speaker: 'B', text: 'Absolutely. We should _____ our timeline.' }
+        ], answers: ['substantive', 'necessitate', 'accelerate'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'Your _____ insights have _____ our perspective.' },
+          { speaker: 'B', text: 'I am pleased to have _____ to this endeavor.' }
+        ], answers: ['insightful', 'enriched', 'contributed'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'This _____ warrants _____ attention.' },
+          { speaker: 'B', text: 'Indeed, we must _____ all stakeholders.' }
+        ], answers: ['matter', 'immediate', 'apprise'], type: 'dialogue' },
+        { dialogue: [
+          { speaker: 'A', text: 'The _____ challenges _____ innovative solutions.' },
+          { speaker: 'B', text: 'Let us _____ a multidisciplinary approach.' }
+        ], answers: ['inherent', 'demand', 'formulate'], type: 'dialogue' },
+      ]
+    };
+
+    let gameState = {
+      difficulty: 'easy',
+      currentQuestionIndex: 0,
+      score: 0,
+      correct: 0,
+      wrong: 0,
+      userAnswers: [],
+      questionList: [],
+      isAnswered: false,
+      startTime: 0,
+      answerTime: 0
+    };
+
+    function init() {
+      const savedTheme = localStorage.getItem('gamingEnglishTheme') || 'default';
+      applyThemeToGame(savedTheme);
+
+      gameState.questionList = [...dialogueDatabase.easy];
+      gameState.currentQuestionIndex = 0;
+      gameState.score = 0;
+      gameState.correct = 0;
+      gameState.wrong = 0;
+      loadQuestion();
+    }
+
+    function applyThemeToGame(themeName) {
+      const themes = {
+        default: { primary: '#667eea', secondary: '#764ba2' },
+        candy: { primary: '#FFB3E6', secondary: '#FF85D0' },
+        ocean: { primary: '#4FC3F7', secondary: '#0288D1' },
+        jungle: { primary: '#81C784', secondary: '#2E7D32' }
+      };
+
+      const theme = themes[themeName] || themes.default;
+      document.documentElement.style.setProperty('--theme-primary', theme.primary);
+      document.documentElement.style.setProperty('--theme-secondary', theme.secondary);
+      document.querySelector('.header').style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+    }
+
+    function setDifficulty(level) {
+      document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      gameState.difficulty = level;
+      gameState.questionList = [...dialogueDatabase[level]];
+      gameState.currentQuestionIndex = 0;
+      gameState.score = 0;
+      gameState.correct = 0;
+      gameState.wrong = 0;
+      updateUI();
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      if (gameState.currentQuestionIndex >= gameState.questionList.length) {
+        showCompletion();
+        return;
+      }
+
+      const question = gameState.questionList[gameState.currentQuestionIndex];
+      gameState.isAnswered = false;
+      gameState.userAnswers = [];
+      gameState.startTime = Date.now();
+
+      let dialogueHtml = '';
+      let inputCount = 0;
+
+      question.dialogue.forEach(line => {
+        const blanks = line.text.match(/____*/g) || [];
+        let textWithInputs = line.text;
+
+        blanks.forEach((blank, idx) => {
+          textWithInputs = textWithInputs.replace(blank, `<input type="text" id="answer_${inputCount}" class="blank-input" placeholder="?">`);
+          inputCount++;
+        });
+
+        dialogueHtml += `
+          <div class="dialogue-line">
+            <span class="speaker">${line.speaker}:</span>
+            <span class="dialogue-text">${textWithInputs}</span>
+          </div>
+        `;
+      });
+
+      document.getElementById('dialogueBox').innerHTML = dialogueHtml;
+      updateProgress();
+
+      // Focus first input
+      setTimeout(() => {
+        const firstInput = document.getElementById('answer_0');
+        if (firstInput) firstInput.focus();
+      }, 100);
+    }
+
+    function submitAnswer() {
+      if (gameState.isAnswered) return;
+
+      const question = gameState.questionList[gameState.currentQuestionIndex];
+      gameState.endTime = Date.now();
+      gameState.answerTime = (gameState.endTime - gameState.startTime) / 1000;
+
+      const inputs = document.querySelectorAll('.blank-input');
+      let allCorrect = true;
+
+      inputs.forEach((input, idx) => {
+        const userAnswer = input.value.trim().toLowerCase();
+        const correctAnswers = question.answers[idx] ? question.answers[idx].split(',').map(a => a.trim().toLowerCase()) : [];
+        const isCorrect = correctAnswers.some(ans => ans === userAnswer);
+
+        if (isCorrect) {
+          input.style.borderColor = '#27ae60';
+          input.style.background = '#d5f4e6';
+        } else {
+          input.style.borderColor = '#e74c3c';
+          input.style.background = '#fadbd8';
+          allCorrect = false;
+        }
+        input.disabled = true;
+      });
+
+      gameState.isAnswered = true;
+
+      if (allCorrect) {
+        gameState.correct++;
+        let points = gameState.difficulty === 'easy' ? 10 : gameState.difficulty === 'medium' ? 20 : 30;
+        
+        // Hybrid scoring: speed bonus
+        if (gameState.answerTime < 10) {
+          points += 5; // Speed bonus for fast answers
+        }
+        
+        gameState.score += points;
+        showResult(true, points);
+      } else {
+        gameState.wrong++;
+        showResult(false, 0);
+      }
+
+      updateUI();
+    }
+
+    function showResult(isCorrect, points) {
+      const modal = document.getElementById('resultModal');
+      const icon = document.getElementById('resultIcon');
+      const title = document.getElementById('resultTitle');
+      const text = document.getElementById('resultText');
+      const pointsElem = document.getElementById('pointsEarned');
+
+      if (isCorrect) {
+        icon.textContent = '✅';
+        title.textContent = 'Harika!';
+        text.textContent = `Doğru cevap! (${gameState.answerTime.toFixed(1)}s)`;
+        pointsElem.textContent = points;
+      } else {
+        icon.textContent = '❌';
+        title.textContent = 'Yanlış!';
+        const question = gameState.questionList[gameState.currentQuestionIndex];
+        text.textContent = `Doğru: ${question.answers.join(', ')}`;
+        pointsElem.textContent = '0';
+      }
+
+      modal.classList.add('active');
+    }
+
+    function nextQuestion() {
+      document.getElementById('resultModal').classList.remove('active');
+      gameState.currentQuestionIndex++;
+      loadQuestion();
+    }
+
+    function skipQuestion() {
+      nextQuestion();
+    }
+
+    function resetGame() {
+      init();
+    }
+
+    function showCompletion() {
+      const modal = document.getElementById('resultModal');
+      const icon = document.getElementById('resultIcon');
+      const title = document.getElementById('resultTitle');
+      const text = document.getElementById('resultText');
+
+      icon.textContent = '🏆';
+      title.textContent = 'Tebrikler!';
+      text.textContent = `${gameState.score} puan kazandın! Doğru: ${gameState.correct}, Yanlış: ${gameState.wrong}`;
+
+      const btn = document.querySelector('#resultModal .btn-primary');
+      btn.textContent = 'Yeniden Başla';
+      btn.onclick = resetGame;
+
+      modal.classList.add('active');
+    }
+
+    function updateUI() {
+      document.getElementById('score').textContent = gameState.score;
+      document.getElementById('correct').textContent = gameState.correct;
+      document.getElementById('wrong').textContent = gameState.wrong;
+    }
+
+    function updateProgress() {
+      const total = gameState.questionList.length;
+      const progress = ((gameState.currentQuestionIndex + 1) / total) * 100;
+      document.getElementById('progressFill').style.width = progress + '%';
+    }
+
+    // Enter tuşu ile submit
+    document.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !gameState.isAnswered) {
+        submitAnswer();
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>
