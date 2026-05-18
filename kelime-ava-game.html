@@ -56,6 +56,29 @@
       gap: 15px;
     }
 
+    .home-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .home-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
     .title {
       font-family: 'Fredoka', sans-serif;
       font-size: 32px;
@@ -517,6 +540,7 @@
   <div class="container">
     <div class="header">
       <div class="title">🎮 Kelime Ava</div>
+      <a href="index.html" class="home-btn">← Ana Sayfa</a>
       <div class="score-box">
         <div class="stat">
           <div class="stat-label">Skor</div>
@@ -816,6 +840,7 @@
     }
 
     function resetGame() {
+      document.getElementById('resultModal').classList.remove('active');
       init();
     }
 
