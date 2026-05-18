@@ -578,6 +578,22 @@
       document.querySelector('.header').style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
     }
 
+    function playAudio() {
+      const question = gameState.questionList[gameState.currentQuestionIndex];
+      const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(question.sentence)}&tl=en&client=tw-ob`;
+      
+      const audio = new Audio(url);
+      audio.play().catch(err => {
+        console.log('Google TTS error, using Web Speech API:', err);
+        const utterance = new SpeechSynthesisUtterance(question.sentence);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.85;
+        utterance.pitch = 1.1;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+      });
+    }
+
     function setDifficulty(level) {
       document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
       event.target.classList.add('active');
