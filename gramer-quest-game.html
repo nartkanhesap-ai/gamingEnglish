@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gramer Quest - İngilizce Oyunu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --theme-primary: #667eea;
+      --theme-secondary: #764ba2;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: background 0.4s ease;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      padding: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      transition: background 0.4s ease;
+    }
+
+    .title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .home-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .home-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .score-box {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .stat {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px 16px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .difficulty-selector {
+      display: flex;
+      gap: 8px;
+    }
+
+    .diff-btn {
+      padding: 8px 16px;
+      border: 2px solid white;
+      background: transparent;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .diff-btn.active {
+      background: white;
+      color: var(--theme-primary);
+    }
+
+    .diff-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .game-area {
+      padding: 40px 30px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      transition: width 0.3s;
+    }
+
+    .question-display {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .instruction {
+      color: #999;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .sentence-box {
+      background: #f5f5f5;
+      padding: 25px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      font-size: 18px;
+      line-height: 1.8;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #e0e0e0;
+      animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .blank {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      display: inline-block;
+      margin: 0 4px;
+      min-width: 120px;
+      text-align: center;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .option-btn {
+      background: white;
+      border: 2px solid #e0e0e0;
+      padding: 15px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s;
+      text-align: center;
+    }
+
+    .option-btn:hover {
+      border-color: var(--theme-primary);
+      background: #f9f9f9;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .option-btn.selected {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      border-color: var(--theme-primary);
+    }
+
+    .option-btn.correct {
+      animation: correctPulse 0.6s ease-out;
+    }
+
+    @keyframes correctPulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .option-btn.wrong {
+      animation: wrongShake 0.4s ease-out;
+    }
+
+    @keyframes wrongShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--theme-primary);
+      border: 2px solid var(--theme-primary);
+    }
+
+    .btn-secondary:hover {
+      background: #f5f5f5;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      text-align: center;
+      max-width: 400px;
+      animation: bounceIn 0.5s ease-out;
+    }
+
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .modal-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--theme-primary);
+    }
+
+    .modal-text {
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .feedback-text {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .title {
+        font-size: 24px;
+      }
+
+      .header {
+        padding: 20px;
+      }
+
+      .game-area {
+        padding: 20px;
+      }
+
+      .sentence-box {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">📚 Gramer Quest</div>
+      <a href="index.html" class="home-btn">← Ana Sayfa</a>
+      <div class="score-box">
+        <div class="stat">
+          <div class="stat-label">Skor</div>
+          <div class="stat-value" id="score">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Doğru</div>
+          <div class="stat-value" id="correct">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Yanlış</div>
+          <div class="stat-value" id="wrong">0</div>
+        </div>
+        <div class="difficulty-selector">
+          <button class="diff-btn active" onclick="setDifficulty('easy')">Easy</button>
+          <button class="diff-btn" onclick="setDifficulty('medium')">Med</button>
+          <button class="diff-btn" onclick="setDifficulty('hard')">Hard</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-area">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+
+      <div class="question-display">
+        <div class="instruction">Boş yeri doldurmak için doğru cevabı seç</div>
+        <div class="sentence-box" id="sentenceBox">
+          I _____ to the cinema yesterday.
+        </div>
+      </div>
+
+      <div class="options-grid" id="optionsGrid">
+        <!-- Seçenekler buraya gelecek -->
+      </div>
+
+      <div class="button-group">
+        <button class="btn-secondary" onclick="skipQuestion()">Atla</button>
+        <button class="btn-secondary" onclick="resetGame()">Sıfırla</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="resultModal">
+    <div class="modal-content">
+      <span class="modal-icon" id="resultIcon">✅</span>
+      <div class="modal-title" id="resultTitle">Harika!</div>
+      <div class="modal-text" id="resultText">Doğru cevap!</div>
+      <div class="feedback-text">+<span id="pointsEarned">10</span> Puan</div>
+      <button class="btn-primary" onclick="nextQuestion()" style="width: 100%;">Sonraki Soru</button>
+    </div>
+  </div>
+
+  <script>
+    // Veritabanı
+    const questionDatabase = {
+      easy: [
+        { sentence: 'I _____ to school every day.', options: ['go', 'goes', 'going'], correct: 'go', explanation: 'I ile "go" (present simple)' },
+        { sentence: 'She _____ a book right now.', options: ['reads', 'is reading', 'read'], correct: 'is reading', explanation: '"right now" için present continuous' },
+        { sentence: 'They _____ to London last year.', options: ['go', 'goes', 'went'], correct: 'went', explanation: '"last year" için past tense' },
+        { sentence: 'We _____ English at school.', options: ['studies', 'study', 'studying'], correct: 'study', explanation: 'We ile "study" (present simple)' },
+        { sentence: 'He _____ coffee every morning.', options: ['drink', 'drinks', 'drinking'], correct: 'drinks', explanation: 'He ile "drinks" (present simple)' },
+        { sentence: 'The cat _____ on the mat.', options: ['sit', 'sits', 'is sitting'], correct: 'sits', explanation: '"now" olmadığı için simple present' },
+        { sentence: 'I _____ my homework yesterday.', options: ['do', 'does', 'did'], correct: 'did', explanation: '"yesterday" için past tense' },
+        { sentence: 'You _____ very kind.', options: ['are', 'is', 'am'], correct: 'are', explanation: 'You ile "are" (be verb)' },
+        { sentence: 'They _____ not coming to the party.', options: ['are', 'is', 'was'], correct: 'are', explanation: 'They ile "are" (be verb plural)' },
+        { sentence: 'She _____ to Paris next month.', options: ['goes', 'will go', 'going'], correct: 'will go', explanation: '"next month" için future tense' },
+        { sentence: 'I _____ never been to Japan.', options: ['has', 'have', 'had'], correct: 'have', explanation: 'I ile "have" (present perfect)' },
+        { sentence: 'We _____ playing football now.', options: ['are', 'is', 'am'], correct: 'are', explanation: 'We ile "are" (present continuous)' },
+        { sentence: 'He _____ his keys yesterday.', options: ['loses', 'lost', 'lose'], correct: 'lost', explanation: '"yesterday" için past tense' },
+        { sentence: 'It _____ raining outside.', options: ['is', 'are', 'am'], correct: 'is', explanation: 'It ile "is" (be verb singular)' },
+        { sentence: 'They _____ three children.', options: ['have', 'has', 'having'], correct: 'have', explanation: 'They ile "have" (present simple)' },
+      ],
+      medium: [
+        { sentence: 'If I _____ you, I would help.', options: ['was', 'were', 'am'], correct: 'were', explanation: 'If + past, were kullanılır (conditional)' },
+        { sentence: 'She acts as if she _____ the boss.', options: ['is', 'were', 'be'], correct: 'were', explanation: 'as if after imaginary durumda were' },
+        { sentence: 'I wish I _____ taller.', options: ['am', 'was', 'were'], correct: 'were', explanation: 'wish after için were' },
+        { sentence: 'The book _____ by Mark Twain.', options: ['wrote', 'was written', 'written'], correct: 'was written', explanation: 'Passive voice past' },
+        { sentence: 'They _____ their homework before dinner.', options: ['will finish', 'will have finished', 'finished'], correct: 'will have finished', explanation: 'Future perfect - before ile kullanılır' },
+        { sentence: 'By the time you arrive, I _____ dinner.', options: ['cooked', 'will cook', 'will have cooked'], correct: 'will have cooked', explanation: 'Future perfect' },
+        { sentence: 'I suggest that he _____ the rules.', options: ['follows', 'follow', 'following'], correct: 'follow', explanation: 'Suggest after subjunctive mood' },
+        { sentence: 'She insisted that I _____ with her.', options: ['come', 'comes', 'coming'], correct: 'come', explanation: 'Insisted after subjunctive' },
+        { sentence: '_____ you finished your work?', options: ['Did', 'Have', 'Will'], correct: 'Have', explanation: 'Present perfect question' },
+        { sentence: 'The painting _____ to be very valuable.', options: ['is believed', 'believes', 'is believing'], correct: 'is believed', explanation: 'Passive voice present' },
+        { sentence: 'Neither John nor Mary _____ coming.', options: ['are', 'is', 'am'], correct: 'is', explanation: 'Neither...nor singular' },
+        { sentence: 'Every student _____ do their best.', options: ['have to', 'has to', 'must'], correct: 'has to', explanation: 'Every student = singular' },
+        { sentence: 'I _____ the project for three hours.', options: ['worked', 'have been working', 'works'], correct: 'have been working', explanation: 'Present perfect continuous (duration)' },
+        { sentence: 'She _____ smoking five years ago.', options: ['gave up', 'has given up', 'gave'], correct: 'gave up', explanation: '"five years ago" = past tense' },
+        { sentence: 'Unless you _____, you will fail.', options: ['study', 'studies', 'studied'], correct: 'study', explanation: 'Unless + present, future will' },
+      ],
+      hard: [
+        { sentence: 'The committee _____ divided on the issue.', options: ['is', 'are', 'being'], correct: 'is', explanation: 'Committee = collective singular' },
+        { sentence: 'Physics _____ my favorite subject.', options: ['are', 'is', 'have'], correct: 'is', explanation: 'Physics = singular (subject olarak)' },
+        { sentence: 'Had he known, he _____ come.', options: ['would have', 'will have', 'have'], correct: 'would have', explanation: 'Third conditional (inversion)' },
+        { sentence: 'Rarely _____ I seen such beauty.', options: ['do', 'have', 'am'], correct: 'have', explanation: 'Inversion + present perfect' },
+        { sentence: 'The data _____ been analyzed thoroughly.', options: ['has', 'have', 'is'], correct: 'have', explanation: 'Data (plural) + passive' },
+        { sentence: 'I _____ but agree with your assessment.', options: ['cannot', 'must', 'can'], correct: 'cannot', explanation: 'Cannot but = cannot help but' },
+        { sentence: 'That he _____ succeed is undeniable.', options: ['would', 'will', 'shall'], correct: 'will', explanation: 'Nominal clause + future' },
+        { sentence: 'The number of students _____ increasing.', options: ['is', 'are', 'have'], correct: 'is', explanation: 'The number = singular' },
+        { sentence: 'Scarcely had he left when I _____arrive.', options: ['had', 'did', 'have'], correct: 'did', explanation: 'Scarcely...when + inversion + past' },
+        { sentence: 'She behaves as though she _____ everything.', options: ['knows', 'knew', 'has known'], correct: 'knew', explanation: 'As though + past (contrary to fact)' },
+        { sentence: 'The government _____ implementing new policies.', options: ['is', 'are', 'have'], correct: 'are', explanation: 'Government = collective (action olarak)' },
+        { sentence: 'I wish I _____ told you earlier.', options: ['had', 'have', 'would'], correct: 'had', explanation: 'Wish + past perfect (regret)' },
+        { sentence: 'It is imperative that he _____ present.', options: ['is', 'be', 'was'], correct: 'be', explanation: 'Imperative + subjunctive' },
+        { sentence: 'The crowd _____ gone home.', options: ['have', 'has', 'are'], correct: 'have', explanation: 'Crowd = collective (members arası)' },
+        { sentence: 'Should you need help, I _____ available.', options: ['will be', 'am', 'be'], correct: 'will be', explanation: 'Should (conditional) + future' },
+      ]
+    };
+
+    let gameState = {
+      difficulty: 'easy',
+      currentQuestionIndex: 0,
+      score: 0,
+      correct: 0,
+      wrong: 0,
+      selectedAnswer: null,
+      questionList: [],
+      isAnswered: false
+    };
+
+    function init() {
+      // localStorage'dan temayı yükle
+      const savedTheme = localStorage.getItem('gamingEnglishTheme') || 'default';
+      applyThemeToGame(savedTheme);
+
+      gameState.questionList = [...questionDatabase.easy];
+      gameState.currentQuestionIndex = 0;
+      gameState.score = 0;
+      gameState.correct = 0;
+      gameState.wrong = 0;
+      loadQuestion();
+    }
+
+    function applyThemeToGame(themeName) {
+      const themes = {
+        default: { primary: '#667eea', secondary: '#764ba2' },
+        candy: { primary: '#FFB3E6', secondary: '#FF85D0' },
+        ocean: { primary: '#4FC3F7', secondary: '#0288D1' },
+        jungle: { primary: '#81C784', secondary: '#2E7D32' }
+      };
+
+      const theme = themes[themeName] || themes.default;
+      document.documentElement.style.setProperty('--theme-primary', theme.primary);
+      document.documentElement.style.setProperty('--theme-secondary', theme.secondary);
+      document.querySelector('.header').style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+    }
+
+    function setDifficulty(level) {
+      document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      gameState.difficulty = level;
+      gameState.questionList = [...questionDatabase[level]];
+      gameState.currentQuestionIndex = 0;
+      gameState.score = 0;
+      gameState.correct = 0;
+      gameState.wrong = 0;
+      updateUI();
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      if (gameState.currentQuestionIndex >= gameState.questionList.length) {
+        showCompletion();
+        return;
+      }
+
+      const question = gameState.questionList[gameState.currentQuestionIndex];
+      document.getElementById('sentenceBox').textContent = question.sentence;
+      gameState.selectedAnswer = null;
+      gameState.isAnswered = false;
+
+      // Seçenekleri karıştır
+      let options = [...question.options].sort(() => Math.random() - 0.5);
+
+      const grid = document.getElementById('optionsGrid');
+      grid.innerHTML = options.map(option => `
+        <button class="option-btn" onclick="selectAnswer(this, '${option}')">${option}</button>
+      `).join('');
+
+      updateProgress();
+    }
+
+    function selectAnswer(element, answer) {
+      if (gameState.isAnswered) return;
+
+      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+      element.classList.add('selected');
+      gameState.selectedAnswer = answer;
+      submitAnswer();
+    }
+
+    function submitAnswer() {
+      if (gameState.isAnswered) return;
+
+      const question = gameState.questionList[gameState.currentQuestionIndex];
+      const isCorrect = gameState.selectedAnswer === question.correct;
+
+      gameState.isAnswered = true;
+
+      if (isCorrect) {
+        gameState.correct++;
+        const points = gameState.difficulty === 'easy' ? 10 : gameState.difficulty === 'medium' ? 20 : 30;
+        gameState.score += points;
+        showResult(true, points, '');
+        document.querySelector(`[onclick*="${question.correct}"]`).classList.add('correct');
+      } else {
+        gameState.wrong++;
+        showResult(false, 0, question.correct);
+        document.querySelector(`[onclick*="${question.correct}"]`).classList.add('correct');
+        document.querySelector(`[onclick*="${gameState.selectedAnswer}"]`).classList.add('wrong');
+      }
+
+      updateUI();
+    }
+
+    function showResult(isCorrect, points, correctAnswer) {
+      const modal = document.getElementById('resultModal');
+      const icon = document.getElementById('resultIcon');
+      const title = document.getElementById('resultTitle');
+      const text = document.getElementById('resultText');
+      const pointsElem = document.getElementById('pointsEarned');
+
+      if (isCorrect) {
+        icon.textContent = '✅';
+        title.textContent = 'Harika!';
+        text.textContent = 'Doğru cevap!';
+        pointsElem.textContent = points;
+      } else {
+        icon.textContent = '❌';
+        title.textContent = 'Yanlış!';
+        text.textContent = `Doğru cevap: ${correctAnswer}`;
+        pointsElem.textContent = '0';
+      }
+
+      modal.classList.add('active');
+    }
+
+    function nextQuestion() {
+      document.getElementById('resultModal').classList.remove('active');
+      gameState.currentQuestionIndex++;
+      loadQuestion();
+    }
+
+    function skipQuestion() {
+      nextQuestion();
+    }
+
+    function resetGame() {
+      init();
+    }
+
+    function showCompletion() {
+      const modal = document.getElementById('resultModal');
+      const icon = document.getElementById('resultIcon');
+      const title = document.getElementById('resultTitle');
+      const text = document.getElementById('resultText');
+
+      icon.textContent = '🏆';
+      title.textContent = 'Tebrikler!';
+      text.textContent = `${gameState.score} puan kazandın! Doğru: ${gameState.correct}, Yanlış: ${gameState.wrong}`;
+
+      const btn = document.querySelector('#resultModal .btn-primary');
+      btn.textContent = 'Yeniden Başla';
+      btn.onclick = resetGame;
+
+      modal.classList.add('active');
+    }
+
+    function updateUI() {
+      document.getElementById('score').textContent = gameState.score;
+      document.getElementById('correct').textContent = gameState.correct;
+      document.getElementById('wrong').textContent = gameState.wrong;
+    }
+
+    function updateProgress() {
+      const total = gameState.questionList.length;
+      const progress = ((gameState.currentQuestionIndex + 1) / total) * 100;
+      document.getElementById('progressFill').style.width = progress + '%';
+    }
+
+    // Başlat
+    init();
+  </script>
+</body>
+</html>
