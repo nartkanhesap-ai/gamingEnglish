@@ -610,6 +610,16 @@
         { word: 'CAT', image: '🐱', label: 'Cat' },
         { word: 'DOG', image: '🐕', label: 'Dog' },
         { word: 'HOUSE', image: '🏠', label: 'House' },
+        { word: 'TREE', image: '🌳', label: 'Tree' },
+        { word: 'FLOWER', image: '🌸', label: 'Flower' },
+        { word: 'BIRD', image: '🐦', label: 'Bird' },
+        { word: 'FISH', image: '🐟', label: 'Fish' },
+        { word: 'STAR', image: '⭐', label: 'Star' },
+        { word: 'MOON', image: '🌙', label: 'Moon' },
+        { word: 'SUN', image: '☀️', label: 'Sun' },
+        { word: 'HEART', image: '❤️', label: 'Heart' },
+        { word: 'SMILE', image: '😊', label: 'Smile' },
+        { word: 'BOOK', image: '📚', label: 'Book' },
       ],
       medium: [
         { word: 'BUTTERFLY', image: '🦋', label: 'Butterfly' },
@@ -617,6 +627,16 @@
         { word: 'GUITAR', image: '🎸', label: 'Guitar' },
         { word: 'ICECREAM', image: '🍦', label: 'Ice Cream' },
         { word: 'JELLYFISH', image: '🪼', label: 'Jellyfish' },
+        { word: 'KEYBOARD', image: '⌨️', label: 'Keyboard' },
+        { word: 'LIGHTNING', image: '⚡', label: 'Lightning' },
+        { word: 'MOUNTAIN', image: '⛰️', label: 'Mountain' },
+        { word: 'NOTEBOOK', image: '📓', label: 'Notebook' },
+        { word: 'OCEAN', image: '🌊', label: 'Ocean' },
+        { word: 'PENGUIN', image: '🐧', label: 'Penguin' },
+        { word: 'QUEEN', image: '👑', label: 'Queen' },
+        { word: 'RAINBOW', image: '🌈', label: 'Rainbow' },
+        { word: 'SKATEBOARD', image: '🛹', label: 'Skateboard' },
+        { word: 'TELESCOPE', image: '🔭', label: 'Telescope' },
       ],
       hard: [
         { word: 'CONSTELLATION', image: '⭐', label: 'Constellation' },
@@ -624,6 +644,16 @@
         { word: 'UNIVERSE', image: '🌌', label: 'Universe' },
         { word: 'ADVENTURE', image: '🏔️', label: 'Adventure' },
         { word: 'TSUNAMI', image: '🌊', label: 'Tsunami' },
+        { word: 'ARCHITECTURE', image: '🏛️', label: 'Architecture' },
+        { word: 'BOTANICAL', image: '🌿', label: 'Botanical' },
+        { word: 'TECHNOLOGY', image: '💻', label: 'Technology' },
+        { word: 'ENCYCLOPEDIA', image: '📖', label: 'Encyclopedia' },
+        { word: 'FOSSIL', image: '🦴', label: 'Fossil' },
+        { word: 'GALAXY', image: '🌌', label: 'Galaxy' },
+        { word: 'HIEROGLYPHIC', image: '🔺', label: 'Hieroglyphic' },
+        { word: 'INNOVATION', image: '💡', label: 'Innovation' },
+        { word: 'JUNGLE', image: '🌴', label: 'Jungle' },
+        { word: 'KALEIDOSCOPE', image: '🎨', label: 'Kaleidoscope' },
       ]
     };
 
@@ -640,12 +670,32 @@
 
     // Başlat
     function init() {
+      // localStorage'dan temayı yükle
+      const savedTheme = localStorage.getItem('gamingEnglishTheme') || 'default';
+      applyThemeToGame(savedTheme);
+      
       gameState.wordList = [...wordDatabase.easy];
       gameState.currentWordIndex = 0;
       gameState.score = 0;
       gameState.correct = 0;
       gameState.wrong = 0;
       loadWord();
+    }
+
+    function applyThemeToGame(themeName) {
+      const themes = {
+        default: { primary: '#667eea', secondary: '#764ba2' },
+        candy: { primary: '#FFB3E6', secondary: '#FF85D0' },
+        ocean: { primary: '#4FC3F7', secondary: '#0288D1' },
+        jungle: { primary: '#81C784', secondary: '#2E7D32' }
+      };
+
+      const theme = themes[themeName] || themes.default;
+      document.documentElement.style.setProperty('--theme-primary', theme.primary);
+      document.documentElement.style.setProperty('--theme-secondary', theme.secondary);
+
+      // Header ve gradient'leri güncelle
+      document.querySelector('.header').style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
     }
 
     function setDifficulty(level) {
