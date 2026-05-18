@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gramer Quest - İngilizce Oyunu</title>
+  <title>Grammar Oyunu - İngilizce Oyunu</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -428,7 +428,7 @@
 <body>
   <div class="container">
     <div class="header">
-      <div class="title">📚 Gramer Quest</div>
+      <div class="title">📚 Grammar Oyunu</div>
       <a href="index.html" class="home-btn">← Ana Sayfa</a>
       <div class="score-box">
         <div class="stat">
@@ -607,7 +607,7 @@
 
       const grid = document.getElementById('optionsGrid');
       grid.innerHTML = options.map(option => `
-        <button class="option-btn" onclick="selectAnswer(this, '${option}')">${option}</button>
+        <button class="option-btn" onclick="selectAnswer(this, '${option}')">${option.toLowerCase()}</button>
       `).join('');
 
       updateProgress();
