@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kelime Ava - İngilizce Oyunu</title>
+  <title>Kelime Avı - İngilizce Oyunu</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,14 +14,20 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --theme-primary: #667eea;
+      --theme-secondary: #764ba2;
+    }
+
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
+      transition: background 0.4s ease;
     }
 
     .container {
@@ -46,7 +52,7 @@
     }
 
     .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
       color: white;
       padding: 30px;
       display: flex;
@@ -54,6 +60,16 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 15px;
+      transition: background 0.4s ease;
+    }
+
+    .title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .home-btn {
@@ -77,15 +93,6 @@
     .home-btn:hover {
       background: rgba(255, 255, 255, 0.3);
       transform: translateY(-2px);
-    }
-
-    .title {
-      font-family: 'Fredoka', sans-serif;
-      font-size: 32px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
 
     .score-box {
@@ -136,7 +143,7 @@
 
     .diff-btn.active {
       background: white;
-      color: #667eea;
+      color: var(--theme-primary);
     }
 
     .diff-btn:hover:not(.active) {
@@ -147,7 +154,22 @@
       padding: 40px 30px;
     }
 
-    .word-display {
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      transition: width 0.3s;
+    }
+
+    .question-display {
       text-align: center;
       margin-bottom: 40px;
       animation: fadeIn 0.4s ease-out;
@@ -167,209 +189,97 @@
       font-size: 14px;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       font-weight: 500;
     }
 
-    .word-card {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    .audio-btn {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
       color: white;
-      padding: 30px;
-      border-radius: 16px;
-      font-size: 48px;
-      font-weight: 700;
-      font-family: 'Fredoka', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-      margin-bottom: 20px;
-      animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
-    @keyframes popIn {
-      from {
-        transform: scale(0.8);
-        opacity: 0;
-      }
-      to {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    .sound-btn {
-      background: white;
       border: none;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      font-size: 24px;
+      padding: 15px 30px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 16px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto;
       transition: all 0.3s;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 
-    .sound-btn:hover {
-      transform: scale(1.1);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    .audio-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
 
-    .sound-btn:active {
+    .audio-btn:active {
       transform: scale(0.95);
     }
 
-    .images-grid {
+    .game-content {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 20px;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
       margin-bottom: 30px;
+      align-items: center;
     }
 
-    .image-card {
-      position: relative;
+    .drag-area {
+      background: #f5f5f5;
+      border: 3px dashed #ddd;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drag-area.over {
+      border-color: var(--theme-primary);
+      background: #f0f4ff;
+    }
+
+    .word-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .word-btn {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      border-radius: 8px;
+      font-weight: 600;
       cursor: grab;
-      animation: slideInUp 0.5s ease-out;
-      animation-fill-mode: both;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
-    .image-card:nth-child(1) { animation-delay: 0.1s; }
-    .image-card:nth-child(2) { animation-delay: 0.2s; }
-    .image-card:nth-child(3) { animation-delay: 0.3s; }
-    .image-card:nth-child(4) { animation-delay: 0.4s; }
-    .image-card:nth-child(5) { animation-delay: 0.5s; }
-    .image-card:nth-child(6) { animation-delay: 0.6s; }
-
-    @keyframes slideInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .word-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
     }
 
-    .image-card.dragging {
-      opacity: 0.5;
+    .word-btn:active {
       cursor: grabbing;
     }
 
-    .image-card.correct {
-      animation: correctPulse 0.6s ease-out;
+    .word-btn.used {
+      opacity: 0.4;
+      cursor: not-allowed;
     }
 
-    @keyframes correctPulse {
-      0% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.15);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
-
-    .image-card.wrong {
-      animation: wrongShake 0.4s ease-out;
-    }
-
-    @keyframes wrongShake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-8px); }
-      75% { transform: translateX(8px); }
-    }
-
-    .image-wrapper {
-      width: 100%;
-      aspect-ratio: 1;
-      background: #f5f5f5;
-      border: 3px solid #e0e0e0;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 60px;
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .image-card:hover .image-wrapper {
-      border-color: #667eea;
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-      transform: translateY(-3px);
-    }
-
-    .image-card.selected .image-wrapper {
-      border-color: #667eea;
-      background: #f0f4ff;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-    }
-
-    .label {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7) 60%, transparent);
-      color: white;
-      padding: 16px 8px 12px;
-      text-align: center;
-      font-size: 14px;
-      font-weight: 700;
-      opacity: 0;
-      transition: all 0.3s;
-      letter-spacing: 0.5px;
-      text-transform: capitalize;
-      display: none;
-    }
-
-    .image-card:hover .label {
-      opacity: 0;
-      padding-bottom: 16px;
-      display: none;
-    }
-
-    .drop-zone {
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      border: 3px dashed #667eea;
-      border-radius: 16px;
-      padding: 40px;
-      text-align: center;
-      margin-bottom: 30px;
-      min-height: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s;
-    }
-
-    .drop-zone.active {
-      background: linear-gradient(135deg, #e0f0ff 0%, #b8d4ff 100%);
-      border-color: #667eea;
-      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
-    }
-
-    .drop-text {
-      color: #999;
-      font-size: 14px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .drop-content {
-      font-size: 60px;
-      min-height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .image-display {
+      font-size: 100px;
+      line-height: 1;
     }
 
     .button-group {
@@ -392,7 +302,7 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
       color: white;
       box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
     }
@@ -410,12 +320,12 @@
 
     .btn-secondary {
       background: white;
-      color: #667eea;
-      border: 2px solid #667eea;
+      color: var(--theme-primary);
+      border: 2px solid var(--theme-primary);
     }
 
     .btn-secondary:hover {
-      background: #f5f7fa;
+      background: #f5f5f5;
     }
 
     .modal {
@@ -470,7 +380,7 @@
       font-size: 32px;
       font-weight: 700;
       margin-bottom: 10px;
-      color: #667eea;
+      color: var(--theme-primary);
     }
 
     .modal-text {
@@ -485,41 +395,9 @@
       margin-bottom: 20px;
     }
 
-    .progress-bar {
-      width: 100%;
-      height: 6px;
-      background: #e0e0e0;
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 30px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-      transition: width 0.3s;
-    }
-
-    .level-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-right: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
     @media (max-width: 768px) {
-      .images-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .word-card {
-        font-size: 36px;
+      .game-content {
+        grid-template-columns: 1fr;
       }
 
       .title {
@@ -533,13 +411,25 @@
       .game-area {
         padding: 20px;
       }
+
+      .image-display {
+        font-size: 80px;
+      }
+    }
+
+    * {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .header, .audio-btn, .word-btn {
+      transition: background 0.4s ease, background-color 0.4s ease;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <div class="title">🎮 Kelime Ava</div>
+      <div class="title">🎮 Kelime Avı</div>
       <a href="index.html" class="home-btn">← Ana Sayfa</a>
       <div class="score-box">
         <div class="stat">
@@ -567,25 +457,24 @@
         <div class="progress-fill" id="progressFill" style="width: 0%"></div>
       </div>
 
-      <div class="word-display">
-        <div class="instruction">Dinle ve doğru resmi bul</div>
-        <div class="word-card" id="wordCard">APPLE</div>
-        <button class="sound-btn" onclick="playSound()" title="Dinle">🔊</button>
+      <div class="question-display">
+        <div class="instruction">Kelimeyi dinle ve doğru resim kutusuna sürükle</div>
+        <button class="audio-btn" onclick="playAudio()" title="Dinle">
+          🔊 Dinle
+        </button>
       </div>
 
-      <div class="images-grid" id="imagesGrid">
-        <!-- İmajlar buraya gelecek -->
-      </div>
-
-      <div class="drop-zone" id="dropZone">
-        <div>
-          <div class="drop-text">Veya resmi buraya sürükle</div>
-          <div class="drop-content" id="dropContent">⬇️</div>
+      <div class="game-content">
+        <div class="drag-area" id="dragArea" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+          <div class="image-display" id="imageDisplay">🎯</div>
+        </div>
+        <div class="word-options" id="wordOptions">
+          <!-- Kelime butonları buraya gelecek -->
         </div>
       </div>
 
       <div class="button-group">
-        <button class="btn-secondary" onclick="skipWord()">Atla</button>
+        <button class="btn-secondary" onclick="skipQuestion()">Atla</button>
         <button class="btn-secondary" onclick="resetGame()">Sıfırla</button>
       </div>
     </div>
@@ -597,12 +486,11 @@
       <div class="modal-title" id="resultTitle">Harika!</div>
       <div class="modal-text" id="resultText">Doğru cevap!</div>
       <div class="feedback-text">+<span id="pointsEarned">10</span> Puan</div>
-      <button class="btn-primary" onclick="nextWord()" style="width: 100%;">Sonraki Kelime</button>
+      <button class="btn-primary" onclick="nextQuestion()" style="width: 100%;">Sonraki Soru</button>
     </div>
   </div>
 
   <script>
-    // Veri
     const wordDatabase = {
       easy: [
         { word: 'APPLE', image: '🍎', label: 'Apple' },
@@ -663,17 +551,15 @@
       score: 0,
       correct: 0,
       wrong: 0,
-      selectedImage: null,
       wordList: [],
-      isAnswered: false
+      isAnswered: false,
+      draggedWord: null
     };
 
-    // Başlat
     function init() {
-      // localStorage'dan temayı yükle
       const savedTheme = localStorage.getItem('gamingEnglishTheme') || 'default';
       applyThemeToGame(savedTheme);
-      
+
       gameState.wordList = [...wordDatabase.easy];
       gameState.currentWordIndex = 0;
       gameState.score = 0;
@@ -693,8 +579,6 @@
       const theme = themes[themeName] || themes.default;
       document.documentElement.style.setProperty('--theme-primary', theme.primary);
       document.documentElement.style.setProperty('--theme-secondary', theme.secondary);
-
-      // Header ve gradient'leri güncelle
       document.querySelector('.header').style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
     }
 
@@ -718,94 +602,58 @@
       }
 
       const word = gameState.wordList[gameState.currentWordIndex];
-      document.getElementById('wordCard').textContent = word.word;
-      gameState.selectedImage = null;
+      document.getElementById('imageDisplay').textContent = word.image;
       gameState.isAnswered = false;
 
-      // İmajları karıştır
-      let options = [word, ...getRandomOptions(4)];
-      options = options.sort(() => Math.random() - 0.5);
+      // Kelime seçeneklerini oluştur (yanlış kelimeler ekle)
+      let options = [word.word];
+      let randomWords = gameState.wordList
+        .filter(w => w.word !== word.word)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3)
+        .map(w => w.word);
+      
+      options = [...options, ...randomWords].sort(() => Math.random() - 0.5);
 
-      const grid = document.getElementById('imagesGrid');
-      grid.innerHTML = options.map((item, idx) => `
-        <div class="image-card" draggable="true" data-word="${item.word}" data-index="${idx}" onclick="selectImage(this)">
-          <div class="image-wrapper">
-            <span>${item.image}</span>
-            <div class="label">${item.label}</div>
-          </div>
-        </div>
+      const optionsContainer = document.getElementById('wordOptions');
+      optionsContainer.innerHTML = options.map(option => `
+        <button class="word-btn" draggable="true" ondragstart="handleDragStart(event, '${option}')" ondragend="handleDragEnd(event)">
+          ${option.toLowerCase()}
+        </button>
       `).join('');
-
-      // Drag and drop
-      document.querySelectorAll('.image-card').forEach(card => {
-        card.addEventListener('dragstart', dragStart);
-        card.addEventListener('dragend', dragEnd);
-      });
 
       updateProgress();
     }
 
-    function getRandomOptions(count) {
-      let options = [];
-      const currentWord = gameState.wordList[gameState.currentWordIndex].word;
-      const available = gameState.wordList.filter(w => w.word !== currentWord);
-      for (let i = 0; i < count && available.length > 0; i++) {
-        const idx = Math.floor(Math.random() * available.length);
-        options.push(available[idx]);
-        available.splice(idx, 1);
-      }
-      return options;
+    function handleDragStart(event, word) {
+      gameState.draggedWord = word;
+      event.dataTransfer.effectAllowed = 'move';
     }
 
-    function selectImage(element) {
+    function handleDragEnd(event) {
+      gameState.draggedWord = null;
+    }
+
+    function handleDragOver(event) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'move';
+      document.getElementById('dragArea').classList.add('over');
+    }
+
+    function handleDragLeave(event) {
+      if (event.target.id === 'dragArea') {
+        document.getElementById('dragArea').classList.remove('over');
+      }
+    }
+
+    function handleDrop(event) {
+      event.preventDefault();
+      document.getElementById('dragArea').classList.remove('over');
+
       if (gameState.isAnswered) return;
 
-      document.querySelectorAll('.image-card').forEach(card => card.classList.remove('selected'));
-      element.classList.add('selected');
-      gameState.selectedImage = element.dataset.word;
-    }
-
-    function playSound() {
-      const word = gameState.wordList[gameState.currentWordIndex].word;
-      
-      // Eski ses varsa durdur
-      if (gameState.audioElement) {
-        gameState.audioElement.pause();
-        gameState.audioElement.currentTime = 0;
-      }
-      
-      // Önce Web Speech API ile sprechSynthesis kullan (daha doğal)
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(word);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.85;
-      utterance.pitch = 1.1;
-      utterance.volume = 1;
-      
-      // Erkek sesini kullan (daha net ve profesyonel)
-      const voices = window.speechSynthesis.getVoices();
-      const englishVoice = voices.find(v => v.lang.includes('en-US') && v.name.includes('Google')) || 
-                           voices.find(v => v.lang.includes('en')) || 
-                           voices[0];
-      if (englishVoice) {
-        utterance.voice = englishVoice;
-      }
-      
-      // Ses oynamaya çalış, başarısız olursa Google Translate'i kullan
-      utterance.onerror = () => {
-        const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(word)}&tl=en&client=tw-ob`;
-        gameState.audioElement = new Audio(url);
-        gameState.audioElement.play().catch(err => console.log('Ses oynatılamadı:', err));
-      };
-      
-      window.speechSynthesis.speak(utterance);
-    }
-
-    function submitAnswer() {
-      if (gameState.isAnswered) return;
-
-      const correctWord = gameState.wordList[gameState.currentWordIndex].word;
-      const isCorrect = gameState.selectedImage === correctWord;
+      const word = gameState.wordList[gameState.currentWordIndex];
+      const isCorrect = gameState.draggedWord === word.word;
 
       gameState.isAnswered = true;
 
@@ -814,48 +662,29 @@
         const points = gameState.difficulty === 'easy' ? 10 : gameState.difficulty === 'medium' ? 20 : 30;
         gameState.score += points;
         showResult(true, points);
-        document.querySelector(`[data-word="${correctWord}"]`).classList.add('correct');
       } else {
         gameState.wrong++;
         showResult(false, 0);
-        document.querySelector(`[data-word="${correctWord}"]`).classList.add('wrong');
-        if (gameState.selectedImage) {
-          document.querySelector(`[data-word="${gameState.selectedImage}"]`).classList.add('wrong');
-        }
       }
 
       updateUI();
     }
 
-    function dragStart(e) {
-      if (gameState.isAnswered) return;
-      e.dataTransfer.effectAllowed = 'move';
-      this.classList.add('dragging');
-      e.dataTransfer.setData('text/html', this.innerHTML);
-      gameState.selectedImage = this.dataset.word;
+    function playAudio() {
+      const word = gameState.wordList[gameState.currentWordIndex];
+      const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(word.word)}&tl=en&client=tw-ob`;
+      
+      const audio = new Audio(url);
+      audio.play().catch(err => {
+        console.log('Google TTS error, using Web Speech API:', err);
+        const utterance = new SpeechSynthesisUtterance(word.word);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.85;
+        utterance.pitch = 1.1;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+      });
     }
-
-    function dragEnd(e) {
-      this.classList.remove('dragging');
-    }
-
-    document.getElementById('dropZone').addEventListener('dragover', (e) => {
-      if (gameState.isAnswered) return;
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      document.getElementById('dropZone').classList.add('active');
-    });
-
-    document.getElementById('dropZone').addEventListener('dragleave', () => {
-      document.getElementById('dropZone').classList.remove('active');
-    });
-
-    document.getElementById('dropZone').addEventListener('drop', (e) => {
-      if (gameState.isAnswered) return;
-      e.preventDefault();
-      document.getElementById('dropZone').classList.remove('active');
-      submitAnswer();
-    });
 
     function showResult(isCorrect, points) {
       const modal = document.getElementById('resultModal');
@@ -872,25 +701,25 @@
       } else {
         icon.textContent = '❌';
         title.textContent = 'Yanlış!';
-        text.textContent = `Doğru cevap: ${gameState.wordList[gameState.currentWordIndex].label}`;
+        const word = gameState.wordList[gameState.currentWordIndex];
+        text.textContent = `Doğru cevap: ${word.word.toLowerCase()}`;
         pointsElem.textContent = '0';
       }
 
       modal.classList.add('active');
     }
 
-    function nextWord() {
+    function nextQuestion() {
       document.getElementById('resultModal').classList.remove('active');
       gameState.currentWordIndex++;
       loadWord();
     }
 
-    function skipWord() {
-      nextWord();
+    function skipQuestion() {
+      nextQuestion();
     }
 
     function resetGame() {
-      document.getElementById('resultModal').classList.remove('active');
       init();
     }
 
@@ -923,14 +752,6 @@
       document.getElementById('progressFill').style.width = progress + '%';
     }
 
-    // Klavye desteği
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !gameState.isAnswered) {
-        submitAnswer();
-      }
-    });
-
-    // Başlat
     init();
   </script>
 </body>
