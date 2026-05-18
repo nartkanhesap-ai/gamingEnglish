@@ -14,11 +14,39 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --primary-light: #667eea;
+      --primary-dark: #764ba2;
+    }
+
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       padding: 20px;
+      transition: background 0.4s ease;
+    }
+
+    body.theme-candy {
+      background: linear-gradient(135deg, #FFB3E6 0%, #FF85D0 100%);
+      --primary-gradient: linear-gradient(135deg, #FFB3E6 0%, #FF85D0 100%);
+      --primary-light: #FFB3E6;
+      --primary-dark: #FF85D0;
+    }
+
+    body.theme-ocean {
+      background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+      --primary-gradient: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+      --primary-light: #4FC3F7;
+      --primary-dark: #0288D1;
+    }
+
+    body.theme-jungle {
+      background: linear-gradient(135deg, #81C784 0%, #2E7D32 100%);
+      --primary-gradient: linear-gradient(135deg, #81C784 0%, #2E7D32 100%);
+      --primary-light: #81C784;
+      --primary-dark: #2E7D32;
     }
 
     .navbar {
@@ -35,6 +63,7 @@
       max-width: 1200px;
       margin-left: auto;
       margin-right: auto;
+      transition: all 0.3s;
     }
 
     .logo {
@@ -45,6 +74,13 @@
       display: flex;
       align-items: center;
       gap: 10px;
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
     .nav-links {
@@ -64,6 +100,57 @@
     .nav-links a:hover {
       opacity: 1;
       transform: translateY(-2px);
+    }
+
+    .theme-selector {
+      display: flex;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 6px;
+      border-radius: 20px;
+      align-items: center;
+    }
+
+    .theme-btn {
+      width: 40px;
+      height: 40px;
+      border: 2px solid transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .theme-btn:hover {
+      transform: scale(1.1);
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .theme-btn.active {
+      border-color: white;
+      transform: scale(1.15);
+      background: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+    }
+
+    .theme-btn[data-theme="default"] {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .theme-btn[data-theme="candy"] {
+      background: linear-gradient(135deg, #FFB3E6 0%, #FF85D0 100%);
+    }
+
+    .theme-btn[data-theme="ocean"] {
+      background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+    }
+
+    .theme-btn[data-theme="jungle"] {
+      background: linear-gradient(135deg, #81C784 0%, #2E7D32 100%);
     }
 
     .container {
@@ -108,7 +195,7 @@
 
     .cta-button {
       background: white;
-      color: #667eea;
+      color: var(--primary-dark);
       padding: 14px 32px;
       border: none;
       border-radius: 8px;
@@ -151,6 +238,7 @@
       cursor: pointer;
       animation: slideUp 0.6s ease-out;
       animation-fill-mode: both;
+      position: relative;
     }
 
     .game-card:nth-child(1) { animation-delay: 0.1s; }
@@ -177,10 +265,11 @@
     }
 
     .game-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--primary-gradient);
       color: white;
       padding: 30px 20px;
       text-align: center;
+      transition: all 0.3s;
     }
 
     .game-icon {
@@ -230,13 +319,13 @@
 
     .game-features li:before {
       content: "✓";
-      color: #667eea;
+      color: var(--primary-light);
       font-weight: 700;
       font-size: 14px;
     }
 
     .play-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--primary-gradient);
       color: white;
       padding: 12px 24px;
       border: none;
@@ -262,6 +351,7 @@
       padding: 50px 30px;
       color: white;
       margin-bottom: 60px;
+      transition: all 0.3s;
     }
 
     .features-section h2 {
@@ -323,10 +413,6 @@
       letter-spacing: 0.5px;
     }
 
-    .game-card {
-      position: relative;
-    }
-
     @media (max-width: 768px) {
       .hero h1 {
         font-size: 36px;
@@ -344,17 +430,39 @@
         width: 100%;
         justify-content: center;
       }
+
+      .theme-selector {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    * {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .navbar, .features-section, .game-header, .play-btn, .cta-button {
+      transition: background 0.4s ease, background-color 0.4s ease;
     }
   </style>
 </head>
-<body>
+<body class="theme-default">
   <nav class="navbar">
     <div class="logo">🎮 Gaming English</div>
-    <ul class="nav-links">
-      <li><a href="#oyunlar">Oyunlar</a></li>
-      <li><a href="#özellikler">Özellikler</a></li>
-      <li><a href="https://github.com/nartkanhesap-ai/gamingEnglish" target="_blank">GitHub</a></li>
-    </ul>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="#oyunlar">Oyunlar</a></li>
+        <li><a href="#özellikler">Özellikler</a></li>
+        <li><a href="https://github.com/nartkanhesap-ai/gamingEnglish" target="_blank">GitHub</a></li>
+      </ul>
+      <div class="theme-selector">
+        <button class="theme-btn active" data-theme="default" onclick="setTheme('default')" title="Purple (Varsayılan)">🎨</button>
+        <button class="theme-btn" data-theme="candy" onclick="setTheme('candy')" title="Candy Dream">🍭</button>
+        <button class="theme-btn" data-theme="ocean" onclick="setTheme('ocean')" title="Ocean Adventure">🌊</button>
+        <button class="theme-btn" data-theme="jungle" onclick="setTheme('jungle')" title="Jungle Paradise">🌿</button>
+      </div>
+    </div>
   </nav>
 
   <div class="container">
@@ -368,7 +476,6 @@
       <h2>Oyunlar</h2>
       <div class="games-grid">
         
-        <!-- Kelime Ava (Aktif) -->
         <div class="game-card">
           <div class="game-header">
             <span class="game-icon">🎮</span>
@@ -389,7 +496,6 @@
           </div>
         </div>
 
-        <!-- Gramer Quest (Yakında) -->
         <div class="game-card">
           <div class="coming-soon">Yakında</div>
           <div class="game-header">
@@ -411,7 +517,6 @@
           </div>
         </div>
 
-        <!-- Dinleme Dedektifi (Yakında) -->
         <div class="game-card">
           <div class="coming-soon">Yakında</div>
           <div class="game-header">
@@ -433,7 +538,6 @@
           </div>
         </div>
 
-        <!-- Yazı Sahnesi (Yakında) -->
         <div class="game-card">
           <div class="coming-soon">Yakında</div>
           <div class="game-header">
@@ -455,7 +559,6 @@
           </div>
         </div>
 
-        <!-- Quiz Hızlı (Yakında) -->
         <div class="game-card">
           <div class="coming-soon">Yakında</div>
           <div class="game-header">
@@ -477,7 +580,6 @@
           </div>
         </div>
 
-        <!-- Kelime Dünyası (Yakında) -->
         <div class="game-card">
           <div class="coming-soon">Yakında</div>
           <div class="game-header">
@@ -540,11 +642,25 @@
   </div>
 
   <footer>
-    <p>&copy; 2024 Gaming English. Tüm hakları saklıdır. | <a href="https://github.com/nartkanhesap-ai/gamingEnglish" style="color: white; text-decoration: underline;">GitHub</a></p>
+    <p>&copy; 2024 Gaming English. Tüm hakları saklıdır. | <a href="https://github.com/nartkanhesap-ai/gamingEnglish" target="_blank" style="color: white; text-decoration: underline;">GitHub</a></p>
   </footer>
 
   <script>
-    // Smooth scroll
+    function setTheme(themeName) {
+      localStorage.setItem('gamingEnglishTheme', themeName);
+      document.body.className = '';
+      document.body.classList.add(`theme-${themeName}`);
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector(`[data-theme="${themeName}"]`).classList.add('active');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('gamingEnglishTheme') || 'default';
+      setTheme(savedTheme);
+    });
+
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
