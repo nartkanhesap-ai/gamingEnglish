@@ -1,0 +1,96 @@
+/**
+ * english-coach-bridge.js
+ * English Coach sitesine eklenecek küçük script.
+ *
+ * Öğrenci login olduğunda uid ve seviyesini localStorage'a yazar.
+ * Gaming English oyunları bu bilgiyi okuyarak seviyeye uygun kelimeler yükler.
+ *
+ * English Coach'ta firebase onAuthStateChanged callback'ine ekle.
+ *
+ * KURULUM:
+ * English Coach'taki auth dinleyicisini bul (genellikle app.jsx veya auth.js'te)
+ * ve aşağıdaki kodu ekle:
+ *
+ *   import { bridgeToGamingEnglish } from './english-coach-bridge.js';
+ *
+ *   firebase.auth().onAuthStateChanged(async (user) => {
+ *     if (user) {
+ *       const userDoc = await db.collection('users').doc(user.uid).get();
+ *       bridgeToGamingEnglish(user.uid, userDoc.data());
+ *     } else {
+ *       clearGamingEnglishBridge();
+ *     }
+ *   });
+ */
+
+/**
+ * Öğrencinin bilgilerini localStorage'a yazar.
+ * @param {string} uid - Firebase Auth UID
+ * @param {Object} userData - Firestore users dökümanı
+ *   Beklenen alanlar (hangisi varsa kullanılır):
+ *   - level, englishLevel, placement, cefr, proficiency
+ */
+function bridgeToGamingEnglish(uid, userData) {
+  if (!uid || !userData) return;
+
+  // Seviyeyi bul — English Coach'taki alan adı hangisi ise
+  const level = userData.level
+             || userData.englishLevel
+             || userData.placement
+             || userData.cefr
+             || userData.proficiency
+             || 'A1';
+
+  // Normalize et (büyük harf, trim)
+  const normalizedLevel = String(level).toUpperCase().trim();
+
+  // Geçerli CEFR seviyesi mi?
+  const validLevels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+  const finalLevel = validLevels.includes(normalizedLevel) ? normalizedLevel : 'A1';
+
+  // Gaming English localStorage'ına yaz
+  localStorage.setItem('gamingEnglish_uid',   uid);
+  localStorage.setItem('gamingEnglish_level', finalLevel);
+  localStorage.setItem('gamingEnglish_name',  userData.name || userData.displayName || '');
+  localStorage.setItem('gamingEnglish_ts',    Date.now().toString());
+
+  console.log(`[Bridge] Gaming English synced: uid=${uid.slice(0,8)}... level=${finalLevel}`);
+}
+
+/**
+ * Logout olduğunda Gaming English bilgilerini temizle.
+ */
+function clearGamingEnglishBridge() {
+  ['gamingEnglish_uid', 'gamingEnglish_level', 'gamingEnglish_name', 'gamingEnglish_ts']
+    .forEach(k => localStorage.removeItem(k));
+  console.log('[Bridge] Gaming English cleared');
+}
+
+// ─── English Coach'un mevcut auth koduna örnek entegrasyon ───────────────────
+//
+// Eğer English Coach'ta zaten böyle bir kod varsa:
+//
+//   firebase.auth().onAuthStateChanged(async (user) => {
+//     if (user) {
+//       currentUser = user;
+//       const doc = await db.collection('users').doc(user.uid).get();
+//       userData = doc.data();
+//       renderDashboard();  // var olan kod
+//     }
+//   });
+//
+// Sadece şunu ekle:
+//
+//   firebase.auth().onAuthStateChanged(async (user) => {
+//     if (user) {
+//       currentUser = user;
+//       const doc = await db.collection('users').doc(user.uid).get();
+//       userData = doc.data();
+//       bridgeToGamingEnglish(user.uid, userData);  // ← BU SATIRI EKLE
+//       renderDashboard();
+//     } else {
+//       clearGamingEnglishBridge();  // ← BU SATIRI EKLE
+//     }
+//   });
+
+module.exports = { bridgeToGamingEnglish, clearGamingEnglishBridge };
