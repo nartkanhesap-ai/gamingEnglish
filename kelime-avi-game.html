@@ -425,7 +425,6 @@
       transition: background 0.4s ease, background-color 0.4s ease;
     }
   </style>
-  <script src="word-system/words-client.js"></script>
 </head>
 <body>
   <div class="container">
@@ -557,33 +556,10 @@
       draggedWord: null
     };
 
-    async function init() {
+    function init() {
       const savedTheme = localStorage.getItem('gamingEnglishTheme') || 'default';
       applyThemeToGame(savedTheme);
-      // ── Dynamic words from Firebase ─────────────────────────────────────
-      if (window.WordsClient) {
-        WordsClient.showLoadingBanner();
-        try {
-          const result = await WordsClient.fetchWords('kelime-avi', fallbackDatabase);
-          const diff = result.difficulty; // 'easy' | 'medium' | 'hard'
-          gameState.wordList = result.items.length > 0
-            ? [...result.items]
-            : [...fallbackDatabase[diff] || fallbackDatabase.easy];
-          // difficulty butonunu seviyeye göre güncelle
-          document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
-          const activeBtn = document.querySelector(`.diff-btn[onclick*="${diff}"]`);
-          if (activeBtn) activeBtn.classList.add('active');
-          gameState.difficulty = diff;
-          WordsClient.showLevelBadge(result.level);
-          WordsClient.hideLoadingBanner(result.source);
-        } catch(e) {
-          console.warn('WordsClient error:', e);
-          gameState.wordList = [...fallbackDatabase.easy];
-          WordsClient.hideLoadingBanner('fallback');
-        }
-      }
-      // ─────────────────────────────────────────────────────────────────────
-
+  
       gameState.currentWordIndex = 0;
       gameState.score = 0;
       gameState.correct = 0;
@@ -609,7 +585,7 @@
       document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
       event.target.classList.add('active');
       gameState.difficulty = level;
-      gameState.wordList = [...(gameState._apiItems && gameState._apiItems[level] ? gameState._apiItems[level] : fallbackDatabase[level])];
+      gameState.wordList = [...fallbackDatabase[level]];
       gameState.currentWordIndex = 0;
       gameState.score = 0;
       gameState.correct = 0;
