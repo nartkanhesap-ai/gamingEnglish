@@ -599,7 +599,7 @@
       document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
       event.target.classList.add('active');
       gameState.difficulty = level;
-      gameState.questionList = [...fallbackDatabase[level]];
+      gameState.questionList = [...(gameState._apiItems && gameState._apiItems[level] ? gameState._apiItems[level] : fallbackDatabase[level])];
       gameState.currentQuestionIndex = 0;
       gameState.score = 0;
       gameState.correct = 0;

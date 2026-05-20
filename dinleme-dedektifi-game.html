@@ -1,129 +1,780 @@
-# Gaming English — Dinamik Kelime Sistemi Kurulum Kılavuzu
-
-## Mimari
-
-```
-English Coach Firebase (users koleksiyonu)
-    └── users/{uid}.level = "A1" | "A2" | "B1" | "B2" | "C1"
-
-Gaming English Firebase (sharedWords koleksiyonu)
-    └── sharedWords/{docId}
-         ├── game: "kelime-avi" | "gramer-quest" | "dinleme-dedektifi" | "quiz-hizli" | "yazi-sahnesi"
-         ├── level: "A1" | "A2" | "B1" | "B2" | "C1"
-         ├── month: "2025-01"   ← YYYY-MM formatı
-         ├── items: [ ... ]     ← oyuna özgü veri dizisi
-         └── updatedAt: Timestamp
-
-Cloudflare Worker (words-api.nartkanhesap.workers.dev)
-    GET /words?game=kelime-avi&level=A1&month=2025-01
-    → sharedWords'dan ilgili items[] döner
-```
-
----
-
-## Adım 1 — Firebase'de sharedWords koleksiyonu oluştur
-
-Firebase Console → Firestore → Yeni koleksiyon: `sharedWords`
-
-### Firestore Security Rules (firestore.rules):
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-
-    // Öğrenciler sadece kendi profilini okuyabilir
-    match /users/{uid} {
-      allow read: if request.auth.uid == uid;
-      allow write: if request.auth.uid == uid;
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dinleme Dedektifi - İngilizce Oyunu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    // sharedWords: herkes okuyabilir (Gaming English public site)
-    // sadece admin yazabilir
-    match /sharedWords/{docId} {
-      allow read: if true;
-      allow write: if request.auth.token.admin == true;
+    :root {
+      --theme-primary: #667eea;
+      --theme-secondary: #764ba2;
     }
-  }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: background 0.4s ease;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      padding: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      transition: background 0.4s ease;
+    }
+
+    .title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .home-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .home-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .score-box {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .stat {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px 16px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .difficulty-selector {
+      display: flex;
+      gap: 8px;
+    }
+
+    .diff-btn {
+      padding: 8px 16px;
+      border: 2px solid white;
+      background: transparent;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .diff-btn.active {
+      background: white;
+      color: var(--theme-primary);
+    }
+
+    .diff-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .game-area {
+      padding: 40px 30px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      transition: width 0.3s;
+    }
+
+    .question-display {
+      text-align: center;
+      margin-bottom: 40px;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .instruction {
+      color: #999;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .audio-btn {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .audio-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .audio-btn:active {
+      transform: scale(0.95);
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .option-card {
+      background: white;
+      border: 3px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+      animation: slideInUp 0.5s ease-out;
+      animation-fill-mode: both;
+    }
+
+    .option-card:nth-child(1) { animation-delay: 0.1s; }
+    .option-card:nth-child(2) { animation-delay: 0.2s; }
+    .option-card:nth-child(3) { animation-delay: 0.3s; }
+    .option-card:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .option-card:hover {
+      border-color: var(--theme-primary);
+      background: #f9f9f9;
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .option-card.selected {
+      border-color: var(--theme-primary);
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+    }
+
+    .option-card.correct {
+      animation: correctPulse 0.6s ease-out;
+    }
+
+    @keyframes correctPulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .option-card.wrong {
+      animation: wrongShake 0.4s ease-out;
+    }
+
+    @keyframes wrongShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .option-text {
+      font-weight: 600;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+      color: white;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--theme-primary);
+      border: 2px solid var(--theme-primary);
+    }
+
+    .btn-secondary:hover {
+      background: #f5f5f5;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 40px;
+      border-radius: 24px;
+      text-align: center;
+      max-width: 400px;
+      animation: bounceIn 0.5s ease-out;
+    }
+
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .modal-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--theme-primary);
+    }
+
+    .modal-text {
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .feedback-text {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .title {
+        font-size: 24px;
+      }
+
+      .header {
+        padding: 20px;
+      }
+
+      .game-area {
+        padding: 20px;
+      }
+    }
+
+    * {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .header, .audio-btn {
+      transition: background 0.4s ease, background-color 0.4s ease;
+    }
+  </style>
+  <script src="word-system/words-client.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">👂 Dinleme Dedektifi</div>
+      <a href="index.html" class="home-btn">← Ana Sayfa</a>
+      <div class="score-box">
+        <div class="stat">
+          <div class="stat-label">Skor</div>
+          <div class="stat-value" id="score">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Doğru</div>
+          <div class="stat-value" id="correct">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Yanlış</div>
+          <div class="stat-value" id="wrong">0</div>
+        </div>
+        <div class="difficulty-selector">
+          <button class="diff-btn active" onclick="setDifficulty('easy')">Easy</button>
+          <button class="diff-btn" onclick="setDifficulty('medium')">Med</button>
+          <button class="diff-btn" onclick="setDifficulty('hard')">Hard</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-area">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+
+      <div class="question-display">
+        <div class="instruction">Dinle ve doğru cümleyi seç</div>
+        <button class="audio-btn" onclick="playAudio()" title="Dinle">
+          🔊 Dinle
+        </button>
+      </div>
+
+      <div class="options-grid" id="optionsGrid">
+        <!-- Seçenekler buraya gelecek -->
+      </div>
+
+      <div class="button-group">
+        <button class="btn-secondary" onclick="skipQuestion()">Atla</button>
+        <button class="btn-secondary" onclick="resetGame()">Sıfırla</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="resultModal">
+    <div class="modal-content">
+      <span class="modal-icon" id="resultIcon">✅</span>
+      <div class="modal-title" id="resultTitle">Harika!</div>
+      <div class="modal-text" id="resultText">Doğru cevap!</div>
+      <div class="feedback-text">+<span id="pointsEarned">10</span> Puan</div>
+      <button class="btn-primary" onclick="nextQuestion()" style="width: 100%;">Sonraki Soru</button>
+    </div>
+  </div>
+
+  <script>
+    const fallbackDatabase = {
+      easy: [
+        { sentence: 'The cat is sleeping.', options: ['The cat is sleeping.', 'The dog is sleeping.', 'The cat is eating.', 'The dog is eating.'] },
+        { sentence: 'She is reading a book.', options: ['She is reading a book.', 'She is writing a book.', 'He is reading a book.', 'He is writing a book.'] },
+        { sentence: 'The bird is flying.', options: ['The bird is flying.', 'The bird is sitting.', 'The fish is swimming.', 'The fish is jumping.'] },
+        { sentence: 'I like apples.', options: ['I like apples.', 'I like oranges.', 'You like apples.', 'You like oranges.'] },
+        { sentence: 'The flower is red.', options: ['The flower is red.', 'The flower is blue.', 'The rose is red.', 'The rose is blue.'] },
+        { sentence: 'He is drinking coffee.', options: ['He is drinking coffee.', 'He is drinking tea.', 'She is drinking coffee.', 'She is drinking tea.'] },
+        { sentence: 'The ball is round.', options: ['The ball is round.', 'The ball is square.', 'The box is round.', 'The box is square.'] },
+        { sentence: 'They are playing football.', options: ['They are playing football.', 'They are playing basketball.', 'We are playing football.', 'We are playing basketball.'] },
+        { sentence: 'The sun is yellow.', options: ['The sun is yellow.', 'The sun is orange.', 'The moon is yellow.', 'The moon is orange.'] },
+        { sentence: 'I have a pen.', options: ['I have a pen.', 'I have a pencil.', 'You have a pen.', 'You have a pencil.'] },
+        { sentence: 'The car is fast.', options: ['The car is fast.', 'The car is slow.', 'The bike is fast.', 'The bike is slow.'] },
+        { sentence: 'She likes chocolate.', options: ['She likes chocolate.', 'She likes vanilla.', 'He likes chocolate.', 'He likes vanilla.'] },
+        { sentence: 'The tree is tall.', options: ['The tree is tall.', 'The tree is short.', 'The flower is tall.', 'The flower is short.'] },
+        { sentence: 'I go to school.', options: ['I go to school.', 'I go to work.', 'You go to school.', 'You go to work.'] },
+        { sentence: 'The house is big.', options: ['The house is big.', 'The house is small.', 'The apartment is big.', 'The apartment is small.'] },
+      ],
+      medium: [
+        { sentence: 'The businessman is attending an important meeting.', options: ['The businessman is attending an important meeting.', 'The businessman is having lunch.', 'The student is attending an important meeting.', 'The student is having lunch.'] },
+        { sentence: 'She is preparing dinner in the kitchen.', options: ['She is preparing dinner in the kitchen.', 'She is preparing breakfast in the kitchen.', 'He is preparing dinner in the kitchen.', 'He is preparing breakfast in the kitchen.'] },
+        { sentence: 'The artist is painting a beautiful portrait.', options: ['The artist is painting a beautiful portrait.', 'The artist is drawing a sketch.', 'The photographer is painting a beautiful portrait.', 'The photographer is drawing a sketch.'] },
+        { sentence: 'They are discussing the project proposal.', options: ['They are discussing the project proposal.', 'They are reviewing the project proposal.', 'We are discussing the project proposal.', 'We are reviewing the project proposal.'] },
+        { sentence: 'The student is studying for the exam.', options: ['The student is studying for the exam.', 'The student is preparing for the presentation.', 'The teacher is studying for the exam.', 'The teacher is preparing for the presentation.'] },
+        { sentence: 'He is working on his computer.', options: ['He is working on his computer.', 'He is playing on his computer.', 'She is working on her computer.', 'She is playing on her computer.'] },
+        { sentence: 'The musician is playing the piano beautifully.', options: ['The musician is playing the piano beautifully.', 'The musician is playing the guitar beautifully.', 'The dancer is playing the piano beautifully.', 'The dancer is playing the guitar beautifully.'] },
+        { sentence: 'She is buying groceries at the supermarket.', options: ['She is buying groceries at the supermarket.', 'She is buying clothes at the store.', 'He is buying groceries at the supermarket.', 'He is buying clothes at the store.'] },
+        { sentence: 'They are watching a movie at the cinema.', options: ['They are watching a movie at the cinema.', 'They are watching a play at the theater.', 'We are watching a movie at the cinema.', 'We are watching a play at the theater.'] },
+        { sentence: 'The athlete is training for the competition.', options: ['The athlete is training for the competition.', 'The athlete is recovering from the competition.', 'The coach is training for the competition.', 'The coach is recovering from the competition.'] },
+        { sentence: 'She is designing a new website.', options: ['She is designing a new website.', 'She is fixing an existing website.', 'He is designing a new website.', 'He is fixing an existing website.'] },
+        { sentence: 'The doctor is examining the patient.', options: ['The doctor is examining the patient.', 'The doctor is prescribing medication.', 'The nurse is examining the patient.', 'The nurse is prescribing medication.'] },
+        { sentence: 'They are organizing the conference.', options: ['They are organizing the conference.', 'They are attending the conference.', 'We are organizing the conference.', 'We are attending the conference.'] },
+        { sentence: 'He is fixing the broken machine.', options: ['He is fixing the broken machine.', 'He is operating the broken machine.', 'She is fixing the broken machine.', 'She is operating the broken machine.'] },
+        { sentence: 'The chef is tasting the soup.', options: ['The chef is tasting the soup.', 'The chef is serving the soup.', 'The waiter is tasting the soup.', 'The waiter is serving the soup.'] },
+      ],
+      hard: [
+        { sentence: 'The neurologist is analyzing complex brain imaging data.', options: ['The neurologist is analyzing complex brain imaging data.', 'The neurologist is presenting findings to colleagues.', 'The radiologist is analyzing complex brain imaging data.', 'The radiologist is presenting findings to colleagues.'] },
+        { sentence: 'The archaeologist is carefully excavating ancient artifacts.', options: ['The archaeologist is carefully excavating ancient artifacts.', 'The archaeologist is cataloging discovered artifacts.', 'The anthropologist is carefully excavating ancient artifacts.', 'The anthropologist is cataloging discovered artifacts.'] },
+        { sentence: 'She is conducting groundbreaking research on renewable energy.', options: ['She is conducting groundbreaking research on renewable energy.', 'She is implementing renewable energy solutions.', 'He is conducting groundbreaking research on renewable energy.', 'He is implementing renewable energy solutions.'] },
+        { sentence: 'The cryptographer is decrypting confidential government documents.', options: ['The cryptographer is decrypting confidential government documents.', 'The cryptographer is encrypting sensitive information.', 'The intelligence officer is decrypting confidential government documents.', 'The intelligence officer is encrypting sensitive information.'] },
+        { sentence: 'They are developing sophisticated artificial intelligence algorithms.', options: ['They are developing sophisticated artificial intelligence algorithms.', 'They are testing sophisticated artificial intelligence algorithms.', 'We are developing sophisticated artificial intelligence algorithms.', 'We are testing sophisticated artificial intelligence algorithms.'] },
+        { sentence: 'The astrophysicist is observing distant supernova explosions.', options: ['The astrophysicist is observing distant supernova explosions.', 'The astrophysicist is calculating supernova trajectories.', 'The astronomer is observing distant supernova explosions.', 'The astronomer is calculating supernova trajectories.'] },
+        { sentence: 'She is synthesizing novel pharmaceutical compounds.', options: ['She is synthesizing novel pharmaceutical compounds.', 'She is testing novel pharmaceutical compounds.', 'He is synthesizing novel pharmaceutical compounds.', 'He is testing novel pharmaceutical compounds.'] },
+        { sentence: 'The marine biologist is documenting deep sea ecosystems.', options: ['The marine biologist is documenting deep sea ecosystems.', 'The marine biologist is preserving deep sea habitats.', 'The oceanographer is documenting deep sea ecosystems.', 'The oceanographer is preserving deep sea habitats.'] },
+        { sentence: 'They are reconstructing historical linguistic patterns.', options: ['They are reconstructing historical linguistic patterns.', 'They are teaching historical linguistic patterns.', 'We are reconstructing historical linguistic patterns.', 'We are teaching historical linguistic patterns.'] },
+        { sentence: 'He is analyzing seismic activity for earthquake prediction.', options: ['He is analyzing seismic activity for earthquake prediction.', 'He is monitoring seismic activity for early warning.', 'She is analyzing seismic activity for earthquake prediction.', 'She is monitoring seismic activity for early warning.'] },
+        { sentence: 'The entomologist is cataloging newly discovered insect species.', options: ['The entomologist is cataloging newly discovered insect species.', 'The entomologist is studying newly discovered insect species.', 'The zoologist is cataloging newly discovered insect species.', 'The zoologist is studying newly discovered insect species.'] },
+        { sentence: 'She is formulating groundbreaking mathematical theorems.', options: ['She is formulating groundbreaking mathematical theorems.', 'She is proving groundbreaking mathematical theorems.', 'He is formulating groundbreaking mathematical theorems.', 'He is proving groundbreaking mathematical theorems.'] },
+        { sentence: 'They are preserving endangered cultural heritage sites.', options: ['They are preserving endangered cultural heritage sites.', 'They are documenting endangered cultural heritage sites.', 'We are preserving endangered cultural heritage sites.', 'We are documenting endangered cultural heritage sites.'] },
+        { sentence: 'The geologist is examining mineral compositions of meteorite samples.', options: ['The geologist is examining mineral compositions of meteorite samples.', 'The geologist is extracting minerals from meteorite samples.', 'The mineralogist is examining mineral compositions of meteorite samples.', 'The mineralogist is extracting minerals from meteorite samples.'] },
+        { sentence: 'He is orchestrating a comprehensive multinational research initiative.', options: ['He is orchestrating a comprehensive multinational research initiative.', 'He is participating in a comprehensive multinational research initiative.', 'She is orchestrating a comprehensive multinational research initiative.', 'She is participating in a comprehensive multinational research initiative.'] },
+      ]
+    };
+
+    let gameState = {
+      difficulty: 'easy',
+      currentQuestionIndex: 0,
+      score: 0,
+      correct: 0,
+      wrong: 0,
+      selectedAnswer: null,
+      questionList: [],
+      isAnswered: false
+    };
+
+    async function init() {
+      const savedTheme = localStorage.getItem('gamingEnglishTheme') || 'default';
+      applyThemeToGame(savedTheme);
+      // ── Dynamic words from Firebase ─────────────────────────────────────
+      if (window.WordsClient) {
+        WordsClient.showLoadingBanner();
+        try {
+          const result = await WordsClient.fetchWords('dinleme-dedektifi', fallbackDatabase);
+          const diff = result.difficulty; // 'easy' | 'medium' | 'hard'
+          gameState.wordList = result.items.length > 0
+            ? [...result.items]
+            : [...fallbackDatabase[diff] || fallbackDatabase.easy];
+          // difficulty butonunu seviyeye göre güncelle
+          document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+          const activeBtn = document.querySelector(`.diff-btn[onclick*="${diff}"]`);
+          if (activeBtn) activeBtn.classList.add('active');
+          gameState.difficulty = diff;
+          WordsClient.showLevelBadge(result.level);
+          WordsClient.hideLoadingBanner(result.source);
+        } catch(e) {
+          console.warn('WordsClient error:', e);
+          gameState.wordList = [...fallbackDatabase.easy];
+          WordsClient.hideLoadingBanner('fallback');
+        }
+      }
+      // ─────────────────────────────────────────────────────────────────────
+
+      gameState.currentQuestionIndex = 0;
+      gameState.score = 0;
+      gameState.correct = 0;
+      gameState.wrong = 0;
+      loadQuestion();
 }
-```
 
----
+    function applyThemeToGame(themeName) {
+      const themes = {
+        default: { primary: '#667eea', secondary: '#764ba2' },
+        candy: { primary: '#FFB3E6', secondary: '#FF85D0' },
+        ocean: { primary: '#4FC3F7', secondary: '#0288D1' },
+        jungle: { primary: '#81C784', secondary: '#2E7D32' }
+      };
 
-## Adım 2 — Cloudflare Worker'ı deploy et
+      const theme = themes[themeName] || themes.default;
+      document.documentElement.style.setProperty('--theme-primary', theme.primary);
+      document.documentElement.style.setProperty('--theme-secondary', theme.secondary);
+      document.querySelector('.header').style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+    }
 
-`word-system/cloudflare-worker.js` dosyasını Cloudflare Dashboard'dan deploy et:
+    function setDifficulty(level) {
+      document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      gameState.difficulty = level;
+      gameState.questionList = [...(gameState._apiItems && gameState._apiItems[level] ? gameState._apiItems[level] : fallbackDatabase[level])];
+      gameState.currentQuestionIndex = 0;
+      gameState.score = 0;
+      gameState.correct = 0;
+      gameState.wrong = 0;
+      updateUI();
+      loadQuestion();
+    }
 
-1. workers.dev → Create Worker → "words-api" adını ver
-2. Kodu yapıştır
-3. Environment Variables ekle:
-   - `FIREBASE_PROJECT_ID` = "english-coaching-2eeee"
-   - `FIREBASE_API_KEY` = Firebase API key'in
+    function loadQuestion() {
+      if (gameState.currentQuestionIndex >= gameState.questionList.length) {
+        showCompletion();
+        return;
+      }
 
-Worker URL: `https://words-api.nartkanhesap.workers.dev`
+      const question = gameState.questionList[gameState.currentQuestionIndex];
+      gameState.selectedAnswer = null;
+      gameState.isAnswered = false;
 
----
+      // Seçenekleri karıştır
+      let options = [...question.options].sort(() => Math.random() - 0.5);
 
-## Adım 3 — Aylık kelime güncelleme
+      const grid = document.getElementById('optionsGrid');
+      grid.innerHTML = options.map(option => `
+        <div class="option-card" onclick="selectAnswer(this, '${option}')">
+          <div class="option-text">${option}</div>
+        </div>
+      `).join('');
 
-`word-system/update-words.js` script'ini her ay çalıştır:
+      updateProgress();
+    }
 
-```bash
-# Node.js gerekli
-npm install @anthropic/sdk firebase-admin
+    function selectAnswer(element, answer) {
+      if (gameState.isAnswered) return;
 
-# .env dosyası oluştur
-ANTHROPIC_API_KEY=sk-ant-...
-FIREBASE_SERVICE_ACCOUNT_PATH=./serviceAccountKey.json
-FIREBASE_PROJECT_ID=english-coaching-2eeee
+      document.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
+      element.classList.add('selected');
+      gameState.selectedAnswer = answer;
+      submitAnswer();
+    }
 
-# Çalıştır
-node update-words.js --month=2025-02
-```
+    function playAudio() {
+      const question = gameState.questionList[gameState.currentQuestionIndex];
+      const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(question.sentence)}&tl=en&client=tw-ob`;
+      
+      const audio = new Audio(url);
+      audio.play().catch(err => {
+        console.log('Audio playback error:', err);
+        // Fallback to Web Speech API
+        const utterance = new SpeechSynthesisUtterance(question.sentence);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.85;
+        utterance.pitch = 1.1;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+      });
+    }
 
-Script otomatik olarak:
-1. Claude API'den her oyun × her seviye için yeni kelimeler/sorular üretir
-2. Firestore'daki sharedWords koleksiyonuna kaydeder
-3. Eski ayın verilerini arşivler (silmez)
+    function submitAnswer() {
+      if (gameState.isAnswered) return;
 
----
+      const question = gameState.questionList[gameState.currentQuestionIndex];
+      const isCorrect = gameState.selectedAnswer === question.sentence;
 
-## Adım 4 — Gaming English oyunlarına Firebase bağla
+      gameState.isAnswered = true;
 
-Her oyun HTML'ine aşağıdaki config'i ekle (zaten ekli gelir):
+      if (isCorrect) {
+        gameState.correct++;
+        const points = gameState.difficulty === 'easy' ? 10 : gameState.difficulty === 'medium' ? 20 : 30;
+        gameState.score += points;
+        showResult(true, points);
+        // Doğru cevapı vurgula
+        document.querySelectorAll('.option-card').forEach(card => {
+          if (card.querySelector('.option-text').textContent === question.sentence) {
+            card.classList.add('correct');
+          }
+        });
+      } else {
+        gameState.wrong++;
+        showResult(false, 0);
+        // Doğru cevapı göster
+        document.querySelectorAll('.option-card').forEach(card => {
+          if (card.querySelector('.option-text').textContent === question.sentence) {
+            card.classList.add('correct');
+          } else if (card.classList.contains('selected')) {
+            card.classList.add('wrong');
+          }
+        });
+      }
 
-```javascript
-const WORDS_API = 'https://words-api.nartkanhesap.workers.dev';
-const ENGLISH_COACH_FIREBASE = {
-  apiKey: "...",
-  projectId: "english-coaching-2eeee"
-};
-```
+      updateUI();
+    }
 
----
+    function showResult(isCorrect, points) {
+      const modal = document.getElementById('resultModal');
+      const icon = document.getElementById('resultIcon');
+      const title = document.getElementById('resultTitle');
+      const text = document.getElementById('resultText');
+      const pointsElem = document.getElementById('pointsEarned');
 
-## Seviye → Oyun Zorluk Eşlemesi
+      if (isCorrect) {
+        icon.textContent = '✅';
+        title.textContent = 'Harika!';
+        text.textContent = 'Doğru cevap!';
+        pointsElem.textContent = points;
+      } else {
+        icon.textContent = '❌';
+        title.textContent = 'Yanlış!';
+        text.textContent = `Doğru cevap: ${gameState.questionList[gameState.currentQuestionIndex].sentence}`;
+        pointsElem.textContent = '0';
+      }
 
-| English Coach Seviyesi | oyun easy | oyun medium | oyun hard |
-|------------------------|-----------|-------------|-----------|
-| A1                     | ✅ aktif  | ❌ kilitli  | ❌ kilitli |
-| A2                     | ✅ aktif  | ✅ aktif    | ❌ kilitli |
-| B1                     | ✅ aktif  | ✅ aktif    | ✅ aktif   |
-| B2+                    | ✅ aktif  | ✅ aktif    | ✅ aktif   |
+      modal.classList.add('active');
+    }
 
----
+    function nextQuestion() {
+      document.getElementById('resultModal').classList.remove('active');
+      gameState.currentQuestionIndex++;
+      loadQuestion();
+    }
 
-## Firestore Döküman Örneği
+    function skipQuestion() {
+      nextQuestion();
+    }
 
-```json
-{
-  "game": "kelime-avi",
-  "level": "A1",
-  "month": "2025-01",
-  "updatedAt": "2025-01-01T00:00:00Z",
-  "items": [
-    { "word": "APPLE",  "image": "🍎", "label": "Apple"  },
-    { "word": "CAT",    "image": "🐱", "label": "Cat"    },
-    { "word": "HOUSE",  "image": "🏠", "label": "House"  }
-  ]
-}
-```
+    function resetGame() {
+      init();
+    }
+
+    function showCompletion() {
+      const modal = document.getElementById('resultModal');
+      const icon = document.getElementById('resultIcon');
+      const title = document.getElementById('resultTitle');
+      const text = document.getElementById('resultText');
+
+      icon.textContent = '🏆';
+      title.textContent = 'Tebrikler!';
+      text.textContent = `${gameState.score} puan kazandın! Doğru: ${gameState.correct}, Yanlış: ${gameState.wrong}`;
+
+      const btn = document.querySelector('#resultModal .btn-primary');
+      btn.textContent = 'Yeniden Başla';
+      btn.onclick = resetGame;
+
+      modal.classList.add('active');
+    }
+
+    function updateUI() {
+      document.getElementById('score').textContent = gameState.score;
+      document.getElementById('correct').textContent = gameState.correct;
+      document.getElementById('wrong').textContent = gameState.wrong;
+    }
+
+    function updateProgress() {
+      const total = gameState.questionList.length;
+      const progress = ((gameState.currentQuestionIndex + 1) / total) * 100;
+      document.getElementById('progressFill').style.width = progress + '%';
+    }
+
+    init();
+  </script>
+</body>
+</html>
