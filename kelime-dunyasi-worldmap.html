@@ -3152,15 +3152,7 @@ function App() {
       }
       console.log('📍 Kıta bulundu:', continent.id);
       
-      // CONTINENT_WORDS tanımlı mı kontrol et
-      if (typeof CONTINENT_WORDS === 'undefined') {
-        console.error('⚠️ CONTINENT_WORDS henüz yüklenmedi');
-        setTimeout(() => handlePickCountry(country), 100);
-        return;
-      }
-      console.log('✅ CONTINENT_WORDS yüklü');
-      
-      // Kelime verisi olan ülkeler
+      // Kelime verisi olan ülkeler (login kontrolü yok artık)
       const hasData = CONTINENT_WORDS[continent.id] && CONTINENT_WORDS[continent.id].countries[country.name];
       console.log('📊 Kelime verisi var mı:', hasData);
       if (hasData) {
@@ -4192,7 +4184,11 @@ function openCountryGame(continentId, countryName) {
   // Tab sıfırla
   document.getElementById('kdTab1').classList.add('active');
   document.getElementById('kdTab2').classList.remove('active');
+  document.getElementById('kdTab3').classList.remove('active');
+  document.getElementById('kdTab4').classList.remove('active');
   document.getElementById('kdTab2').disabled = true;
+  document.getElementById('kdTab3').disabled = true;
+  document.getElementById('kdTab4').disabled = true;
   console.log('✅ Tablar sıfırlandı');
 
   // Overlay aç
@@ -4225,8 +4221,13 @@ function kdSwitchTab(tab) {
   kdState.tab = tab;
   document.getElementById('kdTab1').classList.toggle('active', tab === 1);
   document.getElementById('kdTab2').classList.toggle('active', tab === 2);
+  document.getElementById('kdTab3').classList.toggle('active', tab === 3);
+  document.getElementById('kdTab4').classList.toggle('active', tab === 4);
+  
   if (tab === 1) kdRenderCards();
-  else kdRenderMemory();
+  else if (tab === 2) kdRenderMemory();
+  else if (tab === 3) kdRenderScramble();
+  else if (tab === 4) kdRenderTyping();
 }
 
 // ─── Progress Bar ────────────────────────────────────────────────
@@ -4338,10 +4339,12 @@ function kdLearnWord(el, wordEn) {
     kdState.learnedWords.add(wordEn);
     kdSpeak(wordEn);
     kdUpdateProgress();
-    // Hafıza butonunu aç
+    // Oyun butonlarını aç
     const diffWords = kdState.words.filter(w=>w.level===kdState.selectedDiff);
     if (kdState.learnedWords.size >= Math.min(6, diffWords.length)) {
       document.getElementById('kdTab2').disabled = false;
+      document.getElementById('kdTab3').disabled = false;
+      document.getElementById('kdTab4').disabled = false;
     }
     // Sayacı güncelle
     const counter = document.getElementById('kdLearnedCounter');
@@ -4603,7 +4606,9 @@ function kdSpawnConfetti() {
       </div>
       <div class="kd-tabs">
         <button class="kd-tab active" id="kdTab1" onclick="kdSwitchTab(1)">📚 Kelimeler</button>
-        <button class="kd-tab" id="kdTab2" onclick="kdSwitchTab(2)" disabled>🧠 Hafıza Oyunu</button>
+        <button class="kd-tab" id="kdTab2" onclick="kdSwitchTab(2)" disabled>🧠 Hafıza</button>
+        <button class="kd-tab" id="kdTab3" onclick="kdSwitchTab(3)" disabled>🔤 Harf Karışık</button>
+        <button class="kd-tab" id="kdTab4" onclick="kdSwitchTab(4)" disabled>⚡ Hızlı Yazma</button>
       </div>
       <div class="kd-progress-bar">
         <div class="kd-progress-fill" id="kdProgress" style="width:0%"></div>
@@ -4615,5 +4620,127 @@ function kdSpawnConfetti() {
   </div>
 </div>
 
+
+// ─── Oyun 3: Harf Karışık (Scramble) ──────────────────────────────
+function kdRenderScramble() {
+  const learned = Array.from(kdState.learnedWords).map(w => 
+    kdState.words.find(word => word.en === w)
+  ).filter(Boolean);
+  
+  if (learned.length === 0) {
+    document.getElementById('kdBody').innerHTML = '<div style="padding:40px;text-align:center;color:#666">Önce kelime öğrenmelisin!</div>';
+    return;
+  }
+  
+  const currentWord = learned[Math.floor(Math.random() * learned.length)];
+  const scrambled = currentWord.en.split('').sort(() => Math.random()-0.5).join('');
+  
+  const html = `
+    <div class="kd-scramble-stage">
+      <div style="text-align:center;margin-bottom:30px">
+        <div style="font-size:60px;margin-bottom:12px">${currentWord.emoji}</div>
+        <div style="font-size:18px;color:#666;margin-bottom:20px">${currentWord.tr}</div>
+        <div style="font-size:32px;font-weight:700;letter-spacing:4px;color:#667eea">${scrambled}</div>
+      </div>
+      
+      <input type="text" id="kdScrambleInput" placeholder="Harfleri doğru sıraya dizin" 
+        style="width:100%;padding:14px;font-size:18px;border:3px solid #e5e7eb;border-radius:12px;
+        text-align:center;font-family:inherit;outline:none;margin-bottom:16px"
+        onkeydown="if(event.key==='Enter') kdCheckScramble('${currentWord.en}')">
+      
+      <button onclick="kdCheckScramble('${currentWord.en}')" style="
+        width:100%;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);
+        color:white;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer">
+        Kontrol Et
+      </button>
+      
+      <div id="kdScrambleResult" style="margin-top:16px;text-align:center;font-size:16px;font-weight:600"></div>
+    </div>
+  `;
+  
+  document.getElementById('kdBody').innerHTML = html;
+  document.getElementById('kdScrambleInput').focus();
+}
+
+function kdCheckScramble(correct) {
+  const input = document.getElementById('kdScrambleInput').value.trim().toLowerCase();
+  const result = document.getElementById('kdScrambleResult');
+  
+  if (input === correct.toLowerCase()) {
+    result.innerHTML = '✅ Doğru! Harika iş!';
+    result.style.color = '#22c55e';
+    kdSpeak(correct);
+    setTimeout(() => kdRenderScramble(), 1500);
+  } else {
+    result.innerHTML = '❌ Yanlış, tekrar dene!';
+    result.style.color = '#ef4444';
+    document.getElementById('kdScrambleInput').value = '';
+    document.getElementById('kdScrambleInput').focus();
+  }
+}
+
+// ─── Oyun 4: Hızlı Yazma (Typing Race) ────────────────────────────
+function kdRenderTyping() {
+  const learned = Array.from(kdState.learnedWords).map(w => 
+    kdState.words.find(word => word.en === w)
+  ).filter(Boolean);
+  
+  if (learned.length === 0) {
+    document.getElementById('kdBody').innerHTML = '<div style="padding:40px;text-align:center;color:#666">Önce kelime öğrenmelisin!</div>';
+    return;
+  }
+  
+  const currentWord = learned[Math.floor(Math.random() * learned.length)];
+  
+  const html = `
+    <div class="kd-typing-stage">
+      <div style="text-align:center;margin-bottom:30px">
+        <div style="font-size:60px;margin-bottom:12px">${currentWord.emoji}</div>
+        <div style="font-size:18px;color:#666;margin-bottom:12px">${currentWord.tr}</div>
+        <div style="font-size:14px;color:#999">Kelimeyi İngilizce yaz 👇</div>
+      </div>
+      
+      <input type="text" id="kdTypingInput" placeholder="Hızlı yaz..." 
+        style="width:100%;padding:14px;font-size:20px;border:3px solid #e5e7eb;border-radius:12px;
+        text-align:center;font-family:inherit;outline:none;margin-bottom:16px"
+        oninput="kdCheckTyping('${currentWord.en}')">
+      
+      <div id="kdTypingResult" style="text-align:center;font-size:16px;font-weight:600;min-height:24px"></div>
+      
+      <div style="margin-top:20px;padding:16px;background:#f3f4f6;border-radius:12px;text-align:center">
+        <div style="font-size:14px;color:#666;margin-bottom:4px">Puan</div>
+        <div id="kdTypingScore" style="font-size:24px;font-weight:700;color:#667eea">0</div>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('kdBody').innerHTML = html;
+  document.getElementById('kdTypingInput').focus();
+}
+
+let kdTypingScore = 0;
+
+function kdCheckTyping(correct) {
+  const input = document.getElementById('kdTypingInput').value.trim().toLowerCase();
+  const result = document.getElementById('kdTypingResult');
+  
+  if (input === correct.toLowerCase()) {
+    kdTypingScore++;
+    document.getElementById('kdTypingScore').textContent = kdTypingScore;
+    result.innerHTML = '✅ Süper!';
+    result.style.color = '#22c55e';
+    kdSpeak(correct);
+    setTimeout(() => {
+      result.innerHTML = '';
+      kdRenderTyping();
+    }, 800);
+  } else if (input.length > 0 && correct.toLowerCase().startsWith(input)) {
+    result.innerHTML = '⏳ Devam et...';
+    result.style.color = '#f59e0b';
+  } else if (input.length > 0) {
+    result.innerHTML = '❌ Yanlış gidiyorsun';
+    result.style.color = '#ef4444';
+  }
+}
 </body>
 </html>
