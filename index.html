@@ -8,15 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-/* 
-  ⚠️ ÖNEMLI: Aşağıdaki domain'lerin Firebase Console'daki 
-  Authorization domains'e eklenmesi ZORUNLU:
-  - gaming-english.vercel.app (bu site)
-  - englishcoaching.vercel.app (English Coach)
-  
-  https://console.firebase.google.com → english-coaching-2eeee → 
-  Authentication → Settings → Authorized domains
-*/
 <style>
     * {
       margin: 0;
@@ -987,13 +978,50 @@ async function geHandleLogin(e) {
 }
 
 function geLogout() {
-  firebase.auth().signOut().catch(err => console.error('Logout error:', err));
+  console.log('🚪 Logging out...');
+  firebase.auth().signOut().then(() => {
+    console.log('✅ Logged out successfully');
+    // State reset
+    geCurrentUser = null;
+    geStudentInfo = null;
+    window.geCurrentUser = null;
+    window.geStudentInfo = null;
+    // Login modalı göster
+    showLoginModal();
+    updateNavbar();
+    console.log('📲 Login modal gösterildi');
+  }).catch(err => {
+    console.error('❌ Logout error:', err);
+  });
 }
 
 // Sayfa yüklendiğinde kontrol et
 window.addEventListener('load', () => {
   console.log('🎮 Gaming English yüklendi');
   updateNavbar();
+});
+</script>
+<script>
+// Oyunlar bölümünü koruma
+function protectGamesSection() {
+  const gamesSection = document.querySelector('.games-grid') || document.querySelector('[class*="game"]');
+  const exploreBtn = document.querySelector('button:contains("Oyunları Keşfet")');
+  
+  if (!window.geCurrentUser || !window.geStudentInfo) {
+    // Login olmadıysa oyunları gizle
+    if (gamesSection) gamesSection.style.display = 'none';
+    if (exploreBtn) exploreBtn.onclick = (e) => {
+      e.preventDefault();
+      showLoginModal();
+      return false;
+    };
+  }
+}
+
+// İlk yükleme ve auth değiştiğinde çalıştır
+document.addEventListener('DOMContentLoaded', protectGamesSection);
+firebase.auth().onAuthStateChanged(() => {
+  setTimeout(protectGamesSection, 100);
 });
 </script>
 </body>
