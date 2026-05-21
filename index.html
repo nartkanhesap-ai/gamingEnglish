@@ -7,7 +7,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
+  
+/* 
+  ⚠️ ÖNEMLI: Aşağıdaki domain'lerin Firebase Console'daki 
+  Authorization domains'e eklenmesi ZORUNLU:
+  - gaming-english.vercel.app (bu site)
+  - englishcoaching.vercel.app (English Coach)
+  
+  https://console.firebase.google.com → english-coaching-2eeee → 
+  Authentication → Settings → Authorized domains
+*/
+<style>
     * {
       margin: 0;
       padding: 0;
@@ -446,8 +456,215 @@
       transition: background 0.4s ease, background-color 0.4s ease;
     }
   </style>
+
+<!-- Firebase Auth & Firestore -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyABkM9khEK9ZXIRklOPfePdZj20tGoLGOo",
+  authDomain: "english-coaching-2eeee.firebaseapp.com",
+  projectId: "english-coaching-2eeee",
+  storageBucket: "english-coaching-2eeee.firebasestorage.app",
+  messagingSenderId: "975799266905",
+  appId: "1:975799266905:web:9dfb13cfb4918e24694b48"
+};
+firebase.initializeApp(firebaseConfig);
+
+let geCurrentUser = null;
+let geStudentInfo = null;
+
+firebase.auth().onAuthStateChanged(async (user) => {
+  geCurrentUser = user;
+  if (user) {
+    try {
+      const snap = await firebase.firestore().collection('users').doc(user.uid).get();
+      if (snap.exists) {
+        geStudentInfo = snap.data();
+        hideLoginModal();
+        updateNavbar();
+      }
+    } catch (err) {
+      console.error('Error:', err);
+    }
+  } else {
+    geStudentInfo = null;
+    updateNavbar();
+  }
+});
+</script>
 </head>
 <body class="theme-default">
+
+<!-- Login Modal CSS -->
+<style>
+.ge-login-modal {
+  display: flex !important;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+.ge-login-modal.hidden {
+  display: none !important;
+}
+.ge-login-box {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  width: min(420px, 90vw);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  animation: slideUp 0.4s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.ge-login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.ge-login-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+.ge-login-header p {
+  color: #666;
+  font-size: 14px;
+}
+.ge-form-group {
+  margin-bottom: 16px;
+}
+.ge-form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+.ge-form-group input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+}
+.ge-form-group input:focus {
+  border-color: #667eea;
+}
+.ge-error {
+  background: #fee;
+  color: #c0392b;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: none;
+  border: 2px solid #c0392b;
+}
+.ge-error.show { display: block; }
+.ge-login-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+}
+.ge-login-btn:hover {
+  transform: translateY(-2px);
+}
+.ge-login-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.ge-signup-link {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 13px;
+  color: #666;
+}
+.ge-signup-link a {
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: none;
+}
+.ge-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  font-size: 13px;
+}
+.ge-user-name {
+  font-weight: 600;
+}
+.ge-logout-btn {
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: 2px solid white;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ge-logout-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+</style>
+
+<!-- Login Modal HTML -->
+<div class="ge-login-modal" id="geLoginModal">
+  <div class="ge-login-box">
+    <div class="ge-login-header">
+      <h1>🎮 Gaming English</h1>
+      <p>English Coach hesabınla giriş yap</p>
+    </div>
+    
+    <div class="ge-error" id="geErrorMsg"></div>
+    
+    <form onsubmit="geHandleLogin(event)">
+      <div class="ge-form-group">
+        <label>E-posta</label>
+        <input type="email" id="geEmail" placeholder="ornek@email.com" required>
+      </div>
+      
+      <div class="ge-form-group">
+        <label>Şifre</label>
+        <input type="password" id="gePassword" placeholder="••••••" required>
+      </div>
+      
+      <button type="submit" class="ge-login-btn" id="geLoginBtn">Giriş Yap</button>
+    </form>
+    
+    <div class="ge-signup-link">
+      Henüz English Coach'ta üye değil misiniz?<br>
+      <a href="https://englishcoaching.vercel.app/signup" target="_blank">Kaydolun</a>
+    </div>
+  </div>
+</div>
+
   <nav class="navbar">
     <div class="logo">🎮 Gaming English</div>
     <div class="nav-right">
@@ -461,7 +678,12 @@
         <button class="theme-btn" data-theme="candy" onclick="setTheme('candy')" title="Candy Dream">🍭</button>
         <button class="theme-btn" data-theme="ocean" onclick="setTheme('ocean')" title="Ocean Adventure">🌊</button>
         <button class="theme-btn" data-theme="jungle" onclick="setTheme('jungle')" title="Jungle Paradise">🌿</button>
-      </div>
+      
+      <div id="geUserInfo" class="ge-user-info" style="display:none;">
+        <span>👤</span>
+        <span class="ge-user-name" id="geUserName"></span>
+        <button class="ge-logout-btn" onclick="geLogout()">Çıkış</button>
+      </div></div>
     </div>
   </nav>
 
@@ -666,5 +888,83 @@
       });
     });
   </script>
+
+<script>
+// ─── Login Fonksiyonları ───────────────────────────────────
+
+function hideLoginModal() {
+  const modal = document.getElementById('geLoginModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function showLoginModal() {
+  const modal = document.getElementById('geLoginModal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function updateNavbar() {
+  const userInfoDiv = document.getElementById('geUserInfo');
+  const userNameSpan = document.getElementById('geUserName');
+  
+  if (window.geCurrentUser && window.geStudentInfo) {
+    // Logged in
+    if (userInfoDiv) {
+      userNameSpan.textContent = window.geStudentInfo.firstName + ' ' + window.geStudentInfo.lastName;
+      userInfoDiv.style.display = 'flex';
+    }
+  } else {
+    // Logged out
+    if (userInfoDiv) {
+      userInfoDiv.style.display = 'none';
+    }
+    showLoginModal();
+  }
+}
+
+async function geHandleLogin(e) {
+  e.preventDefault();
+  
+  const email = document.getElementById('geEmail').value.trim();
+  const password = document.getElementById('gePassword').value;
+  const btn = document.getElementById('geLoginBtn');
+  const errorEl = document.getElementById('geErrorMsg');
+  
+  btn.disabled = true;
+  btn.textContent = '⏳ Giriş yapılıyor...';
+  errorEl.classList.remove('show');
+  
+  try {
+    console.log('🔐 Signing in:', email);
+    await firebase.auth().signInWithEmailAndPassword(email, password);
+    console.log('✅ Login başarılı');
+    document.getElementById('geEmail').value = '';
+    document.getElementById('gePassword').value = '';
+  } catch (err) {
+    console.error('❌ Login hatası:', err.code, err.message);
+    
+    let msg = '❌ Giriş başarısız';
+    if (err.code === 'auth/user-not-found') msg = '❌ Bu e-posta kaydedilmemiş';
+    if (err.code === 'auth/wrong-password') msg = '❌ Şifre yanlış';
+    if (err.code === 'auth/invalid-email') msg = '❌ E-posta geçersiz';
+    if (err.code === 'auth/requests-from-referer-null-are-blocked') msg = '❌ Firestore yapılandırması hatası - sistem yöneticisine başvur';
+    
+    errorEl.textContent = msg;
+    errorEl.classList.add('show');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Giriş Yap';
+  }
+}
+
+function geLogout() {
+  firebase.auth().signOut().catch(err => console.error('Logout error:', err));
+}
+
+// Sayfa yüklendiğinde kontrol et
+window.addEventListener('load', () => {
+  console.log('🎮 Gaming English yüklendi');
+  updateNavbar();
+});
+</script>
 </body>
 </html>
