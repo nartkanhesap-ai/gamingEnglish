@@ -2945,6 +2945,31 @@ function App() {
 
       <TopChrome show={t.showChrome} />
 
+      <div className="stage">
+        <WorldMap
+          activeId={activeId}
+          hoverId={hoverId}
+          onHover={setHoverId}
+          onClick={handleContinentClick}
+          hoverIntensity={t.hoverIntensity}
+          density={t.density}
+          theme={t.palette}
+          projection={t.projection}
+          showLens={t.showLens && !activeId && !t.rearrangeMode}
+          lensPos={lensPos}
+          setLensPos={setLensPos}
+          onClick2={handleContinentClick}
+        />
+
+        <CountryPanel
+          activeId={activeId}
+          onClose={() => setActiveId(null)}
+          onPickCountry={handlePickCountry}
+          countryPositions={t.countryPositions}
+          onCountryPositionsChange={(newPos) => setTweak('countryPositions', newPos)}
+        />
+      </div>
+
       <TweaksPanel>
         <TweakButton
           label="Reset country card positions"
@@ -3822,9 +3847,14 @@ function closeCountryGame() {
   if (kdState.timerInterval) clearInterval(kdState.timerInterval);
 }
 
-// Overlay'e tıklayınca kapat
-document.getElementById('kdOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeCountryGame();
+// Overlay'e tıklayınca kapat (DOM hazır olunca)
+window.addEventListener('DOMContentLoaded', () => {
+  const overlay = document.getElementById('kdOverlay');
+  if (overlay) {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) closeCountryGame();
+    });
+  }
 });
 
 // ─── Tab Geçişi ───────────────────────────────────────────────────
