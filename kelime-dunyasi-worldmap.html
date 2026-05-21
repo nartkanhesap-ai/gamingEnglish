@@ -755,43 +755,9 @@ html, body {
   animation: kdConfetti 2s ease forwards;
   pointer-events: none;
 }
-
-.ge-user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 13px;
-  color: #666;
-}
-.ge-user-name {
-  font-weight: 600;
-  color: #333;
-}
-.ge-logout-btn {
-  padding: 6px 12px;
-  background: #c0392b;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.ge-logout-btn:hover {
-  background: #a93226;
-}
 </style>
 </head>
 <body>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     GAMING ENGLISH — LOGIN SCREEN
-═══════════════════════════════════════════════════════════════ -->
-
-<style>
-</style>
-
 <div id="root"></div>
 
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
@@ -2903,7 +2869,15 @@ function App() {
       }
       console.log('📍 Kıta bulundu:', continent.id);
       
-      // Kelime verisi olan ülkeler (login kontrolü yok artık)
+      // CONTINENT_WORDS tanımlı mı kontrol et
+      if (typeof CONTINENT_WORDS === 'undefined') {
+        console.error('⚠️ CONTINENT_WORDS henüz yüklenmedi');
+        setTimeout(() => handlePickCountry(country), 100);
+        return;
+      }
+      console.log('✅ CONTINENT_WORDS yüklü');
+      
+      // Kelime verisi olan ülkeler
       const hasData = CONTINENT_WORDS[continent.id] && CONTINENT_WORDS[continent.id].countries[country.name];
       console.log('📊 Kelime verisi var mı:', hasData);
       if (hasData) {
@@ -2958,19 +2932,109 @@ function App() {
           showLens={t.showLens && !activeId && !t.rearrangeMode}
           lensPos={lensPos}
           setLensPos={setLensPos}
-          onClick2={handleContinentClick}
-        />
-
-        <CountryPanel
-          activeId={activeId}
-          onClose={() => setActiveId(null)}
-          onPickCountry={handlePickCountry}
-          countryPositions={t.countryPositions}
-          onCountryPositionsChange={(newPos) => setTweak('countryPositions', newPos)}
+          ambient={t.ambient}
+          editMode={t.rearrangeMode}
+          offsets={t.continentOffsets || {}}
+          onOffsetsChange={(o) => setTweak('continentOffsets', o)}
         />
       </div>
 
+      <CountryPanel
+        activeId={activeId}
+        onClose={() => setActiveId(null)}
+        onPickCountry={handlePickCountry}
+        countryPositions={t.countryPositions || {}}
+        onCountryPositionsChange={(p) => setTweak('countryPositions', p)}
+      />
+
+      {activeId && (
+        <button className="close-btn" onClick={() => setActiveId(null)} aria-label="Close">
+          ←
+        </button>
+      )}
+
+      {/* Ana sayfa butonu */}
+      <a href="index.html" style={{
+        position:'absolute', top:20, right:20,
+        background:'rgba(255,248,236,0.85)', backdropFilter:'blur(8px)',
+        padding:'10px 18px', borderRadius:999, textDecoration:'none',
+        fontFamily:'var(--font-display)', fontWeight:600, fontSize:13,
+        color:'var(--ink)', boxShadow:'0 6px 18px rgba(15,50,80,0.12)',
+        zIndex:30, letterSpacing:'0.02em', textTransform:'uppercase'
+      }}>
+        ← Ana Sayfa
+      </a>
+
+      {!activeId && (
+        <div className="hint">
+          <span>Bir kıtanın üzerine gel</span>
+          <span className="kbd">click</span>
+          <span>→ ülkeleri gör</span>
+        </div>
+      )}
+
       <TweaksPanel>
+        <TweakSection label="Theme" />
+        <TweakColor
+          label="Palette"
+          value={
+            t.palette === 'classic' ? ['#BEE3F0', '#7FC79A', '#F2C66B']
+            : t.palette === 'meadow' ? ['#F9CFA2', '#9CCC65', '#F08D7A']
+            : ['#2A3D5C', '#06D6A0', '#FFD166']
+          }
+          options={[
+            ['#BEE3F0', '#7FC79A', '#F2C66B'],
+            ['#F9CFA2', '#9CCC65', '#F08D7A'],
+            ['#2A3D5C', '#06D6A0', '#FFD166'],
+          ]}
+          onChange={(v) => {
+            const name = v[0] === '#BEE3F0' ? 'classic' : v[0] === '#F9CFA2' ? 'meadow' : 'dusk';
+            setTweak('palette', name);
+          }}
+        />
+
+        <TweakSection label="Interaction" />
+        <TweakRadio
+          label="Hover lift"
+          value={t.hoverIntensity}
+          options={['subtle','medium','dramatic']}
+          onChange={(v) => setTweak('hoverIntensity', v)}
+        />
+        <TweakToggle
+          label="Magnifying lens"
+          value={t.showLens}
+          onChange={(v) => setTweak('showLens', v)}
+        />
+        <TweakToggle
+          label="Ambient motion"
+          value={t.ambient}
+          onChange={(v) => setTweak('ambient', v)}
+        />
+
+        <TweakSection label="Map" />
+        <TweakRadio
+          label="Projection"
+          value={t.projection}
+          options={['blobs','islands']}
+          onChange={(v) => setTweak('projection', v)}
+        />
+        <TweakRadio
+          label="Icon density"
+          value={t.density}
+          options={['sparse','normal','rich']}
+          onChange={(v) => setTweak('density', v)}
+        />
+
+        <TweakSection label="Rearrange" />
+        <TweakToggle
+          label="Drag continents"
+          value={t.rearrangeMode}
+          onChange={(v) => setTweak('rearrangeMode', v)}
+        />
+        <TweakButton
+          label="Reset continent positions"
+          onClick={() => setTweak('continentOffsets', {})}
+        />
         <TweakButton
           label="Reset country card positions"
           onClick={() => setTweak('countryPositions', {})}
@@ -2988,16 +3052,6 @@ function App() {
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
-
-// ─── Gaming English Init ────────────────────────────────────
-window.addEventListener('load', () => {
-  console.log('🎮 Gaming English başlatıldı');
-  // onAuthStateChanged zaten çalışıyor ve showLogin/showGameHome çağracak
-  // Eğer login'e ihtiyaç varsa, login ekranı gösterilecek
-  setTimeout(() => {
-    
-  }, 500);
-});
 
 </script>
 
@@ -3755,8 +3809,8 @@ let kdState = {
   timerInterval: null,
   seconds: 0,
 };
-
 let kdFlipLock = false;
+
 
 function openCountryGame(continentId, countryName) {
   console.log('🎮 openCountryGame başladı:', continentId, countryName);
@@ -3847,14 +3901,9 @@ function closeCountryGame() {
   if (kdState.timerInterval) clearInterval(kdState.timerInterval);
 }
 
-// Overlay'e tıklayınca kapat (DOM hazır olunca)
-window.addEventListener('DOMContentLoaded', () => {
-  const overlay = document.getElementById('kdOverlay');
-  if (overlay) {
-    overlay.addEventListener('click', function(e) {
-      if (e.target === this) closeCountryGame();
-    });
-  }
+// Overlay'e tıklayınca kapat
+document.getElementById('kdOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeCountryGame();
 });
 
 // ─── Tab Geçişi ───────────────────────────────────────────────────
@@ -3864,7 +3913,6 @@ function kdSwitchTab(tab) {
   document.getElementById('kdTab2').classList.toggle('active', tab === 2);
   document.getElementById('kdTab3').classList.toggle('active', tab === 3);
   document.getElementById('kdTab4').classList.toggle('active', tab === 4);
-  
   if (tab === 1) kdRenderCards();
   else if (tab === 2) kdRenderMemory();
   else if (tab === 3) kdRenderScramble();
@@ -3980,7 +4028,7 @@ function kdLearnWord(el, wordEn) {
     kdState.learnedWords.add(wordEn);
     kdSpeak(wordEn);
     kdUpdateProgress();
-    // Oyun butonlarını aç
+    // Hafıza butonunu aç
     const diffWords = kdState.words.filter(w=>w.level===kdState.selectedDiff);
     if (kdState.learnedWords.size >= Math.min(6, diffWords.length)) {
       document.getElementById('kdTab2').disabled = false;
@@ -4105,6 +4153,7 @@ function kdRenderMemoryGrid() {
 
   document.getElementById('kdBody').innerHTML = html;
 }
+
 
 function kdFlipCard(idx) {
   if (kdFlipLock) return;
@@ -4249,7 +4298,7 @@ function kdSpawnConfetti() {
         <button class="kd-tab active" id="kdTab1" onclick="kdSwitchTab(1)">📚 Kelimeler</button>
         <button class="kd-tab" id="kdTab2" onclick="kdSwitchTab(2)" disabled>🧠 Hafıza</button>
         <button class="kd-tab" id="kdTab3" onclick="kdSwitchTab(3)" disabled>🔤 Harf Karışık</button>
-        <button class="kd-tab" id="kdTab4" onclick="kdSwitchTab(4)" disabled>⚡ Hızlı Yazma</button>
+        <button class="kd-tab" id="kdTab4" onclick="kdSwitchTab(4)" disabled>⚡ Hızlı Yaz</button>
       </div>
       <div class="kd-progress-bar">
         <div class="kd-progress-fill" id="kdProgress" style="width:0%"></div>
@@ -4262,126 +4311,214 @@ function kdSpawnConfetti() {
 </div>
 
 
+<script>
 // ─── Oyun 3: Harf Karışık (Scramble) ──────────────────────────────
 function kdRenderScramble() {
-  const learned = Array.from(kdState.learnedWords).map(w => 
-    kdState.words.find(word => word.en === w)
-  ).filter(Boolean);
-  
-  if (learned.length === 0) {
-    document.getElementById('kdBody').innerHTML = '<div style="padding:40px;text-align:center;color:#666">Önce kelime öğrenmelisin!</div>';
+  const learned = Array.from(kdState.learnedWords)
+    .map(w => kdState.words.find(word => word.en === w))
+    .filter(Boolean);
+
+  if (!learned.length) {
+    document.getElementById('kdBody').innerHTML = '<div style="padding:40px;text-align:center;color:#666;font-family:Fredoka">Önce kelime öğrenmelisin!</div>';
     return;
   }
-  
-  const currentWord = learned[Math.floor(Math.random() * learned.length)];
-  const scrambled = currentWord.en.split('').sort(() => Math.random()-0.5).join('');
-  
-  const html = `
-    <div class="kd-scramble-stage">
-      <div style="text-align:center;margin-bottom:30px">
-        <div style="font-size:60px;margin-bottom:12px">${currentWord.emoji}</div>
-        <div style="font-size:18px;color:#666;margin-bottom:20px">${currentWord.tr}</div>
-        <div style="font-size:32px;font-weight:700;letter-spacing:4px;color:#667eea">${scrambled}</div>
+
+  const pick = learned[Math.floor(Math.random() * learned.length)];
+  const letters = pick.en.toUpperCase().split('').sort(() => Math.random() - 0.5);
+  // Aynı sıraya gelirse tekrar karıştır
+  while (letters.join('') === pick.en.toUpperCase()) {
+    letters.sort(() => Math.random() - 0.5);
+  }
+
+  document.getElementById('kdBody').innerHTML = `
+    <div style="font-family:Fredoka;padding:8px">
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="font-size:64px;margin-bottom:8px">${pick.emoji}</div>
+        <div style="font-size:20px;color:#666;margin-bottom:20px">🇹🇷 ${pick.tr}</div>
+        <div style="font-size:30px;font-weight:700;letter-spacing:6px;color:var(--kd-accent,#6366f1);
+          background:#f3f4f6;padding:12px 24px;border-radius:14px;display:inline-block">
+          ${letters.join(' ')}
+        </div>
       </div>
-      
-      <input type="text" id="kdScrambleInput" placeholder="Harfleri doğru sıraya dizin" 
-        style="width:100%;padding:14px;font-size:18px;border:3px solid #e5e7eb;border-radius:12px;
-        text-align:center;font-family:inherit;outline:none;margin-bottom:16px"
-        onkeydown="if(event.key==='Enter') kdCheckScramble('${currentWord.en}')">
-      
-      <button onclick="kdCheckScramble('${currentWord.en}')" style="
-        width:100%;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);
-        color:white;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer">
-        Kontrol Et
+
+      <input id="kdScrambleInput" type="text" autocomplete="off"
+        placeholder="Harfleri doğru sıraya diz..."
+        style="width:100%;padding:14px;font-size:20px;border:3px solid #e5e7eb;border-radius:12px;
+          text-align:center;font-family:Fredoka;outline:none;margin-bottom:12px;box-sizing:border-box"
+        oninput="kdScrambleLive('${pick.en}')"
+        onkeydown="if(event.key==='Enter')kdCheckScramble('${pick.en}')">
+
+      <button onclick="kdCheckScramble('${pick.en}')"
+        style="width:100%;padding:13px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));
+          color:white;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;font-family:Fredoka">
+        ✅ Kontrol Et
       </button>
-      
-      <div id="kdScrambleResult" style="margin-top:16px;text-align:center;font-size:16px;font-weight:600"></div>
-    </div>
-  `;
-  
-  document.getElementById('kdBody').innerHTML = html;
+
+      <div id="kdScrambleResult" style="margin-top:14px;text-align:center;font-size:18px;font-weight:700;min-height:28px"></div>
+
+      <button onclick="kdRenderScramble()"
+        style="margin-top:10px;width:100%;padding:10px;background:white;border:2px solid #e5e7eb;
+          border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;color:#6b7280;font-family:Fredoka">
+        🔀 Yeni Kelime
+      </button>
+    </div>`;
+
   document.getElementById('kdScrambleInput').focus();
 }
 
+function kdScrambleLive(correct) {
+  const val = document.getElementById('kdScrambleInput').value.trim().toLowerCase();
+  const input = document.getElementById('kdScrambleInput');
+  if (val === correct.toLowerCase()) {
+    input.style.borderColor = '#22c55e';
+  } else if (correct.toLowerCase().startsWith(val)) {
+    input.style.borderColor = '#f59e0b';
+  } else {
+    input.style.borderColor = '#e5e7eb';
+  }
+}
+
 function kdCheckScramble(correct) {
-  const input = document.getElementById('kdScrambleInput').value.trim().toLowerCase();
+  const val = document.getElementById('kdScrambleInput').value.trim();
   const result = document.getElementById('kdScrambleResult');
-  
-  if (input === correct.toLowerCase()) {
-    result.innerHTML = '✅ Doğru! Harika iş!';
+  if (val.toLowerCase() === correct.toLowerCase()) {
+    result.innerHTML = '🎉 Doğru! Harika!';
     result.style.color = '#22c55e';
     kdSpeak(correct);
-    setTimeout(() => kdRenderScramble(), 1500);
+    setTimeout(() => kdRenderScramble(), 1400);
   } else {
     result.innerHTML = '❌ Yanlış, tekrar dene!';
     result.style.color = '#ef4444';
     document.getElementById('kdScrambleInput').value = '';
+    document.getElementById('kdScrambleInput').style.borderColor = '#ef4444';
     document.getElementById('kdScrambleInput').focus();
   }
 }
 
 // ─── Oyun 4: Hızlı Yazma (Typing Race) ────────────────────────────
+let kdTypingScore = 0;
+let kdTypingWords = [];
+let kdTypingIdx = 0;
+
 function kdRenderTyping() {
-  const learned = Array.from(kdState.learnedWords).map(w => 
-    kdState.words.find(word => word.en === w)
-  ).filter(Boolean);
-  
-  if (learned.length === 0) {
-    document.getElementById('kdBody').innerHTML = '<div style="padding:40px;text-align:center;color:#666">Önce kelime öğrenmelisin!</div>';
+  const learned = Array.from(kdState.learnedWords)
+    .map(w => kdState.words.find(word => word.en === w))
+    .filter(Boolean);
+
+  if (!learned.length) {
+    document.getElementById('kdBody').innerHTML = '<div style="padding:40px;text-align:center;color:#666;font-family:Fredoka">Önce kelime öğrenmelisin!</div>';
     return;
   }
-  
-  const currentWord = learned[Math.floor(Math.random() * learned.length)];
-  
-  const html = `
-    <div class="kd-typing-stage">
-      <div style="text-align:center;margin-bottom:30px">
-        <div style="font-size:60px;margin-bottom:12px">${currentWord.emoji}</div>
-        <div style="font-size:18px;color:#666;margin-bottom:12px">${currentWord.tr}</div>
-        <div style="font-size:14px;color:#999">Kelimeyi İngilizce yaz 👇</div>
+
+  // Kelimeleri karıştır
+  kdTypingWords = [...learned].sort(() => Math.random() - 0.5);
+  kdTypingIdx = 0;
+  kdTypingScore = 0;
+  kdShowTypingWord();
+}
+
+function kdShowTypingWord() {
+  if (kdTypingIdx >= kdTypingWords.length) {
+    // Tüm kelimeler tamamlandı
+    document.getElementById('kdBody').innerHTML = `
+      <div style="font-family:Fredoka;text-align:center;padding:40px">
+        <div style="font-size:64px;margin-bottom:16px">🏆</div>
+        <div style="font-size:26px;font-weight:700;color:#1f2937;margin-bottom:8px">Tebrikler!</div>
+        <div style="font-size:18px;color:#6b7280;margin-bottom:24px">
+          ${kdTypingScore} / ${kdTypingWords.length} doğru
+        </div>
+        <button onclick="kdRenderTyping()" style="padding:12px 28px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));
+          color:white;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:Fredoka">
+          🔄 Tekrar Oyna
+        </button>
+      </div>`;
+    return;
+  }
+
+  const pick = kdTypingWords[kdTypingIdx];
+  const progress = kdTypingIdx + 1;
+  const total = kdTypingWords.length;
+
+  document.getElementById('kdBody').innerHTML = `
+    <div style="font-family:Fredoka;padding:8px">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:12px;font-weight:600;color:#9ca3af;margin-bottom:12px">
+          ${progress} / ${total}
+        </div>
+        <div style="height:6px;background:#f3f4f6;border-radius:3px;margin-bottom:20px;overflow:hidden">
+          <div style="height:100%;width:${(progress/total)*100}%;background:var(--kd-accent,#6366f1);border-radius:3px;transition:width 0.3s"></div>
+        </div>
+        <div style="font-size:64px;margin-bottom:8px">${pick.emoji}</div>
+        <div style="font-size:22px;color:#666;margin-bottom:4px">🇹🇷 ${pick.tr}</div>
+        <div style="font-size:13px;color:#9ca3af">İngilizce karşılığını yaz</div>
       </div>
-      
-      <input type="text" id="kdTypingInput" placeholder="Hızlı yaz..." 
-        style="width:100%;padding:14px;font-size:20px;border:3px solid #e5e7eb;border-radius:12px;
-        text-align:center;font-family:inherit;outline:none;margin-bottom:16px"
-        oninput="kdCheckTyping('${currentWord.en}')">
-      
-      <div id="kdTypingResult" style="text-align:center;font-size:16px;font-weight:600;min-height:24px"></div>
-      
-      <div style="margin-top:20px;padding:16px;background:#f3f4f6;border-radius:12px;text-align:center">
-        <div style="font-size:14px;color:#666;margin-bottom:4px">Puan</div>
-        <div id="kdTypingScore" style="font-size:24px;font-weight:700;color:#667eea">0</div>
+
+      <input id="kdTypingInput" type="text" autocomplete="off"
+        placeholder="Yaz..."
+        style="width:100%;padding:14px;font-size:22px;border:3px solid #e5e7eb;border-radius:12px;
+          text-align:center;font-family:Fredoka;outline:none;margin-bottom:12px;box-sizing:border-box"
+        oninput="kdTypingLive('${pick.en}')"
+        onkeydown="if(event.key==='Enter')kdCheckTyping('${pick.en}')">
+
+      <div style="display:flex;gap:8px">
+        <button onclick="kdCheckTyping('${pick.en}')"
+          style="flex:1;padding:12px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));
+            color:white;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:Fredoka">
+          ✅ Gönder
+        </button>
+        <button onclick="kdTypingSkip('${pick.en}')"
+          style="padding:12px 16px;background:white;border:2px solid #e5e7eb;
+            border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;color:#6b7280;font-family:Fredoka">
+          ⏭️ Geç
+        </button>
       </div>
-    </div>
-  `;
-  
-  document.getElementById('kdBody').innerHTML = html;
+
+      <div id="kdTypingResult" style="margin-top:12px;text-align:center;font-size:18px;font-weight:700;min-height:28px"></div>
+      <div style="margin-top:14px;text-align:center;font-size:14px;color:#9ca3af">
+        Puan: <b style="color:var(--kd-accent,#6366f1)">${kdTypingScore}</b>
+      </div>
+    </div>`;
+
   document.getElementById('kdTypingInput').focus();
 }
 
-let kdTypingScore = 0;
-
-function kdCheckTyping(correct) {
-  const input = document.getElementById('kdTypingInput').value.trim().toLowerCase();
-  const result = document.getElementById('kdTypingResult');
-  
-  if (input === correct.toLowerCase()) {
-    kdTypingScore++;
-    document.getElementById('kdTypingScore').textContent = kdTypingScore;
-    result.innerHTML = '✅ Süper!';
-    result.style.color = '#22c55e';
-    kdSpeak(correct);
-    setTimeout(() => {
-      result.innerHTML = '';
-      kdRenderTyping();
-    }, 800);
-  } else if (input.length > 0 && correct.toLowerCase().startsWith(input)) {
-    result.innerHTML = '⏳ Devam et...';
-    result.style.color = '#f59e0b';
-  } else if (input.length > 0) {
-    result.innerHTML = '❌ Yanlış gidiyorsun';
-    result.style.color = '#ef4444';
+function kdTypingLive(correct) {
+  const val = document.getElementById('kdTypingInput').value.trim().toLowerCase();
+  const input = document.getElementById('kdTypingInput');
+  if (val === correct.toLowerCase()) {
+    input.style.borderColor = '#22c55e';
+  } else if (correct.toLowerCase().startsWith(val)) {
+    input.style.borderColor = '#f59e0b';
+  } else {
+    input.style.borderColor = '#e5e7eb';
   }
 }
+
+function kdCheckTyping(correct) {
+  const val = document.getElementById('kdTypingInput').value.trim();
+  if (val.toLowerCase() === correct.toLowerCase()) {
+    kdTypingScore++;
+    kdSpeak(correct);
+    const result = document.getElementById('kdTypingResult');
+    if (result) { result.innerHTML = '🎉 Doğru!'; result.style.color = '#22c55e'; }
+    kdTypingIdx++;
+    setTimeout(kdShowTypingWord, 900);
+  } else if (val.length > 0) {
+    const result = document.getElementById('kdTypingResult');
+    if (result) { result.innerHTML = '❌ Yanlış!'; result.style.color = '#ef4444'; }
+    document.getElementById('kdTypingInput').value = '';
+    document.getElementById('kdTypingInput').style.borderColor = '#ef4444';
+  }
+}
+
+function kdTypingSkip(correct) {
+  const result = document.getElementById('kdTypingResult');
+  if (result) { result.innerHTML = `💡 Cevap: <span style="color:var(--kd-accent,#6366f1)">${correct}</span>`; }
+  kdSpeak(correct);
+  kdTypingIdx++;
+  setTimeout(kdShowTypingWord, 1400);
+}
+</script>
+
 </body>
 </html>
