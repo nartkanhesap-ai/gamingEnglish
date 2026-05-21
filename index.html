@@ -490,9 +490,17 @@ firebase.auth().onAuthStateChanged(async (user) => {
           geStudentInfo.lastName = last || '';
         }
         
+        // Global'e ekle
+        window.geStudentInfo = geStudentInfo;
+        window.geCurrentUser = user;
+        
         console.log('✅ Student:', geStudentInfo.firstName, geStudentInfo.lastName);
-        hideLoginModal();
-        updateNavbar();
+        
+        // DOM hazır olana kadar bekle
+        setTimeout(() => {
+          hideLoginModal();
+          updateNavbar();
+        }, 200);
       }
     } catch (err) {
       console.error('Error:', err);
@@ -915,18 +923,31 @@ function updateNavbar() {
   const userInfoDiv = document.getElementById('geUserInfo');
   const userNameSpan = document.getElementById('geUserName');
   
+  console.log('📊 updateNavbar çağrıldı:', {
+    currentUser: !!window.geCurrentUser,
+    studentInfo: !!window.geStudentInfo,
+    userInfoDiv: !!userInfoDiv,
+    userNameSpan: !!userNameSpan
+  });
+  
   if (window.geCurrentUser && window.geStudentInfo) {
     // Logged in
-    if (userInfoDiv) {
-      userNameSpan.textContent = window.geStudentInfo.firstName + ' ' + window.geStudentInfo.lastName;
+    if (userInfoDiv && userNameSpan) {
+      const fullName = (window.geStudentInfo.firstName || '') + ' ' + (window.geStudentInfo.lastName || '');
+      userNameSpan.textContent = fullName.trim() || 'Öğrenci';
       userInfoDiv.style.display = 'flex';
+      console.log('✅ Navbar güncellendi:', fullName);
+    } else {
+      console.warn('⚠️ User info elementleri bulunamadı');
     }
   } else {
     // Logged out
     if (userInfoDiv) {
       userInfoDiv.style.display = 'none';
     }
-    showLoginModal();
+    if (!window.geCurrentUser) {
+      showLoginModal();
+    }
   }
 }
 
