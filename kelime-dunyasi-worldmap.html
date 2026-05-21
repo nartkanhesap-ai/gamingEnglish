@@ -2024,31 +2024,31 @@ const CONTINENTS = [
     label: 'Antarctica',
     tint: '#E6F1F8',
     tintDeep: '#A8C8DA',
-    cx: 800, cy: 920,
-    labelX: 800, labelY: 985, labelSize: 18,
+    cx: 800, cy: 800,
+    labelX: 800, labelY: 930, labelSize: 18,
     paths: [
       // Long horizontal landmass with wavy coastline
-      `M 200,920
-       C 320,888 480,878 640,880
-       C 800,876 960,884 1120,894
-       C 1240,902 1360,914 1430,930
-       C 1465,945 1452,962 1410,968
-       C 1280,978 1100,978 920,970
-       C 740,978 540,975 360,962
-       C 240,952 160,942 180,930
-       C 185,925 192,922 200,920 Z`,
+      `M 200,860
+       C 320,828 480,818 640,820
+       C 800,816 960,824 1120,834
+       C 1240,842 1360,854 1430,870
+       C 1465,885 1452,902 1410,908
+       C 1280,918 1100,918 920,910
+       C 740,918 540,915 360,902
+       C 240,892 160,882 180,870
+       C 185,865 192,862 200,860 Z`,
     ],
     icons: [
-      { type: 'Penguin', x: 700, y: 925, s: 0.7,  d: 0 },
-      { type: 'Iceberg', x: 820, y: 925, s: 0.8,  d: 1 },
-      { type: 'Penguin', x: 920, y: 925, s: 0.7,  d: 2 },
-      { type: 'Aurora',  x: 580, y: 920, s: 0.75, d: 3 },
-      { type: 'Aurora',  x: 1050, y: 920, s: 0.75, d: 1 },
+      { type: 'Penguin', x: 700, y: 865, s: 0.7,  d: 0 },
+      { type: 'Iceberg', x: 820, y: 865, s: 0.8,  d: 1 },
+      { type: 'Penguin', x: 920, y: 865, s: 0.7,  d: 2 },
+      { type: 'Aurora',  x: 580, y: 860, s: 0.75, d: 3 },
+      { type: 'Aurora',  x: 1050, y: 860, s: 0.75, d: 1 },
     ],
     extraIcons: [
-      { type: 'Iceberg', x: 760, y: 950, s: 0.55, d: 0 },
-      { type: 'Penguin', x: 1000, y: 945, s: 0.5,  d: 2 },
-      { type: 'Aurora',  x: 350, y: 920, s: 0.6,  d: 0 },
+      { type: 'Iceberg', x: 760, y: 890, s: 0.55, d: 0 },
+      { type: 'Penguin', x: 1000, y: 885, s: 0.5,  d: 2 },
+      { type: 'Aurora',  x: 350, y: 860, s: 0.6,  d: 0 },
     ],
     countries: [
       { name: 'Penguin Coast', desc: 'McMurdo',      diff: 2, locked: false, illoColor: '#7DB3CC' },
@@ -2261,7 +2261,7 @@ function WorldMap({
     <svg
       ref={svgRef}
       className="map-svg"
-      viewBox="0 0 1600 1000"
+      viewBox="0 0 1600 1100"
       preserveAspectRatio="xMidYMid slice"
       onMouseMove={handleMouseMove}
       onMouseLeave={() => onHover(null)}
