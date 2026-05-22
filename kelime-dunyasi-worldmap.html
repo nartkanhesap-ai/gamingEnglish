@@ -1675,58 +1675,55 @@ const CONTINENTS = [
     label: 'North America',
     tint: '#7FC79A',
     tintDeep: '#4F9F70',
-    cx: 270, cy: 340,
-    labelX: 270, labelY: 110, labelSize: 26,
+    cx: 220, cy: 290,
+    labelX: 220, labelY: 115, labelSize: 22,
     paths: [
-      // Mainland: Alaska bump NW, wide Canada top, Florida bump SE, Mexico narrowing south
-      `M 70,250
-       C 60,210 80,178 115,178
-       C 138,150 175,160 200,178
-       C 215,188 208,202 196,210
-       C 220,194 260,180 305,178
-       C 360,170 420,180 465,200
-       C 498,212 510,242 488,260
-       C 478,278 495,300 480,316
-       C 488,342 472,365 450,372
-       C 462,395 448,422 420,425
-       C 408,428 398,420 393,408
-       C 385,420 378,432 372,448
-       C 364,470 360,498 378,510
-       C 396,515 396,478 380,460
-       C 360,438 328,428 298,440
-       C 260,455 215,452 180,438
-       C 130,422 88,392 78,348
-       C 68,318 62,282 70,250 Z`,
-      // Greenland (separate landmass NE of NA)
-      `M 555,120
-       C 585,108 625,118 632,148
-       C 638,180 618,210 585,215
-       C 558,218 542,200 540,175
-       C 538,150 545,128 555,120 Z`,
-      // Caribbean dot (Cuba-ish)
-      `M 405,475
-       C 425,470 445,478 442,490
-       C 435,498 415,498 405,490
-       C 398,485 398,478 405,475 Z`,
+      `M 80,205
+       C 72,175 90,148 120,148
+       C 140,125 172,132 195,148
+       C 212,158 206,170 196,178
+       C 218,164 252,152 290,150
+       C 338,142 388,152 425,170
+       C 452,182 462,206 442,222
+       C 432,238 446,256 432,270
+       C 440,292 426,312 406,318
+       C 416,338 404,360 380,362
+       C 370,365 360,358 356,348
+       C 348,360 342,372 338,386
+       C 330,404 328,426 344,436
+       C 360,440 360,410 346,395
+       C 328,375 300,366 272,376
+       C 238,389 196,386 164,374
+       C 118,360 80,332 72,292
+       C 62,266 68,234 80,205 Z`,
+      `M 498,98
+       C 520,88 548,96 552,120
+       C 556,146 538,168 514,172
+       C 494,174 480,158 480,138
+       C 478,118 486,104 498,98 Z`,
+      `M 362,398
+       C 378,394 394,402 390,412
+       C 384,420 368,420 360,412
+       C 354,406 356,400 362,398 Z`,
     ],
     icons: [
-      { type: 'Tree',  x: 200, y: 280, s: 0.85, d: 0 },
-      { type: 'Bear',  x: 280, y: 340, s: 0.95, d: 1 },
-      { type: 'Eagle', x: 370, y: 260, s: 0.9,  d: 2 },
-      { type: 'Tree',  x: 410, y: 370, s: 0.8,  d: 3 },
-      { type: 'Tree',  x: 160, y: 340, s: 0.7,  d: 1 },
+      { type: 'Tree',  x: 168, y: 238, s: 0.8,  d: 0 },
+      { type: 'Bear',  x: 245, y: 288, s: 0.88, d: 1 },
+      { type: 'Eagle', x: 330, y: 218, s: 0.82, d: 2 },
+      { type: 'Tree',  x: 368, y: 320, s: 0.75, d: 3 },
+      { type: 'Tree',  x: 138, y: 295, s: 0.65, d: 1 },
     ],
     extraIcons: [
-      { type: 'Tree',  x: 320, y: 410, s: 0.6,  d: 2 },
-      { type: 'Eagle', x: 230, y: 220, s: 0.7,  d: 0 },
-      { type: 'Bear',  x: 350, y: 310, s: 0.65, d: 3 },
+      { type: 'Tree',  x: 288, y: 350, s: 0.58, d: 2 },
+      { type: 'Eagle', x: 205, y: 188, s: 0.65, d: 0 },
+      { type: 'Bear',  x: 312, y: 265, s: 0.60, d: 3 },
     ],
     countries: [
       { name: 'USA',     desc: 'New York · LA', diff: 1, locked: false, illoColor: '#E27F7F' },
       { name: 'Canada',  desc: 'Toronto',        diff: 2, locked: false, illoColor: '#E04F3A' },
       { name: 'Mexico',  desc: 'Mexico City',    diff: 1, locked: false, illoColor: '#7FC79A' },
-      { name: 'Cuba',    desc: 'Havana',         diff: 2, locked: false,  illoColor: '#F2B544' },
-      { name: 'Jamaica', desc: 'Kingston',       diff: 3, locked: false,  illoColor: '#7BC47F' },
+      { name: 'Cuba',    desc: 'Havana',         diff: 2, locked: false, illoColor: '#F2B544' },
+      { name: 'Jamaica', desc: 'Kingston',       diff: 3, locked: false, illoColor: '#7BC47F' },
     ],
   },
 
@@ -1736,43 +1733,41 @@ const CONTINENTS = [
     label: 'South America',
     tint: '#A8D77A',
     tintDeep: '#6FAE52',
-    cx: 410, cy: 700,
-    labelX: 410, labelY: 870, labelSize: 24,
+    cx: 330, cy: 620,
+    labelX: 330, labelY: 780, labelSize: 20,
     paths: [
-      // Banana / kidney shape, wide NW, narrowing south
-      `M 380,535
-       C 415,520 460,520 488,545
-       C 510,568 510,602 488,620
-       C 510,650 498,690 472,712
-       C 495,740 478,778 452,798
-       C 425,822 392,832 372,810
-       C 352,795 348,772 358,748
-       C 338,725 348,692 365,675
-       C 345,650 342,615 360,595
-       C 365,575 365,552 380,535 Z`,
-      // Falklands (small island SE)
-      `M 470,820
-       C 480,818 488,826 484,834
-       C 478,838 470,834 468,828
-       C 466,824 466,820 470,820 Z`,
+      `M 295,460
+       C 326,446 365,446 388,468
+       C 408,488 408,518 388,534
+       C 408,560 396,594 372,614
+       C 392,638 376,672 352,690
+       C 328,712 298,720 280,700
+       C 262,686 258,664 268,642
+       C 250,620 260,590 276,574
+       C 258,550 256,520 272,502
+       C 276,484 278,470 295,460 Z`,
+      `M 378,712
+       C 386,710 392,718 388,726
+       C 382,730 376,724 376,718
+       C 374,714 376,712 378,712 Z`,
     ],
     icons: [
-      { type: 'Parrot', x: 420, y: 590, s: 0.85, d: 0 },
-      { type: 'Llama',  x: 410, y: 690, s: 0.9,  d: 1 },
-      { type: 'Palm',   x: 440, y: 780, s: 0.85, d: 2 },
-      { type: 'Palm',   x: 380, y: 660, s: 0.75, d: 3 },
+      { type: 'Parrot', x: 332, y: 510, s: 0.80, d: 0 },
+      { type: 'Llama',  x: 322, y: 605, s: 0.85, d: 1 },
+      { type: 'Palm',   x: 350, y: 678, s: 0.80, d: 2 },
+      { type: 'Palm',   x: 295, y: 575, s: 0.70, d: 3 },
     ],
     extraIcons: [
-      { type: 'Parrot', x: 380, y: 740, s: 0.7, d: 1 },
-      { type: 'Palm',   x: 460, y: 590, s: 0.6, d: 0 },
-      { type: 'Llama',  x: 450, y: 660, s: 0.6, d: 2 },
+      { type: 'Parrot', x: 292, y: 650, s: 0.65, d: 1 },
+      { type: 'Palm',   x: 368, y: 512, s: 0.55, d: 0 },
+      { type: 'Llama',  x: 360, y: 578, s: 0.55, d: 2 },
     ],
     countries: [
       { name: 'Brazil',    desc: 'Rio · São Paulo', diff: 1, locked: false, illoColor: '#6FB87A' },
       { name: 'Argentina', desc: 'Buenos Aires',    diff: 2, locked: false, illoColor: '#7DB3CC' },
       { name: 'Peru',      desc: 'Lima · Cusco',    diff: 2, locked: false, illoColor: '#E27F7F' },
-      { name: 'Colombia',  desc: 'Bogotá',          diff: 1, locked: false,  illoColor: '#F2B544' },
-      { name: 'Chile',     desc: 'Santiago',        diff: 3, locked: false,  illoColor: '#E04F3A' },
+      { name: 'Colombia',  desc: 'Bogotá',          diff: 1, locked: false, illoColor: '#F2B544' },
+      { name: 'Chile',     desc: 'Santiago',        diff: 3, locked: false, illoColor: '#E04F3A' },
     ],
   },
 
@@ -1782,58 +1777,53 @@ const CONTINENTS = [
     label: 'Europe',
     tint: '#C3A7E0',
     tintDeep: '#8B6BB8',
-    cx: 770, cy: 280,
-    labelX: 760, labelY: 175, labelSize: 22,
+    cx: 730, cy: 235,
+    labelX: 728, labelY: 148, labelSize: 20,
     paths: [
-      // Mainland: Iberia tip SW, Scandinavia N, Italy boot SE
-      `M 700,265
-       C 690,240 720,215 752,215
-       C 772,212 790,222 795,238
-       C 815,228 832,215 852,212
-       C 875,210 882,228 870,245
-       C 882,258 870,278 850,278
-       C 858,292 848,302 832,302
-       C 822,322 802,332 778,330
-       C 770,356 750,366 728,358
-       C 716,344 700,335 696,315
-       C 690,295 695,278 700,265 Z`,
-      // UK (Great Britain)
-      `M 660,212
-       C 680,208 692,220 686,238
-       C 678,244 666,244 660,236
-       C 655,228 654,218 660,212 Z`,
-      // Ireland
-      `M 642,222
-       C 652,220 658,228 654,238
-       C 646,242 638,238 638,228
-       C 638,224 640,222 642,222 Z`,
-      // Iceland
-      `M 620,170
-       C 635,165 648,175 645,185
-       C 638,192 624,190 620,182
-       C 618,178 618,172 620,170 Z`,
-      // Scandinavia tip detail
-      `M 838,180
-       C 848,175 862,182 860,195
-       C 856,205 848,208 842,200
-       C 838,194 836,185 838,180 Z`,
+      `M 668,228
+       C 658,205 684,182 712,182
+       C 730,180 746,190 750,204
+       C 768,195 782,183 800,180
+       C 820,178 828,194 818,208
+       C 828,220 818,238 800,238
+       C 808,250 798,260 784,260
+       C 775,278 756,286 735,284
+       C 728,306 710,314 690,308
+       C 678,296 664,288 660,270
+       C 654,252 658,238 668,228 Z`,
+      `M 628,178
+       C 644,174 654,185 648,200
+       C 640,206 630,205 624,197
+       C 620,189 622,180 628,178 Z`,
+      `M 610,188
+       C 618,186 624,193 620,201
+       C 614,205 607,201 607,194
+       C 607,190 608,188 610,188 Z`,
+      `M 590,145
+       C 602,141 612,149 609,158
+       C 604,164 594,162 590,155
+       C 588,151 588,147 590,145 Z`,
+      `M 805,150
+       C 813,146 822,152 820,162
+       C 817,170 809,172 804,164
+       C 801,158 801,152 805,150 Z`,
     ],
     icons: [
-      { type: 'Castle',   x: 730, y: 270, s: 0.78, d: 0 },
-      { type: 'Windmill', x: 820, y: 280, s: 0.78, d: 1 },
-      { type: 'House',    x: 855, y: 248, s: 0.7,  d: 2 },
-      { type: 'House',    x: 700, y: 312, s: 0.65, d: 3 },
+      { type: 'Castle',   x: 695, y: 228, s: 0.72, d: 0 },
+      { type: 'Windmill', x: 778, y: 238, s: 0.72, d: 1 },
+      { type: 'House',    x: 808, y: 208, s: 0.65, d: 2 },
+      { type: 'House',    x: 670, y: 268, s: 0.60, d: 3 },
     ],
     extraIcons: [
-      { type: 'House',  x: 778, y: 312, s: 0.6, d: 0 },
-      { type: 'Castle', x: 795, y: 252, s: 0.55, d: 2 },
+      { type: 'House',  x: 738, y: 268, s: 0.55, d: 0 },
+      { type: 'Castle', x: 752, y: 212, s: 0.50, d: 2 },
     ],
     countries: [
       { name: 'UK',      desc: 'London',  diff: 1, locked: false, illoColor: '#E27F7F' },
       { name: 'France',  desc: 'Paris',   diff: 1, locked: false, illoColor: '#7DB3CC' },
       { name: 'Spain',   desc: 'Madrid',  diff: 2, locked: false, illoColor: '#F2B544' },
-      { name: 'Germany', desc: 'Berlin',  diff: 2, locked: false,  illoColor: '#1F3144' },
-      { name: 'Italy',   desc: 'Rome',    diff: 2, locked: false,  illoColor: '#7BC47F' },
+      { name: 'Germany', desc: 'Berlin',  diff: 2, locked: false, illoColor: '#1F3144' },
+      { name: 'Italy',   desc: 'Rome',    diff: 2, locked: false, illoColor: '#7BC47F' },
     ],
   },
 
@@ -1843,46 +1833,44 @@ const CONTINENTS = [
     label: 'Africa',
     tint: '#F2C66B',
     tintDeep: '#C99230',
-    cx: 875, cy: 560,
-    labelX: 875, labelY: 410, labelSize: 26,
+    cx: 830, cy: 510,
+    labelX: 830, labelY: 375, labelSize: 22,
     paths: [
-      // Mainland: Mediterranean coast N, NW bulge (West Africa), Horn E, taper to Cape Town S
-      `M 770,420
-       C 790,408 832,402 875,408
-       C 912,400 952,412 980,425
-       C 1000,435 995,460 975,470
-       C 998,488 1014,500 1005,525
-       C 988,545 952,548 945,568
-       C 962,608 956,650 940,680
-       C 928,720 906,748 878,762
-       C 850,772 822,765 802,745
-       C 780,720 770,688 766,656
-       C 758,618 752,580 750,545
-       C 740,512 738,482 758,460
-       C 760,442 765,428 770,420 Z`,
-      // Madagascar (oval east of Africa)
-      `M 1020,612
-       C 1035,608 1048,628 1042,652
-       C 1038,682 1022,690 1010,680
-       C 1000,665 1006,628 1020,612 Z`,
+      `M 738,382
+       C 756,370 794,364 832,370
+       C 866,362 902,373 928,385
+       C 946,394 941,416 922,425
+       C 942,441 956,452 948,475
+       C 932,493 898,496 892,514
+       C 906,550 900,588 885,615
+       C 874,650 854,675 828,688
+       C 802,696 776,690 758,672
+       C 738,650 728,620 724,590
+       C 716,555 710,520 710,488
+       C 700,458 698,430 718,410
+       C 720,396 728,385 738,382 Z`,
+      `M 965,568
+       C 978,564 989,581 984,602
+       C 980,628 966,635 955,626
+       C 946,612 951,578 965,568 Z`,
     ],
     icons: [
-      { type: 'Pyramid',  x: 870, y: 460, s: 0.95, d: 0 },
-      { type: 'Lion',     x: 880, y: 560, s: 1.0,  d: 1 },
-      { type: 'Elephant', x: 832, y: 650, s: 0.92, d: 2 },
-      { type: 'Giraffe',  x: 935, y: 580, s: 0.88, d: 3 },
+      { type: 'Pyramid',  x: 826, y: 418, s: 0.88, d: 0 },
+      { type: 'Lion',     x: 835, y: 512, s: 0.92, d: 1 },
+      { type: 'Elephant', x: 790, y: 596, s: 0.85, d: 2 },
+      { type: 'Giraffe',  x: 886, y: 530, s: 0.82, d: 3 },
     ],
     extraIcons: [
-      { type: 'Lion',    x: 820, y: 510, s: 0.7,  d: 2 },
-      { type: 'Pyramid', x: 935, y: 480, s: 0.55, d: 1 },
-      { type: 'Giraffe', x: 870, y: 700, s: 0.6,  d: 0 },
+      { type: 'Lion',    x: 778, y: 462, s: 0.65, d: 2 },
+      { type: 'Pyramid', x: 888, y: 435, s: 0.52, d: 1 },
+      { type: 'Giraffe', x: 826, y: 638, s: 0.56, d: 0 },
     ],
     countries: [
       { name: 'Egypt',        desc: 'Cairo',     diff: 2, locked: false, illoColor: '#F2B544' },
       { name: 'Kenya',        desc: 'Nairobi',   diff: 2, locked: false, illoColor: '#E04F3A' },
       { name: 'South Africa', desc: 'Cape Town', diff: 3, locked: false, illoColor: '#7BC47F' },
-      { name: 'Morocco',      desc: 'Marrakech', diff: 1, locked: false,  illoColor: '#E27F7F' },
-      { name: 'Nigeria',      desc: 'Lagos',     diff: 2, locked: false,  illoColor: '#3FA3DC' },
+      { name: 'Morocco',      desc: 'Marrakech', diff: 1, locked: false, illoColor: '#E27F7F' },
+      { name: 'Nigeria',      desc: 'Lagos',     diff: 2, locked: false, illoColor: '#3FA3DC' },
     ],
   },
 
@@ -1892,76 +1880,73 @@ const CONTINENTS = [
     label: 'Asia',
     tint: '#F4A2B6',
     tintDeep: '#D26A85',
-    cx: 1170, cy: 360,
-    labelX: 1170, labelY: 175, labelSize: 28,
+    cx: 1115, cy: 318,
+    labelX: 1115, labelY: 155, labelSize: 24,
     paths: [
-      // Mainland: huge, with Arabian peninsula SW, India peninsula S, SE Asia tail
-      `M 870,265
-       C 882,228 942,208 992,212
-       C 1042,202 1102,208 1172,202
-       C 1232,202 1292,212 1352,228
-       C 1410,238 1472,250 1482,290
-       C 1492,332 1450,348 1408,342
-       C 1432,368 1410,398 1380,398
-       C 1392,422 1372,442 1340,432
-       C 1342,458 1320,472 1296,468
-       C 1302,490 1280,512 1252,500
-       C 1232,524 1202,532 1180,520
-       C 1170,542 1148,540 1140,520
-       C 1122,505 1118,476 1132,460
-       C 1118,440 1090,440 1075,462
-       C 1058,472 1036,460 1030,440
-       C 1022,472 1004,500 982,488
-       C 970,462 988,442 1002,425
-       C 982,420 962,425 945,415
-       C 932,395 942,375 925,360
-       C 905,355 885,350 875,328
-       C 866,310 866,285 870,265 Z`,
-      // Japan (curved islands east of Asia)
-      `M 1492,358
-       C 1508,352 1522,372 1512,392
-       C 1502,408 1486,402 1486,388
-       C 1486,374 1486,362 1492,358 Z`,
-      `M 1500,402
-       C 1512,398 1520,410 1514,422
-       C 1506,428 1496,422 1498,412
-       C 1498,408 1498,404 1500,402 Z`,
-      // Indonesia / Philippines (small archipelago)
-      `M 1278,540
-       C 1295,535 1308,548 1300,560
-       C 1290,565 1276,560 1276,550
-       C 1276,545 1276,542 1278,540 Z`,
-      `M 1320,560
-       C 1336,556 1346,568 1338,578
-       C 1328,582 1318,575 1318,566
-       C 1318,562 1318,560 1320,560 Z`,
-      `M 1370,556
-       C 1382,552 1392,562 1386,572
-       C 1376,576 1366,570 1368,562
-       C 1368,558 1368,556 1370,556 Z`,
-      `M 1230,532
-       C 1242,528 1252,538 1246,548
-       C 1238,552 1228,546 1228,538
-       C 1228,534 1228,532 1230,532 Z`,
+      `M 988,228
+       C 998,196 1048,178 1092,182
+       C 1136,173 1188,179 1248,174
+       C 1300,173 1348,182 1392,196
+       C 1432,205 1472,216 1478,248
+       C 1482,280 1448,294 1412,290
+       C 1432,312 1412,338 1386,338
+       C 1394,358 1376,375 1348,366
+       C 1350,388 1330,400 1308,396
+       C 1314,415 1294,433 1268,422
+       C 1249,444 1222,450 1202,440
+       C 1192,458 1172,456 1164,438
+       C 1148,424 1144,398 1156,384
+       C 1143,366 1118,366 1104,385
+       C 1088,394 1068,383 1062,365
+       C 1054,393 1038,418 1018,408
+       C 1006,384 1022,366 1034,351
+       C 1015,346 996,350 980,341
+       C 968,322 978,304 962,290
+       C 944,285 924,280 915,260
+       C 906,243 906,218 988,228 Z`,
+      `M 1478,308
+       C 1492,302 1504,320 1495,337
+       C 1486,350 1472,345 1472,332
+       C 1471,319 1472,312 1478,308 Z`,
+      `M 1484,348
+       C 1494,344 1502,355 1496,365
+       C 1488,370 1479,364 1481,355
+       C 1481,351 1482,349 1484,348 Z`,
+      `M 1262,458
+       C 1277,454 1288,465 1281,475
+       C 1272,479 1260,474 1260,465
+       C 1260,461 1260,459 1262,458 Z`,
+      `M 1300,475
+       C 1313,471 1322,481 1315,490
+       C 1306,494 1296,488 1296,480
+       C 1296,476 1297,475 1300,475 Z`,
+      `M 1342,472
+       C 1352,468 1360,477 1354,486
+       C 1346,489 1337,484 1338,476
+       C 1338,473 1339,472 1342,472 Z`,
+      `M 1218,446
+       C 1228,442 1237,451 1231,460
+       C 1223,463 1214,458 1215,450
+       C 1215,447 1216,446 1218,446 Z`,
     ],
     icons: [
-      { type: 'Panda',   x: 1100, y: 340, s: 0.95, d: 0 },
-      { type: 'Tiger',   x: 1230, y: 388, s: 0.95, d: 1 },
-      { type: 'Blossom', x: 1320, y: 308, s: 0.9,  d: 2 },
-      { type: 'Bamboo',  x: 1180, y: 275, s: 0.85, d: 3 },
-      { type: 'Blossom', x: 1040, y: 280, s: 0.7,  d: 0 },
+      { type: 'Panda',   x: 1052, y: 295, s: 0.88, d: 0 },
+      { type: 'Tiger',   x: 1174, y: 338, s: 0.88, d: 1 },
+      { type: 'Blossom', x: 1255, y: 265, s: 0.82, d: 2 },
+      { type: 'Bamboo',  x: 1125, y: 238, s: 0.78, d: 3 },
+      { type: 'Blossom', x: 992,  y: 242, s: 0.65, d: 0 },
     ],
     extraIcons: [
-      { type: 'Bamboo',  x: 1378, y: 368, s: 0.7, d: 1 },
-      { type: 'Blossom', x: 1235, y: 450, s: 0.6, d: 2 },
-      { type: 'Panda',   x: 1340, y: 430, s: 0.6, d: 3 },
+      { type: 'Bamboo',  x: 1318, y: 318, s: 0.65, d: 1 },
+      { type: 'Blossom', x: 1178, y: 398, s: 0.56, d: 2 },
+      { type: 'Panda',   x: 1278, y: 375, s: 0.55, d: 3 },
     ],
     countries: [
       { name: 'Japan',       desc: 'Tokyo',   diff: 3, locked: false, illoColor: '#E04F3A' },
       { name: 'China',       desc: 'Beijing', diff: 3, locked: false, illoColor: '#F2B544' },
       { name: 'India',       desc: 'Delhi',   diff: 2, locked: false, illoColor: '#F08D3E' },
-      { name: 'South Korea', desc: 'Seoul',   diff: 2, locked: false,  illoColor: '#7DB3CC' },
-      { name: 'Thailand',    desc: 'Bangkok', diff: 1, locked: false,  illoColor: '#7BC47F' },
+      { name: 'South Korea', desc: 'Seoul',   diff: 2, locked: false, illoColor: '#7DB3CC' },
+      { name: 'Thailand',    desc: 'Bangkok', diff: 1, locked: false, illoColor: '#7BC47F' },
     ],
   },
 
@@ -1971,50 +1956,47 @@ const CONTINENTS = [
     label: 'Australia & Oceania',
     tint: '#F2A56B',
     tintDeep: '#C77638',
-    cx: 1330, cy: 720,
-    labelX: 1330, labelY: 850, labelSize: 22,
+    cx: 1282, cy: 668,
+    labelX: 1282, labelY: 798, labelSize: 18,
     paths: [
-      // Australia mainland with Cape York peninsula N and Gulf indent
-      `M 1250,712
-       C 1245,690 1270,678 1295,684
-       C 1308,664 1322,664 1326,684
-       C 1338,664 1358,666 1362,686
-       C 1392,676 1422,686 1442,712
-       C 1458,732 1452,772 1432,792
-       C 1402,812 1352,818 1302,806
-       C 1268,800 1248,778 1248,752
-       C 1242,738 1246,722 1250,712 Z`,
-      // New Zealand (two islands SE)
-      `M 1480,752
-       C 1494,748 1504,762 1496,778
-       C 1488,786 1478,776 1480,752 Z`,
-      `M 1486,792
-       C 1498,788 1506,800 1498,812
-       C 1490,816 1482,806 1486,792 Z`,
-      // Tasmania (small island SE of Australia)
-      `M 1352,820
-       C 1364,818 1372,828 1366,838
-       C 1358,842 1350,834 1350,826
-       C 1350,822 1350,820 1352,820 Z`,
-      // Pacific dots (small Fiji-ish)
-      `M 1502,720
-       C 1510,718 1516,724 1512,732
-       C 1504,734 1500,728 1502,720 Z`,
+      `M 1195,652
+       C 1191,632 1213,621 1235,626
+       C 1246,609 1258,608 1262,625
+       C 1272,608 1290,610 1294,628
+       C 1320,619 1346,628 1362,650
+       C 1376,668 1370,704 1352,721
+       C 1325,738 1280,743 1235,733
+       C 1205,727 1188,708 1188,686
+       C 1183,673 1188,659 1195,652 Z`,
+      `M 1408,688
+       C 1420,684 1428,696 1421,710
+       C 1414,717 1405,708 1407,695
+       C 1407,691 1407,688 1408,688 Z`,
+      `M 1412,722
+       C 1422,719 1430,729 1423,741
+       C 1416,744 1408,736 1412,722 Z`,
+      `M 1291,744
+       C 1300,742 1307,750 1302,758
+       C 1295,761 1289,755 1290,748
+       C 1289,745 1289,744 1291,744 Z`,
+      `M 1435,651
+       C 1441,649 1446,655 1443,661
+       C 1437,663 1433,659 1435,651 Z`,
     ],
     icons: [
-      { type: 'Kangaroo', x: 1295, y: 730, s: 0.9,  d: 0 },
-      { type: 'Koala',    x: 1380, y: 730, s: 0.9,  d: 1 },
-      { type: 'Reef',     x: 1340, y: 778, s: 0.85, d: 2 },
+      { type: 'Kangaroo', x: 1238, y: 668, s: 0.84, d: 0 },
+      { type: 'Koala',    x: 1315, y: 668, s: 0.84, d: 1 },
+      { type: 'Reef',     x: 1275, y: 712, s: 0.78, d: 2 },
     ],
     extraIcons: [
-      { type: 'Reef',  x: 1265, y: 770, s: 0.55, d: 1 },
-      { type: 'Koala', x: 1425, y: 705, s: 0.55, d: 0 },
+      { type: 'Reef',  x: 1205, y: 706, s: 0.52, d: 1 },
+      { type: 'Koala', x: 1352, y: 642, s: 0.52, d: 0 },
     ],
     countries: [
       { name: 'Australia',   desc: 'Sydney',       diff: 1, locked: false, illoColor: '#F08D3E' },
       { name: 'New Zealand', desc: 'Auckland',     diff: 2, locked: false, illoColor: '#4F8C63' },
       { name: 'Fiji',        desc: 'Suva',         diff: 1, locked: false, illoColor: '#3FA3DC' },
-      { name: 'Papua N.G.',  desc: 'Port Moresby', diff: 3, locked: false,  illoColor: '#7BC47F' },
+      { name: 'Papua N.G.',  desc: 'Port Moresby', diff: 3, locked: false, illoColor: '#7BC47F' },
     ],
   },
 
@@ -2024,40 +2006,38 @@ const CONTINENTS = [
     label: 'Antarctica',
     tint: '#E6F1F8',
     tintDeep: '#A8C8DA',
-    cx: 800, cy: 800,
-    labelX: 800, labelY: 930, labelSize: 18,
+    cx: 800, cy: 862,
+    labelX: 800, labelY: 942, labelSize: 16,
     paths: [
-      // Long horizontal landmass with wavy coastline
-      `M 200,860
-       C 320,828 480,818 640,820
-       C 800,816 960,824 1120,834
-       C 1240,842 1360,854 1430,870
-       C 1465,885 1452,902 1410,908
-       C 1280,918 1100,918 920,910
-       C 740,918 540,915 360,902
-       C 240,892 160,882 180,870
-       C 185,865 192,862 200,860 Z`,
+      `M 248,838
+       C 355,812 502,804 648,806
+       C 795,802 940,810 1072,819
+       C 1178,826 1302,838 1362,851
+       C 1392,862 1380,878 1342,883
+       C 1222,892 1062,892 892,885
+       C 722,892 538,889 375,878
+       C 265,869 198,860 215,850
+       C 220,844 234,840 248,838 Z`,
     ],
     icons: [
-      { type: 'Penguin', x: 700, y: 865, s: 0.7,  d: 0 },
-      { type: 'Iceberg', x: 820, y: 865, s: 0.8,  d: 1 },
-      { type: 'Penguin', x: 920, y: 865, s: 0.7,  d: 2 },
-      { type: 'Aurora',  x: 580, y: 860, s: 0.75, d: 3 },
-      { type: 'Aurora',  x: 1050, y: 860, s: 0.75, d: 1 },
+      { type: 'Penguin', x: 668, y: 845, s: 0.65, d: 0 },
+      { type: 'Iceberg', x: 790, y: 845, s: 0.72, d: 1 },
+      { type: 'Penguin', x: 895, y: 845, s: 0.65, d: 2 },
+      { type: 'Aurora',  x: 555, y: 842, s: 0.68, d: 3 },
+      { type: 'Aurora',  x: 1022, y: 842, s: 0.68, d: 1 },
     ],
     extraIcons: [
-      { type: 'Iceberg', x: 760, y: 890, s: 0.55, d: 0 },
-      { type: 'Penguin', x: 1000, y: 885, s: 0.5,  d: 2 },
-      { type: 'Aurora',  x: 350, y: 860, s: 0.6,  d: 0 },
+      { type: 'Iceberg', x: 732, y: 868, s: 0.50, d: 0 },
+      { type: 'Penguin', x: 972, y: 862, s: 0.46, d: 2 },
+      { type: 'Aurora',  x: 342, y: 842, s: 0.55, d: 0 },
     ],
     countries: [
       { name: 'Penguin Coast', desc: 'McMurdo',      diff: 2, locked: false, illoColor: '#7DB3CC' },
-      { name: 'Aurora Bay',    desc: 'South Pole',   diff: 3, locked: false,  illoColor: '#A78CE0' },
-      { name: 'Iceberg Isle',  desc: 'Ross Sea',     diff: 3, locked: false,  illoColor: '#EAF4FB' },
-      { name: 'Glacier Pass',  desc: 'East Plateau', diff: 2, locked: false,  illoColor: '#7AE0BF' },
+      { name: 'Aurora Bay',    desc: 'South Pole',   diff: 3, locked: false, illoColor: '#A78CE0' },
+      { name: 'Iceberg Isle',  desc: 'Ross Sea',     diff: 3, locked: false, illoColor: '#EAF4FB' },
+      { name: 'Glacier Pass',  desc: 'East Plateau', diff: 2, locked: false, illoColor: '#7AE0BF' },
     ],
   },
-];
 
 window.CONTINENTS = CONTINENTS;
 
