@@ -1987,6 +1987,7 @@ const CONTINENTS = [
       { name: 'Glacier Pass',  desc: 'East Plateau', diff: 2, locked: false, illoColor: '#7AE0BF' },
     ],
   },
+];
 
 window.CONTINENTS = CONTINENTS;
 
@@ -4633,13 +4634,37 @@ function kdSpawnConfetti() {
 <script>
 // ─── Oyun 3: Harf Karışık (Scramble) ──────────────────────────────
 function kdRenderScramble() {
-  var learned = Array.from(kdState.learnedWords).map(function(w){ return kdState.words.find(function(word){ return word.en === w; }); }).filter(Boolean);
-  if (!learned.length) { document.getElementById('kdBody').innerHTML = '<div style="padding:40px;text-align:center;color:#666;font-family:Fredoka">Önce kelime öğrenmelisin!</div>'; return; }
+  var learned = Array.from(kdState.learnedWords).map(function(w){
+    return kdState.words.find(function(word){ return word.en === w; });
+  }).filter(Boolean);
+  if (!learned.length) {
+    document.getElementById('kdBody').innerHTML = '<div style="padding:40px;text-align:center;color:#666;font-family:Fredoka">Önce kelime öğrenmelisin!</div>';
+    return;
+  }
   var pick = learned[Math.floor(Math.random() * learned.length)];
   var letters = pick.en.toUpperCase().split('').sort(function(){ return Math.random()-0.5; });
   var attempt = 0;
-  while (letters.join('') === pick.en.toUpperCase() && attempt++ < 10) { letters.sort(function(){ return Math.random()-0.5; }); }
-  document.getElementById('kdBody').innerHTML = '<div style="font-family:Fredoka;padding:8px"><div style="text-align:center;margin-bottom:24px"><div style="font-size:64px;margin-bottom:8px">' + pick.emoji + '</div><div style="font-size:20px;color:#666;margin-bottom:20px">🇹🇷 ' + pick.tr + '</div><div style="font-size:30px;font-weight:700;letter-spacing:6px;color:var(--kd-accent,#6366f1);background:#f3f4f6;padding:12px 24px;border-radius:14px;display:inline-block">' + letters.join(' ') + '</div></div><input id="kdScrambleInput" type="text" autocomplete="off" placeholder="Harfleri doğru sıraya diz..." style="width:100%;padding:14px;font-size:20px;border:3px solid #e5e7eb;border-radius:12px;text-align:center;font-family:Fredoka;outline:none;margin-bottom:12px;box-sizing:border-box"><button onclick="kdCheckScramble('' + pick.en + '')" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));color:white;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;font-family:Fredoka">✅ Kontrol Et</button><div id="kdScrambleResult" style="margin-top:14px;text-align:center;font-size:18px;font-weight:700;min-height:28px"></div><button onclick="kdRenderScramble()" style="margin-top:10px;width:100%;padding:10px;background:white;border:2px solid #e5e7eb;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;color:#6b7280;font-family:Fredoka">🔀 Yeni Kelime</button></div>';
+  while (letters.join('') === pick.en.toUpperCase() && attempt++ < 10) {
+    letters.sort(function(){ return Math.random()-0.5; });
+  }
+  var body = document.getElementById('kdBody');
+  body.innerHTML = '';
+  var div = document.createElement('div');
+  div.style.cssText = 'font-family:Fredoka;padding:8px';
+  div.innerHTML =
+    '<div style="text-align:center;margin-bottom:24px">' +
+      '<div style="font-size:64px;margin-bottom:8px">' + pick.emoji + '</div>' +
+      '<div style="font-size:20px;color:#666;margin-bottom:20px">&#127481;&#127479; ' + pick.tr + '</div>' +
+      '<div style="font-size:28px;font-weight:700;letter-spacing:6px;color:var(--kd-accent,#6366f1);background:#f3f4f6;padding:12px 24px;border-radius:14px;display:inline-block">' + letters.join(' ') + '</div>' +
+    '</div>' +
+    '<input id="kdScrambleInput" type="text" autocomplete="off" placeholder="Harfleri doğru sıraya diz..." ' +
+      'style="width:100%;padding:14px;font-size:20px;border:3px solid #e5e7eb;border-radius:12px;text-align:center;font-family:Fredoka;outline:none;margin-bottom:12px;box-sizing:border-box">' +
+    '<button id="kdScrambleBtn" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));color:white;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;font-family:Fredoka">✅ Kontrol Et</button>' +
+    '<div id="kdScrambleResult" style="margin-top:14px;text-align:center;font-size:18px;font-weight:700;min-height:28px"></div>' +
+    '<button id="kdScrambleNext" style="margin-top:10px;width:100%;padding:10px;background:white;border:2px solid #e5e7eb;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;color:#6b7280;font-family:Fredoka">🔀 Yeni Kelime</button>';
+  body.appendChild(div);
+  document.getElementById('kdScrambleBtn').onclick = function(){ kdCheckScramble(pick.en); };
+  document.getElementById('kdScrambleNext').onclick = kdRenderScramble;
   document.getElementById('kdScrambleInput').addEventListener('keydown', function(e){ if(e.key==='Enter') kdCheckScramble(pick.en); });
   document.getElementById('kdScrambleInput').focus();
 }
