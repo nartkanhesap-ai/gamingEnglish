@@ -1762,7 +1762,7 @@ const CONTINENTS = [
     tint: '#7FC79A',
     tintDeep: '#4F9F70',
     cx: 210, cy: 310,
-    labelX: 165, labelY: 88, labelSize: 24,
+    labelX: 200, labelY: 100, labelSize: 22,
     paths: [
       `M 62,198
        C 54,165 74,135 108,130
@@ -1820,7 +1820,7 @@ const CONTINENTS = [
     tint: '#A8D77A',
     tintDeep: '#6FAE52',
     cx: 318, cy: 625,
-    labelX: 275, labelY: 790, labelSize: 20,
+    labelX: 275, labelY: 775, labelSize: 20,
     paths: [
       `M 278,460
        C 310,444 352,444 376,468
@@ -1863,8 +1863,8 @@ const CONTINENTS = [
     label: 'Europe',
     tint: '#C3A7E0',
     tintDeep: '#8B6BB8',
-    cx: 700, cy: 230,
-    labelX: 638, labelY: 152, labelSize: 20,
+    cx: 700, cy: 248,
+    labelX: 638, labelY: 175, labelSize: 20,
     paths: [
       `M 646,222
        C 635,198 660,174 690,174
@@ -1967,7 +1967,7 @@ const CONTINENTS = [
     tint: '#F4A2B6',
     tintDeep: '#D26A85',
     cx: 1165, cy: 305,
-    labelX: 1165, labelY: 130, labelSize: 28,
+    labelX: 1165, labelY: 108, labelSize: 24,
     paths: [
       `M 920,205
        C 932,170 990,150 1042,155
@@ -2094,7 +2094,7 @@ const CONTINENTS = [
     tint: '#E6F1F8',
     tintDeep: '#A8C8DA',
     cx: 800, cy: 872,
-    labelX: 800, labelY: 955, labelSize: 16,
+    labelX: 800, labelY: 940, labelSize: 15,
     paths: [
       `M 210,845
        C 322,818 476,810 628,812
@@ -2330,7 +2330,7 @@ function WorldMap({
       ref={svgRef}
       className="map-svg"
       viewBox="0 0 1600 1000"
-      preserveAspectRatio="xMidYMid slice"
+      preserveAspectRatio="xMidYMid meet"
       onMouseMove={handleMouseMove}
       onMouseLeave={() => onHover(null)}
     >
