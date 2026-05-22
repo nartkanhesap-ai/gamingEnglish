@@ -215,7 +215,68 @@ html, body {
   margin-top: -2px;
 }
 
+.hud {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hud-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 248, 236, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 9px 14px;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(15, 50, 80, 0.12);
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 14px;
+}
+.hud-chip svg { display: block; }
+.hud-chip-val { font-variant-numeric: tabular-nums; }
 
+.avatar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 248, 236, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 6px 16px 6px 6px;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(15, 50, 80, 0.12);
+}
+.avatar-ring {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFE0A8, #FFB07A);
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: white;
+  font-size: 18px;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.10);
+}
+.avatar-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.1;
+}
+.avatar-meta { font-size: 11px; color: var(--ink-soft); font-weight: 600; }
+
+.xp-bar {
+  width: 100px; height: 7px; border-radius: 999px;
+  background: rgba(31, 49, 68, 0.10);
+  overflow: hidden; margin-top: 4px;
+}
+.xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--coral));
+  border-radius: 999px;
+  transition: width 600ms ease;
+}
 
 /* Bottom hint */
 .hint {
@@ -1621,6 +1682,31 @@ function IcoAurora({ x, y, s = 1, idle = true, d = 0 }) {
 }
 
 // HUD ICONS
+function IcoStreak() {
+  return (
+    <svg width="18" height="18" viewBox="-12 -12 24 24">
+      <path d="M0,-10 Q-8,-2 -6,4 Q-4,10 0,10 Q4,10 6,4 Q8,-2 0,-10 Z" fill="#F2B544"/>
+      <path d="M0,-2 Q-3,2 -2,6 Q0,8 2,6 Q3,2 0,-2 Z" fill="#FBD96B"/>
+    </svg>
+  );
+}
+function IcoGem() {
+  return (
+    <svg width="16" height="16" viewBox="-12 -12 24 24">
+      <polygon points="-8,-2 -4,-8 4,-8 8,-2 0,10" fill="#7BC4D6"/>
+      <polygon points="-8,-2 0,-2 -4,-8" fill="#9CD9E8"/>
+      <polygon points="0,-2 8,-2 4,-8" fill="#5EAFC5"/>
+    </svg>
+  );
+}
+function IcoStar() {
+  return (
+    <svg width="16" height="16" viewBox="-12 -12 24 24">
+      <polygon points="0,-9 2.8,-2.8 9.5,-2.8 4.3,1.2 6.2,7.6 0,3.8 -6.2,7.6 -4.3,1.2 -9.5,-2.8 -2.8,-2.8" fill="#F2B544"/>
+    </svg>
+  );
+}
+
 // LOCK
 function IcoLock({ size = 14 }) {
   return (
@@ -1678,36 +1764,12 @@ const CONTINENTS = [
     cx: 220, cy: 290,
     labelX: 220, labelY: 115, labelSize: 22,
     paths: [
-      `M 80,205
-       C 72,175 90,148 120,148
-       C 140,125 172,132 195,148
-       C 212,158 206,170 196,178
-       C 218,164 252,152 290,150
-       C 338,142 388,152 425,170
-       C 452,182 462,206 442,222
-       C 432,238 446,256 432,270
-       C 440,292 426,312 406,318
-       C 416,338 404,360 380,362
-       C 370,365 360,358 356,348
-       C 348,360 342,372 338,386
-       C 330,404 328,426 344,436
-       C 360,440 360,410 346,395
-       C 328,375 300,366 272,376
-       C 238,389 196,386 164,374
-       C 118,360 80,332 72,292
-       C 62,266 68,234 80,205 Z`,
-      `M 498,98
-       C 520,88 548,96 552,120
-       C 556,146 538,168 514,172
-       C 494,174 480,158 480,138
-       C 478,118 486,104 498,98 Z`,
-      `M 362,398
-       C 378,394 394,402 390,412
-       C 384,420 368,420 360,412
-       C 354,406 356,400 362,398 Z`,
+      `M 80,205 C 72,175 90,148 120,148 C 140,125 172,132 195,148 C 212,158 206,170 196,178 C 218,164 252,152 290,150 C 338,142 388,152 425,170 C 452,182 462,206 442,222 C 432,238 446,256 432,270 C 440,292 426,312 406,318 C 416,338 404,360 380,362 C 370,365 360,358 356,348 C 348,360 342,372 338,386 C 330,404 328,426 344,436 C 360,440 360,410 346,395 C 328,375 300,366 272,376 C 238,389 196,386 164,374 C 118,360 80,332 72,292 C 62,266 68,234 80,205 Z`,
+      `M 498,98 C 520,88 548,96 552,120 C 556,146 538,168 514,172 C 494,174 480,158 480,138 C 478,118 486,104 498,98 Z`,
+      `M 362,398 C 378,394 394,402 390,412 C 384,420 368,420 360,412 C 354,406 356,400 362,398 Z`,
     ],
     icons: [
-      { type: 'Tree',  x: 168, y: 238, s: 0.8,  d: 0 },
+      { type: 'Tree',  x: 168, y: 238, s: 0.80, d: 0 },
       { type: 'Bear',  x: 245, y: 288, s: 0.88, d: 1 },
       { type: 'Eagle', x: 330, y: 218, s: 0.82, d: 2 },
       { type: 'Tree',  x: 368, y: 320, s: 0.75, d: 3 },
@@ -1736,20 +1798,8 @@ const CONTINENTS = [
     cx: 330, cy: 620,
     labelX: 330, labelY: 780, labelSize: 20,
     paths: [
-      `M 295,460
-       C 326,446 365,446 388,468
-       C 408,488 408,518 388,534
-       C 408,560 396,594 372,614
-       C 392,638 376,672 352,690
-       C 328,712 298,720 280,700
-       C 262,686 258,664 268,642
-       C 250,620 260,590 276,574
-       C 258,550 256,520 272,502
-       C 276,484 278,470 295,460 Z`,
-      `M 378,712
-       C 386,710 392,718 388,726
-       C 382,730 376,724 376,718
-       C 374,714 376,712 378,712 Z`,
+      `M 295,460 C 326,446 365,446 388,468 C 408,488 408,518 388,534 C 408,560 396,594 372,614 C 392,638 376,672 352,690 C 328,712 298,720 280,700 C 262,686 258,664 268,642 C 250,620 260,590 276,574 C 258,550 256,520 272,502 C 276,484 278,470 295,460 Z`,
+      `M 378,712 C 386,710 392,718 388,726 C 382,730 376,724 376,718 C 374,714 376,712 378,712 Z`,
     ],
     icons: [
       { type: 'Parrot', x: 332, y: 510, s: 0.80, d: 0 },
@@ -1780,33 +1830,11 @@ const CONTINENTS = [
     cx: 730, cy: 235,
     labelX: 728, labelY: 148, labelSize: 20,
     paths: [
-      `M 668,228
-       C 658,205 684,182 712,182
-       C 730,180 746,190 750,204
-       C 768,195 782,183 800,180
-       C 820,178 828,194 818,208
-       C 828,220 818,238 800,238
-       C 808,250 798,260 784,260
-       C 775,278 756,286 735,284
-       C 728,306 710,314 690,308
-       C 678,296 664,288 660,270
-       C 654,252 658,238 668,228 Z`,
-      `M 628,178
-       C 644,174 654,185 648,200
-       C 640,206 630,205 624,197
-       C 620,189 622,180 628,178 Z`,
-      `M 610,188
-       C 618,186 624,193 620,201
-       C 614,205 607,201 607,194
-       C 607,190 608,188 610,188 Z`,
-      `M 590,145
-       C 602,141 612,149 609,158
-       C 604,164 594,162 590,155
-       C 588,151 588,147 590,145 Z`,
-      `M 805,150
-       C 813,146 822,152 820,162
-       C 817,170 809,172 804,164
-       C 801,158 801,152 805,150 Z`,
+      `M 668,228 C 658,205 684,182 712,182 C 730,180 746,190 750,204 C 768,195 782,183 800,180 C 820,178 828,194 818,208 C 828,220 818,238 800,238 C 808,250 798,260 784,260 C 775,278 756,286 735,284 C 728,306 710,314 690,308 C 678,296 664,288 660,270 C 654,252 658,238 668,228 Z`,
+      `M 628,178 C 644,174 654,185 648,200 C 640,206 630,205 624,197 C 620,189 622,180 628,178 Z`,
+      `M 610,188 C 618,186 624,193 620,201 C 614,205 607,201 607,194 C 607,190 608,188 610,188 Z`,
+      `M 590,145 C 602,141 612,149 609,158 C 604,164 594,162 590,155 C 588,151 588,147 590,145 Z`,
+      `M 805,150 C 813,146 822,152 820,162 C 817,170 809,172 804,164 C 801,158 801,152 805,150 Z`,
     ],
     icons: [
       { type: 'Castle',   x: 695, y: 228, s: 0.72, d: 0 },
@@ -1836,23 +1864,8 @@ const CONTINENTS = [
     cx: 830, cy: 510,
     labelX: 830, labelY: 375, labelSize: 22,
     paths: [
-      `M 738,382
-       C 756,370 794,364 832,370
-       C 866,362 902,373 928,385
-       C 946,394 941,416 922,425
-       C 942,441 956,452 948,475
-       C 932,493 898,496 892,514
-       C 906,550 900,588 885,615
-       C 874,650 854,675 828,688
-       C 802,696 776,690 758,672
-       C 738,650 728,620 724,590
-       C 716,555 710,520 710,488
-       C 700,458 698,430 718,410
-       C 720,396 728,385 738,382 Z`,
-      `M 965,568
-       C 978,564 989,581 984,602
-       C 980,628 966,635 955,626
-       C 946,612 951,578 965,568 Z`,
+      `M 738,382 C 756,370 794,364 832,370 C 866,362 902,373 928,385 C 946,394 941,416 922,425 C 942,441 956,452 948,475 C 932,493 898,496 892,514 C 906,550 900,588 885,615 C 874,650 854,675 828,688 C 802,696 776,690 758,672 C 738,650 728,620 724,590 C 716,555 710,520 710,488 C 700,458 698,430 718,410 C 720,396 728,385 738,382 Z`,
+      `M 965,568 C 978,564 989,581 984,602 C 980,628 966,635 955,626 C 946,612 951,578 965,568 Z`,
     ],
     icons: [
       { type: 'Pyramid',  x: 826, y: 418, s: 0.88, d: 0 },
@@ -1883,51 +1896,13 @@ const CONTINENTS = [
     cx: 1115, cy: 318,
     labelX: 1115, labelY: 155, labelSize: 24,
     paths: [
-      `M 988,228
-       C 998,196 1048,178 1092,182
-       C 1136,173 1188,179 1248,174
-       C 1300,173 1348,182 1392,196
-       C 1432,205 1472,216 1478,248
-       C 1482,280 1448,294 1412,290
-       C 1432,312 1412,338 1386,338
-       C 1394,358 1376,375 1348,366
-       C 1350,388 1330,400 1308,396
-       C 1314,415 1294,433 1268,422
-       C 1249,444 1222,450 1202,440
-       C 1192,458 1172,456 1164,438
-       C 1148,424 1144,398 1156,384
-       C 1143,366 1118,366 1104,385
-       C 1088,394 1068,383 1062,365
-       C 1054,393 1038,418 1018,408
-       C 1006,384 1022,366 1034,351
-       C 1015,346 996,350 980,341
-       C 968,322 978,304 962,290
-       C 944,285 924,280 915,260
-       C 906,243 906,218 988,228 Z`,
-      `M 1478,308
-       C 1492,302 1504,320 1495,337
-       C 1486,350 1472,345 1472,332
-       C 1471,319 1472,312 1478,308 Z`,
-      `M 1484,348
-       C 1494,344 1502,355 1496,365
-       C 1488,370 1479,364 1481,355
-       C 1481,351 1482,349 1484,348 Z`,
-      `M 1262,458
-       C 1277,454 1288,465 1281,475
-       C 1272,479 1260,474 1260,465
-       C 1260,461 1260,459 1262,458 Z`,
-      `M 1300,475
-       C 1313,471 1322,481 1315,490
-       C 1306,494 1296,488 1296,480
-       C 1296,476 1297,475 1300,475 Z`,
-      `M 1342,472
-       C 1352,468 1360,477 1354,486
-       C 1346,489 1337,484 1338,476
-       C 1338,473 1339,472 1342,472 Z`,
-      `M 1218,446
-       C 1228,442 1237,451 1231,460
-       C 1223,463 1214,458 1215,450
-       C 1215,447 1216,446 1218,446 Z`,
+      `M 988,228 C 998,196 1048,178 1092,182 C 1136,173 1188,179 1248,174 C 1300,173 1348,182 1392,196 C 1432,205 1472,216 1478,248 C 1482,280 1448,294 1412,290 C 1432,312 1412,338 1386,338 C 1394,358 1376,375 1348,366 C 1350,388 1330,400 1308,396 C 1314,415 1294,433 1268,422 C 1249,444 1222,450 1202,440 C 1192,458 1172,456 1164,438 C 1148,424 1144,398 1156,384 C 1143,366 1118,366 1104,385 C 1088,394 1068,383 1062,365 C 1054,393 1038,418 1018,408 C 1006,384 1022,366 1034,351 C 1015,346 996,350 980,341 C 968,322 978,304 962,290 C 944,285 924,280 915,260 C 906,243 906,218 988,228 Z`,
+      `M 1478,308 C 1492,302 1504,320 1495,337 C 1486,350 1472,345 1472,332 C 1471,319 1472,312 1478,308 Z`,
+      `M 1484,348 C 1494,344 1502,355 1496,365 C 1488,370 1479,364 1481,355 C 1481,351 1482,349 1484,348 Z`,
+      `M 1262,458 C 1277,454 1288,465 1281,475 C 1272,479 1260,474 1260,465 C 1260,461 1260,459 1262,458 Z`,
+      `M 1300,475 C 1313,471 1322,481 1315,490 C 1306,494 1296,488 1296,480 C 1296,476 1297,475 1300,475 Z`,
+      `M 1342,472 C 1352,468 1360,477 1354,486 C 1346,489 1337,484 1338,476 C 1338,473 1339,472 1342,472 Z`,
+      `M 1218,446 C 1228,442 1237,451 1231,460 C 1223,463 1214,458 1215,450 C 1215,447 1216,446 1218,446 Z`,
     ],
     icons: [
       { type: 'Panda',   x: 1052, y: 295, s: 0.88, d: 0 },
@@ -1959,29 +1934,11 @@ const CONTINENTS = [
     cx: 1282, cy: 668,
     labelX: 1282, labelY: 798, labelSize: 18,
     paths: [
-      `M 1195,652
-       C 1191,632 1213,621 1235,626
-       C 1246,609 1258,608 1262,625
-       C 1272,608 1290,610 1294,628
-       C 1320,619 1346,628 1362,650
-       C 1376,668 1370,704 1352,721
-       C 1325,738 1280,743 1235,733
-       C 1205,727 1188,708 1188,686
-       C 1183,673 1188,659 1195,652 Z`,
-      `M 1408,688
-       C 1420,684 1428,696 1421,710
-       C 1414,717 1405,708 1407,695
-       C 1407,691 1407,688 1408,688 Z`,
-      `M 1412,722
-       C 1422,719 1430,729 1423,741
-       C 1416,744 1408,736 1412,722 Z`,
-      `M 1291,744
-       C 1300,742 1307,750 1302,758
-       C 1295,761 1289,755 1290,748
-       C 1289,745 1289,744 1291,744 Z`,
-      `M 1435,651
-       C 1441,649 1446,655 1443,661
-       C 1437,663 1433,659 1435,651 Z`,
+      `M 1195,652 C 1191,632 1213,621 1235,626 C 1246,609 1258,608 1262,625 C 1272,608 1290,610 1294,628 C 1320,619 1346,628 1362,650 C 1376,668 1370,704 1352,721 C 1325,738 1280,743 1235,733 C 1205,727 1188,708 1188,686 C 1183,673 1188,659 1195,652 Z`,
+      `M 1408,688 C 1420,684 1428,696 1421,710 C 1414,717 1405,708 1407,695 C 1407,691 1407,688 1408,688 Z`,
+      `M 1412,722 C 1422,719 1430,729 1423,741 C 1416,744 1408,736 1412,722 Z`,
+      `M 1291,744 C 1300,742 1307,750 1302,758 C 1295,761 1289,755 1290,748 C 1289,745 1289,744 1291,744 Z`,
+      `M 1435,651 C 1441,649 1446,655 1443,661 C 1437,663 1433,659 1435,651 Z`,
     ],
     icons: [
       { type: 'Kangaroo', x: 1238, y: 668, s: 0.84, d: 0 },
@@ -2009,15 +1966,7 @@ const CONTINENTS = [
     cx: 800, cy: 862,
     labelX: 800, labelY: 942, labelSize: 16,
     paths: [
-      `M 248,838
-       C 355,812 502,804 648,806
-       C 795,802 940,810 1072,819
-       C 1178,826 1302,838 1362,851
-       C 1392,862 1380,878 1342,883
-       C 1222,892 1062,892 892,885
-       C 722,892 538,889 375,878
-       C 265,869 198,860 215,850
-       C 220,844 234,840 248,838 Z`,
+      `M 248,838 C 355,812 502,804 648,806 C 795,802 940,810 1072,819 C 1178,826 1302,838 1362,851 C 1392,862 1380,878 1342,883 C 1222,892 1062,892 892,885 C 722,892 538,889 375,878 C 265,869 198,860 215,850 C 220,844 234,840 248,838 Z`,
     ],
     icons: [
       { type: 'Penguin', x: 668, y: 845, s: 0.65, d: 0 },
@@ -2027,8 +1976,8 @@ const CONTINENTS = [
       { type: 'Aurora',  x: 1022, y: 842, s: 0.68, d: 1 },
     ],
     extraIcons: [
-      { type: 'Iceberg', x: 732, y: 868, s: 0.50, d: 0 },
-      { type: 'Penguin', x: 972, y: 862, s: 0.46, d: 2 },
+      { type: 'Iceberg', x: 732, y: 862, s: 0.50, d: 0 },
+      { type: 'Penguin', x: 972, y: 858, s: 0.46, d: 2 },
       { type: 'Aurora',  x: 342, y: 842, s: 0.55, d: 0 },
     ],
     countries: [
@@ -2241,7 +2190,7 @@ function WorldMap({
     <svg
       ref={svgRef}
       className="map-svg"
-      viewBox="0 0 1600 1100"
+      viewBox="0 0 1600 1000"
       preserveAspectRatio="xMidYMid slice"
       onMouseMove={handleMouseMove}
       onMouseLeave={() => onHover(null)}
@@ -2674,26 +2623,14 @@ function Cloud({ top, duration, delay, scale }) {
 
 function TopChrome({ show }) {
   return (
-    <div
-      className="chrome"
-      style={{
-        opacity: show ? 1 : 0,
-        transform: show ? 'translateY(0)' : 'translateY(-12px)',
-        transition: 'opacity 320ms ease, transform 320ms ease',
-        pointerEvents: show ? 'auto' : 'none',
-      }}
-    >
+    <div className="chrome" style={{ opacity: show ? 1 : 0, transform: show ? 'translateY(0)' : 'translateY(-12px)', transition: 'opacity 320ms ease, transform 320ms ease', pointerEvents: show ? 'auto' : 'none' }}>
       <div className="brand">
         <div className="brand-mark">GE</div>
-        <div>
-          <div className="brand-name">Gaming English</div>
-          <div className="brand-sub">Dünya'yı Keşfet · Öğren</div>
-        </div>
+        <div><div className="brand-name">Gaming English</div><div className="brand-sub">Dünya'yı Keşfet · Öğren</div></div>
       </div>
     </div>
   );
 }
-
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const palette = PALETTES[t.palette] || PALETTES.classic;
@@ -3063,79 +3000,70 @@ const CONTINENT_WORDS = {
           { en: 'Mural',      tr: 'Duvar resmi',        emoji: '🎨', cat: 'kültür',  level: 'hard' },
         ]
       },
-
-      // ─── Eksik Ülkeler ────────────────────────────────────────────────
-
-      'Cuba': {
-        flag: '🇨🇺', capital: 'Havana',
-        words: [
-          { en: 'Sugar',      tr: 'Şeker',         emoji: '🍬', cat: 'yiyecek', level: 'easy' },
-          { en: 'Beach',      tr: 'Plaj',           emoji: '🏖️', cat: 'doğa',    level: 'easy' },
-          { en: 'Music',      tr: 'Müzik',          emoji: '🎵', cat: 'kültür',  level: 'easy' },
-          { en: 'Car',        tr: 'Araba',          emoji: '🚗', cat: 'kültür',  level: 'easy' },
-          { en: 'Palm',       tr: 'Palmiye',        emoji: '🌴', cat: 'doğa',    level: 'easy' },
-          { en: 'Sea',        tr: 'Deniz',          emoji: '🌊', cat: 'doğa',    level: 'easy' },
-          { en: 'Hat',        tr: 'Şapka',          emoji: '👒', cat: 'kıyafet', level: 'easy' },
-          { en: 'Fish',       tr: 'Balık',          emoji: '🐟', cat: 'yiyecek', level: 'easy' },
-          { en: 'Flamingo',   tr: 'Flamingo',       emoji: '🦩', cat: 'hayvan',  level: 'easy' },
-          { en: 'Island',     tr: 'Ada',            emoji: '🏝️', cat: 'doğa',    level: 'easy' },
-          { en: 'Tobacco',    tr: 'Tütün',          emoji: '🌿', cat: 'kültür',  level: 'medium' },
-          { en: 'Salsa',      tr: 'Salsa',          emoji: '💃', cat: 'kültür',  level: 'medium' },
-          { en: 'Crocodile',  tr: 'Timsah',         emoji: '🐊', cat: 'hayvan',  level: 'medium' },
-          { en: 'Coconut',    tr: 'Hindistancevizi', emoji: '🥥', cat: 'yiyecek', level: 'medium' },
-          { en: 'Coral',      tr: 'Mercan',         emoji: '🪸', cat: 'doğa',    level: 'medium' },
-          { en: 'Rum',        tr: 'Rom',            emoji: '🍹', cat: 'yiyecek', level: 'medium' },
-          { en: 'Sandal',     tr: 'Sandalet',       emoji: '👡', cat: 'kıyafet', level: 'medium' },
-          { en: 'Parrot',     tr: 'Papağan',        emoji: '🦜', cat: 'hayvan',  level: 'medium' },
-          { en: 'Sunset',     tr: 'Gün batımı',     emoji: '🌅', cat: 'doğa',    level: 'medium' },
-          { en: 'Guitar',     tr: 'Gitar',          emoji: '🎸', cat: 'kültür',  level: 'medium' },
-          { en: 'Iguana',     tr: 'İguana',         emoji: '🦎', cat: 'hayvan',  level: 'hard' },
-          { en: 'Mambo',      tr: 'Mambo',          emoji: '🎶', cat: 'kültür',  level: 'hard' },
-          { en: 'Manatee',    tr: 'Deniz ineği',    emoji: '🐋', cat: 'hayvan',  level: 'hard' },
-          { en: 'Papaya',     tr: 'Papaya',         emoji: '🍈', cat: 'yiyecek', level: 'hard' },
-          { en: 'Guayabera',  tr: 'Guayabera gömlek', emoji: '👕', cat: 'kıyafet', level: 'hard' },
-          { en: 'Mojito',     tr: 'Mojito',         emoji: '🍃', cat: 'yiyecek', level: 'hard' },
-          { en: 'Ceiba',      tr: 'Kapok ağacı',    emoji: '🌳', cat: 'doğa',    level: 'hard' },
-          { en: 'Hutia',      tr: 'Hutia',          emoji: '🐭', cat: 'hayvan',  level: 'hard' },
-          { en: 'Bolero',     tr: 'Bolero',         emoji: '🎼', cat: 'kültür',  level: 'hard' },
-          { en: 'Habanero',   tr: 'Habanero biber', emoji: '🌶️', cat: 'yiyecek', level: 'hard' },
-        ]
-      },
-      'Jamaica': {
-        flag: '🇯🇲', capital: 'Kingston',
-        words: [
-          { en: 'Reggae',     tr: 'Reggae',         emoji: '🎵', cat: 'kültür',  level: 'easy' },
-          { en: 'Beach',      tr: 'Plaj',           emoji: '🏖️', cat: 'doğa',    level: 'easy' },
-          { en: 'Mango',      tr: 'Mango',          emoji: '🥭', cat: 'yiyecek', level: 'easy' },
-          { en: 'Sun',        tr: 'Güneş',          emoji: '☀️', cat: 'doğa',    level: 'easy' },
-          { en: 'Palm',       tr: 'Palmiye',        emoji: '🌴', cat: 'doğa',    level: 'easy' },
-          { en: 'Music',      tr: 'Müzik',          emoji: '🎶', cat: 'kültür',  level: 'easy' },
-          { en: 'Fish',       tr: 'Balık',          emoji: '🐟', cat: 'yiyecek', level: 'easy' },
-          { en: 'Blue',       tr: 'Mavi',           emoji: '💙', cat: 'doğa',    level: 'easy' },
-          { en: 'Run',        tr: 'Koşmak',         emoji: '🏃', cat: 'kültür',  level: 'easy' },
-          { en: 'Island',     tr: 'Ada',            emoji: '🏝️', cat: 'doğa',    level: 'easy' },
-          { en: 'Coconut',    tr: 'Hindistancevizi', emoji: '🥥', cat: 'yiyecek', level: 'medium' },
-          { en: 'Hummingbird', tr: 'Sinekkuşu',    emoji: '🐦', cat: 'hayvan',  level: 'medium' },
-          { en: 'Waterfall',  tr: 'Şelale',         emoji: '💧', cat: 'doğa',    level: 'medium' },
-          { en: 'Pepper',     tr: 'Biber',          emoji: '🌶️', cat: 'yiyecek', level: 'medium' },
-          { en: 'Dreadlock',  tr: 'Rasta saç',      emoji: '💈', cat: 'kültür',  level: 'medium' },
-          { en: 'Coral',      tr: 'Mercan',         emoji: '🪸', cat: 'doğa',    level: 'medium' },
-          { en: 'Banana',     tr: 'Muz',            emoji: '🍌', cat: 'yiyecek', level: 'medium' },
-          { en: 'Crocodile',  tr: 'Timsah',         emoji: '🐊', cat: 'hayvan',  level: 'medium' },
-          { en: 'Sprint',     tr: 'Sürat koşusu',   emoji: '⚡', cat: 'kültür',  level: 'medium' },
-          { en: 'Sandal',     tr: 'Sandalet',       emoji: '👡', cat: 'kıyafet', level: 'medium' },
-          { en: 'Jerk',       tr: 'Acılı marine',   emoji: '🍖', cat: 'yiyecek', level: 'hard' },
-          { en: 'Patois',     tr: 'Kreol dili',     emoji: '💬', cat: 'kültür',  level: 'hard' },
-          { en: 'Ackee',      tr: 'Aki meyvesi',    emoji: '🍎', cat: 'yiyecek', level: 'hard' },
-          { en: 'Mongoose',   tr: 'Firavunfaresi',  emoji: '🦡', cat: 'hayvan',  level: 'hard' },
-          { en: 'Rastafari',  tr: 'Rastafari',      emoji: '☮️', cat: 'kültür',  level: 'hard' },
-          { en: 'Breadfruit', tr: 'Ekmek meyvesi',  emoji: '🌿', cat: 'yiyecek', level: 'hard' },
-          { en: 'Mahoe',      tr: 'Milli ağaç',     emoji: '🌳', cat: 'doğa',    level: 'hard' },
-          { en: 'Swallowtail', tr: 'Kırlangıçkuyruk kelebek', emoji: '🦋', cat: 'hayvan', level: 'hard' },
-          { en: 'Dunce',      tr: 'Aptal şapkası',  emoji: '🎓', cat: 'kültür',  level: 'hard' },
-          { en: 'Calypso',    tr: 'Kalipso müzik',  emoji: '🎸', cat: 'kültür',  level: 'hard' },
-        ]
-      },
+      'Cuba': { flag: '🇨🇺', capital: 'Havana', words: [
+        { en: 'Sugar', tr: 'Şeker', emoji: '🍬', cat: 'yiyecek', level: 'easy' },
+        { en: 'Beach', tr: 'Plaj', emoji: '🏖️', cat: 'doğa', level: 'easy' },
+        { en: 'Music', tr: 'Müzik', emoji: '🎵', cat: 'kültür', level: 'easy' },
+        { en: 'Car', tr: 'Araba', emoji: '🚗', cat: 'kültür', level: 'easy' },
+        { en: 'Palm', tr: 'Palmiye', emoji: '🌴', cat: 'doğa', level: 'easy' },
+        { en: 'Sea', tr: 'Deniz', emoji: '🌊', cat: 'doğa', level: 'easy' },
+        { en: 'Hat', tr: 'Şapka', emoji: '👒', cat: 'kıyafet', level: 'easy' },
+        { en: 'Fish', tr: 'Balık', emoji: '🐟', cat: 'yiyecek', level: 'easy' },
+        { en: 'Flamingo', tr: 'Flamingo', emoji: '🦩', cat: 'hayvan', level: 'easy' },
+        { en: 'Island', tr: 'Ada', emoji: '🏝️', cat: 'doğa', level: 'easy' },
+        { en: 'Tobacco', tr: 'Tütün', emoji: '🌿', cat: 'kültür', level: 'medium' },
+        { en: 'Salsa', tr: 'Salsa', emoji: '💃', cat: 'kültür', level: 'medium' },
+        { en: 'Crocodile', tr: 'Timsah', emoji: '🐊', cat: 'hayvan', level: 'medium' },
+        { en: 'Coconut', tr: 'Hindistancevizi', emoji: '🥥', cat: 'yiyecek', level: 'medium' },
+        { en: 'Coral', tr: 'Mercan', emoji: '🪸', cat: 'doğa', level: 'medium' },
+        { en: 'Parrot', tr: 'Papağan', emoji: '🦜', cat: 'hayvan', level: 'medium' },
+        { en: 'Guitar', tr: 'Gitar', emoji: '🎸', cat: 'kültür', level: 'medium' },
+        { en: 'Sandal', tr: 'Sandalet', emoji: '👡', cat: 'kıyafet', level: 'medium' },
+        { en: 'Sunset', tr: 'Gün batımı', emoji: '🌅', cat: 'doğa', level: 'medium' },
+        { en: 'Iguana', tr: 'İguana', emoji: '🦎', cat: 'hayvan', level: 'medium' },
+        { en: 'Mojito', tr: 'Mojito', emoji: '🍃', cat: 'yiyecek', level: 'hard' },
+        { en: 'Mambo', tr: 'Mambo', emoji: '🎶', cat: 'kültür', level: 'hard' },
+        { en: 'Papaya', tr: 'Papaya', emoji: '🍈', cat: 'yiyecek', level: 'hard' },
+        { en: 'Ceiba', tr: 'Kapok ağacı', emoji: '🌳', cat: 'doğa', level: 'hard' },
+        { en: 'Hutia', tr: 'Hutia', emoji: '🐭', cat: 'hayvan', level: 'hard' },
+        { en: 'Bolero', tr: 'Bolero', emoji: '🎼', cat: 'kültür', level: 'hard' },
+        { en: 'Manatee', tr: 'Deniz ineği', emoji: '🐋', cat: 'hayvan', level: 'hard' },
+        { en: 'Habanero', tr: 'Habanero biber', emoji: '🌶️', cat: 'yiyecek', level: 'hard' },
+        { en: 'Guayabera', tr: 'Guayabera gömlek', emoji: '👕', cat: 'kıyafet', level: 'hard' },
+        { en: 'Rum', tr: 'Rom', emoji: '🍹', cat: 'yiyecek', level: 'hard' },
+      ]},
+      'Jamaica': { flag: '🇯🇲', capital: 'Kingston', words: [
+        { en: 'Reggae', tr: 'Reggae', emoji: '🎵', cat: 'kültür', level: 'easy' },
+        { en: 'Beach', tr: 'Plaj', emoji: '🏖️', cat: 'doğa', level: 'easy' },
+        { en: 'Mango', tr: 'Mango', emoji: '🥭', cat: 'yiyecek', level: 'easy' },
+        { en: 'Sun', tr: 'Güneş', emoji: '☀️', cat: 'doğa', level: 'easy' },
+        { en: 'Palm', tr: 'Palmiye', emoji: '🌴', cat: 'doğa', level: 'easy' },
+        { en: 'Music', tr: 'Müzik', emoji: '🎶', cat: 'kültür', level: 'easy' },
+        { en: 'Fish', tr: 'Balık', emoji: '🐟', cat: 'yiyecek', level: 'easy' },
+        { en: 'Run', tr: 'Koşmak', emoji: '🏃', cat: 'kültür', level: 'easy' },
+        { en: 'Island', tr: 'Ada', emoji: '🏝️', cat: 'doğa', level: 'easy' },
+        { en: 'Banana', tr: 'Muz', emoji: '🍌', cat: 'yiyecek', level: 'easy' },
+        { en: 'Coconut', tr: 'Hindistancevizi', emoji: '🥥', cat: 'yiyecek', level: 'medium' },
+        { en: 'Hummingbird', tr: 'Sinekkuşu', emoji: '🐦', cat: 'hayvan', level: 'medium' },
+        { en: 'Waterfall', tr: 'Şelale', emoji: '💧', cat: 'doğa', level: 'medium' },
+        { en: 'Pepper', tr: 'Biber', emoji: '🌶️', cat: 'yiyecek', level: 'medium' },
+        { en: 'Coral', tr: 'Mercan', emoji: '🪸', cat: 'doğa', level: 'medium' },
+        { en: 'Crocodile', tr: 'Timsah', emoji: '🐊', cat: 'hayvan', level: 'medium' },
+        { en: 'Sprint', tr: 'Sürat koşusu', emoji: '⚡', cat: 'kültür', level: 'medium' },
+        { en: 'Sandal', tr: 'Sandalet', emoji: '👡', cat: 'kıyafet', level: 'medium' },
+        { en: 'Parrot', tr: 'Papağan', emoji: '🦜', cat: 'hayvan', level: 'medium' },
+        { en: 'Dreadlock', tr: 'Rasta saç', emoji: '💈', cat: 'kültür', level: 'medium' },
+        { en: 'Jerk', tr: 'Acılı marine', emoji: '🍖', cat: 'yiyecek', level: 'hard' },
+        { en: 'Ackee', tr: 'Aki meyvesi', emoji: '🍎', cat: 'yiyecek', level: 'hard' },
+        { en: 'Mongoose', tr: 'Firavunfaresi', emoji: '🦡', cat: 'hayvan', level: 'hard' },
+        { en: 'Rastafari', tr: 'Rastafari', emoji: '☮️', cat: 'kültür', level: 'hard' },
+        { en: 'Breadfruit', tr: 'Ekmek meyvesi', emoji: '🌿', cat: 'yiyecek', level: 'hard' },
+        { en: 'Calypso', tr: 'Kalipso müzik', emoji: '🎸', cat: 'kültür', level: 'hard' },
+        { en: 'Patois', tr: 'Kreol dili', emoji: '💬', cat: 'kültür', level: 'hard' },
+        { en: 'Mahoe', tr: 'Milli ağaç', emoji: '🌳', cat: 'doğa', level: 'hard' },
+        { en: 'Swallowtail', tr: 'Kırlangıçkuyruk kelebek', emoji: '🦋', cat: 'hayvan', level: 'hard' },
+        { en: 'Dunce', tr: 'Aptal şapkası', emoji: '🎓', cat: 'kültür', level: 'hard' },
+      ]},
     }
   },
 
@@ -3248,77 +3176,70 @@ const CONTINENT_WORDS = {
           { en: 'Pachamama',  tr: 'Toprak ana',         emoji: '🌍', cat: 'kültür',  level: 'hard' },
         ]
       },
-
-      'Colombia': {
-        flag: '🇨🇴', capital: 'Bogotá',
-        words: [
-          { en: 'Coffee',     tr: 'Kahve',          emoji: '☕', cat: 'yiyecek', level: 'easy' },
-          { en: 'Flower',     tr: 'Çiçek',          emoji: '🌸', cat: 'doğa',    level: 'easy' },
-          { en: 'Mountain',   tr: 'Dağ',            emoji: '⛰️', cat: 'doğa',    level: 'easy' },
-          { en: 'Bird',       tr: 'Kuş',            emoji: '🐦', cat: 'hayvan',  level: 'easy' },
-          { en: 'Dance',      tr: 'Dans',           emoji: '💃', cat: 'kültür',  level: 'easy' },
-          { en: 'Gold',       tr: 'Altın',          emoji: '🥇', cat: 'kültür',  level: 'easy' },
-          { en: 'River',      tr: 'Nehir',          emoji: '🏞️', cat: 'doğa',    level: 'easy' },
-          { en: 'Hat',        tr: 'Şapka',          emoji: '👒', cat: 'kıyafet', level: 'easy' },
-          { en: 'Emerald',    tr: 'Zümrüt',         emoji: '💎', cat: 'kültür',  level: 'easy' },
-          { en: 'Jungle',     tr: 'Orman',          emoji: '🌿', cat: 'doğa',    level: 'easy' },
-          { en: 'Toucan',     tr: 'Tukan',          emoji: '🦜', cat: 'hayvan',  level: 'medium' },
-          { en: 'Cumbia',     tr: 'Kumbia',         emoji: '🎶', cat: 'kültür',  level: 'medium' },
-          { en: 'Mango',      tr: 'Mango',          emoji: '🥭', cat: 'yiyecek', level: 'medium' },
-          { en: 'Poncho',     tr: 'Panço',          emoji: '🧥', cat: 'kıyafet', level: 'medium' },
-          { en: 'Amazon',     tr: 'Amazon',         emoji: '🌳', cat: 'doğa',    level: 'medium' },
-          { en: 'Jaguar',     tr: 'Jaguar',         emoji: '🐆', cat: 'hayvan',  level: 'medium' },
-          { en: 'Papaya',     tr: 'Papaya',         emoji: '🍈', cat: 'yiyecek', level: 'medium' },
-          { en: 'Volcano',    tr: 'Volkan',         emoji: '🌋', cat: 'doğa',    level: 'medium' },
-          { en: 'Tapioca',    tr: 'Tapyoka',        emoji: '🥣', cat: 'yiyecek', level: 'medium' },
-          { en: 'Coral',      tr: 'Mercan',         emoji: '🪸', cat: 'doğa',    level: 'medium' },
-          { en: 'Condor',     tr: 'Kondor',         emoji: '🦅', cat: 'hayvan',  level: 'hard' },
-          { en: 'Vallenato',  tr: 'Vallenato',      emoji: '🎵', cat: 'kültür',  level: 'hard' },
-          { en: 'Guanabana',  tr: 'Graviola',       emoji: '🍏', cat: 'yiyecek', level: 'hard' },
-          { en: 'Ruana',      tr: 'Ruana pelerin',  emoji: '🧣', cat: 'kıyafet', level: 'hard' },
-          { en: 'Caiman',     tr: 'Kiman timsahı',  emoji: '🐊', cat: 'hayvan',  level: 'hard' },
-          { en: 'Araucaria',  tr: 'Araukanya ağacı', emoji: '🌲', cat: 'doğa',   level: 'hard' },
-          { en: 'Chirimoya',  tr: 'Şirimoya',       emoji: '🍑', cat: 'yiyecek', level: 'hard' },
-          { en: 'Pirarucu',   tr: 'Arapaima balık', emoji: '🐟', cat: 'hayvan',  level: 'hard' },
-          { en: 'Wayuu',      tr: 'Wayuu kültürü',  emoji: '🎨', cat: 'kültür',  level: 'hard' },
-          { en: 'Bocachico',  tr: 'Bocachico balık', emoji: '🎣', cat: 'yiyecek', level: 'hard' },
-        ]
-      },
-      'Chile': {
-        flag: '🇨🇱', capital: 'Santiago',
-        words: [
-          { en: 'Desert',     tr: 'Çöl',            emoji: '🏜️', cat: 'doğa',    level: 'easy' },
-          { en: 'Wine',       tr: 'Şarap',          emoji: '🍷', cat: 'yiyecek', level: 'easy' },
-          { en: 'Copper',     tr: 'Bakır',          emoji: '🪙', cat: 'kültür',  level: 'easy' },
-          { en: 'Snow',       tr: 'Kar',            emoji: '❄️', cat: 'doğa',    level: 'easy' },
-          { en: 'Mountain',   tr: 'Dağ',            emoji: '⛰️', cat: 'doğa',    level: 'easy' },
-          { en: 'Fish',       tr: 'Balık',          emoji: '🐟', cat: 'yiyecek', level: 'easy' },
-          { en: 'Penguin',    tr: 'Penguen',        emoji: '🐧', cat: 'hayvan',  level: 'easy' },
-          { en: 'Volcano',    tr: 'Volkan',         emoji: '🌋', cat: 'doğa',    level: 'easy' },
-          { en: 'Pepper',     tr: 'Biber',          emoji: '🌶️', cat: 'yiyecek', level: 'easy' },
-          { en: 'Star',       tr: 'Yıldız',         emoji: '⭐', cat: 'doğa',    level: 'easy' },
-          { en: 'Condor',     tr: 'Kondor',         emoji: '🦅', cat: 'hayvan',  level: 'medium' },
-          { en: 'Poncho',     tr: 'Panço',          emoji: '🧥', cat: 'kıyafet', level: 'medium' },
-          { en: 'Salmon',     tr: 'Somon',          emoji: '🐠', cat: 'yiyecek', level: 'medium' },
-          { en: 'Earthquake', tr: 'Deprem',         emoji: '🌍', cat: 'doğa',    level: 'medium' },
-          { en: 'Llama',      tr: 'Lama',           emoji: '🦙', cat: 'hayvan',  level: 'medium' },
-          { en: 'Glacier',    tr: 'Buzul',          emoji: '🧊', cat: 'doğa',    level: 'medium' },
-          { en: 'Grape',      tr: 'Üzüm',           emoji: '🍇', cat: 'yiyecek', level: 'medium' },
-          { en: 'Rapa Nui',   tr: 'Paskalya Adası', emoji: '🗿', cat: 'kültür',  level: 'medium' },
-          { en: 'Chullo',     tr: 'Chullo şapka',  emoji: '🎩', cat: 'kıyafet', level: 'medium' },
-          { en: 'Fjord',      tr: 'Fiyort',         emoji: '🌊', cat: 'doğa',    level: 'medium' },
-          { en: 'Cueca',      tr: 'Kueka dans',     emoji: '💃', cat: 'kültür',  level: 'hard' },
-          { en: 'Atacama',    tr: 'Atacama çölü',   emoji: '🏜️', cat: 'doğa',    level: 'hard' },
-          { en: 'Empanada',   tr: 'Empanada',       emoji: '🥟', cat: 'yiyecek', level: 'hard' },
-          { en: 'Pudu',       tr: 'Pudu geyiği',    emoji: '🦌', cat: 'hayvan',  level: 'hard' },
-          { en: 'Mapuche',    tr: 'Mapuche kültürü', emoji: '🎭', cat: 'kültür', level: 'hard' },
-          { en: 'Carmenere',  tr: 'Carmenere üzümü', emoji: '🍇', cat: 'yiyecek', level: 'hard' },
-          { en: 'Araucaria',  tr: 'Araukanya',      emoji: '🌲', cat: 'doğa',    level: 'hard' },
-          { en: 'Huemul',     tr: 'Huemul geyiği',  emoji: '🦌', cat: 'hayvan',  level: 'hard' },
-          { en: 'Moai',       tr: 'Moai heykeli',   emoji: '🗿', cat: 'kültür',  level: 'hard' },
-          { en: 'Caldillo',   tr: 'Caldillo çorbası', emoji: '🍲', cat: 'yiyecek', level: 'hard' },
-        ]
-      },
+      'Colombia': { flag: '🇨🇴', capital: 'Bogotá', words: [
+        { en: 'Coffee', tr: 'Kahve', emoji: '☕', cat: 'yiyecek', level: 'easy' },
+        { en: 'Flower', tr: 'Çiçek', emoji: '🌸', cat: 'doğa', level: 'easy' },
+        { en: 'Mountain', tr: 'Dağ', emoji: '⛰️', cat: 'doğa', level: 'easy' },
+        { en: 'Bird', tr: 'Kuş', emoji: '🐦', cat: 'hayvan', level: 'easy' },
+        { en: 'Dance', tr: 'Dans', emoji: '💃', cat: 'kültür', level: 'easy' },
+        { en: 'Gold', tr: 'Altın', emoji: '🥇', cat: 'kültür', level: 'easy' },
+        { en: 'River', tr: 'Nehir', emoji: '🏞️', cat: 'doğa', level: 'easy' },
+        { en: 'Emerald', tr: 'Zümrüt', emoji: '💎', cat: 'kültür', level: 'easy' },
+        { en: 'Jungle', tr: 'Orman', emoji: '🌿', cat: 'doğa', level: 'easy' },
+        { en: 'Mango', tr: 'Mango', emoji: '🥭', cat: 'yiyecek', level: 'easy' },
+        { en: 'Toucan', tr: 'Tukan', emoji: '🦜', cat: 'hayvan', level: 'medium' },
+        { en: 'Cumbia', tr: 'Kumbia', emoji: '🎶', cat: 'kültür', level: 'medium' },
+        { en: 'Poncho', tr: 'Panço', emoji: '🧥', cat: 'kıyafet', level: 'medium' },
+        { en: 'Jaguar', tr: 'Jaguar', emoji: '🐆', cat: 'hayvan', level: 'medium' },
+        { en: 'Papaya', tr: 'Papaya', emoji: '🍈', cat: 'yiyecek', level: 'medium' },
+        { en: 'Volcano', tr: 'Volkan', emoji: '🌋', cat: 'doğa', level: 'medium' },
+        { en: 'Hat', tr: 'Şapka', emoji: '👒', cat: 'kıyafet', level: 'medium' },
+        { en: 'Coral', tr: 'Mercan', emoji: '🪸', cat: 'doğa', level: 'medium' },
+        { en: 'Condor', tr: 'Kondor', emoji: '🦅', cat: 'hayvan', level: 'medium' },
+        { en: 'Amazon', tr: 'Amazon', emoji: '🌳', cat: 'doğa', level: 'medium' },
+        { en: 'Vallenato', tr: 'Vallenato', emoji: '🎵', cat: 'kültür', level: 'hard' },
+        { en: 'Araucaria', tr: 'Araukanya ağacı', emoji: '🌲', cat: 'doğa', level: 'hard' },
+        { en: 'Caiman', tr: 'Kiman timsahı', emoji: '🐊', cat: 'hayvan', level: 'hard' },
+        { en: 'Guanabana', tr: 'Graviola', emoji: '🍏', cat: 'yiyecek', level: 'hard' },
+        { en: 'Ruana', tr: 'Ruana pelerin', emoji: '🧣', cat: 'kıyafet', level: 'hard' },
+        { en: 'Chirimoya', tr: 'Şirimoya', emoji: '🍑', cat: 'yiyecek', level: 'hard' },
+        { en: 'Pirarucu', tr: 'Arapaima balık', emoji: '🐟', cat: 'hayvan', level: 'hard' },
+        { en: 'Wayuu', tr: 'Wayuu kültürü', emoji: '🎨', cat: 'kültür', level: 'hard' },
+        { en: 'Tapioca', tr: 'Tapyoka', emoji: '🥣', cat: 'yiyecek', level: 'hard' },
+        { en: 'Bocachico', tr: 'Bocachico balık', emoji: '🎣', cat: 'yiyecek', level: 'hard' },
+      ]},
+      'Chile': { flag: '🇨🇱', capital: 'Santiago', words: [
+        { en: 'Desert', tr: 'Çöl', emoji: '🏜️', cat: 'doğa', level: 'easy' },
+        { en: 'Wine', tr: 'Şarap', emoji: '🍷', cat: 'yiyecek', level: 'easy' },
+        { en: 'Copper', tr: 'Bakır', emoji: '🪙', cat: 'kültür', level: 'easy' },
+        { en: 'Snow', tr: 'Kar', emoji: '❄️', cat: 'doğa', level: 'easy' },
+        { en: 'Mountain', tr: 'Dağ', emoji: '⛰️', cat: 'doğa', level: 'easy' },
+        { en: 'Fish', tr: 'Balık', emoji: '🐟', cat: 'yiyecek', level: 'easy' },
+        { en: 'Penguin', tr: 'Penguen', emoji: '🐧', cat: 'hayvan', level: 'easy' },
+        { en: 'Volcano', tr: 'Volkan', emoji: '🌋', cat: 'doğa', level: 'easy' },
+        { en: 'Star', tr: 'Yıldız', emoji: '⭐', cat: 'doğa', level: 'easy' },
+        { en: 'Grape', tr: 'Üzüm', emoji: '🍇', cat: 'yiyecek', level: 'easy' },
+        { en: 'Condor', tr: 'Kondor', emoji: '🦅', cat: 'hayvan', level: 'medium' },
+        { en: 'Poncho', tr: 'Panço', emoji: '🧥', cat: 'kıyafet', level: 'medium' },
+        { en: 'Salmon', tr: 'Somon', emoji: '🐠', cat: 'yiyecek', level: 'medium' },
+        { en: 'Llama', tr: 'Lama', emoji: '🦙', cat: 'hayvan', level: 'medium' },
+        { en: 'Glacier', tr: 'Buzul', emoji: '🧊', cat: 'doğa', level: 'medium' },
+        { en: 'Rapa Nui', tr: 'Paskalya Adası', emoji: '🗿', cat: 'kültür', level: 'medium' },
+        { en: 'Fjord', tr: 'Fiyort', emoji: '🌊', cat: 'doğa', level: 'medium' },
+        { en: 'Earthquake', tr: 'Deprem', emoji: '🌍', cat: 'doğa', level: 'medium' },
+        { en: 'Chullo', tr: 'Chullo şapka', emoji: '🎩', cat: 'kıyafet', level: 'medium' },
+        { en: 'Pepper', tr: 'Biber', emoji: '🌶️', cat: 'yiyecek', level: 'medium' },
+        { en: 'Cueca', tr: 'Kueka dans', emoji: '💃', cat: 'kültür', level: 'hard' },
+        { en: 'Atacama', tr: 'Atacama çölü', emoji: '🏜️', cat: 'doğa', level: 'hard' },
+        { en: 'Empanada', tr: 'Empanada', emoji: '🥟', cat: 'yiyecek', level: 'hard' },
+        { en: 'Pudu', tr: 'Pudu geyiği', emoji: '🦌', cat: 'hayvan', level: 'hard' },
+        { en: 'Mapuche', tr: 'Mapuche kültürü', emoji: '🎭', cat: 'kültür', level: 'hard' },
+        { en: 'Carmenere', tr: 'Carmenere üzümü', emoji: '🍇', cat: 'yiyecek', level: 'hard' },
+        { en: 'Araucaria', tr: 'Araukanya', emoji: '🌲', cat: 'doğa', level: 'hard' },
+        { en: 'Huemul', tr: 'Huemul geyiği', emoji: '🦌', cat: 'hayvan', level: 'hard' },
+        { en: 'Moai', tr: 'Moai heykeli', emoji: '🗿', cat: 'kültür', level: 'hard' },
+        { en: 'Caldillo', tr: 'Caldillo çorbası', emoji: '🍲', cat: 'yiyecek', level: 'hard' },
+      ]},
     }
   },
 
@@ -3326,6 +3247,70 @@ const CONTINENT_WORDS = {
   eu: {
     theme: { bg: '#E3F2FD', accent: '#1565C0', emoji: '🏰', name: 'Avrupa' },
     countries: {
+      'UK': { flag: '🇬🇧', capital: 'London', words: [
+        { en: 'Tea', tr: 'Çay', emoji: '🍵', cat: 'yiyecek', level: 'easy' },
+        { en: 'Rain', tr: 'Yağmur', emoji: '🌧️', cat: 'doğa', level: 'easy' },
+        { en: 'Castle', tr: 'Kale', emoji: '🏰', cat: 'kültür', level: 'easy' },
+        { en: 'Queen', tr: 'Kraliçe', emoji: '👑', cat: 'kültür', level: 'easy' },
+        { en: 'Bus', tr: 'Otobüs', emoji: '🚌', cat: 'kültür', level: 'easy' },
+        { en: 'Dog', tr: 'Köpek', emoji: '🐕', cat: 'hayvan', level: 'easy' },
+        { en: 'Garden', tr: 'Bahçe', emoji: '🌷', cat: 'doğa', level: 'easy' },
+        { en: 'Coat', tr: 'Palto', emoji: '🧥', cat: 'kıyafet', level: 'easy' },
+        { en: 'Bridge', tr: 'Köprü', emoji: '🌉', cat: 'kültür', level: 'easy' },
+        { en: 'Fish', tr: 'Balık', emoji: '🐟', cat: 'yiyecek', level: 'easy' },
+        { en: 'Fox', tr: 'Tilki', emoji: '🦊', cat: 'hayvan', level: 'medium' },
+        { en: 'Football', tr: 'Futbol', emoji: '⚽', cat: 'kültür', level: 'medium' },
+        { en: 'Chips', tr: 'Patates kızartması', emoji: '🍟', cat: 'yiyecek', level: 'medium' },
+        { en: 'Umbrella', tr: 'Şemsiye', emoji: '☂️', cat: 'kıyafet', level: 'medium' },
+        { en: 'Hedgehog', tr: 'Kirpi', emoji: '🦔', cat: 'hayvan', level: 'medium' },
+        { en: 'Biscuit', tr: 'Bisküvi', emoji: '🍪', cat: 'yiyecek', level: 'medium' },
+        { en: 'Parliament', tr: 'Parlamento', emoji: '🏛️', cat: 'kültür', level: 'medium' },
+        { en: 'Clover', tr: 'Yonca', emoji: '🍀', cat: 'doğa', level: 'medium' },
+        { en: 'Bagpipe', tr: 'Gayda', emoji: '🎵', cat: 'kültür', level: 'medium' },
+        { en: 'Tartan', tr: 'Ekose desen', emoji: '🏴', cat: 'kıyafet', level: 'medium' },
+        { en: 'Cheddar', tr: 'Cheddar peyniri', emoji: '🧀', cat: 'yiyecek', level: 'hard' },
+        { en: 'Corgi', tr: 'Corgi köpeği', emoji: '🐕', cat: 'hayvan', level: 'hard' },
+        { en: 'Stonehenge', tr: 'Stonehenge', emoji: '🗿', cat: 'kültür', level: 'hard' },
+        { en: 'Marmite', tr: 'Marmit', emoji: '🍯', cat: 'yiyecek', level: 'hard' },
+        { en: 'Puffin', tr: 'Pufinus kuşu', emoji: '🐦', cat: 'hayvan', level: 'hard' },
+        { en: 'Haggis', tr: 'Haggis', emoji: '🍖', cat: 'yiyecek', level: 'hard' },
+        { en: 'Bowler', tr: 'Melon şapka', emoji: '🎩', cat: 'kıyafet', level: 'hard' },
+        { en: 'Bluebell', tr: 'Çan çiçeği', emoji: '🔔', cat: 'doğa', level: 'hard' },
+        { en: 'Wellington', tr: 'Wellington çizme', emoji: '👢', cat: 'kıyafet', level: 'hard' },
+        { en: 'Punting', tr: 'Sırıkla kürek', emoji: '🚣', cat: 'kültür', level: 'hard' },
+      ]},
+      'Spain': { flag: '🇪🇸', capital: 'Madrid', words: [
+        { en: 'Bull', tr: 'Boğa', emoji: '🐂', cat: 'hayvan', level: 'easy' },
+        { en: 'Sun', tr: 'Güneş', emoji: '☀️', cat: 'doğa', level: 'easy' },
+        { en: 'Dance', tr: 'Dans', emoji: '💃', cat: 'kültür', level: 'easy' },
+        { en: 'Orange', tr: 'Portakal', emoji: '🍊', cat: 'yiyecek', level: 'easy' },
+        { en: 'Guitar', tr: 'Gitar', emoji: '🎸', cat: 'kültür', level: 'easy' },
+        { en: 'Beach', tr: 'Plaj', emoji: '🏖️', cat: 'doğa', level: 'easy' },
+        { en: 'Castle', tr: 'Kale', emoji: '🏰', cat: 'kültür', level: 'easy' },
+        { en: 'Fan', tr: 'Yelpaze', emoji: '🪭', cat: 'kıyafet', level: 'easy' },
+        { en: 'Tomato', tr: 'Domates', emoji: '🍅', cat: 'yiyecek', level: 'easy' },
+        { en: 'Sea', tr: 'Deniz', emoji: '🌊', cat: 'doğa', level: 'easy' },
+        { en: 'Flamenco', tr: 'Flamenko', emoji: '💃', cat: 'kültür', level: 'medium' },
+        { en: 'Olive', tr: 'Zeytin', emoji: '🫒', cat: 'yiyecek', level: 'medium' },
+        { en: 'Donkey', tr: 'Eşek', emoji: '🫏', cat: 'hayvan', level: 'medium' },
+        { en: 'Shawl', tr: 'Şal', emoji: '🧣', cat: 'kıyafet', level: 'medium' },
+        { en: 'Ham', tr: 'Jambon', emoji: '🥩', cat: 'yiyecek', level: 'medium' },
+        { en: 'Lynx', tr: 'Vaşak', emoji: '🐱', cat: 'hayvan', level: 'medium' },
+        { en: 'Windmill', tr: 'Yel değirmeni', emoji: '💨', cat: 'kültür', level: 'medium' },
+        { en: 'Saffron', tr: 'Safran', emoji: '🌼', cat: 'yiyecek', level: 'medium' },
+        { en: 'Espadrille', tr: 'Espadril ayakkabı', emoji: '👟', cat: 'kıyafet', level: 'medium' },
+        { en: 'Fountain', tr: 'Çeşme', emoji: '⛲', cat: 'kültür', level: 'medium' },
+        { en: 'Gazpacho', tr: 'Gazpaço', emoji: '🍲', cat: 'yiyecek', level: 'hard' },
+        { en: 'Mantilla', tr: 'Mantilla', emoji: '💒', cat: 'kıyafet', level: 'hard' },
+        { en: 'Alhambra', tr: 'Elhamra', emoji: '🏛️', cat: 'kültür', level: 'hard' },
+        { en: 'Paella', tr: 'Paelya', emoji: '🥘', cat: 'yiyecek', level: 'hard' },
+        { en: 'Sardine', tr: 'Sardalye', emoji: '🐟', cat: 'yiyecek', level: 'hard' },
+        { en: 'Chorizo', tr: 'Chorizo', emoji: '🌭', cat: 'yiyecek', level: 'hard' },
+        { en: 'Sagrada', tr: 'Sagrada Familia', emoji: '⛪', cat: 'kültür', level: 'hard' },
+        { en: 'Castanets', tr: 'Kastanyet', emoji: '🎵', cat: 'kültür', level: 'hard' },
+        { en: 'Ibis', tr: 'İbis kuşu', emoji: '🦢', cat: 'hayvan', level: 'hard' },
+        { en: 'Bulrush', tr: 'Hasır sazı', emoji: '🌾', cat: 'doğa', level: 'hard' },
+      ]},
       'France': {
         flag: '🇫🇷', capital: 'Paris',
         words: [
@@ -3396,77 +3381,6 @@ const CONTINENT_WORDS = {
           { en: 'Cuckoo',     tr: 'Guguk kuşu saati',   emoji: '🕰️',  cat: 'kültür',  level: 'hard' },
         ]
       },
-
-      'UK': {
-        flag: '🇬🇧', capital: 'London',
-        words: [
-          { en: 'Tea',        tr: 'Çay',            emoji: '🍵', cat: 'yiyecek', level: 'easy' },
-          { en: 'Rain',       tr: 'Yağmur',         emoji: '🌧️', cat: 'doğa',    level: 'easy' },
-          { en: 'Castle',     tr: 'Kale',           emoji: '🏰', cat: 'kültür',  level: 'easy' },
-          { en: 'Queen',      tr: 'Kraliçe',        emoji: '👑', cat: 'kültür',  level: 'easy' },
-          { en: 'Bus',        tr: 'Otobüs',         emoji: '🚌', cat: 'kültür',  level: 'easy' },
-          { en: 'Dog',        tr: 'Köpek',          emoji: '🐕', cat: 'hayvan',  level: 'easy' },
-          { en: 'Garden',     tr: 'Bahçe',          emoji: '🌷', cat: 'doğa',    level: 'easy' },
-          { en: 'Coat',       tr: 'Palto',          emoji: '🧥', cat: 'kıyafet', level: 'easy' },
-          { en: 'Bridge',     tr: 'Köprü',          emoji: '🌉', cat: 'kültür',  level: 'easy' },
-          { en: 'Fish',       tr: 'Balık',          emoji: '🐟', cat: 'yiyecek', level: 'easy' },
-          { en: 'Fox',        tr: 'Tilki',          emoji: '🦊', cat: 'hayvan',  level: 'medium' },
-          { en: 'Football',   tr: 'Futbol',         emoji: '⚽', cat: 'kültür',  level: 'medium' },
-          { en: 'Chips',      tr: 'Patates kızartması', emoji: '🍟', cat: 'yiyecek', level: 'medium' },
-          { en: 'Umbrella',   tr: 'Şemsiye',        emoji: '☂️', cat: 'kıyafet', level: 'medium' },
-          { en: 'Hedgehog',   tr: 'Kirpi',          emoji: '🦔', cat: 'hayvan',  level: 'medium' },
-          { en: 'Biscuit',    tr: 'Bisküvi',        emoji: '🍪', cat: 'yiyecek', level: 'medium' },
-          { en: 'Tartan',     tr: 'Ekose desen',    emoji: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', cat: 'kıyafet', level: 'medium' },
-          { en: 'Parliament', tr: 'Parlamento',     emoji: '🏛️', cat: 'kültür',  level: 'medium' },
-          { en: 'Clover',     tr: 'Yonca',          emoji: '🍀', cat: 'doğa',    level: 'medium' },
-          { en: 'Bagpipe',    tr: 'Gayda',          emoji: '🎵', cat: 'kültür',  level: 'medium' },
-          { en: 'Cheddar',    tr: 'Cheddar peyniri', emoji: '🧀', cat: 'yiyecek', level: 'hard' },
-          { en: 'Corgi',      tr: 'Corgi köpeği',   emoji: '🐕', cat: 'hayvan',  level: 'hard' },
-          { en: 'Wellington', tr: 'Wellington çizme', emoji: '👢', cat: 'kıyafet', level: 'hard' },
-          { en: 'Stonehenge', tr: 'Stonehenge',     emoji: '🗿', cat: 'kültür',  level: 'hard' },
-          { en: 'Marmite',    tr: 'Marmit',         emoji: '🍯', cat: 'yiyecek', level: 'hard' },
-          { en: 'Puffin',     tr: 'Pufinus kuşu',   emoji: '🐦', cat: 'hayvan',  level: 'hard' },
-          { en: 'Haggis',     tr: 'Haggis',         emoji: '🍖', cat: 'yiyecek', level: 'hard' },
-          { en: 'Bowler',     tr: 'Melon şapka',    emoji: '🎩', cat: 'kıyafet', level: 'hard' },
-          { en: 'Bluebell',   tr: 'Çan çiçeği',     emoji: '🔔', cat: 'doğa',    level: 'hard' },
-          { en: 'Punting',    tr: 'Sırıkla kürek',  emoji: '🚣', cat: 'kültür',  level: 'hard' },
-        ]
-      },
-      'Spain': {
-        flag: '🇪🇸', capital: 'Madrid',
-        words: [
-          { en: 'Bull',       tr: 'Boğa',           emoji: '🐂', cat: 'hayvan',  level: 'easy' },
-          { en: 'Sun',        tr: 'Güneş',          emoji: '☀️', cat: 'doğa',    level: 'easy' },
-          { en: 'Dance',      tr: 'Dans',           emoji: '💃', cat: 'kültür',  level: 'easy' },
-          { en: 'Orange',     tr: 'Portakal',       emoji: '🍊', cat: 'yiyecek', level: 'easy' },
-          { en: 'Guitar',     tr: 'Gitar',          emoji: '🎸', cat: 'kültür',  level: 'easy' },
-          { en: 'Beach',      tr: 'Plaj',           emoji: '🏖️', cat: 'doğa',    level: 'easy' },
-          { en: 'Castle',     tr: 'Kale',           emoji: '🏰', cat: 'kültür',  level: 'easy' },
-          { en: 'Fan',        tr: 'Yelpaze',        emoji: '🪭', cat: 'kıyafet', level: 'easy' },
-          { en: 'Tomato',     tr: 'Domates',        emoji: '🍅', cat: 'yiyecek', level: 'easy' },
-          { en: 'Sea',        tr: 'Deniz',          emoji: '🌊', cat: 'doğa',    level: 'easy' },
-          { en: 'Flamenco',   tr: 'Flamenko',       emoji: '💃', cat: 'kültür',  level: 'medium' },
-          { en: 'Olive',      tr: 'Zeytin',         emoji: '🫒', cat: 'yiyecek', level: 'medium' },
-          { en: 'Donkey',     tr: 'Eşek',           emoji: '🫏', cat: 'hayvan',  level: 'medium' },
-          { en: 'Shawl',      tr: 'Şal',            emoji: '🧣', cat: 'kıyafet', level: 'medium' },
-          { en: 'Fountain',   tr: 'Çeşme',          emoji: '⛲', cat: 'kültür',  level: 'medium' },
-          { en: 'Ham',        tr: 'Jambon',         emoji: '🥩', cat: 'yiyecek', level: 'medium' },
-          { en: 'Lynx',       tr: 'Vaşak',          emoji: '🐱', cat: 'hayvan',  level: 'medium' },
-          { en: 'Windmill',   tr: 'Yel değirmeni',  emoji: '💨', cat: 'kültür',  level: 'medium' },
-          { en: 'Saffron',    tr: 'Safran',         emoji: '🌼', cat: 'yiyecek', level: 'medium' },
-          { en: 'Espadrille', tr: 'Espadril ayakkabı', emoji: '👟', cat: 'kıyafet', level: 'medium' },
-          { en: 'Gazpacho',   tr: 'Gazpaço',        emoji: '🍲', cat: 'yiyecek', level: 'hard' },
-          { en: 'Ibis',       tr: 'İbis kuşu',      emoji: '🦢', cat: 'hayvan',  level: 'hard' },
-          { en: 'Mantilla',   tr: 'Mantilla',       emoji: '💒', cat: 'kıyafet', level: 'hard' },
-          { en: 'Alhambra',   tr: 'Elhamra',        emoji: '🏛️', cat: 'kültür',  level: 'hard' },
-          { en: 'Paella',     tr: 'Paelya',         emoji: '🥘', cat: 'yiyecek', level: 'hard' },
-          { en: 'Sardine',    tr: 'Sardalye',       emoji: '🐟', cat: 'yiyecek', level: 'hard' },
-          { en: 'Chorizo',    tr: 'Chorizo',        emoji: '🌭', cat: 'yiyecek', level: 'hard' },
-          { en: 'Sagrada',    tr: 'Sagrada Familia', emoji: '⛪', cat: 'kültür', level: 'hard' },
-          { en: 'Bulrush',    tr: 'Hasır sazı',     emoji: '🌾', cat: 'doğa',    level: 'hard' },
-          { en: 'Castanets',  tr: 'Kastanyet',      emoji: '🎵', cat: 'kültür',  level: 'hard' },
-        ]
-      },
       'Italy': {
         flag: '🇮🇹', capital: 'Rome',
         words: [
@@ -3509,6 +3423,70 @@ const CONTINENT_WORDS = {
   af: {
     theme: { bg: '#FFF3E0', accent: '#E65100', emoji: '🦁', name: 'Afrika' },
     countries: {
+      'Morocco': { flag: '🇲🇦', capital: 'Rabat', words: [
+        { en: 'Desert', tr: 'Çöl', emoji: '🏜️', cat: 'doğa', level: 'easy' },
+        { en: 'Camel', tr: 'Deve', emoji: '🐪', cat: 'hayvan', level: 'easy' },
+        { en: 'Market', tr: 'Pazar', emoji: '🛍️', cat: 'kültür', level: 'easy' },
+        { en: 'Tea', tr: 'Çay', emoji: '🍵', cat: 'yiyecek', level: 'easy' },
+        { en: 'Mountain', tr: 'Dağ', emoji: '⛰️', cat: 'doğa', level: 'easy' },
+        { en: 'Carpet', tr: 'Halı', emoji: '🧶', cat: 'kültür', level: 'easy' },
+        { en: 'Orange', tr: 'Portakal', emoji: '🍊', cat: 'yiyecek', level: 'easy' },
+        { en: 'Sand', tr: 'Kum', emoji: '🏖️', cat: 'doğa', level: 'easy' },
+        { en: 'Robe', tr: 'Kaftan', emoji: '👘', cat: 'kıyafet', level: 'easy' },
+        { en: 'Star', tr: 'Yıldız', emoji: '⭐', cat: 'doğa', level: 'easy' },
+        { en: 'Stork', tr: 'Leylek', emoji: '🦢', cat: 'hayvan', level: 'medium' },
+        { en: 'Couscous', tr: 'Kuskus', emoji: '🍚', cat: 'yiyecek', level: 'medium' },
+        { en: 'Lantern', tr: 'Fener', emoji: '🏮', cat: 'kültür', level: 'medium' },
+        { en: 'Cobra', tr: 'Kobra', emoji: '🐍', cat: 'hayvan', level: 'medium' },
+        { en: 'Mint', tr: 'Nane', emoji: '🌿', cat: 'yiyecek', level: 'medium' },
+        { en: 'Mosaic', tr: 'Mozaik', emoji: '🎨', cat: 'kültür', level: 'medium' },
+        { en: 'Atlas', tr: 'Atlas dağları', emoji: '🗻', cat: 'doğa', level: 'medium' },
+        { en: 'Fennec', tr: 'Fennec tilkisi', emoji: '🦊', cat: 'hayvan', level: 'medium' },
+        { en: 'Djellaba', tr: 'Çellaba', emoji: '👗', cat: 'kıyafet', level: 'medium' },
+        { en: 'Babouche', tr: 'Babuc terlik', emoji: '👟', cat: 'kıyafet', level: 'medium' },
+        { en: 'Tagine', tr: 'Tajin', emoji: '🍲', cat: 'yiyecek', level: 'hard' },
+        { en: 'Argan', tr: 'Argan yağı', emoji: '🌿', cat: 'doğa', level: 'hard' },
+        { en: 'Fez', tr: 'Fes şehri', emoji: '🕌', cat: 'kültür', level: 'hard' },
+        { en: 'Harira', tr: 'Harira çorbası', emoji: '🍜', cat: 'yiyecek', level: 'hard' },
+        { en: 'Sahara', tr: 'Sahra çölü', emoji: '🏜️', cat: 'doğa', level: 'hard' },
+        { en: 'Gnawa', tr: 'Gnawa müzik', emoji: '🎵', cat: 'kültür', level: 'hard' },
+        { en: 'Chameleon', tr: 'Bukalemun', emoji: '🦎', cat: 'hayvan', level: 'hard' },
+        { en: 'Pastilla', tr: 'Pastilla böreği', emoji: '🥐', cat: 'yiyecek', level: 'hard' },
+        { en: 'Kaftan', tr: 'Kaftan', emoji: '👘', cat: 'kıyafet', level: 'hard' },
+        { en: 'Barbary', tr: 'Berberi aslanı', emoji: '🦁', cat: 'hayvan', level: 'hard' },
+      ]},
+      'Nigeria': { flag: '🇳🇬', capital: 'Abuja', words: [
+        { en: 'Drum', tr: 'Davul', emoji: '🥁', cat: 'kültür', level: 'easy' },
+        { en: 'Lion', tr: 'Aslan', emoji: '🦁', cat: 'hayvan', level: 'easy' },
+        { en: 'River', tr: 'Nehir', emoji: '🏞️', cat: 'doğa', level: 'easy' },
+        { en: 'Dance', tr: 'Dans', emoji: '💃', cat: 'kültür', level: 'easy' },
+        { en: 'Yam', tr: 'Yam', emoji: '🍠', cat: 'yiyecek', level: 'easy' },
+        { en: 'Jungle', tr: 'Orman', emoji: '🌿', cat: 'doğa', level: 'easy' },
+        { en: 'Fish', tr: 'Balık', emoji: '🐟', cat: 'yiyecek', level: 'easy' },
+        { en: 'Sun', tr: 'Güneş', emoji: '☀️', cat: 'doğa', level: 'easy' },
+        { en: 'Market', tr: 'Pazar', emoji: '🛍️', cat: 'kültür', level: 'easy' },
+        { en: 'Banana', tr: 'Muz', emoji: '🍌', cat: 'yiyecek', level: 'easy' },
+        { en: 'Parrot', tr: 'Papağan', emoji: '🦜', cat: 'hayvan', level: 'medium' },
+        { en: 'Suya', tr: 'Suya kebap', emoji: '🍢', cat: 'yiyecek', level: 'medium' },
+        { en: 'Elephant', tr: 'Fil', emoji: '🐘', cat: 'hayvan', level: 'medium' },
+        { en: 'Agbada', tr: 'Agbada', emoji: '👘', cat: 'kıyafet', level: 'medium' },
+        { en: 'Waterfall', tr: 'Şelale', emoji: '💧', cat: 'doğa', level: 'medium' },
+        { en: 'Pepper', tr: 'Biber', emoji: '🌶️', cat: 'yiyecek', level: 'medium' },
+        { en: 'Batik', tr: 'Batik kumaş', emoji: '🎨', cat: 'kültür', level: 'medium' },
+        { en: 'Crocodile', tr: 'Timsah', emoji: '🐊', cat: 'hayvan', level: 'medium' },
+        { en: 'Plantain', tr: 'Pişirmelik muz', emoji: '🍌', cat: 'yiyecek', level: 'medium' },
+        { en: 'Gele', tr: 'Gele baş bağı', emoji: '🎀', cat: 'kıyafet', level: 'medium' },
+        { en: 'Jollof', tr: 'Jollof rice', emoji: '🍛', cat: 'yiyecek', level: 'hard' },
+        { en: 'Afrobeat', tr: 'Afrobeat', emoji: '🎵', cat: 'kültür', level: 'hard' },
+        { en: 'Egusi', tr: 'Egusi çorbası', emoji: '🍲', cat: 'yiyecek', level: 'hard' },
+        { en: 'Gorilla', tr: 'Goril', emoji: '🦍', cat: 'hayvan', level: 'hard' },
+        { en: 'Nollywood', tr: 'Nollywood', emoji: '🎬', cat: 'kültür', level: 'hard' },
+        { en: 'Ankara', tr: 'Ankara kumaş', emoji: '👗', cat: 'kıyafet', level: 'hard' },
+        { en: 'Egwugwu', tr: 'Egwugwu', emoji: '🎭', cat: 'kültür', level: 'hard' },
+        { en: 'Okapi', tr: 'Okapi', emoji: '🦒', cat: 'hayvan', level: 'hard' },
+        { en: 'Ukwa', tr: 'Ukwa meyvesi', emoji: '🌰', cat: 'yiyecek', level: 'hard' },
+        { en: 'Aso Oke', tr: 'Aso Oke kumaş', emoji: '🧵', cat: 'kıyafet', level: 'hard' },
+      ]},
       'Kenya': {
         flag: '🇰🇪', capital: 'Nairobi',
         words: [
@@ -3577,77 +3555,6 @@ const CONTINENT_WORDS = {
           { en: 'Basalt',     tr: 'Bazalt taşı',        emoji: '🪨', cat: 'doğa',   level: 'hard' },
           { en: 'Ankh',       tr: 'Ankh (yaşam simgesi)',emoji: '☥', cat: 'kültür',  level: 'hard' },
           { en: 'Sirocco',    tr: 'Sıcak çöl rüzgarı', emoji: '💨', cat: 'doğa',   level: 'hard' },
-        ]
-      },
-
-      'Morocco': {
-        flag: '🇲🇦', capital: 'Rabat',
-        words: [
-          { en: 'Desert',     tr: 'Çöl',            emoji: '🏜️', cat: 'doğa',    level: 'easy' },
-          { en: 'Camel',      tr: 'Deve',           emoji: '🐪', cat: 'hayvan',  level: 'easy' },
-          { en: 'Market',     tr: 'Pazar',          emoji: '🛍️', cat: 'kültür',  level: 'easy' },
-          { en: 'Tea',        tr: 'Çay',            emoji: '🍵', cat: 'yiyecek', level: 'easy' },
-          { en: 'Star',       tr: 'Yıldız',         emoji: '⭐', cat: 'doğa',    level: 'easy' },
-          { en: 'Mountain',   tr: 'Dağ',            emoji: '⛰️', cat: 'doğa',    level: 'easy' },
-          { en: 'Carpet',     tr: 'Halı',           emoji: '🧶', cat: 'kültür',  level: 'easy' },
-          { en: 'Robe',       tr: 'Kaftan',         emoji: '👘', cat: 'kıyafet', level: 'easy' },
-          { en: 'Orange',     tr: 'Portakal',       emoji: '🍊', cat: 'yiyecek', level: 'easy' },
-          { en: 'Sand',       tr: 'Kum',            emoji: '🏖️', cat: 'doğa',    level: 'easy' },
-          { en: 'Stork',      tr: 'Leylek',         emoji: '🦢', cat: 'hayvan',  level: 'medium' },
-          { en: 'Couscous',   tr: 'Kuskus',         emoji: '🍚', cat: 'yiyecek', level: 'medium' },
-          { en: 'Lantern',    tr: 'Fener',          emoji: '🏮', cat: 'kültür',  level: 'medium' },
-          { en: 'Babouche',   tr: 'Babuc terlik',   emoji: '👟', cat: 'kıyafet', level: 'medium' },
-          { en: 'Cobra',      tr: 'Kobra',          emoji: '🐍', cat: 'hayvan',  level: 'medium' },
-          { en: 'Mint',       tr: 'Nane',           emoji: '🌿', cat: 'yiyecek', level: 'medium' },
-          { en: 'Mosaic',     tr: 'Mozaik',         emoji: '🎨', cat: 'kültür',  level: 'medium' },
-          { en: 'Atlas',      tr: 'Atlas dağları',  emoji: '🗻', cat: 'doğa',    level: 'medium' },
-          { en: 'Djellaba',   tr: 'Çellaba',        emoji: '👗', cat: 'kıyafet', level: 'medium' },
-          { en: 'Fennec',     tr: 'Fennec tilkisi', emoji: '🦊', cat: 'hayvan',  level: 'medium' },
-          { en: 'Tagine',     tr: 'Tajin',          emoji: '🍲', cat: 'yiyecek', level: 'hard' },
-          { en: 'Argan',      tr: 'Argan yağı',     emoji: '🌿', cat: 'doğa',    level: 'hard' },
-          { en: 'Barbary',    tr: 'Berberi aslanı', emoji: '🦁', cat: 'hayvan',  level: 'hard' },
-          { en: 'Fez',        tr: 'Fes şehri',      emoji: '🕌', cat: 'kültür',  level: 'hard' },
-          { en: 'Kaftan',     tr: 'Kaftan',         emoji: '👘', cat: 'kıyafet', level: 'hard' },
-          { en: 'Harira',     tr: 'Harira çorbası', emoji: '🍜', cat: 'yiyecek', level: 'hard' },
-          { en: 'Sahara',     tr: 'Sahra çölü',     emoji: '🏜️', cat: 'doğa',    level: 'hard' },
-          { en: 'Gnawa',      tr: 'Gnawa müzik',    emoji: '🎵', cat: 'kültür',  level: 'hard' },
-          { en: 'Chameleon',  tr: 'Bukalemun',      emoji: '🦎', cat: 'hayvan',  level: 'hard' },
-          { en: 'Pastilla',   tr: 'Pastilla böreği', emoji: '🥐', cat: 'yiyecek', level: 'hard' },
-        ]
-      },
-      'Nigeria': {
-        flag: '🇳🇬', capital: 'Abuja',
-        words: [
-          { en: 'Drum',       tr: 'Davul',          emoji: '🥁', cat: 'kültür',  level: 'easy' },
-          { en: 'Lion',       tr: 'Aslan',          emoji: '🦁', cat: 'hayvan',  level: 'easy' },
-          { en: 'River',      tr: 'Nehir',          emoji: '🏞️', cat: 'doğa',    level: 'easy' },
-          { en: 'Dance',      tr: 'Dans',           emoji: '💃', cat: 'kültür',  level: 'easy' },
-          { en: 'Yam',        tr: 'Yam',            emoji: '🍠', cat: 'yiyecek', level: 'easy' },
-          { en: 'Jungle',     tr: 'Orman',          emoji: '🌿', cat: 'doğa',    level: 'easy' },
-          { en: 'Market',     tr: 'Pazar',          emoji: '🛍️', cat: 'kültür',  level: 'easy' },
-          { en: 'Robe',       tr: '  Kaftan',       emoji: '👘', cat: 'kıyafet', level: 'easy' },
-          { en: 'Fish',       tr: 'Balık',          emoji: '🐟', cat: 'yiyecek', level: 'easy' },
-          { en: 'Sun',        tr: 'Güneş',          emoji: '☀️', cat: 'doğa',    level: 'easy' },
-          { en: 'Parrot',     tr: 'Papağan',        emoji: '🦜', cat: 'hayvan',  level: 'medium' },
-          { en: 'Suya',       tr: 'Suya kebap',     emoji: '🍢', cat: 'yiyecek', level: 'medium' },
-          { en: 'Elephant',   tr: 'Fil',            emoji: '🐘', cat: 'hayvan',  level: 'medium' },
-          { en: 'Agbada',     tr: 'Agbada',         emoji: '👘', cat: 'kıyafet', level: 'medium' },
-          { en: 'Waterfall',  tr: 'Şelale',         emoji: '💧', cat: 'doğa',    level: 'medium' },
-          { en: 'Pepper',     tr: 'Biber',          emoji: '🌶️', cat: 'yiyecek', level: 'medium' },
-          { en: 'Batik',      tr: 'Batik kumaş',    emoji: '🎨', cat: 'kültür',  level: 'medium' },
-          { en: 'Crocodile',  tr: 'Timsah',         emoji: '🐊', cat: 'hayvan',  level: 'medium' },
-          { en: 'Plantain',   tr: 'Pişirmelik muz', emoji: '🍌', cat: 'yiyecek', level: 'medium' },
-          { en: 'Gele',       tr: 'Gele baş bağı',  emoji: '🎀', cat: 'kıyafet', level: 'medium' },
-          { en: 'Jollof',     tr: 'Jollof rice',    emoji: '🍛', cat: 'yiyecek', level: 'hard' },
-          { en: 'Okapi',      tr: 'Okapi',          emoji: '🦒', cat: 'hayvan',  level: 'hard' },
-          { en: 'Egwugwu',    tr: 'Egwugwu',        emoji: '🎭', cat: 'kültür',  level: 'hard' },
-          { en: 'Ankara',     tr: 'Ankara kumaş',   emoji: '👗', cat: 'kıyafet', level: 'hard' },
-          { en: 'Afrobeat',   tr: 'Afrobeat',       emoji: '🎵', cat: 'kültür',  level: 'hard' },
-          { en: 'Egusi',      tr: 'Egusi çorbası',  emoji: '🍲', cat: 'yiyecek', level: 'hard' },
-          { en: 'Gorilla',    tr: 'Goril',          emoji: '🦍', cat: 'hayvan',  level: 'hard' },
-          { en: 'Aso Oke',    tr: 'Aso Oke kumaş',  emoji: '🧵', cat: 'kıyafet', level: 'hard' },
-          { en: 'Nollywood',  tr: 'Nollywood',      emoji: '🎬', cat: 'kültür',  level: 'hard' },
-          { en: 'Ukwa',       tr: 'Ukwa meyvesi',   emoji: '🌰', cat: 'yiyecek', level: 'hard' },
         ]
       },
       'South Africa': {
@@ -3762,77 +3669,70 @@ const CONTINENT_WORDS = {
           { en: 'Porcelain',  tr: 'Porselen',           emoji: '🏺', cat: 'kültür',  level: 'hard' },
         ]
       },
-
-      'South Korea': {
-        flag: '🇰🇷', capital: 'Seoul',
-        words: [
-          { en: 'Robot',      tr: 'Robot',          emoji: '🤖', cat: 'kültür',  level: 'easy' },
-          { en: 'Rice',       tr: 'Pirinç',         emoji: '🍚', cat: 'yiyecek', level: 'easy' },
-          { en: 'Mountain',   tr: 'Dağ',            emoji: '⛰️', cat: 'doğa',    level: 'easy' },
-          { en: 'Music',      tr: 'Müzik',          emoji: '🎵', cat: 'kültür',  level: 'easy' },
-          { en: 'Star',       tr: 'Yıldız',         emoji: '⭐', cat: 'doğa',    level: 'easy' },
-          { en: 'Phone',      tr: 'Telefon',        emoji: '📱', cat: 'kültür',  level: 'easy' },
-          { en: 'Tiger',      tr: 'Kaplan',         emoji: '🐯', cat: 'hayvan',  level: 'easy' },
-          { en: 'Dress',      tr: 'Elbise',         emoji: '👗', cat: 'kıyafet', level: 'easy' },
-          { en: 'Noodle',     tr: 'Noodle',         emoji: '🍜', cat: 'yiyecek', level: 'easy' },
-          { en: 'Cherry',     tr: 'Kiraz',          emoji: '🍒', cat: 'doğa',    level: 'easy' },
-          { en: 'Crane',      tr: 'Turna kuşu',     emoji: '🦢', cat: 'hayvan',  level: 'medium' },
-          { en: 'Kimchi',     tr: 'Kimchi',         emoji: '🥬', cat: 'yiyecek', level: 'medium' },
-          { en: 'Taekwondo',  tr: 'Tekvando',       emoji: '🥋', cat: 'kültür',  level: 'medium' },
-          { en: 'Hanbok',     tr: 'Hanbok',         emoji: '👘', cat: 'kıyafet', level: 'medium' },
-          { en: 'Volcano',    tr: 'Volkan',         emoji: '🌋', cat: 'doğa',    level: 'medium' },
-          { en: 'Squid',      tr: 'Kalamar',        emoji: '🦑', cat: 'yiyecek', level: 'medium' },
-          { en: 'Cartoon',    tr: 'Çizgi film',     emoji: '🎬', cat: 'kültür',  level: 'medium' },
-          { en: 'Magpie',     tr: 'Saksağan',       emoji: '🐦', cat: 'hayvan',  level: 'medium' },
-          { en: 'Raincoat',   tr: 'Yağmurluk',      emoji: '🧥', cat: 'kıyafet', level: 'medium' },
-          { en: 'Temple',     tr: 'Tapınak',        emoji: '⛩️', cat: 'kültür',  level: 'medium' },
-          { en: 'Bibimbap',   tr: 'Bibimbap',       emoji: '🍱', cat: 'yiyecek', level: 'hard' },
-          { en: 'Haenyeo',    tr: 'Haenyeo dalgıç', emoji: '🤿', cat: 'kültür',  level: 'hard' },
-          { en: 'Dojang',     tr: 'Dövüş salonu',   emoji: '🥋', cat: 'kültür',  level: 'hard' },
-          { en: 'Ginseng',    tr: 'Ginseng',        emoji: '🌱', cat: 'yiyecek', level: 'hard' },
-          { en: 'Changot',    tr: 'Changot',        emoji: '👒', cat: 'kıyafet', level: 'hard' },
-          { en: 'Mudflat',    tr: 'Çamur düzlüğü',  emoji: '🌊', cat: 'doğa',    level: 'hard' },
-          { en: 'Amur',       tr: 'Amur kaplanı',   emoji: '🐯', cat: 'hayvan',  level: 'hard' },
-          { en: 'Soju',       tr: 'Soju',           emoji: '🍶', cat: 'yiyecek', level: 'hard' },
-          { en: 'Ondol',      tr: 'Ondol ısıtma',   emoji: '🏠', cat: 'kültür',  level: 'hard' },
-          { en: 'Jeju',       tr: 'Jeju adası',     emoji: '🏝️', cat: 'doğa',    level: 'hard' },
-        ]
-      },
-      'Thailand': {
-        flag: '🇹🇭', capital: 'Bangkok',
-        words: [
-          { en: 'Elephant',   tr: 'Fil',            emoji: '🐘', cat: 'hayvan',  level: 'easy' },
-          { en: 'Temple',     tr: 'Tapınak',        emoji: '⛩️', cat: 'kültür',  level: 'easy' },
-          { en: 'Rice',       tr: 'Pirinç',         emoji: '🍚', cat: 'yiyecek', level: 'easy' },
-          { en: 'Beach',      tr: 'Plaj',           emoji: '🏖️', cat: 'doğa',    level: 'easy' },
-          { en: 'Mango',      tr: 'Mango',          emoji: '🥭', cat: 'yiyecek', level: 'easy' },
-          { en: 'Monkey',     tr: 'Maymun',         emoji: '🐒', cat: 'hayvan',  level: 'easy' },
-          { en: 'Flower',     tr: 'Çiçek',          emoji: '🌸', cat: 'doğa',    level: 'easy' },
-          { en: 'Silk',       tr: 'İpek',           emoji: '🧵', cat: 'kıyafet', level: 'easy' },
-          { en: 'Noodle',     tr: 'Noodle',         emoji: '🍜', cat: 'yiyecek', level: 'easy' },
-          { en: 'Gold',       tr: 'Altın',          emoji: '✨', cat: 'kültür',  level: 'easy' },
-          { en: 'Tiger',      tr: 'Kaplan',         emoji: '🐯', cat: 'hayvan',  level: 'medium' },
-          { en: 'Sarong',     tr: 'Sarong',         emoji: '👗', cat: 'kıyafet', level: 'medium' },
-          { en: 'Coconut',    tr: 'Hindistancevizi', emoji: '🥥', cat: 'yiyecek', level: 'medium' },
-          { en: 'Longan',     tr: 'Longan meyvesi', emoji: '🍇', cat: 'yiyecek', level: 'medium' },
-          { en: 'Cave',       tr: 'Mağara',         emoji: '🏔️', cat: 'doğa',    level: 'medium' },
-          { en: 'Garland',    tr: 'Çelenk',         emoji: '🌺', cat: 'kültür',  level: 'medium' },
-          { en: 'Cobra',      tr: 'Kobra',          emoji: '🐍', cat: 'hayvan',  level: 'medium' },
-          { en: 'Wok',        tr: 'Wok tavası',     emoji: '🍳', cat: 'kültür',  level: 'medium' },
-          { en: 'Jasmine',    tr: 'Yasemin',        emoji: '🌼', cat: 'doğa',    level: 'medium' },
-          { en: 'Sandal',     tr: 'Sandalet',       emoji: '👡', cat: 'kıyafet', level: 'medium' },
-          { en: 'Pad Thai',   tr: 'Pad Thai',       emoji: '🍝', cat: 'yiyecek', level: 'hard' },
-          { en: 'Hornbill',   tr: 'Boynuzlu kuş',   emoji: '🐦', cat: 'hayvan',  level: 'hard' },
-          { en: 'Muay Thai',  tr: 'Muay Thai',      emoji: '🥊', cat: 'kültür',  level: 'hard' },
-          { en: 'Longyi',     tr: 'Longyi',         emoji: '👔', cat: 'kıyafet', level: 'hard' },
-          { en: 'Kanchanaburi', tr: 'Kanchanaburi', emoji: '🌿', cat: 'doğa',   level: 'hard' },
-          { en: 'Durian',     tr: 'Durian',         emoji: '🍈', cat: 'yiyecek', level: 'hard' },
-          { en: 'Gibbons',    tr: 'Gibbon maymun',  emoji: '🐒', cat: 'hayvan',  level: 'hard' },
-          { en: 'Wai',        tr: 'Wai selamlama',  emoji: '🙏', cat: 'kültür',  level: 'hard' },
-          { en: 'Rambutan',   tr: 'Rambutan',       emoji: '🍓', cat: 'yiyecek', level: 'hard' },
-          { en: 'Klong',      tr: 'Kanal',          emoji: '🚣', cat: 'doğa',    level: 'hard' },
-        ]
-      },
+      'South Korea': { flag: '🇰🇷', capital: 'Seoul', words: [
+        { en: 'Robot', tr: 'Robot', emoji: '🤖', cat: 'kültür', level: 'easy' },
+        { en: 'Rice', tr: 'Pirinç', emoji: '🍚', cat: 'yiyecek', level: 'easy' },
+        { en: 'Mountain', tr: 'Dağ', emoji: '⛰️', cat: 'doğa', level: 'easy' },
+        { en: 'Music', tr: 'Müzik', emoji: '🎵', cat: 'kültür', level: 'easy' },
+        { en: 'Phone', tr: 'Telefon', emoji: '📱', cat: 'kültür', level: 'easy' },
+        { en: 'Tiger', tr: 'Kaplan', emoji: '🐯', cat: 'hayvan', level: 'easy' },
+        { en: 'Noodle', tr: 'Noodle', emoji: '🍜', cat: 'yiyecek', level: 'easy' },
+        { en: 'Cherry', tr: 'Kiraz', emoji: '🍒', cat: 'doğa', level: 'easy' },
+        { en: 'Dress', tr: 'Elbise', emoji: '👗', cat: 'kıyafet', level: 'easy' },
+        { en: 'Star', tr: 'Yıldız', emoji: '⭐', cat: 'doğa', level: 'easy' },
+        { en: 'Crane', tr: 'Turna kuşu', emoji: '🦢', cat: 'hayvan', level: 'medium' },
+        { en: 'Kimchi', tr: 'Kimchi', emoji: '🥬', cat: 'yiyecek', level: 'medium' },
+        { en: 'Taekwondo', tr: 'Tekvando', emoji: '🥋', cat: 'kültür', level: 'medium' },
+        { en: 'Hanbok', tr: 'Hanbok', emoji: '👘', cat: 'kıyafet', level: 'medium' },
+        { en: 'Volcano', tr: 'Volkan', emoji: '🌋', cat: 'doğa', level: 'medium' },
+        { en: 'Squid', tr: 'Kalamar', emoji: '🦑', cat: 'yiyecek', level: 'medium' },
+        { en: 'Cartoon', tr: 'Çizgi film', emoji: '🎬', cat: 'kültür', level: 'medium' },
+        { en: 'Magpie', tr: 'Saksağan', emoji: '🐦', cat: 'hayvan', level: 'medium' },
+        { en: 'Raincoat', tr: 'Yağmurluk', emoji: '🧥', cat: 'kıyafet', level: 'medium' },
+        { en: 'Temple', tr: 'Tapınak', emoji: '⛩️', cat: 'kültür', level: 'medium' },
+        { en: 'Bibimbap', tr: 'Bibimbap', emoji: '🍱', cat: 'yiyecek', level: 'hard' },
+        { en: 'Ginseng', tr: 'Ginseng', emoji: '🌱', cat: 'yiyecek', level: 'hard' },
+        { en: 'Jeju', tr: 'Jeju adası', emoji: '🏝️', cat: 'doğa', level: 'hard' },
+        { en: 'Soju', tr: 'Soju', emoji: '🍶', cat: 'yiyecek', level: 'hard' },
+        { en: 'Ondol', tr: 'Ondol ısıtma', emoji: '🏠', cat: 'kültür', level: 'hard' },
+        { en: 'Haenyeo', tr: 'Haenyeo dalgıç', emoji: '🤿', cat: 'kültür', level: 'hard' },
+        { en: 'Dojang', tr: 'Dövüş salonu', emoji: '🥋', cat: 'kültür', level: 'hard' },
+        { en: 'Mudflat', tr: 'Çamur düzlüğü', emoji: '🌊', cat: 'doğa', level: 'hard' },
+        { en: 'Changot', tr: 'Changot', emoji: '👒', cat: 'kıyafet', level: 'hard' },
+        { en: 'Amur', tr: 'Amur kaplanı', emoji: '🐯', cat: 'hayvan', level: 'hard' },
+      ]},
+      'Thailand': { flag: '🇹🇭', capital: 'Bangkok', words: [
+        { en: 'Elephant', tr: 'Fil', emoji: '🐘', cat: 'hayvan', level: 'easy' },
+        { en: 'Temple', tr: 'Tapınak', emoji: '⛩️', cat: 'kültür', level: 'easy' },
+        { en: 'Rice', tr: 'Pirinç', emoji: '🍚', cat: 'yiyecek', level: 'easy' },
+        { en: 'Beach', tr: 'Plaj', emoji: '🏖️', cat: 'doğa', level: 'easy' },
+        { en: 'Mango', tr: 'Mango', emoji: '🥭', cat: 'yiyecek', level: 'easy' },
+        { en: 'Monkey', tr: 'Maymun', emoji: '🐒', cat: 'hayvan', level: 'easy' },
+        { en: 'Flower', tr: 'Çiçek', emoji: '🌸', cat: 'doğa', level: 'easy' },
+        { en: 'Silk', tr: 'İpek', emoji: '🧵', cat: 'kıyafet', level: 'easy' },
+        { en: 'Noodle', tr: 'Noodle', emoji: '🍜', cat: 'yiyecek', level: 'easy' },
+        { en: 'Gold', tr: 'Altın', emoji: '✨', cat: 'kültür', level: 'easy' },
+        { en: 'Tiger', tr: 'Kaplan', emoji: '🐯', cat: 'hayvan', level: 'medium' },
+        { en: 'Coconut', tr: 'Hindistancevizi', emoji: '🥥', cat: 'yiyecek', level: 'medium' },
+        { en: 'Cave', tr: 'Mağara', emoji: '🏔️', cat: 'doğa', level: 'medium' },
+        { en: 'Garland', tr: 'Çelenk', emoji: '🌺', cat: 'kültür', level: 'medium' },
+        { en: 'Cobra', tr: 'Kobra', emoji: '🐍', cat: 'hayvan', level: 'medium' },
+        { en: 'Jasmine', tr: 'Yasemin', emoji: '🌼', cat: 'doğa', level: 'medium' },
+        { en: 'Sandal', tr: 'Sandalet', emoji: '👡', cat: 'kıyafet', level: 'medium' },
+        { en: 'Sarong', tr: 'Sarong', emoji: '👗', cat: 'kıyafet', level: 'medium' },
+        { en: 'Wok', tr: 'Wok tavası', emoji: '🍳', cat: 'kültür', level: 'medium' },
+        { en: 'Longan', tr: 'Longan meyvesi', emoji: '🍇', cat: 'yiyecek', level: 'medium' },
+        { en: 'Pad Thai', tr: 'Pad Thai', emoji: '🍝', cat: 'yiyecek', level: 'hard' },
+        { en: 'Muay Thai', tr: 'Muay Thai', emoji: '🥊', cat: 'kültür', level: 'hard' },
+        { en: 'Durian', tr: 'Durian', emoji: '🍈', cat: 'yiyecek', level: 'hard' },
+        { en: 'Gibbons', tr: 'Gibbon maymun', emoji: '🐒', cat: 'hayvan', level: 'hard' },
+        { en: 'Wai', tr: 'Wai selamlama', emoji: '🙏', cat: 'kültür', level: 'hard' },
+        { en: 'Rambutan', tr: 'Rambutan', emoji: '🍓', cat: 'yiyecek', level: 'hard' },
+        { en: 'Klong', tr: 'Kanal', emoji: '🚣', cat: 'doğa', level: 'hard' },
+        { en: 'Hornbill', tr: 'Boynuzlu kuş', emoji: '🐦', cat: 'hayvan', level: 'hard' },
+        { en: 'Kanchanaburi', tr: 'Kanchanaburi', emoji: '🌿', cat: 'doğa', level: 'hard' },
+        { en: 'Longyi', tr: 'Longyi', emoji: '👔', cat: 'kıyafet', level: 'hard' },
+      ]},
       'India': {
         flag: '🇮🇳', capital: 'New Delhi',
         words: [
@@ -3910,77 +3810,70 @@ const CONTINENT_WORDS = {
           { en: 'Taipan',     tr: 'Zehirli yılan',      emoji: '🐍', cat: 'hayvan',  level: 'hard' },
         ]
       },
-
-      'Fiji': {
-        flag: '🇫🇯', capital: 'Suva',
-        words: [
-          { en: 'Coral',      tr: 'Mercan',         emoji: '🪸', cat: 'doğa',    level: 'easy' },
-          { en: 'Beach',      tr: 'Plaj',           emoji: '🏖️', cat: 'doğa',    level: 'easy' },
-          { en: 'Fish',       tr: 'Balık',          emoji: '🐟', cat: 'yiyecek', level: 'easy' },
-          { en: 'Palm',       tr: 'Palmiye',        emoji: '🌴', cat: 'doğa',    level: 'easy' },
-          { en: 'Sun',        tr: 'Güneş',          emoji: '☀️', cat: 'doğa',    level: 'easy' },
-          { en: 'Shark',      tr: 'Köpekbalığı',    emoji: '🦈', cat: 'hayvan',  level: 'easy' },
-          { en: 'Island',     tr: 'Ada',            emoji: '🏝️', cat: 'doğa',    level: 'easy' },
-          { en: 'Sea',        tr: 'Deniz',          emoji: '🌊', cat: 'doğa',    level: 'easy' },
-          { en: 'Coconut',    tr: 'Hindistancevizi', emoji: '🥥', cat: 'yiyecek', level: 'easy' },
-          { en: 'Dance',      tr: 'Dans',           emoji: '💃', cat: 'kültür',  level: 'easy' },
-          { en: 'Parrot',     tr: 'Papağan',        emoji: '🦜', cat: 'hayvan',  level: 'medium' },
-          { en: 'Sarong',     tr: 'Sarong',         emoji: '👗', cat: 'kıyafet', level: 'medium' },
-          { en: 'Taro',       tr: 'Taro kökü',      emoji: '🥔', cat: 'yiyecek', level: 'medium' },
-          { en: 'Whale',      tr: 'Balina',         emoji: '🐋', cat: 'hayvan',  level: 'medium' },
-          { en: 'Volcano',    tr: 'Volkan',         emoji: '🌋', cat: 'doğa',    level: 'medium' },
-          { en: 'Pineapple',  tr: 'Ananas',         emoji: '🍍', cat: 'yiyecek', level: 'medium' },
-          { en: 'Canoe',      tr: 'Kano',           emoji: '🛶', cat: 'kültür',  level: 'medium' },
-          { en: 'Manta',      tr: 'Manta vatozu',   emoji: '🐡', cat: 'hayvan',  level: 'medium' },
-          { en: 'Reef',       tr: 'Resif',          emoji: '🐠', cat: 'doğa',    level: 'medium' },
-          { en: 'Lovo',       tr: 'Lovo yemeği',    emoji: '🍖', cat: 'yiyecek', level: 'medium' },
-          { en: 'Iguana',     tr: 'İguana',         emoji: '🦎', cat: 'hayvan',  level: 'hard' },
-          { en: 'Bula',       tr: 'Bula selamlama', emoji: '👋', cat: 'kültür',  level: 'hard' },
-          { en: 'Meke',       tr: 'Meke dansı',     emoji: '🎭', cat: 'kültür',  level: 'hard' },
-          { en: 'Tanoa',      tr: 'Tanoa kasesi',   emoji: '🪣', cat: 'kültür',  level: 'hard' },
-          { en: 'Sulu',       tr: 'Sulu etek',      emoji: '👘', cat: 'kıyafet', level: 'hard' },
-          { en: 'Breadfruit', tr: 'Ekmek meyvesi',  emoji: '🌿', cat: 'yiyecek', level: 'hard' },
-          { en: 'Kava',       tr: 'Kava içeceği',   emoji: '🫖', cat: 'yiyecek', level: 'hard' },
-          { en: 'Flying fox', tr: 'Uçan tilki yarasası', emoji: '🦇', cat: 'hayvan', level: 'hard' },
-          { en: 'Tambua',     tr: 'Tambua dişi',    emoji: '🦷', cat: 'kültür',  level: 'hard' },
-          { en: 'Natadola',   tr: 'Natadola plajı', emoji: '🏖️', cat: 'doğa',   level: 'hard' },
-        ]
-      },
-      'Papua N.G.': {
-        flag: '🇵🇬', capital: 'Port Moresby',
-        words: [
-          { en: 'Bird',       tr: 'Kuş',            emoji: '🐦', cat: 'hayvan',  level: 'easy' },
-          { en: 'Jungle',     tr: 'Orman',          emoji: '🌿', cat: 'doğa',    level: 'easy' },
-          { en: 'Coconut',    tr: 'Hindistancevizi', emoji: '🥥', cat: 'yiyecek', level: 'easy' },
-          { en: 'Dance',      tr: 'Dans',           emoji: '💃', cat: 'kültür',  level: 'easy' },
-          { en: 'River',      tr: 'Nehir',          emoji: '🏞️', cat: 'doğa',    level: 'easy' },
-          { en: 'Fish',       tr: 'Balık',          emoji: '🐟', cat: 'yiyecek', level: 'easy' },
-          { en: 'Mountain',   tr: 'Dağ',            emoji: '⛰️', cat: 'doğa',    level: 'easy' },
-          { en: 'Mask',       tr: 'Maske',          emoji: '🎭', cat: 'kültür',  level: 'easy' },
-          { en: 'Rain',       tr: 'Yağmur',         emoji: '🌧️', cat: 'doğa',    level: 'easy' },
-          { en: 'Island',     tr: 'Ada',            emoji: '🏝️', cat: 'doğa',    level: 'easy' },
-          { en: 'Cassowary',  tr: 'Kazuar',         emoji: '🦅', cat: 'hayvan',  level: 'medium' },
-          { en: 'Tapa',       tr: 'Tapa kumaş',     emoji: '🎨', cat: 'kültür',  level: 'medium' },
-          { en: 'Sago',       tr: 'Sago',           emoji: '🌾', cat: 'yiyecek', level: 'medium' },
-          { en: 'Volcano',    tr: 'Volkan',         emoji: '🌋', cat: 'doğa',    level: 'medium' },
-          { en: 'Crocodile',  tr: 'Timsah',         emoji: '🐊', cat: 'hayvan',  level: 'medium' },
-          { en: 'Bilum',      tr: 'Bilum çanta',    emoji: '👜', cat: 'kıyafet', level: 'medium' },
-          { en: 'Banana',     tr: 'Muz',            emoji: '🍌', cat: 'yiyecek', level: 'medium' },
-          { en: 'Firefly',    tr: 'Ateşböceği',     emoji: '✨', cat: 'hayvan',  level: 'medium' },
-          { en: 'Canoe',      tr: 'Kano',           emoji: '🛶', cat: 'kültür',  level: 'medium' },
-          { en: 'Orchid',     tr: 'Orkide',         emoji: '🌺', cat: 'doğa',    level: 'medium' },
-          { en: 'Bird of Paradise', tr: 'Cennet kuşu', emoji: '🦚', cat: 'hayvan', level: 'hard' },
-          { en: 'Sing-sing',  tr: 'Sing-sing festival', emoji: '🎊', cat: 'kültür', level: 'hard' },
-          { en: 'Taro',       tr: 'Taro kökü',      emoji: '🥔', cat: 'yiyecek', level: 'hard' },
-          { en: 'Kundu',      tr: 'Kundu davul',    emoji: '🥁', cat: 'kültür',  level: 'hard' },
-          { en: 'Cuscus',     tr: 'Kuskus hayvanı', emoji: '🐾', cat: 'hayvan',  level: 'hard' },
-          { en: 'Mumu',       tr: 'Mumu yemek',     emoji: '🍲', cat: 'yiyecek', level: 'hard' },
-          { en: 'Headdress',  tr: 'Baş süsü',       emoji: '🌾', cat: 'kıyafet', level: 'hard' },
-          { en: 'Mantis',     tr: 'Peygamberdevesi', emoji: '🦗', cat: 'hayvan', level: 'hard' },
-          { en: 'Sepik',      tr: 'Sepik nehri',    emoji: '🏞️', cat: 'doğa',    level: 'hard' },
-          { en: 'Pottery',    tr: 'Çömlek',         emoji: '🏺', cat: 'kültür',  level: 'hard' },
-        ]
-      },
+      'Fiji': { flag: '🇫🇯', capital: 'Suva', words: [
+        { en: 'Coral', tr: 'Mercan', emoji: '🪸', cat: 'doğa', level: 'easy' },
+        { en: 'Beach', tr: 'Plaj', emoji: '🏖️', cat: 'doğa', level: 'easy' },
+        { en: 'Fish', tr: 'Balık', emoji: '🐟', cat: 'yiyecek', level: 'easy' },
+        { en: 'Palm', tr: 'Palmiye', emoji: '🌴', cat: 'doğa', level: 'easy' },
+        { en: 'Sun', tr: 'Güneş', emoji: '☀️', cat: 'doğa', level: 'easy' },
+        { en: 'Shark', tr: 'Köpekbalığı', emoji: '🦈', cat: 'hayvan', level: 'easy' },
+        { en: 'Island', tr: 'Ada', emoji: '🏝️', cat: 'doğa', level: 'easy' },
+        { en: 'Sea', tr: 'Deniz', emoji: '🌊', cat: 'doğa', level: 'easy' },
+        { en: 'Coconut', tr: 'Hindistancevizi', emoji: '🥥', cat: 'yiyecek', level: 'easy' },
+        { en: 'Dance', tr: 'Dans', emoji: '💃', cat: 'kültür', level: 'easy' },
+        { en: 'Parrot', tr: 'Papağan', emoji: '🦜', cat: 'hayvan', level: 'medium' },
+        { en: 'Taro', tr: 'Taro kökü', emoji: '🥔', cat: 'yiyecek', level: 'medium' },
+        { en: 'Whale', tr: 'Balina', emoji: '🐋', cat: 'hayvan', level: 'medium' },
+        { en: 'Volcano', tr: 'Volkan', emoji: '🌋', cat: 'doğa', level: 'medium' },
+        { en: 'Pineapple', tr: 'Ananas', emoji: '🍍', cat: 'yiyecek', level: 'medium' },
+        { en: 'Canoe', tr: 'Kano', emoji: '🛶', cat: 'kültür', level: 'medium' },
+        { en: 'Manta', tr: 'Manta vatozu', emoji: '🐡', cat: 'hayvan', level: 'medium' },
+        { en: 'Reef', tr: 'Resif', emoji: '🐠', cat: 'doğa', level: 'medium' },
+        { en: 'Sarong', tr: 'Sarong', emoji: '👗', cat: 'kıyafet', level: 'medium' },
+        { en: 'Lovo', tr: 'Lovo yemeği', emoji: '🍖', cat: 'yiyecek', level: 'medium' },
+        { en: 'Bula', tr: 'Bula selamlama', emoji: '👋', cat: 'kültür', level: 'hard' },
+        { en: 'Meke', tr: 'Meke dansı', emoji: '🎭', cat: 'kültür', level: 'hard' },
+        { en: 'Kava', tr: 'Kava içeceği', emoji: '🫖', cat: 'yiyecek', level: 'hard' },
+        { en: 'Iguana', tr: 'İguana', emoji: '🦎', cat: 'hayvan', level: 'hard' },
+        { en: 'Sulu', tr: 'Sulu etek', emoji: '👘', cat: 'kıyafet', level: 'hard' },
+        { en: 'Breadfruit', tr: 'Ekmek meyvesi', emoji: '🌿', cat: 'yiyecek', level: 'hard' },
+        { en: 'Tanoa', tr: 'Tanoa kasesi', emoji: '🪣', cat: 'kültür', level: 'hard' },
+        { en: 'Tambua', tr: 'Tambua dişi', emoji: '🦷', cat: 'kültür', level: 'hard' },
+        { en: 'Natadola', tr: 'Natadola plajı', emoji: '🏖️', cat: 'doğa', level: 'hard' },
+        { en: 'Flying fox', tr: 'Uçan tilki yarasası', emoji: '🦇', cat: 'hayvan', level: 'hard' },
+      ]},
+      'Papua N.G.': { flag: '🇵🇬', capital: 'Port Moresby', words: [
+        { en: 'Bird', tr: 'Kuş', emoji: '🐦', cat: 'hayvan', level: 'easy' },
+        { en: 'Jungle', tr: 'Orman', emoji: '🌿', cat: 'doğa', level: 'easy' },
+        { en: 'Coconut', tr: 'Hindistancevizi', emoji: '🥥', cat: 'yiyecek', level: 'easy' },
+        { en: 'Dance', tr: 'Dans', emoji: '💃', cat: 'kültür', level: 'easy' },
+        { en: 'River', tr: 'Nehir', emoji: '🏞️', cat: 'doğa', level: 'easy' },
+        { en: 'Fish', tr: 'Balık', emoji: '🐟', cat: 'yiyecek', level: 'easy' },
+        { en: 'Mountain', tr: 'Dağ', emoji: '⛰️', cat: 'doğa', level: 'easy' },
+        { en: 'Mask', tr: 'Maske', emoji: '🎭', cat: 'kültür', level: 'easy' },
+        { en: 'Rain', tr: 'Yağmur', emoji: '🌧️', cat: 'doğa', level: 'easy' },
+        { en: 'Island', tr: 'Ada', emoji: '🏝️', cat: 'doğa', level: 'easy' },
+        { en: 'Cassowary', tr: 'Kazuar', emoji: '🦅', cat: 'hayvan', level: 'medium' },
+        { en: 'Sago', tr: 'Sago', emoji: '🌾', cat: 'yiyecek', level: 'medium' },
+        { en: 'Volcano', tr: 'Volkan', emoji: '🌋', cat: 'doğa', level: 'medium' },
+        { en: 'Crocodile', tr: 'Timsah', emoji: '🐊', cat: 'hayvan', level: 'medium' },
+        { en: 'Banana', tr: 'Muz', emoji: '🍌', cat: 'yiyecek', level: 'medium' },
+        { en: 'Orchid', tr: 'Orkide', emoji: '🌺', cat: 'doğa', level: 'medium' },
+        { en: 'Canoe', tr: 'Kano', emoji: '🛶', cat: 'kültür', level: 'medium' },
+        { en: 'Firefly', tr: 'Ateşböceği', emoji: '✨', cat: 'hayvan', level: 'medium' },
+        { en: 'Tapa', tr: 'Tapa kumaş', emoji: '🎨', cat: 'kültür', level: 'medium' },
+        { en: 'Bilum', tr: 'Bilum çanta', emoji: '👜', cat: 'kıyafet', level: 'medium' },
+        { en: 'Bird of Paradise', tr: 'Cennet kuşu', emoji: '🦚', cat: 'hayvan', level: 'hard' },
+        { en: 'Sing-sing', tr: 'Sing-sing festival', emoji: '🎊', cat: 'kültür', level: 'hard' },
+        { en: 'Taro', tr: 'Taro kökü', emoji: '🥔', cat: 'yiyecek', level: 'hard' },
+        { en: 'Kundu', tr: 'Kundu davul', emoji: '🥁', cat: 'kültür', level: 'hard' },
+        { en: 'Cuscus', tr: 'Kuskus hayvanı', emoji: '🐾', cat: 'hayvan', level: 'hard' },
+        { en: 'Mumu', tr: 'Mumu yemek', emoji: '🍲', cat: 'yiyecek', level: 'hard' },
+        { en: 'Headdress', tr: 'Baş süsü', emoji: '🌾', cat: 'kıyafet', level: 'hard' },
+        { en: 'Sepik', tr: 'Sepik nehri', emoji: '🏞️', cat: 'doğa', level: 'hard' },
+        { en: 'Pottery', tr: 'Çömlek', emoji: '🏺', cat: 'kültür', level: 'hard' },
+        { en: 'Mantis', tr: 'Peygamberdevesi', emoji: '🦗', cat: 'hayvan', level: 'hard' },
+      ]},
       'New Zealand': {
         flag: '🇳🇿', capital: 'Wellington',
         words: [
@@ -4023,148 +3916,135 @@ const CONTINENT_WORDS = {
   an: {
     theme: { bg: '#E8EAF6', accent: '#283593', emoji: '🐧', name: 'Antarktika' },
     countries: {
-      
-      'Penguin Coast': {
-        flag: '🐧', capital: 'Penguin Bay',
-        words: [
-          { en: 'Penguin',    tr: 'Penguen',        emoji: '🐧', cat: 'hayvan',  level: 'easy' },
-          { en: 'Ice',        tr: 'Buz',            emoji: '🧊', cat: 'doğa',    level: 'easy' },
-          { en: 'Snow',       tr: 'Kar',            emoji: '❄️', cat: 'doğa',    level: 'easy' },
-          { en: 'Cold',       tr: 'Soğuk',          emoji: '🥶', cat: 'doğa',    level: 'easy' },
-          { en: 'Fish',       tr: 'Balık',          emoji: '🐟', cat: 'yiyecek', level: 'easy' },
-          { en: 'Star',       tr: 'Yıldız',         emoji: '⭐', cat: 'doğa',    level: 'easy' },
-          { en: 'Wind',       tr: 'Rüzgar',         emoji: '💨', cat: 'doğa',    level: 'easy' },
-          { en: 'Blue',       tr: 'Mavi',           emoji: '💙', cat: 'doğa',    level: 'easy' },
-          { en: 'Coat',       tr: 'Palto',          emoji: '🧥', cat: 'kıyafet', level: 'easy' },
-          { en: 'Slide',      tr: 'Kaymak',         emoji: '🛷', cat: 'kültür',  level: 'easy' },
-          { en: 'Seal',       tr: 'Fok',            emoji: '🦭', cat: 'hayvan',  level: 'medium' },
-          { en: 'Blizzard',   tr: 'Tipi',           emoji: '🌨️', cat: 'doğa',    level: 'medium' },
-          { en: 'Glacier',    tr: 'Buzul',          emoji: '🏔️', cat: 'doğa',    level: 'medium' },
-          { en: 'Squid',      tr: 'Kalamar',        emoji: '🦑', cat: 'yiyecek', level: 'medium' },
-          { en: 'Iceberg',    tr: 'Buzdağı',        emoji: '🧊', cat: 'doğa',    level: 'medium' },
-          { en: 'Glove',      tr: 'Eldiven',        emoji: '🧤', cat: 'kıyafet', level: 'medium' },
-          { en: 'Colony',     tr: 'Koloni',         emoji: '🐧', cat: 'kültür',  level: 'medium' },
-          { en: 'Krill',      tr: 'Kril',           emoji: '🦐', cat: 'yiyecek', level: 'medium' },
-          { en: 'Aurora',     tr: 'Kuzey ışıkları', emoji: '🌌', cat: 'doğa',    level: 'medium' },
-          { en: 'Waddle',     tr: 'Paytak yürüyüş', emoji: '🐧', cat: 'kültür', level: 'medium' },
-          { en: 'Emperor',    tr: 'İmparator pengueni', emoji: '🐧', cat: 'hayvan', level: 'hard' },
-          { en: 'Crevasse',   tr: 'Buzul yarığı',   emoji: '❄️', cat: 'doğa',    level: 'hard' },
-          { en: 'Plankton',   tr: 'Plankton',       emoji: '🌊', cat: 'yiyecek', level: 'hard' },
-          { en: 'Snowflake',  tr: 'Kar tanesi',     emoji: '❄️', cat: 'doğa',    level: 'hard' },
-          { en: 'Parka',      tr: 'Parka mont',     emoji: '🧥', cat: 'kıyafet', level: 'hard' },
-          { en: 'Whiteout',   tr: 'Kar fırtınası',  emoji: '🌨️', cat: 'doğa',    level: 'hard' },
-          { en: 'Rookery',    tr: 'Yuvalama bölgesi', emoji: '🐧', cat: 'kültür', level: 'hard' },
-          { en: 'Leopard seal', tr: 'Leopar foku',  emoji: '🦭', cat: 'hayvan',  level: 'hard' },
-          { en: 'Bioluminescence', tr: 'Biyolüminesans', emoji: '✨', cat: 'doğa', level: 'hard' },
-          { en: 'Sastrugi',   tr: 'Kar dalgaları',  emoji: '🏔️', cat: 'doğa',    level: 'hard' },
-        ]
-      },
-      'Aurora Bay': {
-        flag: '🌌', capital: 'Aurora Base',
-        words: [
-          { en: 'Aurora',     tr: 'Kutup ışıkları', emoji: '🌌', cat: 'doğa',    level: 'easy' },
-          { en: 'Night',      tr: 'Gece',           emoji: '🌙', cat: 'doğa',    level: 'easy' },
-          { en: 'Star',       tr: 'Yıldız',         emoji: '⭐', cat: 'doğa',    level: 'easy' },
-          { en: 'Green',      tr: 'Yeşil',          emoji: '💚', cat: 'doğa',    level: 'easy' },
-          { en: 'Cold',       tr: 'Soğuk',          emoji: '🥶', cat: 'doğa',    level: 'easy' },
-          { en: 'Ice',        tr: 'Buz',            emoji: '🧊', cat: 'doğa',    level: 'easy' },
-          { en: 'Whale',      tr: 'Balina',         emoji: '🐋', cat: 'hayvan',  level: 'easy' },
-          { en: 'Scarf',      tr: 'Atkı',           emoji: '🧣', cat: 'kıyafet', level: 'easy' },
-          { en: 'Science',    tr: 'Bilim',          emoji: '🔬', cat: 'kültür',  level: 'easy' },
-          { en: 'Sky',        tr: 'Gökyüzü',        emoji: '🌠', cat: 'doğa',    level: 'easy' },
-          { en: 'Orca',       tr: 'Katil balina',   emoji: '🐋', cat: 'hayvan',  level: 'medium' },
-          { en: 'Telescope',  tr: 'Teleskop',       emoji: '🔭', cat: 'kültür',  level: 'medium' },
-          { en: 'Blizzard',   tr: 'Tipi',           emoji: '🌨️', cat: 'doğa',    level: 'medium' },
-          { en: 'Boots',      tr: 'Kar botu',       emoji: '👢', cat: 'kıyafet', level: 'medium' },
-          { en: 'Iceberg',    tr: 'Buzdağı',        emoji: '🧊', cat: 'doğa',    level: 'medium' },
-          { en: 'Petrel',     tr: 'Petrel kuşu',    emoji: '🐦', cat: 'hayvan',  level: 'medium' },
-          { en: 'Compass',    tr: 'Pusula',         emoji: '🧭', cat: 'kültür',  level: 'medium' },
-          { en: 'Krill',      tr: 'Kril',           emoji: '🦐', cat: 'yiyecek', level: 'medium' },
-          { en: 'Polar',      tr: 'Kutupsal',       emoji: '🌍', cat: 'doğa',    level: 'medium' },
-          { en: 'Mittens',    tr: 'Eldiven',        emoji: '🧤', cat: 'kıyafet', level: 'medium' },
-          { en: 'Magnetosphere', tr: 'Manyetosfer', emoji: '🌐', cat: 'doğa',   level: 'hard' },
-          { en: 'Albatross',  tr: 'Albatros',       emoji: '🦅', cat: 'hayvan',  level: 'hard' },
-          { en: 'Solstice',   tr: 'Gündönümü',      emoji: '☀️', cat: 'doğa',    level: 'hard' },
-          { en: 'Permafrost', tr: 'Donmuş toprak',  emoji: '❄️', cat: 'doğa',    level: 'hard' },
-          { en: 'Thermals',   tr: 'Termal iç çamaşır', emoji: '🧣', cat: 'kıyafet', level: 'hard' },
-          { en: 'Cryosphere', tr: 'Kriyosfer',      emoji: '🌍', cat: 'doğa',    level: 'hard' },
-          { en: 'Meteorite',  tr: 'Meteorit',       emoji: '☄️', cat: 'kültür',  level: 'hard' },
-          { en: 'Zodiac',     tr: 'Şişme bot',      emoji: '🛥️', cat: 'kültür',  level: 'hard' },
-          { en: 'Ionosphere', tr: 'İyonosfer',      emoji: '🌌', cat: 'doğa',    level: 'hard' },
-          { en: 'Fumarole',   tr: 'Fumarol',        emoji: '🌋', cat: 'doğa',    level: 'hard' },
-        ]
-      },
-      'Iceberg Isle': {
-        flag: '🧊', capital: 'Frost Point',
-        words: [
-          { en: 'Iceberg',    tr: 'Buzdağı',        emoji: '🧊', cat: 'doğa',    level: 'easy' },
-          { en: 'Cold',       tr: 'Soğuk',          emoji: '🥶', cat: 'doğa',    level: 'easy' },
-          { en: 'Seal',       tr: 'Fok',            emoji: '🦭', cat: 'hayvan',  level: 'easy' },
-          { en: 'Snow',       tr: 'Kar',            emoji: '❄️', cat: 'doğa',    level: 'easy' },
-          { en: 'Whale',      tr: 'Balina',         emoji: '🐋', cat: 'hayvan',  level: 'easy' },
-          { en: 'Blue',       tr: 'Mavi',           emoji: '💙', cat: 'doğa',    level: 'easy' },
-          { en: 'Frozen',     tr: 'Donmuş',         emoji: '🧊', cat: 'doğa',    level: 'easy' },
-          { en: 'Coat',       tr: 'Palto',          emoji: '🧥', cat: 'kıyafet', level: 'easy' },
-          { en: 'Ocean',      tr: 'Okyanus',        emoji: '🌊', cat: 'doğa',    level: 'easy' },
-          { en: 'White',      tr: 'Beyaz',          emoji: '🤍', cat: 'doğa',    level: 'easy' },
-          { en: 'Blizzard',   tr: 'Tipi',           emoji: '🌨️', cat: 'doğa',    level: 'medium' },
-          { en: 'Glacier',    tr: 'Buzul',          emoji: '🏔️', cat: 'doğa',    level: 'medium' },
-          { en: 'Squid',      tr: 'Kalamar',        emoji: '🦑', cat: 'yiyecek', level: 'medium' },
-          { en: 'Frost',      tr: 'Don',            emoji: '❄️', cat: 'doğa',    level: 'medium' },
-          { en: 'Boots',      tr: 'Kar botu',       emoji: '👢', cat: 'kıyafet', level: 'medium' },
-          { en: 'Skua',       tr: 'Skua kuşu',      emoji: '🐦', cat: 'hayvan',  level: 'medium' },
-          { en: 'Meltwater',  tr: 'Erimekte olan buz', emoji: '💧', cat: 'doğa', level: 'medium' },
-          { en: 'Krill',      tr: 'Kril',           emoji: '🦐', cat: 'yiyecek', level: 'medium' },
-          { en: 'Frostbite',  tr: 'Donuk',          emoji: '🥶', cat: 'doğa',    level: 'medium' },
-          { en: 'Snowshoes',  tr: 'Kar ayakkabısı', emoji: '👟', cat: 'kıyafet', level: 'medium' },
-          { en: 'Crevasse',   tr: 'Buzul yarığı',   emoji: '❄️', cat: 'doğa',    level: 'hard' },
-          { en: 'Calving',    tr: 'Buzul kopması',  emoji: '🧊', cat: 'doğa',    level: 'hard' },
-          { en: 'Brine',      tr: 'Salamura suyu',  emoji: '🌊', cat: 'doğa',    level: 'hard' },
-          { en: 'Narwhal',    tr: 'Dişi balina',    emoji: '🐳', cat: 'hayvan',  level: 'hard' },
-          { en: 'Thermals',   tr: 'Termal giysi',   emoji: '🧣', cat: 'kıyafet', level: 'hard' },
-          { en: 'Icebreaker', tr: 'Buz kıran gemi', emoji: '🚢', cat: 'kültür',  level: 'hard' },
-          { en: 'Sastrugi',   tr: 'Kar dalgaları',  emoji: '🏔️', cat: 'doğa',    level: 'hard' },
-          { en: 'Pelagic',    tr: 'Pelajik',        emoji: '🌊', cat: 'doğa',    level: 'hard' },
-          { en: 'Sublimate',  tr: 'Süblimleşmek',   emoji: '❄️', cat: 'doğa',    level: 'hard' },
-          { en: 'Ablation',   tr: 'Ablasyon',       emoji: '🧊', cat: 'doğa',    level: 'hard' },
-        ]
-      },
-      'Glacier Pass': {
-        flag: '🏔️', capital: 'Summit Base',
-        words: [
-          { en: 'Glacier',    tr: 'Buzul',          emoji: '🏔️', cat: 'doğa',    level: 'easy' },
-          { en: 'Snow',       tr: 'Kar',            emoji: '❄️', cat: 'doğa',    level: 'easy' },
-          { en: 'Mountain',   tr: 'Dağ',            emoji: '⛰️', cat: 'doğa',    level: 'easy' },
-          { en: 'Ice',        tr: 'Buz',            emoji: '🧊', cat: 'doğa',    level: 'easy' },
-          { en: 'Penguin',    tr: 'Penguen',        emoji: '🐧', cat: 'hayvan',  level: 'easy' },
-          { en: 'Cold',       tr: 'Soğuk',          emoji: '🥶', cat: 'doğa',    level: 'easy' },
-          { en: 'Jacket',     tr: 'Mont',           emoji: '🧥', cat: 'kıyafet', level: 'easy' },
-          { en: 'Rock',       tr: 'Kaya',           emoji: '🪨', cat: 'doğa',    level: 'easy' },
-          { en: 'Wind',       tr: 'Rüzgar',         emoji: '💨', cat: 'doğa',    level: 'easy' },
-          { en: 'Seal',       tr: 'Fok',            emoji: '🦭', cat: 'hayvan',  level: 'easy' },
-          { en: 'Crevasse',   tr: 'Buzul yarığı',   emoji: '❄️', cat: 'doğa',    level: 'medium' },
-          { en: 'Crampon',    tr: 'Krampomlar',     emoji: '👟', cat: 'kıyafet', level: 'medium' },
-          { en: 'Blizzard',   tr: 'Tipi',           emoji: '🌨️', cat: 'doğa',    level: 'medium' },
-          { en: 'Petrel',     tr: 'Petrel kuşu',    emoji: '🐦', cat: 'hayvan',  level: 'medium' },
-          { en: 'Frozen',     tr: 'Donmuş',         emoji: '🧊', cat: 'doğa',    level: 'medium' },
-          { en: 'Krill',      tr: 'Kril',           emoji: '🦐', cat: 'yiyecek', level: 'medium' },
-          { en: 'Compass',    tr: 'Pusula',         emoji: '🧭', cat: 'kültür',  level: 'medium' },
-          { en: 'Insulated',  tr: 'Yalıtımlı',      emoji: '🧤', cat: 'kıyafet', level: 'medium' },
-          { en: 'Summit',     tr: 'Zirve',          emoji: '🏔️', cat: 'doğa',    level: 'medium' },
-          { en: 'Polar',      tr: 'Kutupsal',       emoji: '🌍', cat: 'doğa',    level: 'medium' },
-          { en: 'Icepick',    tr: 'Buz kazması',    emoji: '⛏️', cat: 'kültür',  level: 'hard' },
-          { en: 'Morraine',   tr: 'Moren',          emoji: '🪨', cat: 'doğa',    level: 'hard' },
-          { en: 'Serac',      tr: 'Buz sütunu',     emoji: '🧊', cat: 'doğa',    level: 'hard' },
-          { en: 'Meltwater',  tr: 'Erime suyu',     emoji: '💧', cat: 'doğa',    level: 'hard' },
-          { en: 'Thermals',   tr: 'Termal giysi',   emoji: '🧣', cat: 'kıyafet', level: 'hard' },
-          { en: 'Ablation',   tr: 'Ablasyon',       emoji: '🏔️', cat: 'doğa',    level: 'hard' },
-          { en: 'Icebreaker', tr: 'Buz kıran',      emoji: '🚢', cat: 'kültür',  level: 'hard' },
-          { en: 'Albatross',  tr: 'Albatros',       emoji: '🦅', cat: 'hayvan',  level: 'hard' },
-          { en: 'Sublimate',  tr: 'Süblimleşmek',   emoji: '❄️', cat: 'doğa',    level: 'hard' },
-          { en: 'Periglacial', tr: 'Periglasyal',   emoji: '🌍', cat: 'doğa',    level: 'hard' },
-        ]
-      },
-'Antarctica': {
+      'Penguin Coast': { flag: '🐧', capital: 'McMurdo', words: [
+        { en: 'Penguin', tr: 'Penguen', emoji: '🐧', cat: 'hayvan', level: 'easy' },
+        { en: 'Ice', tr: 'Buz', emoji: '🧊', cat: 'doğa', level: 'easy' },
+        { en: 'Snow', tr: 'Kar', emoji: '❄️', cat: 'doğa', level: 'easy' },
+        { en: 'Cold', tr: 'Soğuk', emoji: '🥶', cat: 'doğa', level: 'easy' },
+        { en: 'Fish', tr: 'Balık', emoji: '🐟', cat: 'yiyecek', level: 'easy' },
+        { en: 'Star', tr: 'Yıldız', emoji: '⭐', cat: 'doğa', level: 'easy' },
+        { en: 'Wind', tr: 'Rüzgar', emoji: '💨', cat: 'doğa', level: 'easy' },
+        { en: 'Coat', tr: 'Palto', emoji: '🧥', cat: 'kıyafet', level: 'easy' },
+        { en: 'Blue', tr: 'Mavi', emoji: '💙', cat: 'doğa', level: 'easy' },
+        { en: 'Slide', tr: 'Kaymak', emoji: '🛷', cat: 'kültür', level: 'easy' },
+        { en: 'Seal', tr: 'Fok', emoji: '🦭', cat: 'hayvan', level: 'medium' },
+        { en: 'Blizzard', tr: 'Tipi', emoji: '🌨️', cat: 'doğa', level: 'medium' },
+        { en: 'Glacier', tr: 'Buzul', emoji: '🏔️', cat: 'doğa', level: 'medium' },
+        { en: 'Squid', tr: 'Kalamar', emoji: '🦑', cat: 'yiyecek', level: 'medium' },
+        { en: 'Iceberg', tr: 'Buzdağı', emoji: '🧊', cat: 'doğa', level: 'medium' },
+        { en: 'Glove', tr: 'Eldiven', emoji: '🧤', cat: 'kıyafet', level: 'medium' },
+        { en: 'Krill', tr: 'Kril', emoji: '🦐', cat: 'yiyecek', level: 'medium' },
+        { en: 'Aurora', tr: 'Kutup ışıkları', emoji: '🌌', cat: 'doğa', level: 'medium' },
+        { en: 'Colony', tr: 'Koloni', emoji: '🐧', cat: 'kültür', level: 'medium' },
+        { en: 'Waddle', tr: 'Paytak yürüyüş', emoji: '🐧', cat: 'kültür', level: 'medium' },
+        { en: 'Emperor', tr: 'İmparator pengueni', emoji: '🐧', cat: 'hayvan', level: 'hard' },
+        { en: 'Crevasse', tr: 'Buzul yarığı', emoji: '❄️', cat: 'doğa', level: 'hard' },
+        { en: 'Plankton', tr: 'Plankton', emoji: '🌊', cat: 'yiyecek', level: 'hard' },
+        { en: 'Parka', tr: 'Parka mont', emoji: '🧥', cat: 'kıyafet', level: 'hard' },
+        { en: 'Rookery', tr: 'Yuvalama bölgesi', emoji: '🐧', cat: 'kültür', level: 'hard' },
+        { en: 'Whiteout', tr: 'Kar fırtınası', emoji: '🌨️', cat: 'doğa', level: 'hard' },
+        { en: 'Snowflake', tr: 'Kar tanesi', emoji: '❄️', cat: 'doğa', level: 'hard' },
+        { en: 'Leopard seal', tr: 'Leopar foku', emoji: '🦭', cat: 'hayvan', level: 'hard' },
+        { en: 'Sastrugi', tr: 'Kar dalgaları', emoji: '🏔️', cat: 'doğa', level: 'hard' },
+        { en: 'Bioluminescence', tr: 'Biyolüminesans', emoji: '✨', cat: 'doğa', level: 'hard' },
+      ]},
+      'Aurora Bay': { flag: '🌌', capital: 'South Pole', words: [
+        { en: 'Aurora', tr: 'Kutup ışıkları', emoji: '🌌', cat: 'doğa', level: 'easy' },
+        { en: 'Night', tr: 'Gece', emoji: '🌙', cat: 'doğa', level: 'easy' },
+        { en: 'Star', tr: 'Yıldız', emoji: '⭐', cat: 'doğa', level: 'easy' },
+        { en: 'Green', tr: 'Yeşil', emoji: '💚', cat: 'doğa', level: 'easy' },
+        { en: 'Cold', tr: 'Soğuk', emoji: '🥶', cat: 'doğa', level: 'easy' },
+        { en: 'Ice', tr: 'Buz', emoji: '🧊', cat: 'doğa', level: 'easy' },
+        { en: 'Whale', tr: 'Balina', emoji: '🐋', cat: 'hayvan', level: 'easy' },
+        { en: 'Scarf', tr: 'Atkı', emoji: '🧣', cat: 'kıyafet', level: 'easy' },
+        { en: 'Science', tr: 'Bilim', emoji: '🔬', cat: 'kültür', level: 'easy' },
+        { en: 'Sky', tr: 'Gökyüzü', emoji: '🌠', cat: 'doğa', level: 'easy' },
+        { en: 'Orca', tr: 'Katil balina', emoji: '🐋', cat: 'hayvan', level: 'medium' },
+        { en: 'Telescope', tr: 'Teleskop', emoji: '🔭', cat: 'kültür', level: 'medium' },
+        { en: 'Blizzard', tr: 'Tipi', emoji: '🌨️', cat: 'doğa', level: 'medium' },
+        { en: 'Boots', tr: 'Kar botu', emoji: '👢', cat: 'kıyafet', level: 'medium' },
+        { en: 'Iceberg', tr: 'Buzdağı', emoji: '🧊', cat: 'doğa', level: 'medium' },
+        { en: 'Petrel', tr: 'Petrel kuşu', emoji: '🐦', cat: 'hayvan', level: 'medium' },
+        { en: 'Compass', tr: 'Pusula', emoji: '🧭', cat: 'kültür', level: 'medium' },
+        { en: 'Krill', tr: 'Kril', emoji: '🦐', cat: 'yiyecek', level: 'medium' },
+        { en: 'Polar', tr: 'Kutupsal', emoji: '🌍', cat: 'doğa', level: 'medium' },
+        { en: 'Mittens', tr: 'Eldiven', emoji: '🧤', cat: 'kıyafet', level: 'medium' },
+        { en: 'Magnetosphere', tr: 'Manyetosfer', emoji: '🌐', cat: 'doğa', level: 'hard' },
+        { en: 'Albatross', tr: 'Albatros', emoji: '🦅', cat: 'hayvan', level: 'hard' },
+        { en: 'Solstice', tr: 'Gündönümü', emoji: '☀️', cat: 'doğa', level: 'hard' },
+        { en: 'Permafrost', tr: 'Donmuş toprak', emoji: '❄️', cat: 'doğa', level: 'hard' },
+        { en: 'Thermals', tr: 'Termal iç çamaşır', emoji: '🧣', cat: 'kıyafet', level: 'hard' },
+        { en: 'Meteorite', tr: 'Meteorit', emoji: '☄️', cat: 'kültür', level: 'hard' },
+        { en: 'Zodiac', tr: 'Şişme bot', emoji: '🛥️', cat: 'kültür', level: 'hard' },
+        { en: 'Ionosphere', tr: 'İyonosfer', emoji: '🌌', cat: 'doğa', level: 'hard' },
+        { en: 'Fumarole', tr: 'Fumarol', emoji: '🌋', cat: 'doğa', level: 'hard' },
+        { en: 'Cryosphere', tr: 'Kriyosfer', emoji: '🌍', cat: 'doğa', level: 'hard' },
+      ]},
+      'Iceberg Isle': { flag: '🧊', capital: 'Ross Sea', words: [
+        { en: 'Iceberg', tr: 'Buzdağı', emoji: '🧊', cat: 'doğa', level: 'easy' },
+        { en: 'Cold', tr: 'Soğuk', emoji: '🥶', cat: 'doğa', level: 'easy' },
+        { en: 'Seal', tr: 'Fok', emoji: '🦭', cat: 'hayvan', level: 'easy' },
+        { en: 'Snow', tr: 'Kar', emoji: '❄️', cat: 'doğa', level: 'easy' },
+        { en: 'Whale', tr: 'Balina', emoji: '🐋', cat: 'hayvan', level: 'easy' },
+        { en: 'Blue', tr: 'Mavi', emoji: '💙', cat: 'doğa', level: 'easy' },
+        { en: 'Frozen', tr: 'Donmuş', emoji: '🧊', cat: 'doğa', level: 'easy' },
+        { en: 'Coat', tr: 'Palto', emoji: '🧥', cat: 'kıyafet', level: 'easy' },
+        { en: 'Ocean', tr: 'Okyanus', emoji: '🌊', cat: 'doğa', level: 'easy' },
+        { en: 'White', tr: 'Beyaz', emoji: '🤍', cat: 'doğa', level: 'easy' },
+        { en: 'Blizzard', tr: 'Tipi', emoji: '🌨️', cat: 'doğa', level: 'medium' },
+        { en: 'Glacier', tr: 'Buzul', emoji: '🏔️', cat: 'doğa', level: 'medium' },
+        { en: 'Squid', tr: 'Kalamar', emoji: '🦑', cat: 'yiyecek', level: 'medium' },
+        { en: 'Frost', tr: 'Don', emoji: '❄️', cat: 'doğa', level: 'medium' },
+        { en: 'Boots', tr: 'Kar botu', emoji: '👢', cat: 'kıyafet', level: 'medium' },
+        { en: 'Skua', tr: 'Skua kuşu', emoji: '🐦', cat: 'hayvan', level: 'medium' },
+        { en: 'Krill', tr: 'Kril', emoji: '🦐', cat: 'yiyecek', level: 'medium' },
+        { en: 'Frostbite', tr: 'Donuk', emoji: '🥶', cat: 'doğa', level: 'medium' },
+        { en: 'Meltwater', tr: 'Erime suyu', emoji: '💧', cat: 'doğa', level: 'medium' },
+        { en: 'Snowshoes', tr: 'Kar ayakkabısı', emoji: '👟', cat: 'kıyafet', level: 'medium' },
+        { en: 'Crevasse', tr: 'Buzul yarığı', emoji: '❄️', cat: 'doğa', level: 'hard' },
+        { en: 'Calving', tr: 'Buzul kopması', emoji: '🧊', cat: 'doğa', level: 'hard' },
+        { en: 'Narwhal', tr: 'Dişi balina', emoji: '🐳', cat: 'hayvan', level: 'hard' },
+        { en: 'Thermals', tr: 'Termal giysi', emoji: '🧣', cat: 'kıyafet', level: 'hard' },
+        { en: 'Icebreaker', tr: 'Buz kıran gemi', emoji: '🚢', cat: 'kültür', level: 'hard' },
+        { en: 'Sastrugi', tr: 'Kar dalgaları', emoji: '🏔️', cat: 'doğa', level: 'hard' },
+        { en: 'Brine', tr: 'Salamura suyu', emoji: '🌊', cat: 'doğa', level: 'hard' },
+        { en: 'Ablation', tr: 'Ablasyon', emoji: '🧊', cat: 'doğa', level: 'hard' },
+        { en: 'Sublimate', tr: 'Süblimleşmek', emoji: '❄️', cat: 'doğa', level: 'hard' },
+        { en: 'Pelagic', tr: 'Pelajik', emoji: '🌊', cat: 'doğa', level: 'hard' },
+      ]},
+      'Glacier Pass': { flag: '🏔️', capital: 'East Plateau', words: [
+        { en: 'Glacier', tr: 'Buzul', emoji: '🏔️', cat: 'doğa', level: 'easy' },
+        { en: 'Snow', tr: 'Kar', emoji: '❄️', cat: 'doğa', level: 'easy' },
+        { en: 'Mountain', tr: 'Dağ', emoji: '⛰️', cat: 'doğa', level: 'easy' },
+        { en: 'Ice', tr: 'Buz', emoji: '🧊', cat: 'doğa', level: 'easy' },
+        { en: 'Penguin', tr: 'Penguen', emoji: '🐧', cat: 'hayvan', level: 'easy' },
+        { en: 'Cold', tr: 'Soğuk', emoji: '🥶', cat: 'doğa', level: 'easy' },
+        { en: 'Jacket', tr: 'Mont', emoji: '🧥', cat: 'kıyafet', level: 'easy' },
+        { en: 'Rock', tr: 'Kaya', emoji: '🪨', cat: 'doğa', level: 'easy' },
+        { en: 'Wind', tr: 'Rüzgar', emoji: '💨', cat: 'doğa', level: 'easy' },
+        { en: 'Seal', tr: 'Fok', emoji: '🦭', cat: 'hayvan', level: 'easy' },
+        { en: 'Crevasse', tr: 'Buzul yarığı', emoji: '❄️', cat: 'doğa', level: 'medium' },
+        { en: 'Blizzard', tr: 'Tipi', emoji: '🌨️', cat: 'doğa', level: 'medium' },
+        { en: 'Petrel', tr: 'Petrel kuşu', emoji: '🐦', cat: 'hayvan', level: 'medium' },
+        { en: 'Krill', tr: 'Kril', emoji: '🦐', cat: 'yiyecek', level: 'medium' },
+        { en: 'Compass', tr: 'Pusula', emoji: '🧭', cat: 'kültür', level: 'medium' },
+        { en: 'Summit', tr: 'Zirve', emoji: '🏔️', cat: 'doğa', level: 'medium' },
+        { en: 'Polar', tr: 'Kutupsal', emoji: '🌍', cat: 'doğa', level: 'medium' },
+        { en: 'Frozen', tr: 'Donmuş', emoji: '🧊', cat: 'doğa', level: 'medium' },
+        { en: 'Crampon', tr: 'Kramponlar', emoji: '👟', cat: 'kıyafet', level: 'medium' },
+        { en: 'Insulated', tr: 'Yalıtımlı', emoji: '🧤', cat: 'kıyafet', level: 'medium' },
+        { en: 'Icepick', tr: 'Buz kazması', emoji: '⛏️', cat: 'kültür', level: 'hard' },
+        { en: 'Moraine', tr: 'Moren', emoji: '🪨', cat: 'doğa', level: 'hard' },
+        { en: 'Serac', tr: 'Buz sütunu', emoji: '🧊', cat: 'doğa', level: 'hard' },
+        { en: 'Meltwater', tr: 'Erime suyu', emoji: '💧', cat: 'doğa', level: 'hard' },
+        { en: 'Ablation', tr: 'Ablasyon', emoji: '🏔️', cat: 'doğa', level: 'hard' },
+        { en: 'Albatross', tr: 'Albatros', emoji: '🦅', cat: 'hayvan', level: 'hard' },
+        { en: 'Thermals', tr: 'Termal giysi', emoji: '🧣', cat: 'kıyafet', level: 'hard' },
+        { en: 'Icebreaker', tr: 'Buz kıran', emoji: '🚢', cat: 'kültür', level: 'hard' },
+        { en: 'Sublimate', tr: 'Süblimleşmek', emoji: '❄️', cat: 'doğa', level: 'hard' },
+        { en: 'Periglacial', tr: 'Periglasyal', emoji: '🌍', cat: 'doğa', level: 'hard' },
+      ]},
+      'Antarctica': {
         flag: '🏔️', capital: 'McMurdo Station',
         words: [
           { en: 'Penguin',    tr: 'Penguen',            emoji: '🐧', cat: 'hayvan',  level: 'easy' },
@@ -4271,15 +4151,12 @@ function openCountryGame(continentId, countryName) {
   console.log('✅ Kıta verisi var:', Object.keys(contData.countries).length, 'ülke');
 
   const countryData = contData.countries[countryName];
-  console.log('🔍 countryName:', countryName, '| Mevcut ülkeler:', Object.keys(contData.countries));
   if (!countryData) {
-    console.warn('⚠️ Ülke verisi yok:', countryName);
-    // Yakında toast göster, fallback etme
-    const el = document.createElement('div');
-    el.innerHTML = '<span style="font-size:22px">🔜</span> <b>' + countryName + '</b> yakında açılıyor!';
-    el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1F3144;color:#FFF8EC;padding:16px 28px;border-radius:999px;font-family:Fredoka,sans-serif;font-size:18px;font-weight:600;box-shadow:0 14px 40px rgba(0,0,0,0.35);z-index:9999;pointer-events:none;display:flex;align-items:center;gap:10px;';
+    var el = document.createElement('div');
+    el.textContent = '🔜 ' + countryName + ' yakında açılıyor!';
+    el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1F3144;color:#FFF8EC;padding:16px 28px;border-radius:999px;font-family:Fredoka,sans-serif;font-size:18px;font-weight:600;z-index:9999;pointer-events:none;';
     document.body.appendChild(el);
-    setTimeout(() => el.remove(), 1800);
+    setTimeout(function(){ el.remove(); }, 1800);
     return;
   }
   console.log('✅ Ülke verisi var:', countryData.words.length, 'kelime');
@@ -4343,9 +4220,9 @@ function closeCountryGame() {
   if (kdState.timerInterval) clearInterval(kdState.timerInterval);
 }
 
-// Overlay'e tıklayınca kapat
-document.getElementById('kdOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeCountryGame();
+window.addEventListener('DOMContentLoaded', function() {
+  var ov = document.getElementById('kdOverlay');
+  if (ov) ov.addEventListener('click', function(e) { if (e.target === this) closeCountryGame(); });
 });
 
 // ─── Tab Geçişi ───────────────────────────────────────────────────
@@ -4756,211 +4633,65 @@ function kdSpawnConfetti() {
 <script>
 // ─── Oyun 3: Harf Karışık (Scramble) ──────────────────────────────
 function kdRenderScramble() {
-  const learned = Array.from(kdState.learnedWords)
-    .map(w => kdState.words.find(word => word.en === w))
-    .filter(Boolean);
-
-  if (!learned.length) {
-    document.getElementById('kdBody').innerHTML = '<div style="padding:40px;text-align:center;color:#666;font-family:Fredoka">Önce kelime öğrenmelisin!</div>';
-    return;
-  }
-
-  const pick = learned[Math.floor(Math.random() * learned.length)];
-  const letters = pick.en.toUpperCase().split('').sort(() => Math.random() - 0.5);
-  // Aynı sıraya gelirse tekrar karıştır
-  while (letters.join('') === pick.en.toUpperCase()) {
-    letters.sort(() => Math.random() - 0.5);
-  }
-
-  document.getElementById('kdBody').innerHTML = `
-    <div style="font-family:Fredoka;padding:8px">
-      <div style="text-align:center;margin-bottom:24px">
-        <div style="font-size:64px;margin-bottom:8px">${pick.emoji}</div>
-        <div style="font-size:20px;color:#666;margin-bottom:20px">🇹🇷 ${pick.tr}</div>
-        <div style="font-size:30px;font-weight:700;letter-spacing:6px;color:var(--kd-accent,#6366f1);
-          background:#f3f4f6;padding:12px 24px;border-radius:14px;display:inline-block">
-          ${letters.join(' ')}
-        </div>
-      </div>
-
-      <input id="kdScrambleInput" type="text" autocomplete="off"
-        placeholder="Harfleri doğru sıraya diz..."
-        style="width:100%;padding:14px;font-size:20px;border:3px solid #e5e7eb;border-radius:12px;
-          text-align:center;font-family:Fredoka;outline:none;margin-bottom:12px;box-sizing:border-box"
-        oninput="kdScrambleLive('${pick.en}')"
-        onkeydown="if(event.key==='Enter')kdCheckScramble('${pick.en}')">
-
-      <button onclick="kdCheckScramble('${pick.en}')"
-        style="width:100%;padding:13px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));
-          color:white;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;font-family:Fredoka">
-        ✅ Kontrol Et
-      </button>
-
-      <div id="kdScrambleResult" style="margin-top:14px;text-align:center;font-size:18px;font-weight:700;min-height:28px"></div>
-
-      <button onclick="kdRenderScramble()"
-        style="margin-top:10px;width:100%;padding:10px;background:white;border:2px solid #e5e7eb;
-          border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;color:#6b7280;font-family:Fredoka">
-        🔀 Yeni Kelime
-      </button>
-    </div>`;
-
+  var learned = Array.from(kdState.learnedWords).map(function(w){ return kdState.words.find(function(word){ return word.en === w; }); }).filter(Boolean);
+  if (!learned.length) { document.getElementById('kdBody').innerHTML = '<div style="padding:40px;text-align:center;color:#666;font-family:Fredoka">Önce kelime öğrenmelisin!</div>'; return; }
+  var pick = learned[Math.floor(Math.random() * learned.length)];
+  var letters = pick.en.toUpperCase().split('').sort(function(){ return Math.random()-0.5; });
+  var attempt = 0;
+  while (letters.join('') === pick.en.toUpperCase() && attempt++ < 10) { letters.sort(function(){ return Math.random()-0.5; }); }
+  document.getElementById('kdBody').innerHTML = '<div style="font-family:Fredoka;padding:8px"><div style="text-align:center;margin-bottom:24px"><div style="font-size:64px;margin-bottom:8px">' + pick.emoji + '</div><div style="font-size:20px;color:#666;margin-bottom:20px">🇹🇷 ' + pick.tr + '</div><div style="font-size:30px;font-weight:700;letter-spacing:6px;color:var(--kd-accent,#6366f1);background:#f3f4f6;padding:12px 24px;border-radius:14px;display:inline-block">' + letters.join(' ') + '</div></div><input id="kdScrambleInput" type="text" autocomplete="off" placeholder="Harfleri doğru sıraya diz..." style="width:100%;padding:14px;font-size:20px;border:3px solid #e5e7eb;border-radius:12px;text-align:center;font-family:Fredoka;outline:none;margin-bottom:12px;box-sizing:border-box"><button onclick="kdCheckScramble('' + pick.en + '')" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));color:white;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;font-family:Fredoka">✅ Kontrol Et</button><div id="kdScrambleResult" style="margin-top:14px;text-align:center;font-size:18px;font-weight:700;min-height:28px"></div><button onclick="kdRenderScramble()" style="margin-top:10px;width:100%;padding:10px;background:white;border:2px solid #e5e7eb;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;color:#6b7280;font-family:Fredoka">🔀 Yeni Kelime</button></div>';
+  document.getElementById('kdScrambleInput').addEventListener('keydown', function(e){ if(e.key==='Enter') kdCheckScramble(pick.en); });
   document.getElementById('kdScrambleInput').focus();
 }
-
-function kdScrambleLive(correct) {
-  const val = document.getElementById('kdScrambleInput').value.trim().toLowerCase();
-  const input = document.getElementById('kdScrambleInput');
-  if (val === correct.toLowerCase()) {
-    input.style.borderColor = '#22c55e';
-  } else if (correct.toLowerCase().startsWith(val)) {
-    input.style.borderColor = '#f59e0b';
-  } else {
-    input.style.borderColor = '#e5e7eb';
-  }
-}
-
 function kdCheckScramble(correct) {
-  const val = document.getElementById('kdScrambleInput').value.trim();
-  const result = document.getElementById('kdScrambleResult');
+  var val = document.getElementById('kdScrambleInput').value.trim();
+  var result = document.getElementById('kdScrambleResult');
   if (val.toLowerCase() === correct.toLowerCase()) {
-    result.innerHTML = '🎉 Doğru! Harika!';
-    result.style.color = '#22c55e';
-    kdSpeak(correct);
-    setTimeout(() => kdRenderScramble(), 1400);
+    result.innerHTML = '🎉 Doğru! Harika!'; result.style.color = '#22c55e';
+    kdSpeak(correct); setTimeout(kdRenderScramble, 1400);
   } else {
-    result.innerHTML = '❌ Yanlış, tekrar dene!';
-    result.style.color = '#ef4444';
+    result.innerHTML = '❌ Yanlış, tekrar dene!'; result.style.color = '#ef4444';
     document.getElementById('kdScrambleInput').value = '';
-    document.getElementById('kdScrambleInput').style.borderColor = '#ef4444';
     document.getElementById('kdScrambleInput').focus();
   }
 }
 
 // ─── Oyun 4: Hızlı Yazma (Typing Race) ────────────────────────────
-let kdTypingScore = 0;
-let kdTypingWords = [];
-let kdTypingIdx = 0;
-
+var kdTypingScore = 0, kdTypingWords = [], kdTypingIdx = 0;
 function kdRenderTyping() {
-  const learned = Array.from(kdState.learnedWords)
-    .map(w => kdState.words.find(word => word.en === w))
-    .filter(Boolean);
-
-  if (!learned.length) {
-    document.getElementById('kdBody').innerHTML = '<div style="padding:40px;text-align:center;color:#666;font-family:Fredoka">Önce kelime öğrenmelisin!</div>';
-    return;
-  }
-
-  // Kelimeleri karıştır
-  kdTypingWords = [...learned].sort(() => Math.random() - 0.5);
-  kdTypingIdx = 0;
-  kdTypingScore = 0;
-  kdShowTypingWord();
+  var learned = Array.from(kdState.learnedWords).map(function(w){ return kdState.words.find(function(word){ return word.en === w; }); }).filter(Boolean);
+  if (!learned.length) { document.getElementById('kdBody').innerHTML = '<div style="padding:40px;text-align:center;color:#666;font-family:Fredoka">Önce kelime öğrenmelisin!</div>'; return; }
+  kdTypingWords = learned.slice().sort(function(){ return Math.random()-0.5; });
+  kdTypingIdx = 0; kdTypingScore = 0; kdShowTypingWord();
 }
-
 function kdShowTypingWord() {
   if (kdTypingIdx >= kdTypingWords.length) {
-    // Tüm kelimeler tamamlandı
-    document.getElementById('kdBody').innerHTML = `
-      <div style="font-family:Fredoka;text-align:center;padding:40px">
-        <div style="font-size:64px;margin-bottom:16px">🏆</div>
-        <div style="font-size:26px;font-weight:700;color:#1f2937;margin-bottom:8px">Tebrikler!</div>
-        <div style="font-size:18px;color:#6b7280;margin-bottom:24px">
-          ${kdTypingScore} / ${kdTypingWords.length} doğru
-        </div>
-        <button onclick="kdRenderTyping()" style="padding:12px 28px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));
-          color:white;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:Fredoka">
-          🔄 Tekrar Oyna
-        </button>
-      </div>`;
+    document.getElementById('kdBody').innerHTML = '<div style="font-family:Fredoka;text-align:center;padding:40px"><div style="font-size:64px;margin-bottom:16px">🏆</div><div style="font-size:26px;font-weight:700;color:#1f2937;margin-bottom:8px">Tebrikler!</div><div style="font-size:18px;color:#6b7280;margin-bottom:24px">' + kdTypingScore + ' / ' + kdTypingWords.length + ' doğru</div><button onclick="kdRenderTyping()" style="padding:12px 28px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));color:white;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:Fredoka">🔄 Tekrar Oyna</button></div>';
     return;
   }
-
-  const pick = kdTypingWords[kdTypingIdx];
-  const progress = kdTypingIdx + 1;
-  const total = kdTypingWords.length;
-
-  document.getElementById('kdBody').innerHTML = `
-    <div style="font-family:Fredoka;padding:8px">
-      <div style="text-align:center;margin-bottom:20px">
-        <div style="font-size:12px;font-weight:600;color:#9ca3af;margin-bottom:12px">
-          ${progress} / ${total}
-        </div>
-        <div style="height:6px;background:#f3f4f6;border-radius:3px;margin-bottom:20px;overflow:hidden">
-          <div style="height:100%;width:${(progress/total)*100}%;background:var(--kd-accent,#6366f1);border-radius:3px;transition:width 0.3s"></div>
-        </div>
-        <div style="font-size:64px;margin-bottom:8px">${pick.emoji}</div>
-        <div style="font-size:22px;color:#666;margin-bottom:4px">🇹🇷 ${pick.tr}</div>
-        <div style="font-size:13px;color:#9ca3af">İngilizce karşılığını yaz</div>
-      </div>
-
-      <input id="kdTypingInput" type="text" autocomplete="off"
-        placeholder="Yaz..."
-        style="width:100%;padding:14px;font-size:22px;border:3px solid #e5e7eb;border-radius:12px;
-          text-align:center;font-family:Fredoka;outline:none;margin-bottom:12px;box-sizing:border-box"
-        oninput="kdTypingLive('${pick.en}')"
-        onkeydown="if(event.key==='Enter')kdCheckTyping('${pick.en}')">
-
-      <div style="display:flex;gap:8px">
-        <button onclick="kdCheckTyping('${pick.en}')"
-          style="flex:1;padding:12px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));
-            color:white;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:Fredoka">
-          ✅ Gönder
-        </button>
-        <button onclick="kdTypingSkip('${pick.en}')"
-          style="padding:12px 16px;background:white;border:2px solid #e5e7eb;
-            border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;color:#6b7280;font-family:Fredoka">
-          ⏭️ Geç
-        </button>
-      </div>
-
-      <div id="kdTypingResult" style="margin-top:12px;text-align:center;font-size:18px;font-weight:700;min-height:28px"></div>
-      <div style="margin-top:14px;text-align:center;font-size:14px;color:#9ca3af">
-        Puan: <b style="color:var(--kd-accent,#6366f1)">${kdTypingScore}</b>
-      </div>
-    </div>`;
-
+  var pick = kdTypingWords[kdTypingIdx];
+  var prog = kdTypingIdx + 1, total = kdTypingWords.length;
+  document.getElementById('kdBody').innerHTML = '<div style="font-family:Fredoka;padding:8px"><div style="text-align:center;margin-bottom:20px"><div style="font-size:12px;font-weight:600;color:#9ca3af;margin-bottom:12px">' + prog + ' / ' + total + '</div><div style="height:6px;background:#f3f4f6;border-radius:3px;margin-bottom:20px;overflow:hidden"><div style="height:100%;width:' + (prog/total*100) + '%;background:var(--kd-accent,#6366f1);border-radius:3px"></div></div><div style="font-size:64px;margin-bottom:8px">' + pick.emoji + '</div><div style="font-size:22px;color:#666;margin-bottom:4px">🇹🇷 ' + pick.tr + '</div></div><input id="kdTypingInput" type="text" autocomplete="off" placeholder="Yaz..." style="width:100%;padding:14px;font-size:22px;border:3px solid #e5e7eb;border-radius:12px;text-align:center;font-family:Fredoka;outline:none;margin-bottom:12px;box-sizing:border-box"><div style="display:flex;gap:8px"><button onclick="kdCheckTyping('' + pick.en + '')" style="flex:1;padding:12px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));color:white;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:Fredoka">✅ Gönder</button><button onclick="kdTypingSkip('' + pick.en + '')" style="padding:12px 16px;background:white;border:2px solid #e5e7eb;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;color:#6b7280;font-family:Fredoka">⏭️ Geç</button></div><div id="kdTypingResult" style="margin-top:12px;text-align:center;font-size:18px;font-weight:700;min-height:28px"></div><div style="margin-top:14px;text-align:center;font-size:14px;color:#9ca3af">Puan: <b style="color:var(--kd-accent,#6366f1)">' + kdTypingScore + '</b></div></div>';
+  document.getElementById('kdTypingInput').addEventListener('keydown', function(e){ if(e.key==='Enter') kdCheckTyping(pick.en); });
   document.getElementById('kdTypingInput').focus();
 }
-
-function kdTypingLive(correct) {
-  const val = document.getElementById('kdTypingInput').value.trim().toLowerCase();
-  const input = document.getElementById('kdTypingInput');
-  if (val === correct.toLowerCase()) {
-    input.style.borderColor = '#22c55e';
-  } else if (correct.toLowerCase().startsWith(val)) {
-    input.style.borderColor = '#f59e0b';
-  } else {
-    input.style.borderColor = '#e5e7eb';
-  }
-}
-
 function kdCheckTyping(correct) {
-  const val = document.getElementById('kdTypingInput').value.trim();
+  var val = document.getElementById('kdTypingInput').value.trim();
   if (val.toLowerCase() === correct.toLowerCase()) {
-    kdTypingScore++;
-    kdSpeak(correct);
-    const result = document.getElementById('kdTypingResult');
-    if (result) { result.innerHTML = '🎉 Doğru!'; result.style.color = '#22c55e'; }
-    kdTypingIdx++;
-    setTimeout(kdShowTypingWord, 900);
+    kdTypingScore++; kdSpeak(correct);
+    var r = document.getElementById('kdTypingResult');
+    if(r){r.innerHTML='🎉 Doğru!';r.style.color='#22c55e';}
+    kdTypingIdx++; setTimeout(kdShowTypingWord, 900);
   } else if (val.length > 0) {
-    const result = document.getElementById('kdTypingResult');
-    if (result) { result.innerHTML = '❌ Yanlış!'; result.style.color = '#ef4444'; }
-    document.getElementById('kdTypingInput').value = '';
-    document.getElementById('kdTypingInput').style.borderColor = '#ef4444';
+    var r = document.getElementById('kdTypingResult');
+    if(r){r.innerHTML='❌ Yanlış!';r.style.color='#ef4444';}
   }
 }
-
 function kdTypingSkip(correct) {
-  const result = document.getElementById('kdTypingResult');
-  if (result) { result.innerHTML = `💡 Cevap: <span style="color:var(--kd-accent,#6366f1)">${correct}</span>`; }
-  kdSpeak(correct);
-  kdTypingIdx++;
-  setTimeout(kdShowTypingWord, 1400);
+  var r = document.getElementById('kdTypingResult');
+  if(r){r.innerHTML='💡 Cevap: <span style="color:var(--kd-accent,#6366f1)">' + correct + '</span>';}
+  kdSpeak(correct); kdTypingIdx++; setTimeout(kdShowTypingWord, 1400);
 }
 </script>
-
 </body>
 </html>
