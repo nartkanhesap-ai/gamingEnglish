@@ -1296,7 +1296,7 @@ firebase.auth().onAuthStateChanged(() => {
 </div>
 
 <script>
-function openKelimeOyunlari() {
+window.openKelimeOyunlari = function openKelimeOyunlari() {
   document.getElementById('koOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   koGoHome();
@@ -1313,7 +1313,7 @@ function openKelimeOyunlari() {
   } catch(e) {}
 }
 
-function koShowImportedSetBanner(data) {
+window.koShowImportedSetBanner = function koShowImportedSetBanner(data) {
   var existing = document.getElementById('koImportBanner');
   if (existing) existing.remove();
   var banner = document.createElement('div');
@@ -1328,7 +1328,7 @@ function koShowImportedSetBanner(data) {
   if (body) body.insertBefore(banner, body.firstChild);
 }
 
-function koPlayWithImportedSet() {
+window.koPlayWithImportedSet = function koPlayWithImportedSet() {
   // Oyun seçim modalı aç - hangi oyunla oynamak istediğini sor
   try {
     var imp = localStorage.getItem('ge_imported_set');
@@ -1341,7 +1341,7 @@ function koPlayWithImportedSet() {
   } catch(e) {}
 }
 
-function koShowGamePicker(data) {
+window.koShowGamePicker = function koShowGamePicker(data) {
   var body = document.getElementById('koBody');
   if (!body) return;
   body.innerHTML = '<div style="font-family:Fredoka,sans-serif">'
@@ -1360,7 +1360,7 @@ function koShowGamePicker(data) {
     + '</div></div>';
 }
 
-function koGamePickerCard(url, emoji, title, desc, bg) {
+window.koGamePickerCard = function koGamePickerCard(url, emoji, title, desc, bg) {
   return '<div onclick="koLaunchWithSet('' + url + '')" style="background:#fff;border:2px solid #e8edf2;border-radius:14px;padding:18px;cursor:pointer;transition:all .18s;text-align:center" onmouseover="this.style.borderColor='#f5576c';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#e8edf2';this.style.transform=''">'
     + '<div style="width:48px;height:48px;background:' + bg + ';border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 10px">' + emoji + '</div>'
     + '<div style="font-weight:700;font-size:14px;color:#1f2937;margin-bottom:4px">' + title + '</div>'
@@ -1368,24 +1368,24 @@ function koGamePickerCard(url, emoji, title, desc, bg) {
     + '</div>';
 }
 
-function koLaunchWithSet(url) {
+window.koLaunchWithSet = function koLaunchWithSet(url) {
   // ge_active_set'i localStorage'da bırak, oyun sayfası bunu okuyacak
   window.location.href = url + '?mode=imported';
 }
-function closeKelimeOyunlari() {
+window.closeKelimeOyunlari = function closeKelimeOyunlari() {
   document.getElementById('koOverlay').classList.remove('open');
   document.body.style.overflow = '';
   // iframe'i temizle
   document.getElementById('koGameFrame').src = '';
 }
-function koGoHome() {
+window.koGoHome = function koGoHome() {
   document.getElementById('koBody').style.display = 'block';
   document.getElementById('koGameView').classList.remove('active');
   document.getElementById('koGameFrame').src = '';
   document.getElementById('koBreadcrumb').innerHTML =
     '<span class="active">📂 Kelime Oyunları</span>';
 }
-function koPlayGame(url, name) {
+window.koPlayGame = function koPlayGame(url, name) {
   window.location.href = url;
 }
 // Overlay dışına tıklayınca kapat
