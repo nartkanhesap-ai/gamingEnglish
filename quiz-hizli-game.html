@@ -439,12 +439,12 @@
     box-shadow: 0 6px 24px rgba(0,0,0,0.2);
   }
 </style>
-<a id="ge-back-btn" href="gaming-english-index.html" title="Ana Sayfaya Dön">✕</a>
+<a id="ge-back-btn" href="index.html" title="Ana Sayfaya Dön">✕</a>
 
   <div class="container">
     <div class="header">
       <div class="title">⚡ Quiz Hızlı</div>
-      <a href="gaming-english-index.html" class="home-btn">← Ana Sayfa</a>
+      <a href="index.html" class="home-btn">← Ana Sayfa</a>
       <div class="score-box">
         <div class="stat">
           <div class="stat-label">Skor</div>
@@ -579,7 +579,32 @@
       gameState.wrong = 0;
       // Liste boşsa doldur
       if (!gameState.questionList || gameState.questionList.length === 0) {
-        gameState.questionList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
+        
+      // English Coach'tan aktarılan set varsa yükle
+      (function() {
+        try {
+          var imp = localStorage.getItem('ge_active_set');
+          if (imp && window.location.search.indexOf('mode=imported') > -1) {
+            var data = JSON.parse(imp);
+            if (data && data.words && data.words.length >= 2) {
+              // words formatını oyun formatına çevir
+              var converted = data.words.map(function(w, i) {
+                return { word: (w.en||'').toUpperCase(), label: w.en||'', image: '📖', tr: w.tr||'', answer: w.en||'' };
+              });
+              fallbackDatabase['easy'] = converted;
+              fallbackDatabase['medium'] = converted;
+              fallbackDatabase['hard'] = converted;
+              // Banner göster
+              var banner = document.createElement('div');
+              banner.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 14px rgba(240,83,240,.4)';
+              banner.textContent = '🎮 ' + (data.setName||'Set') + ' yüklendi! (' + data.words.length + ' kelime)';
+              document.body.appendChild(banner);
+              setTimeout(function(){ banner.remove(); }, 3000);
+            }
+          }
+        } catch(e) {}
+      })();
+      gameState.questionList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
       }
       loadQuestion();
 }
@@ -738,6 +763,31 @@
       const _m = document.getElementById('resultModal');
       if (_m) { _m.style.display = 'none'; _m.classList.remove('show'); }
             clearInterval(gameState.timerInterval);
+      
+      // English Coach'tan aktarılan set varsa yükle
+      (function() {
+        try {
+          var imp = localStorage.getItem('ge_active_set');
+          if (imp && window.location.search.indexOf('mode=imported') > -1) {
+            var data = JSON.parse(imp);
+            if (data && data.words && data.words.length >= 2) {
+              // words formatını oyun formatına çevir
+              var converted = data.words.map(function(w, i) {
+                return { word: (w.en||'').toUpperCase(), label: w.en||'', image: '📖', tr: w.tr||'', answer: w.en||'' };
+              });
+              fallbackDatabase['easy'] = converted;
+              fallbackDatabase['medium'] = converted;
+              fallbackDatabase['hard'] = converted;
+              // Banner göster
+              var banner = document.createElement('div');
+              banner.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 14px rgba(240,83,240,.4)';
+              banner.textContent = '🎮 ' + (data.setName||'Set') + ' yüklendi! (' + data.words.length + ' kelime)';
+              document.body.appendChild(banner);
+              setTimeout(function(){ banner.remove(); }, 3000);
+            }
+          }
+        } catch(e) {}
+      })();
       gameState.questionList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
       init();
     }
