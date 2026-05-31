@@ -2887,6 +2887,37 @@ function App() {
       </div>
 
       <TopChrome show={t.showChrome} />
+      
+      {/* English Coach Set Butonu */}
+      {(() => {
+        try {
+          const imp = localStorage.getItem('ge_active_set');
+          if (imp) {
+            const data = JSON.parse(imp);
+            const age = Date.now() - (data.timestamp||0);
+            if (age < 86400000 && data.words && data.words.length >= 2) {
+              return (
+                <div
+                  onClick={() => openImportedSetModal(data)}
+                  style={{
+                    position: 'fixed', bottom: 80, left: '50%', transform: 'translateX(-50%)',
+                    background: 'linear-gradient(135deg,#f093fb,#f5576c)',
+                    color: '#fff', padding: '12px 24px', borderRadius: 999,
+                    fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
+                    cursor: 'pointer', zIndex: 50,
+                    boxShadow: '0 6px 20px rgba(240,83,240,.4)',
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  🎮 {data.setName} setini çalış ({data.words.length} kelime)
+                </div>
+              );
+            }
+          }
+        } catch(e) {}
+        return null;
+      })()}
 
       <div className="stage">
         <WorldMap
@@ -4877,6 +4908,54 @@ function kdTypingSkip(correct) {
   var r = document.getElementById('kdTypingResult');
   if(r){r.innerHTML='💡 Cevap: <span style="color:var(--kd-accent,#6366f1)">' + correct + '</span>';}
   kdSpeak(correct); kdTypingIdx++; setTimeout(kdShowTypingWord, 1400);
+}
+</script>
+
+<script>
+function openImportedSetModal(data) {
+  // Aktarılan seti Kelime Dünyası modal'ında aç
+  var words = (data.words||[]).map(function(w) {
+    return {
+      en: w.en||'', tr: w.tr||'',
+      emoji: '📖', cat: 'genel', level: 'easy'
+    };
+  });
+  
+  // kdState'i doldur
+  if (typeof kdState !== 'undefined') {
+    kdState.continentId = 'imported';
+    kdState.countryName = data.setName || 'Kendi Setim';
+    kdState.words = words;
+    kdState.filteredWords = words;
+    kdState.learnedWords = new Set();
+    kdState.tab = 1;
+    kdState.selectedCat = 'hepsi';
+    kdState.selectedDiff = 'easy';
+    
+    // Modal'ı aç
+    var overlay = document.getElementById('kdOverlay');
+    if (overlay) {
+      // Başlık güncelle
+      var title = document.getElementById('kdCountryTitle');
+      if (title) title.textContent = '🎮 ' + (data.setName || 'Kendi Setim');
+      var flag = document.getElementById('kdCountryFlag');
+      if (flag) flag.textContent = '🎯';
+      
+      // Tab sıfırla
+      ['kdTab1','kdTab2','kdTab3','kdTab4'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) { el.classList.remove('active'); el.disabled = true; }
+      });
+      var t1 = document.getElementById('kdTab1');
+      if (t1) { t1.classList.add('active'); t1.disabled = false; }
+      
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      
+      // Kelimeleri render et
+      if (typeof kdRenderCards === 'function') kdRenderCards();
+    }
+  }
 }
 </script>
 </body>
