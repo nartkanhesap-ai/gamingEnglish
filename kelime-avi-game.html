@@ -597,6 +597,7 @@
               if (data && data.words && data.words.length >= 2) {
                 gameState.wordList = convertSetForKelimeAvi(data.words);
                 showImportBanner(data.setName, data.words.length);
+                var db = document.querySelector(".diff-buttons"); if(db) db.style.display="none";
                 loadWord();
                 return;
               }
@@ -624,44 +625,72 @@
 
     function setDifficulty(level) {
       document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      if (event && event.target) event.target.classList.add('active');
       gameState.difficulty = level;
-      gameState.wordList = [...fallbackDatabase[level]];
+      // Aktif set varsa set korunsun
+      try {
+        var active = localStorage.getItem('ge_active_set');
+        if (active) {
+          var data = JSON.parse(active);
+          if (data && data.words && data.words.length >= 2) {
+            gameState.wordList = convertSetForKelimeAvi(data.words);
+            gameState.currentWordIndex = 0;
+            updateUI(); loadWord(); return;
+          }
+        }
+      } catch(e) {}
+      gameState.wordList = [...(fallbackDatabase[level] || fallbackDatabase['easy'])];
       gameState.currentWordIndex = 0;
-      gameState.score = 0;
-      gameState.correct = 0;
-      gameState.wrong = 0;
-      updateUI();
-      loadWord();
+      updateUI(); loadWord();
     }
 
     function loadWord() {
       if (gameState.currentWordIndex >= gameState.wordList.length) {
-        showCompletion();
-        return;
+        showCompletion(); return;
       }
-
       const word = gameState.wordList[gameState.currentWordIndex];
-      document.getElementById('imageDisplay').textContent = word.image;
+      // Drag alanında Türkçe göster (ne sürükleneceğini anlasın)
+      document.getElementById('imageDisplay').textContent = word.tr || word.image || '?';
       gameState.isAnswered = false;
+      gameState.draggedWord = null;
 
-      // Kelime seçeneklerini oluştur (yanlış kelimeler ekle)
+      // Seçenekler
       let options = [word.word];
-      let randomWords = gameState.wordList
+      let others = gameState.wordList
         .filter(w => w.word !== word.word)
         .sort(() => Math.random() - 0.5)
         .slice(0, 3)
         .map(w => w.word);
-      
-      options = [...options, ...randomWords].sort(() => Math.random() - 0.5);
+      options = [...options, ...others].sort(() => Math.random() - 0.5);
 
-      const optionsContainer = document.getElementById('wordOptions');
-      optionsContainer.innerHTML = options.map(option => `
-        <button class="word-btn" draggable="true" ondragstart="handleDragStart(event, '${option}')" ondragend="handleDragEnd(event)">
-          ${option.toLowerCase()}
-        </button>
-      `).join('');
-
+      const container = document.getElementById('wordOptions');
+      container.innerHTML = '';
+      options.forEach(function(option) {
+        var btn = document.createElement('button');
+        btn.className = 'word-btn';
+        btn.draggable = true;
+        btn.textContent = option.toLowerCase();
+        btn.style.cursor = 'grab';
+        btn.addEventListener('dragstart', function(e) {
+          gameState.draggedWord = option;
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', option);
+          btn.style.opacity = '0.5';
+          btn.style.transform = 'scale(1.05)';
+        });
+        btn.addEventListener('dragend', function(e) {
+          btn.style.opacity = '1';
+          btn.style.transform = '';
+        });
+        // Mobil için tıklama desteği de ekle
+        btn.addEventListener('click', function() {
+          if (!gameState.isAnswered) {
+            gameState.draggedWord = option;
+            handleDrop({ preventDefault: function(){} });
+          }
+        });
+        container.appendChild(btn);
+      });
       updateProgress();
     }
 
