@@ -999,7 +999,13 @@ firebase.auth().onAuthStateChanged(async (user) => {
     window.addEventListener('DOMContentLoaded', () => {
       const savedTheme = localStorage.getItem('gamingEnglishTheme') || 'default';
       setTheme(savedTheme);
-    });
+    }
+  
+  // English Coach'tan yönlendirme var mı?
+  if (window.location.search.indexOf('set=imported') > -1) {
+    setTimeout(function() { openKelimeOyunlari(); }, 300);
+  }
+});
 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
@@ -1282,6 +1288,77 @@ function openKelimeOyunlari() {
   document.getElementById('koOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   koGoHome();
+  // English Coach'tan aktarılan set varsa bildir
+  try {
+    var imp = localStorage.getItem('ge_imported_set');
+    if (imp) {
+      var data = JSON.parse(imp);
+      var age = Date.now() - (data.timestamp || 0);
+      if (age < 300000) { // 5 dakika içinde geldiyse göster
+        koShowImportedSetBanner(data);
+      }
+    }
+  } catch(e) {}
+}
+
+function koShowImportedSetBanner(data) {
+  var existing = document.getElementById('koImportBanner');
+  if (existing) existing.remove();
+  var banner = document.createElement('div');
+  banner.id = 'koImportBanner';
+  banner.style.cssText = 'background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:14px 18px;border-radius:12px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;';
+  banner.innerHTML = '<span style="font-size:22px">🎮</span>'
+    + '<div style="flex:1"><div style="font-weight:700;font-size:14px">English Coach'tan Set Aktarıldı!</div>'
+    + '<div style="font-size:12px;opacity:.9">' + (data.setName || 'Set') + ' · ' + (data.words||[]).length + ' kelime</div></div>'
+    + '<button onclick="koPlayWithImportedSet()" style="background:rgba(255,255,255,0.25);border:2px solid rgba(255,255,255,0.5);color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Bu Setle Oyna →</button>'
+    + '<button onclick="document.getElementById('koImportBanner').remove();localStorage.removeItem('ge_imported_set')" style="background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;font-size:18px;padding:0 4px;">✕</button>';
+  var body = document.getElementById('koBody');
+  if (body) body.insertBefore(banner, body.firstChild);
+}
+
+function koPlayWithImportedSet() {
+  // Oyun seçim modalı aç - hangi oyunla oynamak istediğini sor
+  try {
+    var imp = localStorage.getItem('ge_imported_set');
+    if (!imp) return;
+    var data = JSON.parse(imp);
+    // ge_active_set olarak işaretle - oyunlar bunu kullanacak
+    localStorage.setItem('ge_active_set', JSON.stringify(data));
+    // Oyun seçim modalını göster
+    koShowGamePicker(data);
+  } catch(e) {}
+}
+
+function koShowGamePicker(data) {
+  var body = document.getElementById('koBody');
+  if (!body) return;
+  body.innerHTML = '<div style="font-family:Fredoka,sans-serif">'
+    + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">'
+    + '<button onclick="koGoHome()" style="background:none;border:2px solid #e5e7eb;border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;color:#6b7280">← Geri</button>'
+    + '<div><div style="font-weight:700;font-size:16px;color:#1f2937">🎮 ' + (data.setName||'Set') + '</div>'
+    + '<div style="font-size:12px;color:#6b7280">' + (data.words||[]).length + ' kelime · Hangi oyunla çalışmak istersin?</div></div>'
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px">'
+    + koGamePickerCard('kelime-avi-game.html', '🎮', 'Kelime Avı', 'Dinle ve eşleştir', '#fce4ec')
+    + koGamePickerCard('gramer-quest-game.html', '📚', 'Gramer Quest', 'Cümle tamamla', '#e3f2fd')
+    + koGamePickerCard('dinleme-dedektifi-game.html', '👂', 'Dinleme Dedektifi', 'Dinle ve bul', '#f3e5f5')
+    + koGamePickerCard('yazi-sahnesi-game.html', '🎭', 'Yazı Sahnesi', 'Diyalog tamamla', '#fff8e1')
+    + koGamePickerCard('quiz-hizli-game.html', '⚡', 'Quiz Hızlı', '30 sn, hızlı cevap', '#fff3e0')
+    + koGamePickerCard('kelime-dunyasi-worldmap.html', '🌍', 'Kelime Dünyası', 'Harita + 4 oyun', '#e8f5e9')
+    + '</div></div>';
+}
+
+function koGamePickerCard(url, emoji, title, desc, bg) {
+  return '<div onclick="koLaunchWithSet('' + url + '')" style="background:#fff;border:2px solid #e8edf2;border-radius:14px;padding:18px;cursor:pointer;transition:all .18s;text-align:center" onmouseover="this.style.borderColor='#f5576c';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#e8edf2';this.style.transform=''">'
+    + '<div style="width:48px;height:48px;background:' + bg + ';border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 10px">' + emoji + '</div>'
+    + '<div style="font-weight:700;font-size:14px;color:#1f2937;margin-bottom:4px">' + title + '</div>'
+    + '<div style="font-size:12px;color:#6b7280">' + desc + '</div>'
+    + '</div>';
+}
+
+function koLaunchWithSet(url) {
+  // ge_active_set'i localStorage'da bırak, oyun sayfası bunu okuyacak
+  window.location.href = url + '?mode=imported';
 }
 function closeKelimeOyunlari() {
   document.getElementById('koOverlay').classList.remove('open');
