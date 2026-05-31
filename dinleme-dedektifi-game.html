@@ -610,7 +610,7 @@
               }
             }
           }
-        } catch(e) {}
+        } catch(e) { console.error("Import error:", e); }
         gameState.questionList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
         loadQuestion();
       })();
