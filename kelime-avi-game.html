@@ -587,6 +587,10 @@
       gameState.score = 0;
       gameState.correct = 0;
       gameState.wrong = 0;
+      // wordList boşsa varsayılan difficulty ile doldur
+      if (!gameState.wordList || gameState.wordList.length === 0) {
+        gameState.wordList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
+      }
       loadWord();
 }
 
@@ -742,7 +746,17 @@
     }
 
     function resetGame() {
-      init();
+      const _m = document.getElementById('resultModal');
+      if (_m) { _m.style.display = 'none'; _m.classList.remove('show'); }
+            gameState.wordList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
+      gameState.currentWordIndex = 0;
+      gameState.score = 0;
+      gameState.correct = 0;
+      gameState.wrong = 0;
+      // Completion modal'ı kapat
+      const modal = document.getElementById('completionModal') || document.querySelector('.completion-modal') || document.querySelector('[id*="modal"]') || document.querySelector('[id*="completion"]');
+      if (modal) modal.style.display = 'none';
+      loadWord();
     }
 
     function showCompletion() {
