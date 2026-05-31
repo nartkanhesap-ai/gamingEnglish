@@ -572,41 +572,32 @@
     function init() {
       const savedTheme = (function(){ try { return localStorage.getItem('gamingEnglishTheme'); } catch(e) { return null; } })() || 'default';
       applyThemeToGame(savedTheme);
-  
+      clearInterval(gameState.timerInterval);
       gameState.currentQuestionIndex = 0;
       gameState.score = 0;
       gameState.correct = 0;
       gameState.wrong = 0;
-      // Liste boşsa doldur
-      if (!gameState.questionList || gameState.questionList.length === 0) {
-        
-      // English Coach'tan aktarılan set varsa yükle
+      gameState.selectedAnswer = null;
+      gameState.isAnswered = false;
       (function() {
         try {
-          var imp = localStorage.getItem('ge_active_set');
-          if (imp && window.location.search.indexOf('mode=imported') > -1) {
-            var data = JSON.parse(imp);
-            if (data && data.words && data.words.length >= 2) {
-              // words formatını oyun formatına çevir
-              var converted = data.words.map(function(w, i) {
-                return { word: (w.en||'').toUpperCase(), label: w.en||'', image: '📖', tr: w.tr||'', answer: w.en||'' };
-              });
-              fallbackDatabase['easy'] = converted;
-              fallbackDatabase['medium'] = converted;
-              fallbackDatabase['hard'] = converted;
-              // Banner göster
-              var banner = document.createElement('div');
-              banner.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 14px rgba(240,83,240,.4)';
-              banner.textContent = '🎮 ' + (data.setName||'Set') + ' yüklendi! (' + data.words.length + ' kelime)';
-              document.body.appendChild(banner);
-              setTimeout(function(){ banner.remove(); }, 3000);
+          if (window.location.search.indexOf('mode=imported') > -1) {
+            var imp = localStorage.getItem('ge_active_set');
+            if (imp) {
+              var data = JSON.parse(imp);
+              if (data && data.words && data.words.length >= 2) {
+                var converted = convertSetForQuiz(data.words);
+                gameState.questionList = converted;
+                fallbackDatabase['easy'] = fallbackDatabase['medium'] = fallbackDatabase['hard'] = converted;
+                showImportBanner(data.setName, data.words.length);
+                loadQuestion(); return;
+              }
             }
           }
         } catch(e) {}
+        gameState.questionList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
+        loadQuestion();
       })();
-      gameState.questionList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
-      }
-      loadQuestion();
 }
 
     function applyThemeToGame(themeName) {
@@ -638,10 +629,8 @@
 
     function loadQuestion() {
       if (gameState.currentQuestionIndex >= gameState.questionList.length) {
-        showCompletion();
-        return;
+        showCompletion(); return;
       }
-
       const question = gameState.questionList[gameState.currentQuestionIndex];
       document.getElementById('questionText').textContent = question.question;
       gameState.selectedAnswer = null;
@@ -649,12 +638,15 @@
       gameState.timeLeft = 30;
 
       let options = [...question.options].sort(() => Math.random() - 0.5);
-
       const grid = document.getElementById('optionsGrid');
-      grid.innerHTML = options.map(option => `
-        <button class="option-btn" onclick="selectAnswer(this, '${option}')">${option}</button>
-      `).join('');
-
+      grid.innerHTML = '';
+      options.forEach(function(option) {
+        var btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = option;
+        btn.addEventListener('click', function() { selectAnswer(btn, option); });
+        grid.appendChild(btn);
+      });
       updateProgress();
       startTimer();
     }
@@ -822,6 +814,56 @@
     }
 
     init();
-  </script>
+  
+
+// ── Quizlet Set Converter: Quiz Hızlı ──────────────────
+function convertSetForQuiz(words) {
+  var result = [];
+  words.forEach(function(w, i) {
+    var others = words.filter(function(x, j) { return j !== i; })
+                      .sort(function() { return Math.random()-0.5; }).slice(0, 3);
+
+    // TR → EN sorusu
+    var wrongEN = others.map(function(x) { return x.en || ''; })
+                        .filter(function(x) { return x !== (w.en||''); }).slice(0, 3);
+    while (wrongEN.length < 3) { wrongEN.push('???'); }
+    var optEN = [w.en||''].concat(wrongEN).sort(function() { return Math.random()-0.5; });
+    result.push({
+      question: '"' + (w.tr||'') + '" kelimesinin İngilizcesi?',
+      options: optEN,
+      correct: w.en || '',
+      type: 'vocabulary'
+    });
+
+    // EN → TR sorusu
+    var wrongTR = others.map(function(x) { return x.tr || ''; })
+                        .filter(function(x) { return x !== (w.tr||''); }).slice(0, 3);
+    while (wrongTR.length < 3) { wrongTR.push('???'); }
+    var optTR = [w.tr||''].concat(wrongTR).sort(function() { return Math.random()-0.5; });
+    result.push({
+      question: '"' + (w.en||'') + '" kelimesinin Türkçesi?',
+      options: optTR,
+      correct: w.tr || '',
+      type: 'vocabulary'
+    });
+  });
+  return result;
+}
+
+
+function showImportBanner(setName, wordCount) {
+  var existing = document.getElementById('importBanner');
+  if (existing) existing.remove();
+  var banner = document.createElement('div');
+  banner.id = 'importBanner';
+  banner.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);'
+    + 'background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:10px 20px;'
+    + 'border-radius:99px;font-size:13px;font-weight:700;z-index:9999;'
+    + 'box-shadow:0 4px 14px rgba(240,83,240,.4);white-space:nowrap;pointer-events:none';
+  banner.textContent = '🎮 ' + (setName || 'Set') + ' yüklendi (' + wordCount + ' kelime)';
+  document.body.appendChild(banner);
+  setTimeout(function() { if (banner.parentNode) banner.remove(); }, 3000);
+}
+</script>
 </body>
 </html>
