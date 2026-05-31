@@ -710,6 +710,19 @@ firebase.auth().onAuthStateChanged(async (user) => {
   } else {
     geStudentInfo = null;
     updateNavbar();
+    // English Coach'tan kelime setiyle gelinmişse login modal'ı gösterme
+    const isImportedSession = window.location.search.indexOf('set=imported') > -1 ||
+      (function() {
+        try {
+          const imp = localStorage.getItem('ge_imported_set');
+          if (!imp) return false;
+          const d = JSON.parse(imp);
+          return (Date.now() - (d.timestamp||0)) < 300000; // 5 dakika
+        } catch(e) { return false; }
+      })();
+    if (!isImportedSession) {
+      showLoginModal();
+    }
   }
 });
 </script>
@@ -1057,8 +1070,18 @@ function updateNavbar() {
     if (userInfoDiv) {
       userInfoDiv.style.display = 'none';
     }
+    // English Coach'tan set ile gelinmişse login modal'ı gösterme
     if (!window.geCurrentUser) {
-      showLoginModal();
+      const fromImport = window.location.search.indexOf('set=imported') > -1 ||
+        (function() {
+          try {
+            const imp = localStorage.getItem('ge_imported_set');
+            if (!imp) return false;
+            const d = JSON.parse(imp);
+            return (Date.now() - (d.timestamp||0)) < 300000;
+          } catch(e) { return false; }
+        })();
+      if (!fromImport) showLoginModal();
     }
   }
 }
@@ -1125,18 +1148,7 @@ window.addEventListener('load', () => {
 <script>
 // Oyunlar bölümünü koruma
 function protectGamesSection() {
-  const gamesSection = document.querySelector('.games-grid') || document.querySelector('[class*="game"]');
-  const exploreBtn = document.querySelector('button:contains("Oyunları Keşfet")');
-  
-  if (!window.geCurrentUser || !window.geStudentInfo) {
-    // Login olmadıysa oyunları gizle
-    if (gamesSection) gamesSection.style.display = 'none';
-    if (exploreBtn) exploreBtn.onclick = (e) => {
-      e.preventDefault();
-      showLoginModal();
-      return false;
-    };
-  }
+  // Oyunlar her zaman görünür - login sadece siteye giriş için gerekli
 }
 
 // İlk yükleme ve auth değiştiğinde çalıştır
