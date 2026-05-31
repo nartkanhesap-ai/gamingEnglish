@@ -602,7 +602,7 @@
               }
             }
           }
-        } catch(e) {}
+        } catch(e) { console.error("Import error:", e); }
         gameState.wordList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
         loadWord();
       })();
