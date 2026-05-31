@@ -594,6 +594,7 @@
                 gameState.questionList = converted;
                 fallbackDatabase['easy'] = fallbackDatabase['medium'] = fallbackDatabase['hard'] = converted;
                 showImportBanner(data.setName, data.words.length);
+                var db = document.querySelector(".diff-buttons"); if(db) db.style.display="none";
                 loadQuestion(); return;
               }
             }
@@ -636,15 +637,25 @@
 
     function setDifficulty(level) {
       document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      if (event && event.target) event.target.classList.add('active');
       gameState.difficulty = level;
-      gameState.questionList = [...fallbackDatabase[level]];
       gameState.currentQuestionIndex = 0;
       gameState.score = 0;
       gameState.correct = 0;
       gameState.wrong = 0;
-      updateUI();
-      loadQuestion();
+      // Aktif set varsa koru
+      try {
+        var active = localStorage.getItem('ge_active_set');
+        if (active) {
+          var data = JSON.parse(active);
+          if (data && data.words && data.words.length >= 2) {
+            gameState.questionList = convertSetForGramer(data.words);
+            updateUI(); loadQuestion(); return;
+          }
+        }
+      } catch(e) {}
+      gameState.questionList = [...(fallbackDatabase[level] || fallbackDatabase['easy'])];
+      updateUI(); loadQuestion();
     }
 
     function loadQuestion() {
@@ -808,20 +819,34 @@
 
 // ── Quizlet Set Converter: Gramer Quest ──────────────────
 function convertSetForGramer(words) {
+  var sentences = [
+    'I ___ to school every day.',      // go/like/have
+    'She ___ a beautiful flower.',      // saw/has/loves
+    'They ___ in the park yesterday.',  // played/were/walked
+    'He ___ his homework every night.', // does/finishes/starts
+    'We ___ very happy today.',         // are/feel/seem
+    'The cat ___ on the chair.',        // sits/sleeps/jumps
+    'My friend ___ me a message.',      // sent/gave/wrote
+    'Can you ___ me with this?',        // help/show/tell
+    'I always ___ breakfast at home.',  // eat/have/make
+    'She ___ to music every morning.',  // listens/dances/sings
+  ];
   return words.map(function(w, i) {
-    var others = words.filter(function(x, j) { return j !== i; })
-                      .sort(function() { return Math.random()-0.5; }).slice(0, 3);
-    var correct = w.tr || w.en || '';
-    var wrongOptions = others.map(function(x) { return x.tr || x.en || ''; });
-    // Unique yap
-    wrongOptions = wrongOptions.filter(function(x) { return x !== correct; }).slice(0, 3);
-    while (wrongOptions.length < 3) { wrongOptions.push('...'); }
-    var options = [correct].concat(wrongOptions).sort(function() { return Math.random()-0.5; });
+    var others = words.filter(function(x,j){ return j!==i; })
+                      .sort(function(){ return Math.random()-.5; }).slice(0,3);
+    var correct = w.en || '';
+    var wrong = others.map(function(x){ return x.en||''; })
+                      .filter(function(x){ return x !== correct; }).slice(0,3);
+    while(wrong.length < 3) wrong.push('...');
+    var options = [correct].concat(wrong).sort(function(){ return Math.random()-.5; });
+    var sentence = sentences[i % sentences.length].replace('___', '"' + correct + '"');
+    // Cümlede kelimeyi boşluğa çevir
+    var question = sentences[i % sentences.length];
     return {
-      sentence: '"' + (w.en || '') + '" = ?',
+      sentence: '"' + (w.tr||'') + '" = ? (' + question + ')',
       options: options,
       correct: correct,
-      explanation: (w.en || '') + ' = ' + (w.tr || '')
+      explanation: correct + ' = ' + (w.tr||'')
     };
   });
 }
