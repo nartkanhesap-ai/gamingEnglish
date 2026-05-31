@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz Hızlı - İngilizce Oyunu</title>
+  <title>Hızlı Quiz - İngilizce Oyunu</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -443,7 +443,7 @@
 
   <div class="container">
     <div class="header">
-      <div class="title">⚡ Quiz Hızlı</div>
+      <div class="title">⚡ Hızlı Quiz</div>
       <a href="index.html" class="home-btn">← Ana Sayfa</a>
       <div class="score-box">
         <div class="stat">
@@ -473,7 +473,7 @@
 
       <div class="question-display">
         <div class="instruction">Hızlı cevap ver, puan kazan!</div>
-        <div class="timer" id="timer">⏱️ 30s</div>
+        <div class="timer" id="timer">⏱️ 5s</div>
       </div>
 
       <div class="question-text" id="questionText">
@@ -590,6 +590,7 @@
                 gameState.questionList = converted;
                 fallbackDatabase['easy'] = fallbackDatabase['medium'] = fallbackDatabase['hard'] = converted;
                 showImportBanner(data.setName, data.words.length);
+                var db = document.getElementById("diffButtons"); if(db) db.style.display="none";
                 loadQuestion(); return;
               }
             }
@@ -616,15 +617,25 @@
 
     function setDifficulty(level) {
       document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      if (event && event.target) event.target.classList.add('active');
       gameState.difficulty = level;
-      gameState.questionList = [...fallbackDatabase[level]];
       gameState.currentQuestionIndex = 0;
       gameState.score = 0;
       gameState.correct = 0;
       gameState.wrong = 0;
-      updateUI();
-      loadQuestion();
+      // Aktif set varsa koru
+      try {
+        var active = localStorage.getItem('ge_active_set');
+        if (active) {
+          var data = JSON.parse(active);
+          if (data && data.words && data.words.length >= 2) {
+            gameState.questionList = convertSetForQuiz(data.words);
+            updateUI(); loadQuestion(); return;
+          }
+        }
+      } catch(e) {}
+      gameState.questionList = [...(fallbackDatabase[level] || fallbackDatabase['easy'])];
+      updateUI(); loadQuestion();
     }
 
     function loadQuestion() {
@@ -635,7 +646,7 @@
       document.getElementById('questionText').textContent = question.question;
       gameState.selectedAnswer = null;
       gameState.isAnswered = false;
-      gameState.timeLeft = 30;
+      gameState.timeLeft = 5;
 
       let options = [...question.options].sort(() => Math.random() - 0.5);
       const grid = document.getElementById('optionsGrid');
@@ -816,7 +827,7 @@
     init();
   
 
-// ── Quizlet Set Converter: Quiz Hızlı ──────────────────
+// ── Quizlet Set Converter: Hızlı Quiz ──────────────────
 function convertSetForQuiz(words) {
   var result = [];
   words.forEach(function(w, i) {
