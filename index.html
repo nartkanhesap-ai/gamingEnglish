@@ -673,6 +673,10 @@ const firebaseConfig = {
   appId: "1:975799266905:web:9dfb13cfb4918e24694b48"
 };
 firebase.initializeApp(firebaseConfig);
+// Login kalıcı olsun - her seferinde tekrar giriş gerekmez
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(e) {
+  console.warn('Persistence error:', e);
+});
 
 // English Coach'tan set ile gelindiyse URL'den oku ve login modal'ı gizle
 (function() {
@@ -777,18 +781,169 @@ window.closeImportBanner = function() {
 window.openKelimeOyunlari = function openKelimeOyunlari() {
   document.getElementById('koOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
-  koGoHome();
-  // English Coach'tan aktarılan set varsa bildir
-  try {
-    var imp = localStorage.getItem('ge_imported_set');
-    if (imp) {
-      var data = JSON.parse(imp);
-      var age = Date.now() - (data.timestamp || 0);
-      if (age < 300000) { // 5 dakika içinde geldiyse göster
-        koShowImportedSetBanner(data);
+  koShowSetSelector();
+}
+
+window.koShowSetSelector = function koShowSetSelector() {
+  var body = document.getElementById('koBody');
+  var gameView = document.getElementById('koGameView');
+  if (body) body.style.display = 'block';
+  if (gameView) gameView.classList.remove('active');
+  document.getElementById('koBreadcrumb').innerHTML = '<span class="active">📂 Kelime Oyunları</span>';
+
+  body.innerHTML = '<div style="font-family:Fredoka,sans-serif;padding:4px">'
+    + '<div style="font-size:15px;font-weight:700;color:#374151;margin-bottom:14px">🎯 Kelime Seti Seç</div>'
+    + '<div id="koSetList"><div style="color:#9ca3af;text-align:center;padding:20px">Yükleniyor...</div></div>'
+    + '</div>';
+
+  // Quizlet setlerini yükle
+  koLoadQuizletSets();
+}
+
+window.koLoadQuizletSets = function koLoadQuizletSets() {
+  var list = document.getElementById('koSetList');
+  if (!list) return;
+
+  // Genel seçenek her zaman var
+  var html = '<div style="display:grid;gap:10px">';
+  html += koSetCard('__general__', '📚 Genel', 'Oyunun kendi kelimeleri', 'linear-gradient(135deg,#667eea,#764ba2)');
+
+  // Firebase'den quizlet setlerini çek
+  if (typeof firebase !== 'undefined' && firebase.auth().currentUser) {
+    var uid = firebase.auth().currentUser.uid;
+    firebase.firestore().collection('users').doc(uid).get()
+      .then(function(snap) {
+        var sets = (snap.exists && snap.data().quizletSets) ? snap.data().quizletSets : [];
+        var html2 = '<div style="display:grid;gap:10px">';
+        html2 += koSetCard('__general__', '📚 Genel', 'Oyunun kendi kelimeleri', 'linear-gradient(135deg,#667eea,#764ba2)');
+        sets.forEach(function(set, i) {
+          if (set && set.words && set.words.length >= 2) {
+            var gradient = ['linear-gradient(135deg,#f093fb,#f5576c)',
+                            'linear-gradient(135deg,#4facfe,#00f2fe)',
+                            'linear-gradient(135deg,#43e97b,#38f9d7)',
+                            'linear-gradient(135deg,#fa709a,#fee140)',
+                            'linear-gradient(135deg,#a18cd1,#fbc2eb)'][i % 5];
+            html2 += koSetCard('__set__' + i, '📖 ' + (set.name || 'Set ' + (i+1)), set.words.length + ' kelime', gradient, set);
+          }
+        });
+        html2 += '</div>';
+        list.innerHTML = html2;
+        // Event listener'ları ekle
+        koAttachSetCardEvents(sets);
+      })
+      .catch(function(e) {
+        console.error('Quizlet sets error:', e);
+        list.innerHTML = '<div style="display:grid;gap:10px">'
+          + koSetCard('__general__', '📚 Genel', 'Oyunun kendi kelimeleri', 'linear-gradient(135deg,#667eea,#764ba2)')
+          + '</div>';
+        koAttachSetCardEvents([]);
+      });
+  } else {
+    // Login değil - sadece Genel
+    list.innerHTML = '<div style="display:grid;gap:10px">'
+      + koSetCard('__general__', '📚 Genel', 'Oyunun kendi kelimeleri', 'linear-gradient(135deg,#667eea,#764ba2)')
+      + '</div>';
+    koAttachSetCardEvents([]);
+  }
+}
+
+window.koSetCard = function koSetCard(id, title, subtitle, gradient, setData) {
+  return '<div class="ko-set-card" data-set-id="' + id + '" style="'
+    + 'background:' + gradient + ';color:#fff;border-radius:14px;padding:16px 20px;'
+    + 'cursor:pointer;display:flex;align-items:center;gap:14px;'
+    + 'transition:transform .15s,box-shadow .15s;'
+    + 'box-shadow:0 4px 14px rgba(0,0,0,0.15)">'
+    + '<div style="font-size:28px">' + title.split(' ')[0] + '</div>'
+    + '<div><div style="font-weight:700;font-size:15px">' + title.split(' ').slice(1).join(' ') + '</div>'
+    + '<div style="font-size:12px;opacity:.85">' + subtitle + '</div></div>'
+    + '<div style="margin-left:auto;font-size:20px;opacity:.7">›</div>'
+    + '</div>';
+}
+
+window.koAttachSetCardEvents = function koAttachSetCardEvents(sets) {
+  document.querySelectorAll('.ko-set-card').forEach(function(card) {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-2px)';
+      this.style.boxShadow = '0 8px 24px rgba(0,0,0,0.2)';
+    });
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = '';
+      this.style.boxShadow = '0 4px 14px rgba(0,0,0,0.15)';
+    });
+    card.addEventListener('click', function() {
+      var id = this.getAttribute('data-set-id');
+      if (id === '__general__') {
+        localStorage.removeItem('ge_active_set');
+        localStorage.removeItem('ge_imported_set');
+        koShowGameList(null);
+      } else {
+        var idx = parseInt(id.replace('__set__', ''));
+        var set = sets[idx];
+        if (set) {
+          var payload = { setName: set.name, words: set.words, timestamp: Date.now() };
+          localStorage.setItem('ge_active_set', JSON.stringify(payload));
+          localStorage.setItem('ge_imported_set', JSON.stringify(payload));
+          koShowGameList(payload);
+        }
       }
-    }
-  } catch(e) {}
+    });
+  });
+}
+
+window.koShowGameList = function koShowGameList(activeSet) {
+  var body = document.getElementById('koBody');
+  if (!body) return;
+  var setLabel = activeSet ? activeSet.setName : 'Genel';
+  document.getElementById('koBreadcrumb').innerHTML =
+    '<span onclick="window.koShowSetSelector()" style="cursor:pointer">📂 Kelime Oyunları</span>'
+    + '<span style="color:#d1d5db;margin:0 6px">›</span>'
+    + '<span style="font-weight:700;color:#1f2937">' + setLabel + '</span>';
+
+  body.innerHTML = '<div style="font-family:Fredoka,sans-serif">'
+    + (activeSet ? '<div style="background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:10px 16px;border-radius:10px;margin-bottom:16px;font-size:13px;font-weight:700">'
+      + '🎮 ' + activeSet.setName + ' · ' + activeSet.words.length + ' kelime ile oynuyorsun'
+      + '</div>' : '')
+    + '<div class="ko-game-list" id="koGameListGrid"></div>'
+    + '</div>';
+
+  var grid = document.getElementById('koGameListGrid');
+  // Kelime Dünyası hariç oyunlar - set varsa mode=imported ile aç
+  var games = [
+    ['kelime-avi-game.html',        '🎮', 'Kelime Avı',        'Dinle ve eşleştir',  '#fce4ec'],
+    ['gramer-quest-game.html',      '📚', 'Gramer Quest',      'Cümle tamamla',      '#e3f2fd'],
+    ['dinleme-dedektifi-game.html', '👂', 'Dinleme Dedektifi', 'Dinle ve bul',       '#f3e5f5'],
+    ['yazi-sahnesi-game.html',      '🎭', 'Yazı Sahnesi',      'Diyalog tamamla',    '#fff8e1'],
+    ['quiz-hizli-game.html',        '⚡', 'Hızlı Quiz',        '5 sn, hızlı cevap',  '#fff3e0'],
+  ];
+  // Kelime Dünyası - her zaman kendi kelimeleriyle
+  var kdCard = document.createElement('div');
+  kdCard.className = 'ko-game-item';
+  kdCard.innerHTML = '<div class="ko-game-item-top">'
+    + '<div class="ko-game-emoji" style="background:#e8f5e9">🌍</div>'
+    + '<div class="ko-game-info"><h3>Kelime Dünyası</h3><span class="level">A1 – B1</span></div></div>'
+    + '<div class="ko-game-desc">Dünya haritasını keşfet! Ülke seç, kelimeler öğren.</div>'
+    + '<button class="ko-play-btn">▶ Oyna</button>';
+  kdCard.querySelector('button').addEventListener('click', function() {
+    window.location.href = 'kelime-dunyasi-worldmap.html';
+  });
+  grid.appendChild(kdCard);
+
+  games.forEach(function(g) {
+    var card = document.createElement('div');
+    card.className = 'ko-game-item';
+    card.innerHTML = '<div class="ko-game-item-top">'
+      + '<div class="ko-game-emoji" style="background:' + g[4] + '">' + g[0].split('-')[0] === 'kelime' ? g[1] : g[1] + '</div>'
+      + '<div class="ko-game-emoji" style="background:' + g[4] + '">' + g[1] + '</div>'
+      + '<div class="ko-game-info"><h3>' + g[2] + '</h3></div></div>'
+      + '<div class="ko-game-desc">' + g[3] + '</div>'
+      + '<button class="ko-play-btn">▶ Oyna</button>';
+    var url = g[0];
+    var hasSet = !!activeSet;
+    card.querySelector('button').addEventListener('click', function() {
+      window.location.href = url + (hasSet ? '?mode=imported' : '');
+    });
+    grid.appendChild(card);
+  });
 }
 
 window.koShowImportedSetBanner = function koShowImportedSetBanner(data) {
@@ -886,18 +1041,15 @@ window.closeKelimeOyunlari = function closeKelimeOyunlari() {
 window.koGoHome = function koGoHome() {
   document.getElementById('koBody').style.display = 'block';
   document.getElementById('koGameView').classList.remove('active');
-  document.getElementById('koGameFrame').src = '';
-  document.getElementById('koBreadcrumb').innerHTML =
-    '<span class="active">📂 Kelime Oyunları</span>';
+  if (document.getElementById('koGameFrame')) document.getElementById('koGameFrame').src = '';
+  window.koShowSetSelector();
 }
 window.koPlayGame = function koPlayGame(url, name) {
-  // Import session varsa ge_active_set'i set et
   try {
-    var imp = localStorage.getItem('ge_imported_set');
-    if (imp) {
-      var data = JSON.parse(imp);
+    var active = localStorage.getItem('ge_active_set');
+    if (active) {
+      var data = JSON.parse(active);
       if (data && data.words && data.words.length >= 2) {
-        localStorage.setItem('ge_active_set', JSON.stringify(data));
         window.location.href = url + '?mode=imported';
         return;
       }
