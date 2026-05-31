@@ -577,6 +577,10 @@
       gameState.score = 0;
       gameState.correct = 0;
       gameState.wrong = 0;
+      // Liste boşsa doldur
+      if (!gameState.questionList || gameState.questionList.length === 0) {
+        gameState.questionList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
+      }
       loadQuestion();
 }
 
@@ -731,7 +735,10 @@
     }
 
     function resetGame() {
-      clearInterval(gameState.timerInterval);
+      const _m = document.getElementById('resultModal');
+      if (_m) { _m.style.display = 'none'; _m.classList.remove('show'); }
+            clearInterval(gameState.timerInterval);
+      gameState.questionList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
       init();
     }
 
