@@ -606,6 +606,7 @@
                 gameState.questionList = converted;
                 fallbackDatabase['easy'] = fallbackDatabase['medium'] = fallbackDatabase['hard'] = converted;
                 showImportBanner(data.setName, data.words.length);
+                var db = document.querySelector(".diff-buttons"); if(db) db.style.display="none";
                 loadQuestion(); return;
               }
             }
@@ -632,15 +633,25 @@
 
     function setDifficulty(level) {
       document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      if (event && event.target) event.target.classList.add('active');
       gameState.difficulty = level;
-      gameState.questionList = [...fallbackDatabase[level]];
       gameState.currentQuestionIndex = 0;
       gameState.score = 0;
       gameState.correct = 0;
       gameState.wrong = 0;
-      updateUI();
-      loadQuestion();
+      // Aktif set varsa koru
+      try {
+        var active = localStorage.getItem('ge_active_set');
+        if (active) {
+          var data = JSON.parse(active);
+          if (data && data.words && data.words.length >= 2) {
+            gameState.questionList = convertSetForDinleme(data.words);
+            updateUI(); loadQuestion(); return;
+          }
+        }
+      } catch(e) {}
+      gameState.questionList = [...(fallbackDatabase[level] || fallbackDatabase['easy'])];
+      updateUI(); loadQuestion();
     }
 
     function loadQuestion() {
