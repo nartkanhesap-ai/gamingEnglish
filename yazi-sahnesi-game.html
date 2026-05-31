@@ -715,41 +715,30 @@
     function init() {
       const savedTheme = (function(){ try { return localStorage.getItem('gamingEnglishTheme'); } catch(e) { return null; } })() || 'default';
       applyThemeToGame(savedTheme);
-  
       gameState.currentQuestionIndex = 0;
       gameState.score = 0;
       gameState.correct = 0;
       gameState.wrong = 0;
-      // Liste boşsa doldur
-      if (!gameState.questionList || gameState.questionList.length === 0) {
-        
-      // English Coach'tan aktarılan set varsa yükle
+      gameState.isAnswered = false;
       (function() {
         try {
-          var imp = localStorage.getItem('ge_active_set');
-          if (imp && window.location.search.indexOf('mode=imported') > -1) {
-            var data = JSON.parse(imp);
-            if (data && data.words && data.words.length >= 2) {
-              // words formatını oyun formatına çevir
-              var converted = data.words.map(function(w, i) {
-                return { word: (w.en||'').toUpperCase(), label: w.en||'', image: '📖', tr: w.tr||'', answer: w.en||'' };
-              });
-              fallbackDatabase['easy'] = converted;
-              fallbackDatabase['medium'] = converted;
-              fallbackDatabase['hard'] = converted;
-              // Banner göster
-              var banner = document.createElement('div');
-              banner.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 14px rgba(240,83,240,.4)';
-              banner.textContent = '🎮 ' + (data.setName||'Set') + ' yüklendi! (' + data.words.length + ' kelime)';
-              document.body.appendChild(banner);
-              setTimeout(function(){ banner.remove(); }, 3000);
+          if (window.location.search.indexOf('mode=imported') > -1) {
+            var imp = localStorage.getItem('ge_active_set');
+            if (imp) {
+              var data = JSON.parse(imp);
+              if (data && data.words && data.words.length >= 2) {
+                var converted = convertSetForYazi(data.words);
+                gameState.questionList = converted;
+                fallbackDatabase['easy'] = fallbackDatabase['medium'] = fallbackDatabase['hard'] = converted;
+                showImportBanner(data.setName, data.words.length);
+                loadQuestion(); return;
+              }
             }
           }
         } catch(e) {}
+        gameState.questionList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
+        loadQuestion();
       })();
-      gameState.questionList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
-      }
-      loadQuestion();
 }
 
     function applyThemeToGame(themeName) {
@@ -976,6 +965,37 @@
     });
 
     init();
-  </script>
+  
+
+// ── Quizlet Set Converter: Yazı Sahnesi ──────────────────
+function convertSetForYazi(words) {
+  return words.map(function(w) {
+    return {
+      dialogue: [
+        { speaker: 'A', text: '"' + (w.tr || '') + '" kelimesinin İngilizcesi nedir?' },
+        { speaker: 'B', text: '_____' }
+      ],
+      answers: [w.en || ''],
+      type: 'dialogue',
+      hint: w.en || ''
+    };
+  });
+}
+
+
+function showImportBanner(setName, wordCount) {
+  var existing = document.getElementById('importBanner');
+  if (existing) existing.remove();
+  var banner = document.createElement('div');
+  banner.id = 'importBanner';
+  banner.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);'
+    + 'background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:10px 20px;'
+    + 'border-radius:99px;font-size:13px;font-weight:700;z-index:9999;'
+    + 'box-shadow:0 4px 14px rgba(240,83,240,.4);white-space:nowrap;pointer-events:none';
+  banner.textContent = '🎮 ' + (setName || 'Set') + ' yüklendi (' + wordCount + ' kelime)';
+  document.body.appendChild(banner);
+  setTimeout(function() { if (banner.parentNode) banner.remove(); }, 3000);
+}
+</script>
 </body>
 </html>
