@@ -1297,14 +1297,7 @@ function koGoHome() {
     '<span class="active">📂 Kelime Oyunları</span>';
 }
 function koPlayGame(url, name) {
-  document.getElementById('koBody').style.display = 'none';
-  document.getElementById('koGameView').classList.add('active');
-  document.getElementById('koGameFrame').src = url;
-  document.getElementById('koPlayingTitle').textContent = name;
-  document.getElementById('koBreadcrumb').innerHTML =
-    '<span onclick="koGoHome()">📂 Kelime Oyunları</span>' +
-    '<span class="sep">›</span>' +
-    '<span class="active">' + name + '</span>';
+  window.location.href = url;
 }
 // Overlay dışına tıklayınca kapat
 document.getElementById('koOverlay').addEventListener('click', function(e) {
