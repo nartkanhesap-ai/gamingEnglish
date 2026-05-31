@@ -878,6 +878,18 @@ window.koGoHome = function koGoHome() {
     '<span class="active">📂 Kelime Oyunları</span>';
 }
 window.koPlayGame = function koPlayGame(url, name) {
+  // Import session varsa ge_active_set'i set et
+  try {
+    var imp = localStorage.getItem('ge_imported_set');
+    if (imp) {
+      var data = JSON.parse(imp);
+      if (data && data.words && data.words.length >= 2) {
+        localStorage.setItem('ge_active_set', JSON.stringify(data));
+        window.location.href = url + '?mode=imported';
+        return;
+      }
+    }
+  } catch(e) {}
   window.location.href = url;
 }
 // Overlay dışına tıklayınca kapat
