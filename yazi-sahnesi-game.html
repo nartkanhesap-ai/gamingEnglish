@@ -731,6 +731,7 @@
                 gameState.questionList = converted;
                 fallbackDatabase['easy'] = fallbackDatabase['medium'] = fallbackDatabase['hard'] = converted;
                 showImportBanner(data.setName, data.words.length);
+                var db = document.querySelector(".diff-buttons"); if(db) db.style.display="none";
                 loadQuestion(); return;
               }
             }
@@ -757,15 +758,25 @@
 
     function setDifficulty(level) {
       document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      if (event && event.target) event.target.classList.add('active');
       gameState.difficulty = level;
-      gameState.questionList = [...fallbackDatabase[level]];
       gameState.currentQuestionIndex = 0;
       gameState.score = 0;
       gameState.correct = 0;
       gameState.wrong = 0;
-      updateUI();
-      loadQuestion();
+      // Aktif set varsa koru
+      try {
+        var active = localStorage.getItem('ge_active_set');
+        if (active) {
+          var data = JSON.parse(active);
+          if (data && data.words && data.words.length >= 2) {
+            gameState.questionList = convertSetForYazi(data.words);
+            updateUI(); loadQuestion(); return;
+          }
+        }
+      } catch(e) {}
+      gameState.questionList = [...(fallbackDatabase[level] || fallbackDatabase['easy'])];
+      updateUI(); loadQuestion();
     }
 
     function loadQuestion() {
@@ -969,15 +980,55 @@
 
 // ── Quizlet Set Converter: Yazı Sahnesi ──────────────────
 function convertSetForYazi(words) {
-  return words.map(function(w) {
-    return {
-      dialogue: [
-        { speaker: 'A', text: '"' + (w.tr || '') + '" kelimesinin İngilizcesi nedir?' },
-        { speaker: 'B', text: '_____' }
+  var dialogTemplates = [
+    function(en, tr) { return {
+      lines: [
+        { speaker: 'A', text: 'Hey, do you know what "_____" means in Turkish?' },
+        { speaker: 'B', text: 'Yes! It means "' + tr + '" in Turkish.' },
+        { speaker: 'A', text: 'Great! Can you use "_____" in a sentence?' },
+        { speaker: 'B', text: 'Sure! I can see a _____ over there.' }
       ],
-      answers: [w.en || ''],
+      answers: [en, en, en],
+      blanks: [0, 2, 3]
+    }; },
+    function(en, tr) { return {
+      lines: [
+        { speaker: 'A', text: 'What is the English word for "' + tr + '"?' },
+        { speaker: 'B', text: 'The English word is "_____".' },
+        { speaker: 'A', text: 'Perfect. So we can say: "I have a _____."' },
+        { speaker: 'B', text: 'Exactly! "_____" is a very common word.' }
+      ],
+      answers: [en, en, en],
+      blanks: [1, 2, 3]
+    }; },
+    function(en, tr) { return {
+      lines: [
+        { speaker: 'A', text: 'Can you teach me the word "' + tr + '" in English?' },
+        { speaker: 'B', text: 'Of course! It is "_____".' },
+        { speaker: 'A', text: 'How do you spell "_____"?' },
+        { speaker: 'B', text: 'Just like it sounds: _____.' }
+      ],
+      answers: [en, en, en],
+      blanks: [1, 2, 3]
+    }; },
+  ];
+  return words.map(function(w, i) {
+    var en = w.en || '';
+    var tr = w.tr || '';
+    var tmpl = dialogTemplates[i % dialogTemplates.length](en, tr);
+    // Boşlukları _____  ile değiştir
+    var dialogue = tmpl.lines.map(function(line, lineIdx) {
+      var isBlank = tmpl.blanks.indexOf(lineIdx) > -1;
+      return {
+        speaker: line.speaker,
+        text: isBlank ? line.text.replace('"' + en + '"', '"_____"').replace('_____', '_____') : line.text
+      };
+    });
+    return {
+      dialogue: dialogue,
+      answers: [en],
       type: 'dialogue',
-      hint: w.en || ''
+      hint: en
     };
   });
 }
