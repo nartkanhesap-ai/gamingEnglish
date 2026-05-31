@@ -674,25 +674,39 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
-// English Coach'tan set ile gelindiyse login modal'ı gizle
+// English Coach'tan set ile gelindiyse URL'den oku ve login modal'ı gizle
 (function() {
-  var isImport = window.location.search.indexOf('set=imported') > -1;
-  if (!isImport) {
-    try {
-      var imp = localStorage.getItem('ge_imported_set');
-      if (imp) {
-        var d = JSON.parse(imp);
-        isImport = (Date.now() - (d.timestamp||0)) < 300000;
+  var isImport = false;
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var geSet = params.get('ge_set');
+    if (geSet) {
+      // Base64 decode - yeni format
+      var json = decodeURIComponent(escape(atob(geSet)));
+      var data = JSON.parse(json);
+      if (data && data.words && data.words.length >= 2) {
+        localStorage.setItem('ge_active_set', JSON.stringify(data));
+        localStorage.setItem('ge_imported_set', JSON.stringify(data));
+        isImport = true;
       }
-    } catch(e) {}
-  }
+    } else if (params.get('set') === 'imported') {
+      // Eski format - localStorage'dan oku (aynı domain deploy ise çalışır)
+      var oldImp = localStorage.getItem('ge_imported_set') || localStorage.getItem('ge_active_set');
+      if (oldImp) {
+        var oldData = JSON.parse(oldImp);
+        if (oldData && oldData.words && oldData.words.length >= 2) {
+          localStorage.setItem('ge_active_set', oldImp);
+          isImport = true;
+        }
+      }
+    }
+  } catch(e) { console.error('ge_set parse error:', e); }
+
   if (isImport) {
-    // DOM hazır olunca modal'ı gizle
     document.addEventListener('DOMContentLoaded', function() {
       var modal = document.getElementById('geLoginModal');
       if (modal) modal.classList.add('hidden');
     });
-    // Inline da dene (head'de script çalışıyor)
     var style = document.createElement('style');
     style.textContent = '#geLoginModal { display: none !important; }';
     document.head.appendChild(style);
@@ -736,13 +750,12 @@ firebase.auth().onAuthStateChanged(async (user) => {
     geStudentInfo = null;
     updateNavbar();
     // English Coach'tan kelime setiyle gelinmişse login modal'ı gösterme
-    const isImportedSession = window.location.search.indexOf('set=imported') > -1 ||
-      (function() {
+    const isImportedSession = (function() {
         try {
-          const imp = localStorage.getItem('ge_imported_set');
+          var imp = localStorage.getItem('ge_imported_set');
           if (!imp) return false;
-          const d = JSON.parse(imp);
-          return (Date.now() - (d.timestamp||0)) < 300000; // 5 dakika
+          var d = JSON.parse(imp);
+          return (Date.now() - (d.timestamp||0)) < 600000; // 10 dakika
         } catch(e) { return false; }
       })();
     if (!isImportedSession) {
@@ -892,9 +905,12 @@ window.koPlayGame = function koPlayGame(url, name) {
   } catch(e) {}
   window.location.href = url;
 }
-// Overlay dışına tıklayınca kapat
-document.getElementById('koOverlay').addEventListener('click', function(e) {
-  if (e.target === this && window.closeKelimeOyunlari) window.closeKelimeOyunlari();
+// Overlay dışına tıklayınca kapat - DOM hazır olunca
+document.addEventListener('DOMContentLoaded', function() {
+  var ov = document.getElementById('koOverlay');
+  if (ov) ov.addEventListener('click', function(e) {
+    if (e.target === this && window.closeKelimeOyunlari) window.closeKelimeOyunlari();
+  });
 });
 
 </script>
@@ -1186,7 +1202,7 @@ document.getElementById('koOverlay').addEventListener('click', function(e) {
       setTheme(savedTheme);
     
       // English Coach'tan yönlendirme var mı?
-      if (window.location.search.indexOf('set=imported') > -1) {
+      if (window.location.search.indexOf('ge_set') > -1 || localStorage.getItem('ge_imported_set')) {
         setTimeout(function() { if (window.openKelimeOyunlari) window.openKelimeOyunlari(); }, 500);
       }
     });
@@ -1243,13 +1259,12 @@ function updateNavbar() {
     }
     // English Coach'tan set ile gelinmişse login modal'ı gösterme
     if (!window.geCurrentUser) {
-      const fromImport = window.location.search.indexOf('set=imported') > -1 ||
-        (function() {
+      const fromImport = (function() {
           try {
-            const imp = localStorage.getItem('ge_imported_set');
+            var imp = localStorage.getItem('ge_imported_set');
             if (!imp) return false;
-            const d = JSON.parse(imp);
-            return (Date.now() - (d.timestamp||0)) < 300000;
+            var d = JSON.parse(imp);
+            return (Date.now() - (d.timestamp||0)) < 600000;
           } catch(e) { return false; }
         })();
       if (!fromImport) showLoginModal();
