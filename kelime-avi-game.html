@@ -582,15 +582,11 @@
     function init() {
       const savedTheme = (function(){ try { return localStorage.getItem('gamingEnglishTheme'); } catch(e) { return null; } })() || 'default';
       applyThemeToGame(savedTheme);
-  
       gameState.currentWordIndex = 0;
       gameState.score = 0;
       gameState.correct = 0;
       gameState.wrong = 0;
-      // wordList boşsa varsayılan difficulty ile doldur
-      if (!gameState.wordList || gameState.wordList.length === 0) {
-        gameState.wordList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
-      }
+      gameState.wordList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
       loadWord();
 }
 
