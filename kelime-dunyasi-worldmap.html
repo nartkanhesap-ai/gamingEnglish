@@ -4778,23 +4778,22 @@ function kdRenderScramble() {
   body.innerHTML = '';
   var div = document.createElement('div');
   div.style.cssText = 'font-family:Fredoka;padding:8px';
-  div.innerHTML =
-    '<div style="text-align:center;margin-bottom:24px">' +
-      '<div style="font-size:64px;margin-bottom:8px">' + pick.emoji + '</div>' +
-      '<div style="font-size:20px;color:#666;margin-bottom:20px">&#127481;&#127479; ' + pick.tr + '</div>' +
-      '<div style="font-size:28px;font-weight:700;letter-spacing:6px;color:var(--kd-accent,#6366f1);background:#f3f4f6;padding:12px 24px;border-radius:14px;display:inline-block">' + letters.join(' ') + '</div>' +
-    '</div>' +
-    '<input id="kdScrambleInput" type="text" autocomplete="off" placeholder="Harfleri doğru sıraya diz..." ' +
-      'style="width:100%;padding:14px;font-size:20px;border:3px solid #e5e7eb;border-radius:12px;text-align:center;font-family:Fredoka;outline:none;margin-bottom:12px;box-sizing:border-box">' +
-    '<button id="kdScrambleBtn" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));color:white;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;font-family:Fredoka">✅ Kontrol Et</button>' +
-    '<div id="kdScrambleResult" style="margin-top:14px;text-align:center;font-size:18px;font-weight:700;min-height:28px"></div>' +
-    '<button id="kdScrambleNext" style="margin-top:10px;width:100%;padding:10px;background:white;border:2px solid #e5e7eb;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;color:#6b7280;font-family:Fredoka">🔀 Yeni Kelime</button>';
+  div.innerHTML = '<div style="text-align:center;margin-bottom:24px">'
+    + '<div style="font-size:64px;margin-bottom:8px">' + (pick.emoji||'📖') + '</div>'
+    + '<div style="font-size:20px;color:#666;margin-bottom:20px">🇹🇷 ' + (pick.tr||'') + '</div>'
+    + '<div style="font-size:28px;font-weight:700;letter-spacing:6px;color:var(--kd-accent,#6366f1);background:#f3f4f6;padding:12px 24px;border-radius:14px;display:inline-block">' + letters.join(' ') + '</div>'
+    + '</div>'
+    + '<input id="kdScrambleInput" type="text" autocomplete="off" placeholder="Harfleri doğru sıraya diz..." style="width:100%;padding:14px;font-size:20px;border:3px solid #e5e7eb;border-radius:12px;text-align:center;font-family:Fredoka;outline:none;margin-bottom:12px;box-sizing:border-box">'
+    + '<button id="kdScrambleBtn" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));color:white;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;font-family:Fredoka">✅ Kontrol Et</button>'
+    + '<div id="kdScrambleResult" style="margin-top:14px;text-align:center;font-size:18px;font-weight:700;min-height:28px"></div>'
+    + '<button id="kdScrambleNext" style="margin-top:10px;width:100%;padding:10px;background:white;border:2px solid #e5e7eb;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;color:#6b7280;font-family:Fredoka">🔀 Yeni Kelime</button>';
   body.appendChild(div);
   document.getElementById('kdScrambleBtn').onclick = function(){ kdCheckScramble(pick.en); };
   document.getElementById('kdScrambleNext').onclick = kdRenderScramble;
   document.getElementById('kdScrambleInput').addEventListener('keydown', function(e){ if(e.key==='Enter') kdCheckScramble(pick.en); });
   document.getElementById('kdScrambleInput').focus();
 }
+
 function kdCheckScramble(correct) {
   var val = document.getElementById('kdScrambleInput').value.trim();
   var result = document.getElementById('kdScrambleResult');
@@ -4810,23 +4809,77 @@ function kdCheckScramble(correct) {
 
 // ─── Oyun 4: Hızlı Yazma (Typing Race) ────────────────────────────
 var kdTypingScore = 0, kdTypingWords = [], kdTypingIdx = 0;
+
 function kdRenderTyping() {
   var learned = Array.from(kdState.learnedWords).map(function(w){ return kdState.words.find(function(word){ return word.en === w; }); }).filter(Boolean);
-  if (!learned.length) { document.getElementById('kdBody').innerHTML = '<div style="padding:40px;text-align:center;color:#666;font-family:Fredoka">Önce kelime öğrenmelisin!</div>'; return; }
+  if (!learned.length) {
+    document.getElementById('kdBody').innerHTML = '<div style="padding:40px;text-align:center;color:#666;font-family:Fredoka">Önce kelime öğrenmelisin!</div>';
+    return;
+  }
   kdTypingWords = learned.slice().sort(function(){ return Math.random()-0.5; });
   kdTypingIdx = 0; kdTypingScore = 0; kdShowTypingWord();
 }
+
 function kdShowTypingWord() {
+  var body = document.getElementById('kdBody');
+  if (!body) return;
   if (kdTypingIdx >= kdTypingWords.length) {
-    document.getElementById('kdBody').innerHTML = '<div style="font-family:Fredoka;text-align:center;padding:40px"><div style="font-size:64px;margin-bottom:16px">🏆</div><div style="font-size:26px;font-weight:700;color:#1f2937;margin-bottom:8px">Tebrikler!</div><div style="font-size:18px;color:#6b7280;margin-bottom:24px">' + kdTypingScore + ' / ' + kdTypingWords.length + ' doğru</div><button onclick="kdRenderTyping()" style="padding:12px 28px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));color:white;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:Fredoka">🔄 Tekrar Oyna</button></div>';
+    body.innerHTML = '';
+    var d = document.createElement('div');
+    d.style.cssText = 'font-family:Fredoka;text-align:center;padding:40px';
+    d.innerHTML = '<div style="font-size:64px;margin-bottom:16px">🏆</div>'
+      + '<div style="font-size:26px;font-weight:700;color:#1f2937;margin-bottom:8px">Tebrikler!</div>'
+      + '<div style="font-size:18px;color:#6b7280;margin-bottom:24px">' + kdTypingScore + ' / ' + kdTypingWords.length + ' doğru</div>';
+    var rb = document.createElement('button');
+    rb.textContent = '🔄 Tekrar Oyna';
+    rb.style.cssText = 'padding:12px 28px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));color:white;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:Fredoka';
+    rb.onclick = kdRenderTyping;
+    d.appendChild(rb);
+    body.appendChild(d);
     return;
   }
   var pick = kdTypingWords[kdTypingIdx];
   var prog = kdTypingIdx + 1, total = kdTypingWords.length;
-  document.getElementById('kdBody').innerHTML = '<div style="font-family:Fredoka;padding:8px"><div style="text-align:center;margin-bottom:20px"><div style="font-size:12px;font-weight:600;color:#9ca3af;margin-bottom:12px">' + prog + ' / ' + total + '</div><div style="height:6px;background:#f3f4f6;border-radius:3px;margin-bottom:20px;overflow:hidden"><div style="height:100%;width:' + (prog/total*100) + '%;background:var(--kd-accent,#6366f1);border-radius:3px"></div></div><div style="font-size:64px;margin-bottom:8px">' + pick.emoji + '</div><div style="font-size:22px;color:#666;margin-bottom:4px">🇹🇷 ' + pick.tr + '</div></div><input id="kdTypingInput" type="text" autocomplete="off" placeholder="Yaz..." style="width:100%;padding:14px;font-size:22px;border:3px solid #e5e7eb;border-radius:12px;text-align:center;font-family:Fredoka;outline:none;margin-bottom:12px;box-sizing:border-box"><div style="display:flex;gap:8px"><button onclick="kdCheckTyping('' + pick.en + '')" style="flex:1;padding:12px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));color:white;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:Fredoka">✅ Gönder</button><button onclick="kdTypingSkip('' + pick.en + '')" style="padding:12px 16px;background:white;border:2px solid #e5e7eb;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;color:#6b7280;font-family:Fredoka">⏭️ Geç</button></div><div id="kdTypingResult" style="margin-top:12px;text-align:center;font-size:18px;font-weight:700;min-height:28px"></div><div style="margin-top:14px;text-align:center;font-size:14px;color:#9ca3af">Puan: <b style="color:var(--kd-accent,#6366f1)">' + kdTypingScore + '</b></div></div>';
-  document.getElementById('kdTypingInput').addEventListener('keydown', function(e){ if(e.key==='Enter') kdCheckTyping(pick.en); });
-  document.getElementById('kdTypingInput').focus();
+  body.innerHTML = '';
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'font-family:Fredoka;padding:8px';
+  var hdr = document.createElement('div');
+  hdr.style.cssText = 'text-align:center;margin-bottom:20px';
+  hdr.innerHTML = '<div style="font-size:12px;font-weight:600;color:#9ca3af;margin-bottom:12px">' + prog + ' / ' + total + '</div>'
+    + '<div style="height:6px;background:#f3f4f6;border-radius:3px;margin-bottom:20px;overflow:hidden"><div style="height:100%;width:' + (prog/total*100) + '%;background:var(--kd-accent,#6366f1);border-radius:3px"></div></div>'
+    + '<div style="font-size:64px;margin-bottom:8px">' + (pick.emoji||'📖') + '</div>'
+    + '<div style="font-size:22px;color:#666;margin-bottom:4px">🇹🇷 ' + (pick.tr||'') + '</div>';
+  wrap.appendChild(hdr);
+  var inp = document.createElement('input');
+  inp.id = 'kdTypingInput'; inp.type = 'text'; inp.autocomplete = 'off'; inp.placeholder = 'Yaz...';
+  inp.style.cssText = 'width:100%;padding:14px;font-size:22px;border:3px solid #e5e7eb;border-radius:12px;text-align:center;font-family:Fredoka;outline:none;margin-bottom:12px;box-sizing:border-box';
+  wrap.appendChild(inp);
+  var row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:8px';
+  var sb = document.createElement('button');
+  sb.textContent = '✅ Gönder';
+  sb.style.cssText = 'flex:1;padding:12px;background:linear-gradient(135deg,var(--kd-accent,#6366f1),var(--kd-accent2,#8b5cf6));color:white;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:Fredoka';
+  sb.onclick = (function(en){ return function(){ kdCheckTyping(en); }; })(pick.en);
+  row.appendChild(sb);
+  var sk = document.createElement('button');
+  sk.textContent = '⏭️ Geç';
+  sk.style.cssText = 'padding:12px 16px;background:white;border:2px solid #e5e7eb;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;color:#6b7280;font-family:Fredoka';
+  sk.onclick = (function(en){ return function(){ kdTypingSkip(en); }; })(pick.en);
+  row.appendChild(sk);
+  wrap.appendChild(row);
+  var res = document.createElement('div');
+  res.id = 'kdTypingResult';
+  res.style.cssText = 'margin-top:12px;text-align:center;font-size:18px;font-weight:700;min-height:28px';
+  wrap.appendChild(res);
+  var sc = document.createElement('div');
+  sc.style.cssText = 'margin-top:14px;text-align:center;font-size:14px;color:#9ca3af';
+  sc.innerHTML = 'Puan: <b style="color:var(--kd-accent,#6366f1)">' + kdTypingScore + '</b>';
+  wrap.appendChild(sc);
+  body.appendChild(wrap);
+  inp.addEventListener('keydown', function(e){ if(e.key==='Enter') kdCheckTyping(pick.en); });
+  inp.focus();
 }
+
 function kdCheckTyping(correct) {
   var val = document.getElementById('kdTypingInput').value.trim();
   if (val.toLowerCase() === correct.toLowerCase()) {
@@ -4839,6 +4892,7 @@ function kdCheckTyping(correct) {
     if(r){r.innerHTML='❌ Yanlış!';r.style.color='#ef4444';}
   }
 }
+
 function kdTypingSkip(correct) {
   var r = document.getElementById('kdTypingResult');
   if(r){r.innerHTML='💡 Cevap: <span style="color:var(--kd-accent,#6366f1)">' + correct + '</span>';}
