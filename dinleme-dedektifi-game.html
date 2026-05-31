@@ -596,7 +596,32 @@
       gameState.wrong = 0;
       // Liste boşsa doldur
       if (!gameState.questionList || gameState.questionList.length === 0) {
-        gameState.questionList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
+        
+      // English Coach'tan aktarılan set varsa yükle
+      (function() {
+        try {
+          var imp = localStorage.getItem('ge_active_set');
+          if (imp && window.location.search.indexOf('mode=imported') > -1) {
+            var data = JSON.parse(imp);
+            if (data && data.words && data.words.length >= 2) {
+              // words formatını oyun formatına çevir
+              var converted = data.words.map(function(w, i) {
+                return { word: (w.en||'').toUpperCase(), label: w.en||'', image: '📖', tr: w.tr||'', answer: w.en||'' };
+              });
+              fallbackDatabase['easy'] = converted;
+              fallbackDatabase['medium'] = converted;
+              fallbackDatabase['hard'] = converted;
+              // Banner göster
+              var banner = document.createElement('div');
+              banner.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 14px rgba(240,83,240,.4)';
+              banner.textContent = '🎮 ' + (data.setName||'Set') + ' yüklendi! (' + data.words.length + ' kelime)';
+              document.body.appendChild(banner);
+              setTimeout(function(){ banner.remove(); }, 3000);
+            }
+          }
+        } catch(e) {}
+      })();
+      gameState.questionList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
       }
       loadQuestion();
 }
@@ -747,7 +772,32 @@
     function resetGame() {
       const _m = document.getElementById('resultModal');
       if (_m) { _m.style.display = 'none'; _m.classList.remove('show'); }
-            gameState.questionList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
+            
+      // English Coach'tan aktarılan set varsa yükle
+      (function() {
+        try {
+          var imp = localStorage.getItem('ge_active_set');
+          if (imp && window.location.search.indexOf('mode=imported') > -1) {
+            var data = JSON.parse(imp);
+            if (data && data.words && data.words.length >= 2) {
+              // words formatını oyun formatına çevir
+              var converted = data.words.map(function(w, i) {
+                return { word: (w.en||'').toUpperCase(), label: w.en||'', image: '📖', tr: w.tr||'', answer: w.en||'' };
+              });
+              fallbackDatabase['easy'] = converted;
+              fallbackDatabase['medium'] = converted;
+              fallbackDatabase['hard'] = converted;
+              // Banner göster
+              var banner = document.createElement('div');
+              banner.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 14px rgba(240,83,240,.4)';
+              banner.textContent = '🎮 ' + (data.setName||'Set') + ' yüklendi! (' + data.words.length + ' kelime)';
+              document.body.appendChild(banner);
+              setTimeout(function(){ banner.remove(); }, 3000);
+            }
+          }
+        } catch(e) {}
+      })();
+      gameState.questionList = [...(fallbackDatabase[gameState.difficulty] || fallbackDatabase['easy'])];
       gameState.currentWordIndex = 0;
       gameState.score = 0;
       gameState.correct = 0;
