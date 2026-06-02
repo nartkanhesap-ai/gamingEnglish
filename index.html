@@ -319,6 +319,18 @@ body{font-family:var(--font-body);background:var(--paper);color:var(--ink);-webk
   .lesson-body{padding:20px 16px 50px}
   .quiz-opts{grid-template-columns:1fr}
 }
+
+/* ── ATLAS ANIMATIONS ─── */
+@keyframes atlasWiggle{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes atlasBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes atlasBlink{0%,88%,100%{transform:scaleY(1)}91%,96%{transform:scaleY(.1)}}
+@keyframes atlasTalk{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.35)}}
+@keyframes fadeUp{from{transform:translateY(12px);opacity:0}to{transform:translateY(0);opacity:1}}
+.atlas-bob{animation:atlasBob 2.4s ease-in-out infinite;transform-origin:60px 100px}
+.atlas-eye-l{animation:atlasBlink 3.8s ease-in-out infinite;transform-origin:48px 60px}
+.atlas-eye-r{animation:atlasBlink 3.8s 0.3s ease-in-out infinite;transform-origin:72px 60px}
+.atlas-paw{animation:atlasWiggle 1.4s ease-in-out infinite;transform-origin:98px 74px}
+.atlas-mouth.talking{animation:atlasTalk .3s ease-in-out infinite;transform-origin:60px 78px}
 </style>
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -585,12 +597,15 @@ firebase.auth().onAuthStateChanged(async function(user){
 ══════════════════════════════════════════ -->
 <div class="lesson-overlay" id="lessonOverlay">
   <div class="lesson-topbar">
-    <button class="btn btn-ghost btn-sm" onclick="closeLesson()">← Geri</button>
-    <div style="flex:1">
-      <div style="font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--ink)" id="lessonTitle">—</div>
+    <button class="btn btn-ghost btn-sm" onclick="closeLesson()" style="flex-shrink:0">✕</button>
+    <div style="flex:1;min-width:0">
+      <div style="font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="lessonTitle">—</div>
       <div style="font-size:12px;color:var(--ink-soft);font-weight:600" id="lessonSub">—</div>
     </div>
-    <div class="pbar" style="width:120px"><i id="lessonProgress" style="width:0%"></i></div>
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <div style="display:flex;gap:5px;align-items:center" id="lessonStepDots"></div>
+      <div class="pbar" style="width:80px"><i id="lessonProgress" style="width:0%"></i></div>
+    </div>
   </div>
   <div class="lesson-body" id="lessonBody"><!-- JS ile doldurulur --></div>
 </div>
@@ -620,6 +635,1451 @@ firebase.auth().onAuthStateChanged(async function(user){
 
 
 <script>
+// Atlas SVG - Kid ve Teen versiyonları + animasyonlar
+// JSX'den saf SVG/JS'e çevrildi
+
+function getAtlasKidSVG(size, extraStyle) {
+  size = size || 120;
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 120 120" style="' + (extraStyle||'') + '" aria-label="Atlas the Fox">'
+    + '<defs>'
+    + '<linearGradient id="atlasBody" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0" stop-color="#F4863C"/>'
+    + '<stop offset="1" stop-color="#E5603C"/>'
+    + '</linearGradient>'
+    + '</defs>'
+    + '<ellipse cx="60" cy="110" rx="30" ry="6" fill="rgba(0,0,0,0.10)"/>'
+    + '<path d="M28 44 L34 14 L54 38 Z" fill="url(#atlasBody)"/>'
+    + '<path d="M92 44 L86 14 L66 38 Z" fill="url(#atlasBody)"/>'
+    + '<path d="M34 38 L37 22 L47 36 Z" fill="#2A1A12"/>'
+    + '<path d="M86 38 L83 22 L73 36 Z" fill="#2A1A12"/>'
+    + '<circle cx="60" cy="62" r="34" fill="url(#atlasBody)"/>'
+    + '<path d="M60 50 q26 6 22 30 q-22 14 -44 0 q-4 -24 22 -30 Z" fill="#FBF6EA"/>'
+    + '<circle cx="48" cy="60" r="5.4" fill="#241008"/>'
+    + '<circle cx="72" cy="60" r="5.4" fill="#241008"/>'
+    + '<circle cx="49.6" cy="58.2" r="1.7" fill="#fff"/>'
+    + '<circle cx="73.6" cy="58.2" r="1.7" fill="#fff"/>'
+    + '<path d="M60 74 l-5 -5 h10 Z" fill="#241008"/>'
+    + '<path d="M60 74 v6" stroke="#241008" stroke-width="2.4" stroke-linecap="round"/>'
+    + '<path d="M30 36 q30 -20 60 0 q-6 6 -30 6 q-24 0 -30 -6 Z" fill="#1E8A53"/>'
+    + '<rect x="42" y="22" width="36" height="16" rx="8" fill="#14633A"/>'
+    + '<circle cx="60" cy="30" r="5" fill="#FFC53D"/>'
+    + '<g style="transform-origin:98px 78px;animation:atlasWiggle 1.4s ease-in-out infinite">'
+    + '<circle cx="100" cy="74" r="9" fill="url(#atlasBody)"/>'
+    + '</g>'
+    + '</svg>';
+}
+
+function getAtlasTeenSVG(size, extraStyle) {
+  size = size || 120;
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 120 120" style="' + (extraStyle||'') + '" aria-label="Atlas Teen">'
+    + '<defs>'
+    + '<linearGradient id="atlasBodyT" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0" stop-color="#E8895A"/><stop offset="1" stop-color="#C9553A"/>'
+    + '</linearGradient>'
+    + '<linearGradient id="hoodieT" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0" stop-color="#2A3242"/><stop offset="1" stop-color="#1B2230"/>'
+    + '</linearGradient>'
+    + '</defs>'
+    + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="rgba(0,0,0,0.18)"/>'
+    + '<path d="M22 116 q4 -34 38 -34 q34 0 38 34 Z" fill="url(#hoodieT)"/>'
+    + '<path d="M44 88 q16 12 32 0 l-2 12 q-14 9 -28 0 Z" fill="#222a38"/>'
+    + '<path d="M54 92 v16" stroke="#19D89B" stroke-width="2.6" stroke-linecap="round"/>'
+    + '<path d="M66 92 v16" stroke="#19D89B" stroke-width="2.6" stroke-linecap="round"/>'
+    + '<circle cx="54" cy="110" r="2.4" fill="#19D89B"/>'
+    + '<circle cx="66" cy="110" r="2.4" fill="#19D89B"/>'
+    + '<path d="M30 92 q30 18 60 0" fill="none" stroke="#11161f" stroke-width="5" stroke-linecap="round"/>'
+    + '<rect x="24" y="84" width="12" height="18" rx="5" fill="#11161f"/>'
+    + '<rect x="84" y="84" width="12" height="18" rx="5" fill="#11161f"/>'
+    + '<rect x="26" y="87" width="8" height="12" rx="4" fill="#19D89B" opacity="0.85"/>'
+    + '<path d="M28 42 L33 13 L53 36 Z" fill="url(#atlasBodyT)"/>'
+    + '<path d="M92 42 L87 13 L67 36 Z" fill="url(#atlasBodyT)"/>'
+    + '<path d="M34 35 L36 21 L46 34 Z" fill="#2A1A12"/>'
+    + '<path d="M86 35 L84 21 L74 34 Z" fill="#2A1A12"/>'
+    + '<circle cx="90" cy="44" r="2.6" fill="#9B8CFF"/>'
+    + '<circle cx="60" cy="60" r="33" fill="url(#atlasBodyT)"/>'
+    + '<path d="M60 50 q24 6 20 28 q-20 13 -40 0 q-4 -22 20 -28 Z" fill="#F0E6D6"/>'
+    + '<path d="M42 58 q6 -5 12 0" fill="none" stroke="#241008" stroke-width="3.4" stroke-linecap="round"/>'
+    + '<path d="M66 58 q6 -5 12 0" fill="none" stroke="#241008" stroke-width="3.4" stroke-linecap="round"/>'
+    + '<path d="M60 70 l-4 -4 h8 Z" fill="#241008"/>'
+    + '<path d="M58 78 q8 4 14 -2" fill="none" stroke="#241008" stroke-width="2.2" stroke-linecap="round"/>'
+    + '<path d="M30 40 q30 -30 60 0 q-30 -8 -60 0 Z" fill="url(#hoodieT)"/>'
+    + '<path d="M28 38 q32 -34 64 0 q-32 -12 -64 0 Z" fill="#28303f"/>'
+    + '<rect x="28" y="34" width="64" height="9" rx="4" fill="#19D89B"/>'
+    + '<g style="transform-origin:96px 86px;animation:atlasWiggle 2.4s ease-in-out infinite">'
+    + '<circle cx="98" cy="82" r="8.5" fill="url(#atlasBodyT)"/>'
+    + '</g>'
+    + '</svg>';
+}
+
+function getAtlasFaceKidSVG(size) {
+  size = size || 40;
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 48 48">'
+    + '<circle cx="24" cy="24" r="22" fill="#F4863C"/>'
+    + '<path d="M10 16 L13 5 L22 14 Z" fill="#E5603C"/>'
+    + '<path d="M38 16 L35 5 L26 14 Z" fill="#E5603C"/>'
+    + '<path d="M24 18 q14 3 12 17 q-12 8 -24 0 q-2 -14 12 -17 Z" fill="#FBF6EA"/>'
+    + '<circle cx="18" cy="24" r="3" fill="#241008"/>'
+    + '<circle cx="30" cy="24" r="3" fill="#241008"/>'
+    + '<circle cx="19" cy="23" r="1" fill="#fff"/>'
+    + '<circle cx="31" cy="23" r="1" fill="#fff"/>'
+    + '<path d="M24 31 l-3 -3 h6 Z" fill="#241008"/>'
+    + '</svg>';
+}
+
+function getAtlasFaceTeenSVG(size) {
+  size = size || 40;
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 48 48">'
+    + '<circle cx="24" cy="24" r="22" fill="#D9744E"/>'
+    + '<path d="M10 16 L13 5 L22 14 Z" fill="#C9553A"/>'
+    + '<path d="M38 16 L35 5 L26 14 Z" fill="#C9553A"/>'
+    + '<path d="M24 19 q13 3 11 16 q-11 8 -22 0 q-2 -13 11 -16 Z" fill="#F0E6D6"/>'
+    + '<path d="M14 23 q4 -3 8 0" fill="none" stroke="#241008" stroke-width="2.6" stroke-linecap="round"/>'
+    + '<path d="M26 23 q4 -3 8 0" fill="none" stroke="#241008" stroke-width="2.6" stroke-linecap="round"/>'
+    + '<path d="M24 30 l-2.6 -2.6 h5.2 Z" fill="#241008"/>'
+    + '<path d="M9 16 q15 -16 30 0 q-15 -6 -30 0 Z" fill="#28303f"/>'
+    + '<rect x="9" y="13" width="30" height="5" rx="2.5" fill="#19D89B"/>'
+    + '</svg>';
+}
+
+function getAtlasSVG(size, forceMode) {
+  var mode = forceMode || (document.documentElement.getAttribute('data-mode')) || 'explorer';
+  return mode === 'challenger' ? getAtlasTeenSVG(size) : getAtlasKidSVG(size);
+}
+
+function getAtlasFaceSVG(size, forceMode) {
+  var mode = forceMode || (document.documentElement.getAttribute('data-mode')) || 'explorer';
+  return mode === 'challenger' ? getAtlasFaceTeenSVG(size) : getAtlasFaceKidSVG(size);
+}
+
+// Talking atlas - animasyonlu ağız ile
+function getAtlasTalkingKidSVG(size, isTalking) {
+  size = size || 140;
+  var mouthPath = isTalking
+    ? '<ellipse cx="60" cy="78" rx="7" ry="5" fill="#241008"/><ellipse cx="60" cy="79" rx="5" ry="3" fill="#E5603C"/>'
+    : '<path d="M53 76 q7 6 14 0" stroke="#241008" stroke-width="2.4" stroke-linecap="round" fill="none"/>';
+  return '<svg width="' + size + '" height="' + (size*1.15|0) + '" viewBox="0 0 120 138" aria-label="Atlas">'
+    + '<style>'
+    + '@keyframes atlasWiggle{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}'
+    + '@keyframes atlasBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}'
+    + '@keyframes atlasBlink{0%,88%,100%{transform:scaleY(1)}91%,96%{transform:scaleY(.1)}}'
+    + '.atlas-bob{animation:atlasBob 2.4s ease-in-out infinite;transform-origin:60px 100px}'
+    + '.atlas-eye-l{animation:atlasBlink 3.8s ease-in-out infinite;transform-origin:48px 60px}'
+    + '.atlas-eye-r{animation:atlasBlink 3.8s 0.2s ease-in-out infinite;transform-origin:72px 60px}'
+    + '.atlas-paw{animation:atlasWiggle 1.4s ease-in-out infinite;transform-origin:98px 78px}'
+    + '</style>'
+    + '<defs>'
+    + '<linearGradient id="ab2" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0" stop-color="#F4863C"/><stop offset="1" stop-color="#E5603C"/>'
+    + '</linearGradient>'
+    + '</defs>'
+    + '<ellipse cx="60" cy="130" rx="28" ry="5" fill="rgba(0,0,0,0.1)"/>'
+    + '<g class="atlas-bob">'
+    // Body
+    + '<ellipse cx="60" cy="108" rx="28" ry="24" fill="url(#ab2)"/>'
+    + '<ellipse cx="60" cy="114" rx="17" ry="14" fill="#FBF6EA"/>'
+    // Feet
+    + '<ellipse cx="44" cy="128" rx="9" ry="5" fill="#E5603C"/>'
+    + '<ellipse cx="76" cy="128" rx="9" ry="5" fill="#E5603C"/>'
+    // Tail
+    + '<path d="M32 118 Q12 105 18 88 Q24 74 36 82 Q26 96 32 112Z" fill="url(#ab2)"/>'
+    + '<path d="M18 88 Q16 75 26 80 Q20 88 22 98Z" fill="#FBF6EA"/>'
+    // Ears
+    + '<path d="M30 44 L36 16 L54 38 Z" fill="url(#ab2)"/>'
+    + '<path d="M90 44 L84 16 L66 38 Z" fill="url(#ab2)"/>'
+    + '<path d="M36 38 L38 22 L48 36 Z" fill="#2A1A12"/>'
+    + '<path d="M84 38 L82 22 L72 36 Z" fill="#2A1A12"/>'
+    // Head
+    + '<circle cx="60" cy="62" r="34" fill="url(#ab2)"/>'
+    + '<path d="M60 50 q26 6 22 30 q-22 14 -44 0 q-4 -24 22 -30 Z" fill="#FBF6EA"/>'
+    // Eyes
+    + '<g class="atlas-eye-l"><circle cx="48" cy="60" r="5.4" fill="#241008"/><circle cx="49.6" cy="58.2" r="1.7" fill="#fff"/></g>'
+    + '<g class="atlas-eye-r"><circle cx="72" cy="60" r="5.4" fill="#241008"/><circle cx="73.6" cy="58.2" r="1.7" fill="#fff"/></g>'
+    // Nose
+    + '<path d="M60 73 l-4 -4 h8 Z" fill="#241008"/>'
+    // Mouth
+    + mouthPath
+    // Cheeks
+    + '<ellipse cx="38" cy="68" rx="6" ry="4" fill="#F2A23C" opacity="0.4"/>'
+    + '<ellipse cx="82" cy="68" rx="6" ry="4" fill="#F2A23C" opacity="0.4"/>'
+    // Hat
+    + '<path d="M30 36 q30 -20 60 0 q-6 6 -30 6 q-24 0 -30 -6 Z" fill="#1E8A53"/>'
+    + '<rect x="42" y="22" width="36" height="16" rx="8" fill="#14633A"/>'
+    + '<circle cx="60" cy="30" r="5" fill="#FFC53D"/>'
+    // Waving paw
+    + '<g class="atlas-paw"><circle cx="100" cy="74" r="9" fill="url(#ab2)"/></g>'
+    + '</g>'
+    + '</svg>';
+}
+
+console.log('Atlas SVG helpers loaded');
+
+
+// Küçük SVG illüstrasyonları - kelime kartları için
+// Her kelime için 64x64 basit, tatlı SVG çizimi
+
+var WORD_SVGS = {
+  // ── GREETINGS ─────────────────────────────
+  'Hello': '<svg viewBox="0 0 64 64"><circle cx="32" cy="28" r="18" fill="#FDE68A"/><circle cx="25" cy="24" r="3" fill="#1C1C1C"/><circle cx="39" cy="24" r="3" fill="#1C1C1C"/><path d="M24 34 q8 8 16 0" stroke="#1C1C1C" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M14 16 Q10 8 6 12" stroke="#F4863C" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M50 16 Q54 8 58 12" stroke="#F4863C" stroke-width="3" fill="none" stroke-linecap="round"/></svg>',
+  'Goodbye': '<svg viewBox="0 0 64 64"><path d="M40 20 l14 -6 M40 26 l14 0 M40 32 l14 6" stroke="#F4863C" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="24" cy="32" r="14" fill="#FDE68A"/><circle cx="19" cy="29" r="2.5" fill="#1C1C1C"/><circle cx="29" cy="29" r="2.5" fill="#1C1C1C"/><path d="M18 37 q6 5 12 0" stroke="#1C1C1C" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
+  'Please': '<svg viewBox="0 0 64 64"><circle cx="32" cy="26" r="16" fill="#C7D2FE"/><path d="M22 46 Q32 58 42 46" stroke="#818CF8" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="26" cy="22" r="3" fill="#1C1C1C"/><circle cx="38" cy="22" r="3" fill="#1C1C1C"/><path d="M26 32 q6 5 12 0" stroke="#1C1C1C" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M32 10 L32 6 M24 12 L21 9 M40 12 L43 9" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" fill="none"/></svg>',
+  'Thank you': '<svg viewBox="0 0 64 64"><path d="M32 52 L18 36 Q10 26 20 20 Q28 16 32 26 Q36 16 44 20 Q54 26 46 36 Z" fill="#F87171"/><path d="M32 52 L18 36 Q10 26 20 20 Q28 16 32 26 Q36 16 44 20 Q54 26 46 36 Z" fill="none" stroke="#DC2626" stroke-width="1.5"/></svg>',
+  'Sorry': '<svg viewBox="0 0 64 64"><circle cx="32" cy="30" r="18" fill="#FDE68A"/><circle cx="25" cy="26" r="3" fill="#1C1C1C"/><circle cx="39" cy="26" r="3" fill="#1C1C1C"/><path d="M24 39 q8 -4 16 0" stroke="#1C1C1C" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M22 22 L18 18 M42 22 L46 18" stroke="#60A5FA" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="20" cy="17" r="2" fill="#60A5FA"/><circle cx="44" cy="17" r="2" fill="#60A5FA"/></svg>',
+  'Yes': '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="#D1FAE5"/><circle cx="32" cy="32" r="24" fill="none" stroke="#10B981" stroke-width="2.5"/><path d="M20 32 L28 42 L46 22" stroke="#10B981" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
+  'No': '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="#FEE2E2"/><circle cx="32" cy="32" r="24" fill="none" stroke="#EF4444" stroke-width="2.5"/><path d="M20 20 L44 44 M44 20 L20 44" stroke="#EF4444" stroke-width="4" stroke-linecap="round" fill="none"/></svg>',
+  'Name': '<svg viewBox="0 0 64 64"><rect x="8" y="20" width="48" height="30" rx="6" fill="#E0E7FF"/><rect x="8" y="20" width="48" height="30" rx="6" fill="none" stroke="#818CF8" stroke-width="2"/><rect x="14" y="28" width="20" height="3" rx="1.5" fill="#818CF8"/><rect x="14" y="34" width="32" height="3" rx="1.5" fill="#C7D2FE"/><rect x="14" y="40" width="24" height="3" rx="1.5" fill="#C7D2FE"/><circle cx="48" cy="28" r="6" fill="#F59E0B"/><path d="M45 28 L47 30 L51 25" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
+
+  // ── BODY ─────────────────────────────────
+  'Head': '<svg viewBox="0 0 64 64"><circle cx="32" cy="28" r="20" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/><circle cx="25" cy="24" r="3" fill="#1C1C1C"/><circle cx="39" cy="24" r="3" fill="#1C1C1C"/><path d="M26 34 q6 5 12 0" stroke="#1C1C1C" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M32 48 L32 56" stroke="#F4863C" stroke-width="4" stroke-linecap="round" fill="none"/></svg>',
+  'Eyes': '<svg viewBox="0 0 64 64"><ellipse cx="20" cy="32" rx="14" ry="10" fill="#fff" stroke="#1C1C1C" stroke-width="2"/><ellipse cx="44" cy="32" rx="14" ry="10" fill="#fff" stroke="#1C1C1C" stroke-width="2"/><circle cx="20" cy="32" r="5" fill="#60A5FA"/><circle cx="44" cy="32" r="5" fill="#60A5FA"/><circle cx="21" cy="30" r="2" fill="#1C1C1C"/><circle cx="45" cy="30" r="2" fill="#1C1C1C"/><circle cx="22" cy="29" r="1" fill="#fff"/><circle cx="46" cy="29" r="1" fill="#fff"/></svg>',
+  'Ears': '<svg viewBox="0 0 64 64"><ellipse cx="16" cy="32" rx="10" ry="14" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/><ellipse cx="48" cy="32" rx="10" ry="14" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/><ellipse cx="16" cy="32" rx="5" ry="8" fill="#FCA5A5"/><ellipse cx="48" cy="32" rx="5" ry="8" fill="#FCA5A5"/></svg>',
+  'Mouth': '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/><path d="M18 36 Q32 50 46 36" stroke="#1C1C1C" stroke-width="3" fill="#F87171" stroke-linecap="round"/><path d="M18 36 Q32 50 46 36" fill="#F87171"/><circle cx="24" cy="36" r="3" fill="#fff"/><circle cx="32" cy="38" r="3" fill="#fff"/><circle cx="40" cy="36" r="3" fill="#fff"/></svg>',
+  'Hands': '<svg viewBox="0 0 64 64"><path d="M32 44 L20 30 Q16 22 22 20 Q26 19 28 24 L28 14 Q28 10 32 10 Q36 10 36 14 L36 24 Q38 19 42 20 Q48 22 44 30 Z" fill="#FDE68A" stroke="#F59E0B" stroke-width="1.5"/></svg>',
+  'Legs': '<svg viewBox="0 0 64 64"><rect x="16" y="8" width="14" height="32" rx="7" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/><rect x="34" y="8" width="14" height="32" rx="7" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/><rect x="12" y="38" width="20" height="14" rx="5" fill="#60A5FA" stroke="#3B82F6" stroke-width="1.5"/><rect x="32" y="38" width="20" height="14" rx="5" fill="#60A5FA" stroke="#3B82F6" stroke-width="1.5"/></svg>',
+  'Nose': '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/><path d="M24 32 Q32 22 40 32 Q36 42 28 42 Z" fill="#FCA5A5" stroke="#F87171" stroke-width="1.5"/><circle cx="27" cy="36" r="2.5" fill="#1C1C1C" opacity="0.4"/><circle cx="37" cy="36" r="2.5" fill="#1C1C1C" opacity="0.4"/></svg>',
+  'Heart': '<svg viewBox="0 0 64 64"><path d="M32 52 L14 34 Q6 22 18 16 Q26 12 32 24 Q38 12 46 16 Q58 22 50 34 Z" fill="#F87171"/><path d="M32 52 L14 34 Q6 22 18 16 Q26 12 32 24 Q38 12 46 16 Q58 22 50 34 Z" fill="none" stroke="#DC2626" stroke-width="1.5"/></svg>',
+
+  // ── COLORS ─────────────────────────────────
+  'Red': '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#EF4444"/><text x="32" y="46" text-anchor="middle" font-size="28" fill="#fff" font-weight="bold">R</text></svg>',
+  'Blue': '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#3B82F6"/><text x="32" y="46" text-anchor="middle" font-size="28" fill="#fff" font-weight="bold">B</text></svg>',
+  'Green': '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#22C55E"/><text x="32" y="46" text-anchor="middle" font-size="28" fill="#fff" font-weight="bold">G</text></svg>',
+  'Yellow': '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#EAB308"/><text x="32" y="46" text-anchor="middle" font-size="28" fill="#fff" font-weight="bold">Y</text></svg>',
+  'Circle': '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="none" stroke="#8B5CF6" stroke-width="5"/><circle cx="32" cy="32" r="12" fill="#DDD6FE"/></svg>',
+  'Square': '<svg viewBox="0 0 64 64"><rect x="10" y="10" width="44" height="44" rx="4" fill="none" stroke="#3B82F6" stroke-width="5"/><rect x="20" y="20" width="24" height="24" rx="3" fill="#BFDBFE"/></svg>',
+  'Triangle': '<svg viewBox="0 0 64 64"><polygon points="32,8 58,56 6,56" fill="none" stroke="#EF4444" stroke-width="5" stroke-linejoin="round"/><polygon points="32,22 48,52 16,52" fill="#FEE2E2"/></svg>',
+  'Star': '<svg viewBox="0 0 64 64"><polygon points="32,6 38,24 58,24 42,36 48,54 32,42 16,54 22,36 6,24 26,24" fill="#FBBF24" stroke="#F59E0B" stroke-width="1.5"/></svg>',
+
+  // ── ANIMALS ───────────────────────────────
+  'Cat': '<svg viewBox="0 0 64 64"><polygon points="14,24 8,8 22,18" fill="#9CA3AF"/><polygon points="50,24 56,8 42,18" fill="#9CA3AF"/><circle cx="32" cy="34" r="20" fill="#9CA3AF"/><ellipse cx="32" cy="40" rx="12" ry="8" fill="#F9FAFB"/><circle cx="24" cy="30" r="4" fill="#1C1C1C"/><circle cx="40" cy="30" r="4" fill="#1C1C1C"/><circle cx="25" cy="29" r="1.5" fill="#fff"/><circle cx="41" cy="29" r="1.5" fill="#fff"/><ellipse cx="32" cy="38" rx="3" ry="2" fill="#F9A8D4"/><path d="M22 44 Q32 50 42 44" stroke="#1C1C1C" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 42 L6 38 M20 44 L6 44 M20 46 L6 50" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M44 42 L58 38 M44 44 L58 44 M44 46 L58 50" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>',
+  'Dog': '<svg viewBox="0 0 64 64"><ellipse cx="20" cy="24" rx="8" ry="14" fill="#D97706"/><ellipse cx="44" cy="24" rx="8" ry="14" fill="#D97706"/><circle cx="32" cy="34" r="20" fill="#D97706"/><ellipse cx="32" cy="42" rx="12" ry="8" fill="#FEF3C7"/><circle cx="26" cy="30" r="4" fill="#1C1C1C"/><circle cx="38" cy="30" r="4" fill="#1C1C1C"/><circle cx="27" cy="29" r="1.5" fill="#fff"/><circle cx="39" cy="29" r="1.5" fill="#fff"/><ellipse cx="32" cy="40" rx="4" ry="3" fill="#92400E"/><path d="M22 46 Q32 54 42 46" stroke="#92400E" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>',
+  'Lion': '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="#F59E0B" opacity="0.4"/><circle cx="32" cy="32" r="18" fill="#D97706"/><ellipse cx="32" cy="38" rx="10" ry="7" fill="#FEF3C7"/><circle cx="26" cy="29" r="3.5" fill="#1C1C1C"/><circle cx="38" cy="29" r="3.5" fill="#1C1C1C"/><circle cx="27" cy="28" r="1.4" fill="#fff"/><circle cx="39" cy="28" r="1.4" fill="#fff"/><ellipse cx="32" cy="36" rx="3" ry="2" fill="#B45309"/><path d="M23 41 Q32 48 41 41" stroke="#B45309" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>',
+  'Elephant': '<svg viewBox="0 0 64 64"><circle cx="36" cy="26" r="18" fill="#94A3B8"/><ellipse cx="28" cy="44" rx="16" ry="12" fill="#94A3B8"/><path d="M22 38 Q14 46 16 56 Q18 62 22 60 Q26 58 24 48" fill="#94A3B8" stroke="#64748B" stroke-width="1.5"/><circle cx="30" cy="20" r="3.5" fill="#1C1C1C"/><circle cx="31" cy="19" r="1.4" fill="#fff"/><path d="M16 16 L10 6 L22 12 Z" fill="#94A3B8"/><path d="M42 16 L48 6 L36 12 Z" fill="#94A3B8"/><path d="M24 32 L30 30" stroke="#475569" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M26 35 L32 33" stroke="#475569" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>',
+  'Bird': '<svg viewBox="0 0 64 64"><circle cx="36" cy="26" r="14" fill="#60A5FA"/><ellipse cx="24" cy="38" rx="16" ry="10" fill="#60A5FA"/><polygon points="50,22 62,20 52,30" fill="#FDE68A"/><circle cx="42" cy="22" r="3" fill="#1C1C1C"/><circle cx="43" cy="21" r="1.2" fill="#fff"/><path d="M8 36 Q4 28 0 32" fill="#93C5FD"/><path d="M8 36 Q4 44 0 40" fill="#93C5FD"/><path d="M8 36 L24 38" stroke="#3B82F6" stroke-width="2" fill="none"/></svg>',
+  'Fish': '<svg viewBox="0 0 64 64"><ellipse cx="30" cy="32" rx="22" ry="14" fill="#34D399"/><polygon points="52,20 64,32 52,44" fill="#6EE7B7"/><polygon points="8,22 2,32 8,42" fill="#6EE7B7"/><circle cx="18" cy="28" r="4" fill="#fff"/><circle cx="18" cy="28" r="2" fill="#1C1C1C"/><circle cx="19" cy="27" r="1" fill="#fff"/><ellipse cx="38" cy="36" rx="4" ry="2" fill="#059669" opacity="0.5"/><ellipse cx="32" cy="38" rx="4" ry="2" fill="#059669" opacity="0.5"/></svg>',
+  'Rabbit': '<svg viewBox="0 0 64 64"><ellipse cx="22" cy="18" rx="7" ry="16" fill="#E5E7EB"/><ellipse cx="42" cy="18" rx="7" ry="16" fill="#E5E7EB"/><ellipse cx="22" cy="20" rx="3.5" ry="10" fill="#FCA5A5"/><ellipse cx="42" cy="20" rx="3.5" ry="10" fill="#FCA5A5"/><circle cx="32" cy="38" r="18" fill="#E5E7EB"/><ellipse cx="32" cy="44" rx="10" ry="7" fill="#fff"/><circle cx="26" cy="34" r="4" fill="#1C1C1C"/><circle cx="38" cy="34" r="4" fill="#1C1C1C"/><circle cx="27" cy="33" r="1.5" fill="#fff"/><circle cx="39" cy="33" r="1.5" fill="#fff"/><ellipse cx="32" cy="42" rx="3" ry="2" fill="#FCA5A5"/><path d="M24 46 Q32 52 40 46" stroke="#6B7280" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
+  'Tiger': '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="#F97316"/><ellipse cx="32" cy="40" rx="13" ry="9" fill="#FEF3C7"/><circle cx="24" cy="26" r="4.5" fill="#1C1C1C"/><circle cx="40" cy="26" r="4.5" fill="#1C1C1C"/><circle cx="25.5" cy="24.5" r="1.8" fill="#fff"/><circle cx="41.5" cy="24.5" r="1.8" fill="#fff"/><ellipse cx="32" cy="38" rx="4" ry="2.5" fill="#B45309"/><path d="M22 44 Q32 52 42 44" stroke="#B45309" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M20 20 L16 12 M26 18 L24 10 M38 18 L40 10 M44 20 L48 12" stroke="#C2410C" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>',
+
+  // ── FOOD ──────────────────────────────────
+  'Apple': '<svg viewBox="0 0 64 64"><circle cx="32" cy="36" r="22" fill="#EF4444"/><path d="M28 14 Q32 6 36 14" stroke="#22C55E" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M32 6 L32 14" stroke="#15803D" stroke-width="2.5" stroke-linecap="round" fill="none"/><ellipse cx="24" cy="30" rx="5" ry="8" fill="#FCA5A5" opacity="0.5"/></svg>',
+  'Bread': '<svg viewBox="0 0 64 64"><rect x="6" y="24" width="52" height="32" rx="14" fill="#D97706"/><rect x="10" y="28" width="44" height="24" rx="10" fill="#F59E0B"/><ellipse cx="32" cy="28" rx="28" ry="10" fill="#FBBF24"/><path d="M18 38 Q24 34 30 38 Q36 34 42 38 Q48 34 54 38" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>',
+  'Milk': '<svg viewBox="0 0 64 64"><rect x="18" y="20" width="28" height="36" rx="6" fill="#E2E8F0"/><rect x="18" y="20" width="28" height="36" rx="6" fill="none" stroke="#94A3B8" stroke-width="2"/><rect x="20" y="8" width="24" height="14" rx="4" fill="#CBD5E1"/><text x="32" y="42" text-anchor="middle" font-size="9" fill="#1E40AF" font-weight="bold">MILK</text><path d="M18 30 Q32 36 46 30" stroke="#fff" stroke-width="2" fill="none"/></svg>',
+  'Water': '<svg viewBox="0 0 64 64"><path d="M32 8 Q44 24 44 36 Q44 50 32 52 Q20 50 20 36 Q20 24 32 8Z" fill="#60A5FA"/><path d="M32 8 Q44 24 44 36 Q44 50 32 52 Q20 50 20 36 Q20 24 32 8Z" fill="none" stroke="#3B82F6" stroke-width="2"/><ellipse cx="26" cy="32" rx="4" ry="7" fill="#93C5FD" opacity="0.6"/></svg>',
+  'Rice': '<svg viewBox="0 0 64 64"><ellipse cx="32" cy="40" rx="24" ry="14" fill="#E2E8F0"/><ellipse cx="32" cy="40" rx="24" ry="14" fill="none" stroke="#94A3B8" stroke-width="2"/><ellipse cx="32" cy="28" rx="22" ry="6" fill="#F8FAFC"/><rect x="10" y="28" width="44" height="12" fill="#F1F5F9"/><circle cx="22" cy="34" r="2" fill="#fff"/><circle cx="28" cy="36" r="2" fill="#fff"/><circle cx="34" cy="33" r="2" fill="#fff"/><circle cx="40" cy="36" r="2" fill="#fff"/><circle cx="46" cy="34" r="2" fill="#fff"/></svg>',
+  'Egg': '<svg viewBox="0 0 64 64"><ellipse cx="32" cy="34" rx="20" ry="24" fill="#FEF9C3" stroke="#FDE047" stroke-width="2"/><ellipse cx="24" cy="30" rx="4" ry="6" fill="#FEF3C7" opacity="0.6"/></svg>',
+  'Chocolate': '<svg viewBox="0 0 64 64"><rect x="8" y="16" width="48" height="32" rx="6" fill="#7C2D12"/><rect x="12" y="20" width="40" height="24" rx="4" fill="#92400E"/><line x1="28" y1="20" x2="28" y2="44" stroke="#7C2D12" stroke-width="2.5"/><line x1="44" y1="20" x2="44" y2="44" stroke="#7C2D12" stroke-width="2.5"/><line x1="12" y1="32" x2="52" y2="32" stroke="#7C2D12" stroke-width="2.5"/></svg>',
+  'Orange': '<svg viewBox="0 0 64 64"><circle cx="32" cy="34" r="22" fill="#FB923C"/><path d="M30 12 Q32 6 34 12" stroke="#22C55E" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M32 6 L32 14" stroke="#15803D" stroke-width="2.5" stroke-linecap="round" fill="none"/><ellipse cx="24" cy="30" rx="5" ry="8" fill="#FED7AA" opacity="0.5"/><line x1="32" y1="14" x2="32" y2="54" stroke="#FB923C" stroke-width="1.5" opacity="0.4"/><line x1="12" y1="34" x2="52" y2="34" stroke="#FB923C" stroke-width="1.5" opacity="0.4"/></svg>',
+
+  // ── HOUSE ────────────────────────────────
+  'Kitchen': '<svg viewBox="0 0 64 64"><rect x="6" y="30" width="52" height="28" rx="4" fill="#E0E7FF"/><rect x="6" y="30" width="52" height="28" rx="4" fill="none" stroke="#818CF8" stroke-width="2"/><rect x="10" y="34" width="20" height="18" rx="3" fill="#fff" stroke="#C7D2FE" stroke-width="1.5"/><rect x="34" y="34" width="20" height="18" rx="3" fill="#fff" stroke="#C7D2FE" stroke-width="1.5"/><path d="M10 18 L32 6 L54 18 Z" fill="#F87171"/><path d="M10 18 L32 6 L54 18" fill="none" stroke="#DC2626" stroke-width="2"/></svg>',
+  'Bedroom': '<svg viewBox="0 0 64 64"><rect x="4" y="32" width="56" height="26" rx="4" fill="#BFDBFE" stroke="#3B82F6" stroke-width="2"/><rect x="8" y="36" width="48" height="14" rx="8" fill="#EFF6FF"/><rect x="8" y="36" width="20" height="14" rx="6" fill="#FDE68A" stroke="#F59E0B" stroke-width="1.5"/><rect x="32" y="36" width="24" height="14" rx="6" fill="#FDE68A" stroke="#F59E0B" stroke-width="1.5"/><rect x="4" y="18" width="8" height="18" rx="3" fill="#93C5FD"/><rect x="52" y="18" width="8" height="18" rx="3" fill="#93C5FD"/></svg>',
+  'Bathroom': '<svg viewBox="0 0 64 64"><rect x="8" y="28" width="48" height="28" rx="18" fill="#E0F2FE" stroke="#7DD3FC" stroke-width="2"/><rect x="16" y="32" width="32" height="20" rx="14" fill="#F0FDFF"/><circle cx="32" cy="18" r="8" fill="#E0F2FE" stroke="#7DD3FC" stroke-width="2"/><path d="M28 14 L36 14 M32 10 L32 18" stroke="#7DD3FC" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>',
+  'Door': '<svg viewBox="0 0 64 64"><rect x="12" y="8" width="40" height="52" rx="4" fill="#D97706" stroke="#92400E" stroke-width="2.5"/><rect x="16" y="12" width="32" height="44" rx="3" fill="#F59E0B"/><circle cx="44" cy="36" r="4" fill="#C0C0C0"/><circle cx="44" cy="36" r="2" fill="#A0A0A0"/></svg>',
+  'Window': '<svg viewBox="0 0 64 64"><rect x="8" y="8" width="48" height="48" rx="4" fill="#BFDBFE" stroke="#3B82F6" stroke-width="3"/><line x1="32" y1="8" x2="32" y2="56" stroke="#3B82F6" stroke-width="2.5"/><line x1="8" y1="32" x2="56" y2="32" stroke="#3B82F6" stroke-width="2.5"/><circle cx="20" cy="18" r="4" fill="#FDE68A" opacity="0.7"/></svg>',
+  'Chair': '<svg viewBox="0 0 64 64"><rect x="12" y="22" width="40" height="8" rx="4" fill="#D97706" stroke="#92400E" stroke-width="1.5"/><rect x="12" y="8" width="8" height="24" rx="4" fill="#D97706" stroke="#92400E" stroke-width="1.5"/><rect x="16" y="30" width="8" height="28" rx="4" fill="#92400E"/><rect x="40" y="30" width="8" height="28" rx="4" fill="#92400E"/></svg>',
+  'Table': '<svg viewBox="0 0 64 64"><rect x="4" y="24" width="56" height="8" rx="4" fill="#92400E"/><rect x="10" y="32" width="8" height="28" rx="4" fill="#B45309"/><rect x="46" y="32" width="8" height="28" rx="4" fill="#B45309"/></svg>',
+  'Garden': '<svg viewBox="0 0 64 64"><ellipse cx="32" cy="54" rx="28" ry="8" fill="#22C55E"/><path d="M32 52 L32 28" stroke="#15803D" stroke-width="4" stroke-linecap="round" fill="none"/><circle cx="32" cy="22" r="18" fill="#4ADE80"/><circle cx="20" cy="28" r="10" fill="#22C55E"/><circle cx="44" cy="28" r="10" fill="#22C55E"/><circle cx="32" cy="16" r="8" fill="#86EFAC"/><circle cx="32" cy="22" r="4" fill="#FDE68A"/></svg>',
+
+  // ── FAMILY ───────────────────────────────
+  'Mother': '<svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="14" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/><path d="M12 58 Q12 40 32 38 Q52 40 52 58" fill="#F9A8D4"/><circle cx="26" cy="15" r="2.5" fill="#1C1C1C"/><circle cx="38" cy="15" r="2.5" fill="#1C1C1C"/><path d="M26 22 Q32 28 38 22" stroke="#B45309" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M18 8 Q32 2 46 8 Q40 4 32 6 Q24 4 18 8" fill="#8B4513" stroke="#713c12" stroke-width="1"/></svg>',
+  'Father': '<svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="14" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/><path d="M12 58 Q12 40 32 38 Q52 40 52 58" fill="#60A5FA"/><circle cx="26" cy="15" r="2.5" fill="#1C1C1C"/><circle cx="38" cy="15" r="2.5" fill="#1C1C1C"/><path d="M26 22 Q32 28 38 22" stroke="#B45309" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M18 6 Q32 2 46 6 L46 12 Q32 8 18 12 Z" fill="#1C1C1C"/></svg>',
+  'Sister': '<svg viewBox="0 0 64 64"><circle cx="32" cy="16" r="12" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/><path d="M14 58 Q14 40 32 38 Q50 40 50 58" fill="#FCA5A5"/><circle cx="27" cy="14" r="2.2" fill="#1C1C1C"/><circle cx="37" cy="14" r="2.2" fill="#1C1C1C"/><path d="M27 20 Q32 25 37 20" stroke="#B45309" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 6 Q26 2 38 4 Q44 8 40 8 Q32 4 24 8 Z" fill="#F97316"/></svg>',
+  'Brother': '<svg viewBox="0 0 64 64"><circle cx="32" cy="16" r="12" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/><path d="M14 58 Q14 40 32 38 Q50 40 50 58" fill="#86EFAC"/><circle cx="27" cy="14" r="2.2" fill="#1C1C1C"/><circle cx="37" cy="14" r="2.2" fill="#1C1C1C"/><path d="M27 20 Q32 25 37 20" stroke="#B45309" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
+  'Grandmother': '<svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="13" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/><path d="M12 58 Q12 40 32 38 Q52 40 52 58" fill="#DDD6FE"/><circle cx="26" cy="15" r="2.5" fill="#1C1C1C"/><circle cx="38" cy="15" r="2.5" fill="#1C1C1C"/><path d="M26 22 Q32 26 38 22" stroke="#B45309" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M19 8 Q32 2 45 8 Q40 6 32 8 Q24 6 19 8" fill="#D1D5DB"/></svg>',
+  'Grandfather': '<svg viewBox="0 0 64 64"><circle cx="32" cy="18" r="13" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/><path d="M12 58 Q12 40 32 38 Q52 40 52 58" fill="#BAE6FD"/><circle cx="26" cy="15" r="2.5" fill="#1C1C1C"/><circle cx="38" cy="15" r="2.5" fill="#1C1C1C"/><path d="M26 22 Q32 26 38 22" stroke="#B45309" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M19 8 Q32 2 45 8" fill="#D1D5DB" stroke="#D1D5DB" stroke-width="8" stroke-linecap="round"/><path d="M22 18 Q24 22 28 22 Q30 18 32 16 Q34 18 36 22 Q40 22 42 18" stroke="#D1D5DB" stroke-width="2" fill="none"/></svg>',
+  'Baby': '<svg viewBox="0 0 64 64"><circle cx="32" cy="26" r="18" fill="#FDE68A" stroke="#F59E0B" stroke-width="2"/><ellipse cx="32" cy="50" rx="16" ry="10" fill="#FCA5A5"/><circle cx="25" cy="22" r="3" fill="#1C1C1C"/><circle cx="39" cy="22" r="3" fill="#1C1C1C"/><circle cx="26" cy="21" r="1.2" fill="#fff"/><circle cx="40" cy="21" r="1.2" fill="#fff"/><ellipse cx="32" cy="30" rx="4" ry="3" fill="#FCA5A5"/><path d="M24 34 Q32 40 40 34" stroke="#B45309" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>',
+  'Family': '<svg viewBox="0 0 64 64"><circle cx="16" cy="22" r="10" fill="#FDE68A" stroke="#F59E0B" stroke-width="1.5"/><circle cx="48" cy="22" r="10" fill="#FDE68A" stroke="#F59E0B" stroke-width="1.5"/><circle cx="32" cy="26" r="8" fill="#FDE68A" stroke="#F59E0B" stroke-width="1.5"/><path d="M6 54 Q6 42 16 40 Q26 42 26 54" fill="#F9A8D4"/><path d="M38 54 Q38 42 48 40 Q58 42 58 54" fill="#60A5FA"/><path d="M24 54 Q24 44 32 43 Q40 44 40 54" fill="#86EFAC"/></svg>',
+
+  // ── WEATHER ─────────────────────────────
+  'Monday': '<svg viewBox="0 0 64 64"><rect x="8" y="8" width="48" height="48" rx="8" fill="#BFDBFE" stroke="#3B82F6" stroke-width="2"/><text x="32" y="38" text-anchor="middle" font-size="22" fill="#1D4ED8" font-weight="bold">M</text><text x="32" y="52" text-anchor="middle" font-size="10" fill="#3B82F6">Monday</text></svg>',
+  'Friday': '<svg viewBox="0 0 64 64"><rect x="8" y="8" width="48" height="48" rx="8" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/><text x="32" y="38" text-anchor="middle" font-size="22" fill="#D97706" font-weight="bold">F</text><text x="32" y="52" text-anchor="middle" font-size="10" fill="#F59E0B">Friday</text></svg>',
+  'Sunday': '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="14" fill="#FDE68A"/><path d="M32 10 L32 6 M32 58 L32 54 M10 32 L6 32 M58 32 L54 32 M17 17 L14 14 M50 50 L47 47 M47 17 L50 14 M14 50 L17 47" stroke="#F59E0B" stroke-width="3" stroke-linecap="round" fill="none"/></svg>',
+  'Sunny': '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="16" fill="#FDE68A"/><path d="M32 8 L32 4 M32 60 L32 56 M8 32 L4 32 M60 32 L56 32 M16 16 L13 13 M51 51 L48 48 M48 16 L51 13 M13 51 L16 48" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round" fill="none"/></svg>',
+  'Rainy': '<svg viewBox="0 0 64 64"><path d="M14 34 Q8 28 14 22 Q18 16 26 18 Q28 10 36 10 Q46 10 48 20 Q56 22 54 32 Q52 40 44 38 L18 38 Q12 38 14 34 Z" fill="#94A3B8"/><path d="M20 46 L16 56 M28 44 L24 56 M36 44 L32 56 M44 46 L40 56" stroke="#60A5FA" stroke-width="3" stroke-linecap="round" fill="none"/></svg>',
+  'Snowy': '<svg viewBox="0 0 64 64"><path d="M32 8 L32 56 M8 32 L56 32 M16 16 L48 48 M48 16 L16 48" stroke="#BAE6FD" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="32" cy="32" r="5" fill="#60A5FA"/><circle cx="32" cy="8" r="4" fill="#60A5FA"/><circle cx="32" cy="56" r="4" fill="#60A5FA"/><circle cx="8" cy="32" r="4" fill="#60A5FA"/><circle cx="56" cy="32" r="4" fill="#60A5FA"/></svg>',
+  'Windy': '<svg viewBox="0 0 64 64"><path d="M8 22 Q20 18 32 22 Q44 26 56 22" stroke="#94A3B8" stroke-width="3.5" stroke-linecap="round" fill="none"/><path d="M8 32 Q22 28 36 32 Q50 36 60 30" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M8 42 Q18 38 28 42 Q38 46 50 42" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M50 20 Q58 12 56 22 Q54 28 46 26" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>',
+  'Cloudy': '<svg viewBox="0 0 64 64"><ellipse cx="32" cy="36" rx="26" ry="18" fill="#CBD5E1"/><circle cx="20" cy="28" r="14" fill="#E2E8F0"/><circle cx="38" cy="24" r="18" fill="#E2E8F0"/><circle cx="50" cy="30" r="12" fill="#CBD5E1"/></svg>',
+};
+
+// Default fallback SVG
+function getWordSVG(word) {
+  if (WORD_SVGS[word]) return WORD_SVGS[word];
+  // Fallback: renkli daire ile baş harf
+  var colors = ['#F87171','#FB923C','#FBBF24','#34D399','#60A5FA','#A78BFA','#F472B6'];
+  var col = colors[word.charCodeAt(0) % colors.length];
+  return '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="' + col + '" opacity="0.85"/><text x="32" y="44" text-anchor="middle" font-size="28" fill="#fff" font-weight="bold">' + word.charAt(0) + '</text></svg>';
+}
+
+console.log('Word SVGs loaded:', Object.keys(WORD_SVGS).length, 'words');
+
+
+// ─── DERS İÇERİKLERİ — Her ünite için kapsamlı anlatım ──────
+
+function getIntroContent(unitTitle) {
+  var contents = {
+
+"Welcome! 👋": {
+  atlasText: "Merhaba! Ben Atlas! Bugün İngilizce'de nasıl selam verileceğini öğreneceğiz. Hadi başlayalım! 🦊",
+  atlasSpeak: "Hello! I am Atlas! Today we will learn how to say hello in English. Let us start!",
+  slides: [
+    {
+      icon: '👋',
+      title: 'İngilizce\'de Selamlama',
+      content: '<strong>Hello</strong> ve <strong>Hi</strong> kelimelerini herkese söyleyebilirsin! Sabah, öğleden sonra ya da akşam — her zaman kullanabilirsin.',
+      examples: [
+        { en: 'Hello!', tr: 'Merhaba!', icon: '👋' },
+        { en: 'Hi there!', tr: 'Hey, selam!', icon: '✌️' },
+        { en: 'Good morning!', tr: 'Günaydın!', icon: '☀️' },
+        { en: 'Good afternoon!', tr: 'İyi öğleden sonralar!', icon: '🌤️' },
+        { en: 'Good evening!', tr: 'İyi akşamlar!', icon: '🌙' },
+      ]
+    },
+    {
+      icon: '🤝',
+      title: 'Tanışma',
+      content: 'Birisiyle ilk kez tanıştığında şu kalıpları kullan:',
+      examples: [
+        { en: 'My name is Emma.', tr: 'Benim adım Emma.', icon: '🏷️' },
+        { en: 'What is your name?', tr: 'Senin adın ne?', icon: '❓' },
+        { en: 'Nice to meet you!', tr: 'Tanıştığımıza memnun oldum!', icon: '😊' },
+        { en: 'I am from Turkey.', tr: 'Ben Türkiye\'den geliyorum.', icon: '🇹🇷' },
+      ]
+    },
+    {
+      icon: '😊',
+      title: 'Nasılsın?',
+      content: '<strong>How are you?</strong> diye sorulunca ne cevap vereceksin?',
+      examples: [
+        { en: 'I am fine, thank you!', tr: 'İyiyim, teşekkürler!', icon: '😊' },
+        { en: 'I am great!', tr: 'Mükemmelim!', icon: '🌟' },
+        { en: 'I am happy!', tr: 'Mutluyum!', icon: '😄' },
+        { en: 'Not bad!', tr: 'Fena değil!', icon: '👍' },
+      ]
+    },
+    {
+      icon: '👋',
+      title: 'Vedalaşma',
+      content: 'Ayrılırken de İngilizce söyleyebilirsin!',
+      examples: [
+        { en: 'Goodbye!', tr: 'Hoşça kal!', icon: '🚪' },
+        { en: 'Bye bye!', tr: 'Bay bay!', icon: '👋' },
+        { en: 'See you tomorrow!', tr: 'Yarın görüşürüz!', icon: '📅' },
+        { en: 'See you later!', tr: 'Sonra görüşürüz!', icon: '⏰' },
+      ]
+    }
+  ]
+},
+
+"My Body 🧍": {
+  atlasText: "Vücudumuzun İngilizce adlarını öğrenelim! Kafadan ayağa kadar her şeyi biliyor olacaksın! 🦊",
+  atlasSpeak: "Let us learn the parts of our body in English! From head to toe!",
+  slides: [
+    {
+      icon: '👤',
+      title: 'Baş ve Yüz',
+      content: 'Yüzündeki organların İngilizce adları:',
+      examples: [
+        { en: 'Head', tr: 'Baş', icon: '👤' },
+        { en: 'Eyes', tr: 'Gözler', icon: '👀' },
+        { en: 'Ears', tr: 'Kulaklar', icon: '👂' },
+        { en: 'Nose', tr: 'Burun', icon: '👃' },
+        { en: 'Mouth', tr: 'Ağız', icon: '👄' },
+        { en: 'Hair', tr: 'Saç', icon: '💇' },
+      ]
+    },
+    {
+      icon: '🤲',
+      title: 'Gövde ve Kollar',
+      content: 'Vücudunun orta bölümü ve kollar:',
+      examples: [
+        { en: 'Shoulders', tr: 'Omuzlar', icon: '💪' },
+        { en: 'Arms', tr: 'Kollar', icon: '💪' },
+        { en: 'Hands', tr: 'Eller', icon: '🤲' },
+        { en: 'Fingers', tr: 'Parmaklar', icon: '🖐️' },
+        { en: 'Tummy', tr: 'Karın', icon: '🫃' },
+      ]
+    },
+    {
+      icon: '🦵',
+      title: 'Bacaklar ve Ayaklar',
+      content: 'Alt vücudun İngilizce adları:',
+      examples: [
+        { en: 'Legs', tr: 'Bacaklar', icon: '🦵' },
+        { en: 'Knees', tr: 'Dizler', icon: '🦵' },
+        { en: 'Feet', tr: 'Ayaklar', icon: '🦶' },
+        { en: 'Toes', tr: 'Ayak parmakları', icon: '🦶' },
+      ]
+    }
+  ]
+},
+
+"Animals 🐾": {
+  atlasText: "Hayvanları seviyorum! 🦊 Ben de bir hayvanım! Bugün pek çok hayvanın İngilizce adını öğreneceğiz!",
+  atlasSpeak: "I love animals! I am an animal too! Today we learn animal names in English!",
+  slides: [
+    {
+      icon: '🐾',
+      title: 'Çiftlik Hayvanları',
+      content: 'Çiftliklerde yaşayan hayvanlar:',
+      examples: [
+        { en: 'Cow', tr: 'İnek', icon: '🐮' },
+        { en: 'Horse', tr: 'At', icon: '🐴' },
+        { en: 'Chicken', tr: 'Tavuk', icon: '🐔' },
+        { en: 'Sheep', tr: 'Koyun', icon: '🐑' },
+        { en: 'Pig', tr: 'Domuz', icon: '🐷' },
+        { en: 'Duck', tr: 'Ördek', icon: '🦆' },
+      ]
+    },
+    {
+      icon: '🦁',
+      title: 'Yabani Hayvanlar',
+      content: 'Ormanlarda ve savalarda yaşayan hayvanlar:',
+      examples: [
+        { en: 'Lion', tr: 'Aslan', icon: '🦁' },
+        { en: 'Tiger', tr: 'Kaplan', icon: '🐯' },
+        { en: 'Elephant', tr: 'Fil', icon: '🐘' },
+        { en: 'Giraffe', tr: 'Zürafa', icon: '🦒' },
+        { en: 'Monkey', tr: 'Maymun', icon: '🐒' },
+        { en: 'Snake', tr: 'Yılan', icon: '🐍' },
+      ]
+    },
+    {
+      icon: '🐟',
+      title: 'Deniz Canlıları',
+      content: 'Denizde yaşayan hayvanlar:',
+      examples: [
+        { en: 'Fish', tr: 'Balık', icon: '🐟' },
+        { en: 'Dolphin', tr: 'Yunus', icon: '🐬' },
+        { en: 'Shark', tr: 'Köpekbalığı', icon: '🦈' },
+        { en: 'Crab', tr: 'Yengeç', icon: '🦀' },
+        { en: 'Octopus', tr: 'Ahtapot', icon: '🐙' },
+      ]
+    },
+    {
+      icon: '🔍',
+      title: 'Hayvan Özellikleri',
+      content: 'Hayvanları tanımlamak için kullanabileceğin kalıplar:',
+      examples: [
+        { en: 'It can fly.', tr: 'Uçabilir.', icon: '🦅' },
+        { en: 'It can swim.', tr: 'Yüzebilir.', icon: '🏊' },
+        { en: 'It has four legs.', tr: 'Dört ayağı var.', icon: '🐾' },
+        { en: 'It is big.', tr: 'Büyük.', icon: '🦣' },
+        { en: 'It eats grass.', tr: 'Ot yer.', icon: '🌿' },
+      ]
+    }
+  ]
+},
+
+"Food & Drinks 🍎": {
+  atlasText: "Yemek çok severim! Favori yiyeceklerinin İngilizce adlarını öğrenelim! 🍕🍎",
+  atlasSpeak: "I love food! Let us learn the names of foods in English!",
+  slides: [
+    {
+      icon: '🍎',
+      title: 'Meyveler',
+      content: 'Sağlıklı ve lezzetli meyvelerin İngilizce adları:',
+      examples: [
+        { en: 'Apple', tr: 'Elma', icon: '🍎' },
+        { en: 'Banana', tr: 'Muz', icon: '🍌' },
+        { en: 'Orange', tr: 'Portakal', icon: '🍊' },
+        { en: 'Strawberry', tr: 'Çilek', icon: '🍓' },
+        { en: 'Watermelon', tr: 'Karpuz', icon: '🍉' },
+        { en: 'Grapes', tr: 'Üzüm', icon: '🍇' },
+      ]
+    },
+    {
+      icon: '🥦',
+      title: 'Sebzeler',
+      content: 'Sebzelerin İngilizce adları:',
+      examples: [
+        { en: 'Carrot', tr: 'Havuç', icon: '🥕' },
+        { en: 'Tomato', tr: 'Domates', icon: '🍅' },
+        { en: 'Potato', tr: 'Patates', icon: '🥔' },
+        { en: 'Lettuce', tr: 'Marul', icon: '🥬' },
+        { en: 'Corn', tr: 'Mısır', icon: '🌽' },
+      ]
+    },
+    {
+      icon: '🍕',
+      title: 'Yemekler',
+      content: 'Popüler yemeklerin İngilizce adları:',
+      examples: [
+        { en: 'Pizza', tr: 'Pizza', icon: '🍕' },
+        { en: 'Sandwich', tr: 'Sandviç', icon: '🥪' },
+        { en: 'Soup', tr: 'Çorba', icon: '🍲' },
+        { en: 'Rice', tr: 'Pirinç/Pilav', icon: '🍚' },
+        { en: 'Pasta', tr: 'Makarna', icon: '🍝' },
+      ]
+    },
+    {
+      icon: '🥤',
+      title: 'İçecekler',
+      content: 'İçeceklerin İngilizce adları:',
+      examples: [
+        { en: 'Water', tr: 'Su', icon: '💧' },
+        { en: 'Milk', tr: 'Süt', icon: '🥛' },
+        { en: 'Juice', tr: 'Meyve suyu', icon: '🧃' },
+        { en: 'Tea', tr: 'Çay', icon: '🍵' },
+      ]
+    }
+  ]
+},
+
+"My Family 👨‍👩‍👧": {
+  atlasText: "Ailem benim için çok önemli! Aile üyelerinin İngilizce adlarını öğrenelim! 👨‍👩‍👧",
+  atlasSpeak: "My family is very important to me! Let us learn family words in English!",
+  slides: [
+    {
+      icon: '👨‍👩‍👧',
+      title: 'Aile Üyeleri',
+      content: 'Temel aile kelimelerini öğrenelim:',
+      examples: [
+        { en: 'Mother / Mum', tr: 'Anne', icon: '👩' },
+        { en: 'Father / Dad', tr: 'Baba', icon: '👨' },
+        { en: 'Sister', tr: 'Kız kardeş', icon: '👧' },
+        { en: 'Brother', tr: 'Erkek kardeş', icon: '👦' },
+        { en: 'Grandmother', tr: 'Büyükanne', icon: '👵' },
+        { en: 'Grandfather', tr: 'Büyükbaba', icon: '👴' },
+        { en: 'Baby', tr: 'Bebek', icon: '👶' },
+      ]
+    },
+    {
+      icon: '🗣️',
+      title: 'Aile Hakkında Konuşmak',
+      content: 'Aileden bahsederken kullanabileceğin cümleler:',
+      examples: [
+        { en: 'This is my mum.', tr: 'Bu benim annem.', icon: '👩' },
+        { en: 'He is my brother.', tr: 'O benim erkek kardeşim.', icon: '👦' },
+        { en: 'I have one sister.', tr: 'Bir kız kardeşim var.', icon: '👧' },
+        { en: 'We are a happy family!', tr: 'Mutlu bir aileyiz!', icon: '❤️' },
+      ]
+    },
+    {
+      icon: '🎂',
+      title: 'Yaşlar',
+      content: 'Yaş sormak ve cevap vermek:',
+      examples: [
+        { en: 'How old are you?', tr: 'Kaç yaşındasın?', icon: '❓' },
+        { en: 'I am eight years old.', tr: 'Sekiz yaşındayım.', icon: '8️⃣' },
+        { en: 'She is ten.', tr: 'O on yaşında.', icon: '🔟' },
+        { en: 'My grandma is sixty.', tr: 'Büyükannem altmış yaşında.', icon: '👵' },
+      ]
+    }
+  ]
+},
+
+"Days & Weather ⛅": {
+  atlasText: "Bugün hava nasıl? Ve bugün hangi gün? Bunları İngilizce söylemeyi öğrenelim! ⛅",
+  atlasSpeak: "What is the weather like today? And what day is it? Let us learn in English!",
+  slides: [
+    {
+      icon: '📅',
+      title: 'Haftanın Günleri',
+      content: 'Pazartesi\'den Pazar\'a — haftanın günleri:',
+      examples: [
+        { en: 'Monday', tr: 'Pazartesi', icon: '📅' },
+        { en: 'Tuesday', tr: 'Salı', icon: '📅' },
+        { en: 'Wednesday', tr: 'Çarşamba', icon: '📅' },
+        { en: 'Thursday', tr: 'Perşembe', icon: '📅' },
+        { en: 'Friday', tr: 'Cuma', icon: '🎉' },
+        { en: 'Saturday', tr: 'Cumartesi', icon: '🏖️' },
+        { en: 'Sunday', tr: 'Pazar', icon: '☀️' },
+      ]
+    },
+    {
+      icon: '⛅',
+      title: 'Hava Durumu',
+      content: 'Hava durumunu İngilizce nasıl anlatırsın?',
+      examples: [
+        { en: 'It is sunny.', tr: 'Güneşli.', icon: '☀️' },
+        { en: 'It is raining.', tr: 'Yağmur yağıyor.', icon: '🌧️' },
+        { en: 'It is snowing.', tr: 'Kar yağıyor.', icon: '❄️' },
+        { en: 'It is cloudy.', tr: 'Bulutlu.', icon: '☁️' },
+        { en: 'It is windy.', tr: 'Rüzgarlı.', icon: '💨' },
+        { en: 'It is hot.', tr: 'Sıcak.', icon: '🌡️' },
+        { en: 'It is cold.', tr: 'Soğuk.', icon: '🥶' },
+      ]
+    },
+    {
+      icon: '❓',
+      title: 'Hava Hakkında Konuşmak',
+      content: 'Hava ile ilgili soru-cevap:',
+      examples: [
+        { en: 'What is the weather like?', tr: 'Hava nasıl?', icon: '❓' },
+        { en: 'Today is Monday.', tr: 'Bugün Pazartesi.', icon: '📅' },
+        { en: 'It is a beautiful day!', tr: 'Harika bir gün!', icon: '🌈' },
+        { en: 'Take your umbrella!', tr: 'Şemsiyeni al!', icon: '☂️' },
+      ]
+    }
+  ]
+}
+
+  };
+
+  return contents[unitTitle] || {
+    atlasText: "Bu ünitede yeni kelimeler ve cümleler öğreneceğiz! Hazır mısın? 🦊",
+    atlasSpeak: "In this unit we will learn new words and sentences! Are you ready?",
+    slides: [
+      {
+        icon: '📖',
+        title: 'Ünite Konusu: ' + unitTitle,
+        content: 'Bu ünitede konuyla ilgili temel kelime ve ifadeleri öğreneceğiz.',
+        examples: []
+      }
+    ]
+  };
+}
+
+
+// Grammar - genişletilmiş versiyon (fillEx eklendi)
+function generateGrammar(unitTitle) {
+  var grammars = {
+"Welcome! 👋": {
+  rule: 'Tanıtma Cümlesi',
+  pattern: 'My name is ___.  |  I am ___.',
+  atlasTip: 'Birisiyle tanışınca "My name is..." veya "I am..." kullanırsın! İkisi de doğru!',
+  examples: [
+    'My name is Emma. (Benim adım Emma.)',
+    'I am Kerem. (Ben Kerem\'im.)',
+    'Her name is Zeynep. (Onun adı Zeynep.)',
+    'What is your name? (Senin adın ne?)',
+    'Nice to meet you! (Tanıştığımıza memnun oldum!)',
+  ],
+  table: '<table style="width:100%;border-collapse:collapse;font-size:13px;font-weight:600"><thead><tr style="background:var(--violet-soft)"><th style="padding:8px;border:1px solid var(--line);color:var(--violet)">Türkçe</th><th style="padding:8px;border:1px solid var(--line);color:var(--violet)">İngilizce</th><th style="padding:8px;border:1px solid var(--line);color:var(--violet)">Örnek</th></tr></thead><tbody><tr><td style="padding:8px;border:1px solid var(--line)">Benim adım...</td><td style="padding:8px;border:1px solid var(--line)">My name is...</td><td style="padding:8px;border:1px solid var(--line)">My name is Atlas</td></tr><tr style="background:var(--surface-2)"><td style="padding:8px;border:1px solid var(--line)">Ben...</td><td style="padding:8px;border:1px solid var(--line)">I am...</td><td style="padding:8px;border:1px solid var(--line)">I am happy</td></tr><tr><td style="padding:8px;border:1px solid var(--line)">Onun adı...</td><td style="padding:8px;border:1px solid var(--line)">Her/His name is...</td><td style="padding:8px;border:1px solid var(--line)">Her name is Emma</td></tr></tbody></table>',
+  fillEx: { sentence: 'Hello! ___ name is Atlas!', answer: 'My' }
+},
+"My Body 🧍": {
+  rule: '"I have..." — Sahip Olma',
+  pattern: 'I have ___ ___.  |  She/He has ___.',
+  atlasTip: '"Have" kelimesi "var" demek! Ben iki gözüm var = I have two eyes!',
+  examples: [
+    'I have two eyes. (İki gözüm var.)',
+    'She has long hair. (Onun uzun saçları var.)',
+    'He has big ears. (Onun büyük kulakları var.)',
+    'I have ten fingers! (On parmağım var!)',
+    'The cat has four legs. (Kedinin dört ayağı var.)',
+  ],
+  fillEx: { sentence: 'I ___ two eyes and a nose.', answer: 'have' }
+},
+"Colors & Shapes 🌈": {
+  rule: '"What color is it?" — Renk Sorma',
+  pattern: 'It is ___ (color).  |  The ___ is ___.',
+  atlasTip: '"What color is it?" ile renk sorabilirsin! "It is red!" diye cevap verirsin.',
+  examples: [
+    'It is red. (Kırmızı.)',
+    'The apple is green. (Elma yeşil.)',
+    'What color is the sky? (Gökyüzü ne renk?)',
+    'The sky is blue! (Gökyüzü mavi!)',
+    'I see a big yellow star! (Büyük sarı bir yıldız görüyorum!)',
+  ],
+  fillEx: { sentence: 'The banana ___ yellow.', answer: 'is' }
+},
+"Animals 🐾": {
+  rule: '"It can..." — Hayvan Yetenekleri',
+  pattern: 'A ___ can ___.  |  It has ___.',
+  atlasTip: '"Can" kelimesi bir şeyi yapabilmek demek! Birds can fly = Kuşlar uçabilir!',
+  examples: [
+    'A bird can fly. (Bir kuş uçabilir.)',
+    'Fish can swim. (Balıklar yüzebilir.)',
+    'Elephants can not fly! (Filler uçamaz!)',
+    'A cat has four legs. (Bir kedinin dört ayağı var.)',
+    'Can a dog swim? Yes, it can! (Köpek yüzebilir mi? Evet, yüzebilir!)',
+  ],
+  table: '<table style="width:100%;border-collapse:collapse;font-size:13px;font-weight:600"><thead><tr style="background:var(--green-soft)"><th style="padding:8px;border:1px solid var(--line);color:var(--green-deep)">Hayvan</th><th style="padding:8px;border:1px solid var(--line);color:var(--green-deep)">Yapabilir</th><th style="padding:8px;border:1px solid var(--line);color:var(--green-deep)">Yapamaz</th></tr></thead><tbody><tr><td style="padding:8px;border:1px solid var(--line)">🐦 Bird</td><td style="padding:8px;border:1px solid var(--line);color:var(--green)">can fly ✓</td><td style="padding:8px;border:1px solid var(--line);color:var(--coral)">cannot swim ✗</td></tr><tr style="background:var(--surface-2)"><td style="padding:8px;border:1px solid var(--line)">🐟 Fish</td><td style="padding:8px;border:1px solid var(--line);color:var(--green)">can swim ✓</td><td style="padding:8px;border:1px solid var(--line);color:var(--coral)">cannot fly ✗</td></tr><tr><td style="padding:8px;border:1px solid var(--line)">🦁 Lion</td><td style="padding:8px;border:1px solid var(--line);color:var(--green)">can run ✓</td><td style="padding:8px;border:1px solid var(--line);color:var(--coral)">cannot fly ✗</td></tr></tbody></table>',
+  fillEx: { sentence: 'A bird ___ fly.', answer: 'can' }
+},
+"Food & Drinks 🍎": {
+  rule: '"I like / I do not like" — Sevmek & Sevmemek',
+  pattern: 'I like ___.  |  I do not like ___.',
+  atlasTip: '"Like" sevmek demek! Do not like = sevmemek. Çok basit!',
+  examples: [
+    'I like apples. (Elmaları severim.)',
+    'I do not like onions. (Soğanları sevmem.)',
+    'Do you like pizza? (Pizza sever misin?)',
+    'Yes, I like pizza! (Evet, pizzayı severim!)',
+    'No, I do not like it. (Hayır, sevmiyorum.)',
+  ],
+  table: '<table style="width:100%;border-collapse:collapse;font-size:13px;font-weight:600"><thead><tr style="background:var(--green-soft)"><th style="padding:8px;border:1px solid var(--line);color:var(--green-deep)">Olumlu (+)</th><th style="padding:8px;border:1px solid var(--line);color:var(--coral)">Olumsuz (-)</th></tr></thead><tbody><tr><td style="padding:8px;border:1px solid var(--line)">I like apples.</td><td style="padding:8px;border:1px solid var(--line)">I do not like onions.</td></tr><tr style="background:var(--surface-2)"><td style="padding:8px;border:1px solid var(--line)">She likes pizza.</td><td style="padding:8px;border:1px solid var(--line)">She does not like soup.</td></tr></tbody></table>',
+  fillEx: { sentence: 'I ___ pizza very much!', answer: 'like' }
+},
+"My Family 👨‍👩‍👧": {
+  rule: '"This is my..." — Tanıtma',
+  pattern: 'This is my ___.  |  He/She is my ___.',
+  atlasTip: '"This is my mum" = Bu benim annem. Çok kolay!',
+  examples: [
+    'This is my mum. (Bu benim annem.)',
+    'He is my brother. (O benim erkek kardeşim.)',
+    'She is my sister. (O benim kız kardeşim.)',
+    'These are my grandparents. (Bunlar büyükannem ve büyükbabam.)',
+    'My family has four members. (Ailem dört kişilik.)',
+  ],
+  fillEx: { sentence: '___ is my father.', answer: 'He' }
+},
+"Days & Weather ⛅": {
+  rule: '"It is..." — Hava Durumu',
+  pattern: 'It is ___ today.  |  Today is ___.',
+  atlasTip: 'Hava durumu için "It is" kullanıyoruz! "It is sunny" = Güneşli!',
+  examples: [
+    'It is sunny today. (Bugün güneşli.)',
+    'It is raining. (Yağmur yağıyor.)',
+    'Today is Monday. (Bugün Pazartesi.)',
+    'What day is it? It is Friday! (Hangi gün? Cuma!)',
+    'It is cold in winter. (Kışın soğuktur.)',
+  ],
+  fillEx: { sentence: 'It ___ very cold today!', answer: 'is' }
+}
+  };
+  return grammars[unitTitle] || null;
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// DERS MOTORU — Adım adım ilerleme sistemi
+// ═══════════════════════════════════════════════════════════════
+
+var currentLesson = { unit: null, map: null, step: 0, steps: [], quizAnswers: {} };
+
+// Atlas sesi — çocuksu: yüksek pitch, yavaş rate
+function atlasSpeak(text, onEnd) {
+  if (!window.speechSynthesis) { if(onEnd) onEnd(); return; }
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = 0.72;
+  u.pitch = 1.55;
+  u.volume = 1.0;
+  if (onEnd) u.onend = onEnd;
+  window.speechSynthesis.speak(u);
+  startAtlasTalk();
+}
+
+var _talkTimer = null;
+function startAtlasTalk(dur) {
+  var m = document.getElementById('atlasMouth');
+  if (m) { m.classList.add('talking'); clearTimeout(_talkTimer); _talkTimer = setTimeout(function(){ m.classList.remove('talking'); }, dur||3000); }
+}
+
+// ─── DERS ADIMLARINI ÜRET ─────────────────────────────────────
+function buildLessonSteps(unit, map) {
+  var vocab = GE_VOCAB[unit.title] || [];
+  var steps = [];
+
+  // ADIM 1: Ders Anlatımı (Atlas konuşuyor)
+  steps.push({ type:'intro', label:'📖 Ders' });
+
+  // ADIM 2: Kelimeler (varsa)
+  if (vocab.length > 0) steps.push({ type:'vocab', label:'📚 Kelimeler' });
+
+  // ADIM 3: Gramer (varsa)
+  var grammar = generateGrammar(unit.title);
+  if (grammar) steps.push({ type:'grammar', label:'🧩 Gramer' });
+
+  // ADIM 4: Diyalog
+  var dialogs = generateDialogue(unit.title);
+  if (dialogs && dialogs.length > 0) steps.push({ type:'dialogue', label:'💬 Diyalog' });
+
+  // ADIM 5: Alıştırma (fill-in-the-blank)
+  steps.push({ type:'practice', label:'✏️ Alıştırma' });
+
+  // ADIM 6: Quiz
+  steps.push({ type:'quiz', label:'🎯 Quiz' });
+
+  // ADIM 7: Oyunlar
+  steps.push({ type:'games', label:'🎮 Oyunlar' });
+
+  return steps;
+}
+
+// ─── DERS AÇ ──────────────────────────────────────────────────
+function openLesson(unit, map) {
+  currentLesson = { unit: unit, map: map, step: 0, steps: buildLessonSteps(unit, map), quizAnswers: {} };
+  var overlay = document.getElementById('lessonOverlay');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderLessonStep();
+}
+
+function closeLesson() {
+  document.getElementById('lessonOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  // Atlas'ı sustur
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  var m = document.getElementById('atlasMouth');
+  if (m) m.classList.remove('talking');
+  // Sayfayı koru - oyunlar sayfasına yönlendirme YOK
+}
+
+function lessonNextStep() {
+  if (currentLesson.step < currentLesson.steps.length - 1) {
+    currentLesson.step++;
+    renderLessonStep();
+    var body = document.getElementById('lessonBody');
+    if (body) body.scrollTop = 0;
+  }
+}
+
+function lessonPrevStep() {
+  if (currentLesson.step > 0) {
+    currentLesson.step--;
+    renderLessonStep();
+    var body = document.getElementById('lessonBody');
+    if (body) body.scrollTop = 0;
+  }
+}
+
+// ─── STEP RENDER ──────────────────────────────────────────────
+function renderLessonStep() {
+  var unit = currentLesson.unit;
+  var map = currentLesson.map;
+  var step = currentLesson.steps[currentLesson.step];
+  var total = currentLesson.steps.length;
+  var idx = currentLesson.step;
+
+  // Topbar güncelle
+  document.getElementById('lessonTitle').textContent = unit.title;
+  document.getElementById('lessonSub').textContent = step.label + ' · ' + (idx+1) + '/' + total;
+
+  // Progress bar
+  var pct = Math.round((idx+1) / total * 100);
+  var pb = document.getElementById('lessonProgress');
+  if (pb) pb.style.width = pct + '%';
+
+  // Step dots
+  renderStepDots();
+
+  // Body
+  var body = document.getElementById('lessonBody');
+  body.innerHTML = '';
+
+  switch(step.type) {
+    case 'intro':    renderIntroStep(body, unit, map); break;
+    case 'vocab':    renderVocabStep(body, unit); break;
+    case 'grammar':  renderGrammarStep(body, unit); break;
+    case 'dialogue': renderDialogueStep(body, unit); break;
+    case 'practice': renderPracticeStep(body, unit); break;
+    case 'quiz':     renderQuizStep(body, unit); break;
+    case 'games':    renderGamesStep(body, unit); break;
+  }
+
+  // Nav butonları
+  renderLessonNav(body, idx, total, step.type);
+}
+
+function renderStepDots() {
+  var container = document.getElementById('lessonStepDots');
+  if (!container) return;
+  container.innerHTML = '';
+  currentLesson.steps.forEach(function(s, i) {
+    var dot = document.createElement('div');
+    dot.style.cssText = 'width:8px;height:8px;border-radius:50%;background:' +
+      (i < currentLesson.step ? 'var(--green)' :
+       i === currentLesson.step ? 'var(--amber)' : 'var(--line-2)') +
+      ';transition:background .3s;cursor:pointer;flex-shrink:0';
+    dot.title = s.label;
+    dot.addEventListener('click', function() {
+      if (i <= currentLesson.step) { currentLesson.step = i; renderLessonStep(); }
+    });
+    container.appendChild(dot);
+  });
+}
+
+function renderLessonNav(body, idx, total, stepType) {
+  var nav = document.createElement('div');
+  nav.style.cssText = 'display:flex;gap:12px;justify-content:space-between;align-items:center;margin-top:28px;padding-top:20px;border-top:1.5px solid var(--line);padding-bottom:20px';
+
+  var leftBtn = document.createElement('button');
+  if (idx > 0) {
+    leftBtn.className = 'btn btn-ghost btn-md';
+    leftBtn.innerHTML = '← Geri';
+    leftBtn.onclick = lessonPrevStep;
+  } else {
+    leftBtn.className = 'btn btn-ghost btn-md';
+    leftBtn.innerHTML = '✕ Kapat';
+    leftBtn.onclick = closeLesson;
+  }
+
+  var rightBtn = document.createElement('button');
+  if (idx < total - 1) {
+    rightBtn.className = 'btn btn-primary btn-md';
+    rightBtn.innerHTML = stepType === 'intro' ? 'Kelimeleri Öğren →' :
+                         stepType === 'vocab' ? 'Gramere Geç →' :
+                         stepType === 'grammar' ? 'Diyaloğa Geç →' :
+                         stepType === 'dialogue' ? 'Alıştırmaya Geç →' :
+                         stepType === 'practice' ? 'Quize Geç →' :
+                         stepType === 'quiz' ? 'Oyunlara Geç 🎮' :
+                         'Devam Et →';
+    rightBtn.onclick = lessonNextStep;
+  } else {
+    rightBtn.className = 'btn btn-amber btn-md';
+    rightBtn.innerHTML = '🏆 Üniteyi Tamamla!';
+    rightBtn.onclick = function() {
+      closeLesson();
+      // Skor göster
+      setTimeout(function() {
+        if (confirm('Tebrikler! ' + currentLesson.unit.title + ' ünitesini tamamladın! 🎉\n\nOyunlarla pekiştirmek ister misin?')) {
+          openKelimeOyunlari();
+        }
+      }, 300);
+    };
+  }
+
+  nav.appendChild(leftBtn);
+  nav.appendChild(rightBtn);
+  body.appendChild(nav);
+}
+
+// ─── ADIM 1: GİRİŞ/DERS ANLATIMI ─────────────────────────────
+function renderIntroStep(body, unit, map) {
+  var introData = getIntroContent(unit.title);
+
+  // Atlas bölümü
+  var atlasSection = document.createElement('div');
+  atlasSection.style.cssText = 'display:flex;gap:20px;align-items:flex-end;background:' + map.color1 + '15;border-radius:20px;padding:20px;margin-bottom:24px;border:1.5px solid ' + map.color1 + '30';
+
+  var atlasSVG = document.createElement('div');
+  atlasSVG.style.cssText = 'flex-shrink:0';
+  atlasSVG.innerHTML = getAtlasTalkingKidSVG(130, false);
+
+  var atlasBubble = document.createElement('div');
+  atlasBubble.style.cssText = 'flex:1;background:#fff;border-radius:16px 16px 16px 4px;padding:16px 18px;box-shadow:0 2px 12px rgba(0,0,0,.08);border:1.5px solid rgba(28,46,34,.08)';
+  atlasBubble.innerHTML = '<div style="font-size:13px;font-weight:800;color:var(--green-deep);margin-bottom:6px">🦊 Atlas diyor ki:</div>'
+    + '<div id="atlasIntroText" style="font-size:16px;font-weight:600;color:var(--ink);line-height:1.6">' + introData.atlasText + '</div>'
+    + '<button onclick="atlasSpeak(\'' + introData.atlasSpeak.replace(/'/g,"&#39;") + '\')" style="margin-top:10px;background:var(--green-soft);border:none;border-radius:99px;padding:6px 14px;font-size:12px;font-weight:800;color:var(--green-deep);cursor:pointer">🔊 Dinle</button>';
+
+  atlasSection.appendChild(atlasSVG);
+  atlasSection.appendChild(atlasBubble);
+  body.appendChild(atlasSection);
+
+  // Konular
+  introData.slides.forEach(function(slide, i) {
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.style.cssText = 'padding:20px;margin-bottom:16px';
+
+    var header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:14px';
+    header.innerHTML = '<div style="width:36px;height:36px;background:' + map.color1 + '20;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">' + slide.icon + '</div>'
+      + '<div style="font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--ink)">' + slide.title + '</div>';
+    card.appendChild(header);
+
+    var content = document.createElement('div');
+    content.style.cssText = 'font-size:15px;color:var(--ink-soft);line-height:1.7;font-weight:600';
+    content.innerHTML = slide.content;
+    card.appendChild(content);
+
+    if (slide.examples && slide.examples.length) {
+      var exBox = document.createElement('div');
+      exBox.style.cssText = 'margin-top:14px;padding:14px;background:var(--surface-2);border-radius:12px;border-left:4px solid ' + map.color1;
+      slide.examples.forEach(function(ex) {
+        var row = document.createElement('div');
+        row.style.cssText = 'font-size:14px;font-weight:600;color:var(--ink);padding:4px 0;display:flex;align-items:center;gap:8px;cursor:pointer';
+        row.innerHTML = '<span style="font-size:18px">' + (ex.icon||'💬') + '</span>'
+          + '<span><strong style="color:var(--green-deep)">' + ex.en + '</strong> <span style="color:var(--ink-faint)">= ' + ex.tr + '</span></span>'
+          + '<button style="margin-left:auto;background:none;border:none;cursor:pointer;font-size:16px;opacity:.7" onclick="atlasSpeak(\'' + ex.en.replace(/'/g,"&#39;") + '\')">🔊</button>';
+        exBox.appendChild(row);
+      });
+      card.appendChild(exBox);
+    }
+    body.appendChild(card);
+  });
+
+  // Atlas konuşmayı otomatik başlat
+  setTimeout(function() { atlasSpeak(introData.atlasSpeak); }, 500);
+}
+
+// ─── ADIM 2: KELİMELER ────────────────────────────────────────
+function renderVocabStep(body, unit) {
+  var vocab = GE_VOCAB[unit.title] || [];
+  if (!vocab.length) { lessonNextStep(); return; }
+
+  var header = document.createElement('div');
+  header.style.cssText = 'text-align:center;margin-bottom:20px';
+  header.innerHTML = '<div style="font-size:13px;font-weight:800;color:var(--ink-faint);margin-bottom:6px;letter-spacing:.5px">BU ÜNİTENİN KELİMELERİ</div>'
+    + '<div style="font-family:var(--font-display);font-weight:800;font-size:22px;color:var(--ink)">' + vocab.length + ' yeni kelime öğren!</div>'
+    + '<div style="font-size:13px;color:var(--ink-soft);font-weight:600;margin-top:4px">Tıkla ve sesini duyun 🔊</div>';
+  body.appendChild(header);
+
+  var grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:20px';
+
+  vocab.forEach(function(w) {
+    var card = document.createElement('div');
+    card.style.cssText = 'background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:16px 10px;text-align:center;cursor:pointer;transition:all .2s;user-select:none';
+    card.onmouseover = function() { this.style.borderColor='var(--green)'; this.style.transform='translateY(-3px)'; this.style.boxShadow='0 6px 16px rgba(30,138,83,.15)'; };
+    card.onmouseout = function() { this.style.borderColor='var(--line)'; this.style.transform=''; this.style.boxShadow=''; };
+
+    var svgDiv = document.createElement('div');
+    svgDiv.style.cssText = 'width:64px;height:64px;margin:0 auto 8px';
+    svgDiv.innerHTML = getWordSVG(w.en);
+
+    var enDiv = document.createElement('div');
+    enDiv.style.cssText = 'font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--ink);margin-bottom:3px';
+    enDiv.textContent = w.en;
+
+    var trDiv = document.createElement('div');
+    trDiv.style.cssText = 'font-size:11px;color:var(--ink-soft);font-weight:700';
+    trDiv.textContent = w.tr;
+
+    var speakBtn = document.createElement('div');
+    speakBtn.style.cssText = 'font-size:18px;margin-top:6px;opacity:.6';
+    speakBtn.textContent = '🔊';
+
+    card.appendChild(svgDiv);
+    card.appendChild(enDiv);
+    card.appendChild(trDiv);
+    card.appendChild(speakBtn);
+
+    card.addEventListener('click', function() {
+      atlasSpeak(w.en);
+      card.style.background = 'var(--green-soft)';
+      setTimeout(function() { card.style.background = 'var(--surface)'; }, 800);
+    });
+
+    grid.appendChild(card);
+  });
+  body.appendChild(grid);
+}
+
+// ─── ADIM 3: GRAMER ──────────────────────────────────────────
+function renderGrammarStep(body, unit) {
+  var grammar = generateGrammar(unit.title);
+  if (!grammar) { lessonNextStep(); return; }
+
+  var gHeader = document.createElement('div');
+  gHeader.style.cssText = 'text-align:center;margin-bottom:20px';
+  gHeader.innerHTML = '<div style="font-size:13px;font-weight:800;color:var(--ink-faint);margin-bottom:6px">GRAMER NOKTASI</div>'
+    + '<div style="font-family:var(--font-display);font-weight:800;font-size:22px;color:var(--ink)">Kuralı öğren!</div>';
+  body.appendChild(gHeader);
+
+  // Atlas açıklama
+  var atlasSect = document.createElement('div');
+  atlasSect.style.cssText = 'display:flex;gap:16px;align-items:flex-end;background:var(--violet-soft);border-radius:16px;padding:16px;margin-bottom:20px;border:1.5px solid var(--violet)40';
+  atlasSect.innerHTML = '<div style="flex-shrink:0">' + getAtlasTalkingKidSVG(90, false) + '</div>'
+    + '<div style="flex:1"><div style="font-size:13px;font-weight:800;color:var(--violet);margin-bottom:4px">Atlas açıklıyor:</div>'
+    + '<div style="font-size:15px;font-weight:600;color:var(--ink);line-height:1.6">' + grammar.atlasTip + '</div></div>';
+  body.appendChild(atlasSect);
+
+  // Kural kutusu
+  var ruleBox = document.createElement('div');
+  ruleBox.style.cssText = 'background:var(--violet-soft);border:2px solid var(--violet);border-radius:16px;padding:20px;margin-bottom:20px';
+  ruleBox.innerHTML = '<div style="font-family:var(--font-display);font-weight:800;font-size:19px;color:var(--violet);margin-bottom:10px">' + grammar.rule + '</div>'
+    + '<div style="font-size:20px;font-family:monospace;background:#fff;border-radius:10px;padding:12px 16px;color:var(--violet);font-weight:700;letter-spacing:.5px">' + (grammar.pattern||'') + '</div>';
+  body.appendChild(ruleBox);
+
+  // Örnekler
+  var exTitle = document.createElement('div');
+  exTitle.style.cssText = 'font-family:var(--font-display);font-weight:800;font-size:16px;color:var(--ink);margin-bottom:12px';
+  exTitle.textContent = '✨ Örnekler:';
+  body.appendChild(exTitle);
+
+  grammar.examples.forEach(function(ex) {
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;margin-bottom:8px;cursor:pointer';
+    row.innerHTML = '<div style="flex:1"><div style="font-size:15px;font-weight:700;color:var(--ink)" id="">' + ex + '</div></div>'
+      + '<button style="background:none;border:none;font-size:20px;cursor:pointer;opacity:.7" onclick="atlasSpeak(this.parentNode.querySelector(\'div div\').textContent)">🔊</button>';
+    body.appendChild(row);
+  });
+
+  // Kural tablosu (varsa)
+  if (grammar.table) {
+    var tableWrap = document.createElement('div');
+    tableWrap.style.cssText = 'margin-top:16px;overflow-x:auto';
+    tableWrap.innerHTML = grammar.table;
+    body.appendChild(tableWrap);
+  }
+}
+
+// ─── ADIM 4: DİYALOG ─────────────────────────────────────────
+function renderDialogueStep(body, unit) {
+  var dialogs = generateDialogue(unit.title);
+  if (!dialogs) { lessonNextStep(); return; }
+
+  var header = document.createElement('div');
+  header.style.cssText = 'text-align:center;margin-bottom:20px';
+  header.innerHTML = '<div style="font-size:13px;font-weight:800;color:var(--ink-faint);margin-bottom:6px">DİYALOG</div>'
+    + '<div style="font-family:var(--font-display);font-weight:800;font-size:22px;color:var(--ink)">Konuşmayı takip et!</div>'
+    + '<div style="font-size:13px;color:var(--ink-soft);font-weight:600;margin-top:4px">Satıra tıkla ve dinle 🔊</div>';
+  body.appendChild(header);
+
+  // Karakterler
+  var chars = document.createElement('div');
+  chars.style.cssText = 'display:flex;gap:20px;justify-content:center;margin-bottom:20px';
+  ['Emma', 'Kerem'].forEach(function(name, i) {
+    var ch = document.createElement('div');
+    ch.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:6px';
+    ch.innerHTML = (i === 0
+      ? '<div style="width:52px;height:52px;background:var(--amber-soft);border-radius:50%;border:2px solid var(--amber);display:flex;align-items:center;justify-content:center;font-size:28px">👧</div>'
+      : '<div style="width:52px;height:52px;background:var(--sky-soft);border-radius:50%;border:2px solid var(--sky);display:flex;align-items:center;justify-content:center;font-size:28px">👦</div>')
+      + '<div style="font-size:12px;font-weight:800;color:var(--ink-soft)">' + name + '</div>';
+    chars.appendChild(ch);
+  });
+  body.appendChild(chars);
+
+  var dbox = document.createElement('div');
+  dbox.style.cssText = 'background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:16px;margin-bottom:16px';
+
+  dialogs.forEach(function(d, i) {
+    var isB = d.speaker === 'B';
+    var line = document.createElement('div');
+    line.style.cssText = 'display:flex;gap:10px;margin-bottom:14px;align-items:flex-start;' + (isB ? 'flex-direction:row-reverse' : '');
+    line.style.cursor = 'pointer';
+
+    var avatar = document.createElement('div');
+    avatar.style.cssText = 'width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;'
+      + (isB ? 'background:var(--sky-soft);border:1.5px solid var(--sky)' : 'background:var(--amber-soft);border:1.5px solid var(--amber)');
+    avatar.textContent = isB ? '👦' : '👧';
+
+    var bubble = document.createElement('div');
+    bubble.style.cssText = 'flex:1;padding:11px 14px;border-radius:' + (isB ? '16px 4px 16px 16px' : '4px 16px 16px 16px') + ';font-size:14px;font-weight:600;line-height:1.55;max-width:80%;'
+      + (isB ? 'background:var(--sky-soft);color:var(--ink);margin-left:auto' : 'background:var(--amber-soft);color:var(--ink)');
+    bubble.innerHTML = d.text;
+
+    line.appendChild(avatar);
+    line.appendChild(bubble);
+
+    var plainText = d.text.replace(/<[^>]+>/g,'');
+    line.addEventListener('click', function() {
+      atlasSpeak(plainText);
+      bubble.style.outline = '2px solid var(--green)';
+      setTimeout(function() { bubble.style.outline = ''; }, 1500);
+    });
+
+    dbox.appendChild(line);
+  });
+  body.appendChild(dbox);
+
+  // Tümünü oynat butonu
+  var playAll = document.createElement('button');
+  playAll.className = 'btn btn-primary btn-md';
+  playAll.style.cssText = 'width:100%;margin-bottom:16px';
+  playAll.innerHTML = '▶ Tüm Diyaloğu Dinle';
+  var dIdx = 0;
+  function playNext() {
+    if (dIdx >= dialogs.length) { dIdx = 0; return; }
+    var text = dialogs[dIdx].text.replace(/<[^>]+>/g,'');
+    dIdx++;
+    atlasSpeak(text, function() { setTimeout(playNext, 400); });
+  }
+  playAll.addEventListener('click', function() { dIdx = 0; playNext(); });
+  body.appendChild(playAll);
+}
+
+// ─── ADIM 5: ALIŞTIRMA ───────────────────────────────────────
+function renderPracticeStep(body, unit) {
+  var vocab = GE_VOCAB[unit.title] || [];
+  var grammar = generateGrammar(unit.title);
+
+  var header = document.createElement('div');
+  header.style.cssText = 'text-align:center;margin-bottom:20px';
+  header.innerHTML = '<div style="font-size:13px;font-weight:800;color:var(--ink-faint);margin-bottom:6px">ALIŞTIRMA</div>'
+    + '<div style="font-family:var(--font-display);font-weight:800;font-size:22px;color:var(--ink)">Boşlukları doldur!</div>'
+    + '<div style="font-size:13px;color:var(--ink-soft);font-weight:600;margin-top:4px">Kelimeyi yazıp Enter\'a bas</div>';
+  body.appendChild(header);
+
+  var practices = generatePracticeExercises(unit.title, vocab);
+  practices.forEach(function(pr, i) {
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.style.cssText = 'padding:18px;margin-bottom:14px';
+
+    var qnum = document.createElement('div');
+    qnum.style.cssText = 'font-size:11px;font-weight:800;color:var(--ink-faint);margin-bottom:10px;letter-spacing:.5px';
+    qnum.textContent = 'SORU ' + (i+1);
+    card.appendChild(qnum);
+
+    var sentence = document.createElement('div');
+    sentence.style.cssText = 'font-size:17px;font-weight:700;color:var(--ink);margin-bottom:12px;line-height:1.6';
+    sentence.innerHTML = pr.question;
+    card.appendChild(sentence);
+
+    if (pr.type === 'fill') {
+      var inputRow = document.createElement('div');
+      inputRow.style.cssText = 'display:flex;gap:8px;align-items:center';
+      var inp = document.createElement('input');
+      inp.type = 'text'; inp.autocomplete = 'off';
+      inp.placeholder = 'Cevabını yaz...';
+      inp.style.cssText = 'flex:1;padding:11px 14px;border:2px solid var(--line-2);border-radius:12px;font-size:15px;outline:none;font-family:var(--font-body);color:var(--ink);background:var(--surface-2);transition:border .2s';
+      var fb = document.createElement('div');
+      fb.style.cssText = 'font-size:14px;font-weight:700;min-height:20px;margin-top:8px';
+
+      inp.onfocus = function() { this.style.borderColor = 'var(--sky)'; };
+      inp.onblur = function() { this.style.borderColor = 'var(--line-2)'; };
+      inp.onkeydown = function(e) {
+        if (e.key === 'Enter') {
+          var val = inp.value.trim().toLowerCase();
+          var correct = pr.answer.toLowerCase();
+          if (val === correct) {
+            inp.style.borderColor = 'var(--green)';
+            inp.style.background = 'var(--green-soft)';
+            fb.textContent = '🎉 Doğru! Harikasın!';
+            fb.style.color = 'var(--green-deep)';
+            atlasSpeak('Correct! Well done!');
+            inp.disabled = true;
+          } else {
+            inp.style.borderColor = 'var(--coral)';
+            inp.style.background = 'var(--coral-soft)';
+            fb.textContent = '❌ Tekrar dene! İpucu: ' + pr.answer.charAt(0) + '___';
+            fb.style.color = 'var(--coral)';
+            setTimeout(function() {
+              inp.style.borderColor = 'var(--line-2)';
+              inp.style.background = 'var(--surface-2)';
+              inp.value = ''; inp.focus();
+            }, 1200);
+          }
+        }
+      };
+
+      inputRow.appendChild(inp);
+      card.appendChild(inputRow);
+      card.appendChild(fb);
+
+      var hintBtn = document.createElement('button');
+      hintBtn.style.cssText = 'margin-top:8px;background:none;border:none;font-size:12px;color:var(--ink-faint);cursor:pointer;font-weight:700;padding:0';
+      hintBtn.textContent = '💡 İpucu göster';
+      hintBtn.onclick = function() {
+        fb.textContent = 'İpucu: ' + pr.answer;
+        fb.style.color = 'var(--amber)';
+      };
+      card.appendChild(hintBtn);
+
+    } else if (pr.type === 'match') {
+      // Eşleştirme sorusu
+      pr.options.forEach(function(opt) {
+        var optBtn = document.createElement('button');
+        optBtn.style.cssText = 'display:block;width:100%;padding:10px 14px;border:2px solid var(--line-2);border-radius:10px;font-size:14px;font-weight:700;color:var(--ink);background:var(--surface-2);cursor:pointer;margin-bottom:6px;text-align:left;transition:all .18s;font-family:var(--font-body)';
+        optBtn.textContent = opt;
+        optBtn.onmouseover = function() { this.style.borderColor='var(--sky)'; this.style.background='var(--sky-soft)'; };
+        optBtn.onmouseout = function() { if(!this.disabled){ this.style.borderColor='var(--line-2)'; this.style.background='var(--surface-2)'; } };
+        optBtn.onclick = function() {
+          card.querySelectorAll('button').forEach(function(b) {
+            b.disabled = true;
+            if (b.textContent === pr.answer) { b.style.background='var(--green-soft)'; b.style.borderColor='var(--green)'; b.style.color='var(--green-deep)'; }
+          });
+          if (optBtn.textContent === pr.answer) {
+            atlasSpeak('Correct!');
+          } else {
+            optBtn.style.background='var(--coral-soft)'; optBtn.style.borderColor='var(--coral)'; optBtn.style.color='var(--coral)';
+          }
+        };
+        card.appendChild(optBtn);
+      });
+    }
+    body.appendChild(card);
+  });
+}
+
+// ─── ADIM 6: QUİZ ────────────────────────────────────────────
+function renderQuizStep(body, unit) {
+  var vocab = GE_VOCAB[unit.title] || [];
+  var quizzes = generateQuiz(unit.title, vocab);
+  currentLesson.quizAnswers = {};
+
+  var header = document.createElement('div');
+  header.style.cssText = 'text-align:center;margin-bottom:20px';
+  header.innerHTML = '<div style="font-size:13px;font-weight:800;color:var(--ink-faint);margin-bottom:6px">QUİZ ZAMANI!</div>'
+    + '<div style="font-family:var(--font-display);font-weight:800;font-size:22px;color:var(--ink)">Öğrendiklerini test et!</div>'
+    + '<div style="font-size:13px;color:var(--ink-soft);font-weight:600;margin-top:4px">' + quizzes.length + ' soru · Başarılar 🦊</div>';
+  body.appendChild(header);
+
+  quizzes.forEach(function(q, qi) {
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.style.cssText = 'padding:20px;margin-bottom:16px';
+
+    // Soru
+    var qNum = document.createElement('div');
+    qNum.style.cssText = 'font-size:11px;font-weight:800;color:var(--ink-faint);margin-bottom:10px;letter-spacing:.5px';
+    qNum.textContent = 'SORU ' + (qi+1) + ' / ' + quizzes.length;
+    card.appendChild(qNum);
+
+    // Emoji/resim (varsa)
+    if (q.image) {
+      var imgDiv = document.createElement('div');
+      imgDiv.style.cssText = 'width:80px;height:80px;margin:0 auto 12px';
+      imgDiv.innerHTML = getWordSVG(q.imageWord || '');
+      card.appendChild(imgDiv);
+    }
+
+    var qText = document.createElement('div');
+    qText.style.cssText = 'font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--ink);margin-bottom:16px;line-height:1.4';
+    qText.innerHTML = q.question;
+    card.appendChild(qText);
+
+    var optsGrid = document.createElement('div');
+    optsGrid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px';
+    var letters = ['A','B','C','D'];
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement('button');
+      btn.style.cssText = 'border:2px solid var(--line-2);background:var(--surface-2);border-radius:12px;padding:12px 14px;font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px;transition:all .18s;font-family:var(--font-body)';
+      btn.innerHTML = '<span style="width:24px;height:24px;border-radius:8px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--ink-soft);flex-shrink:0">' + letters[oi] + '</span>'
+        + '<span>' + opt + '</span>';
+      btn.onmouseover = function() { if(!this.disabled) { this.style.borderColor='var(--sky)'; this.style.background='var(--sky-soft)'; } };
+      btn.onmouseout = function() { if(!this.disabled && !this.classList.contains('answered')) { this.style.borderColor='var(--line-2)'; this.style.background='var(--surface-2)'; } };
+
+      btn.addEventListener('click', function() {
+        if (currentLesson.quizAnswers['q'+qi]) return;
+        currentLesson.quizAnswers['q'+qi] = true;
+        var isCorrect = opt === q.answer;
+        card.querySelectorAll('button').forEach(function(b) {
+          b.disabled = true;
+          b.classList.add('answered');
+          var bOpt = b.querySelector('span:last-child').textContent;
+          if (bOpt === q.answer) {
+            b.style.background = 'var(--green-soft)'; b.style.borderColor = 'var(--green)';
+            b.querySelector('span:first-child').style.background = 'var(--green)';
+            b.querySelector('span:first-child').style.color = '#fff';
+          }
+        });
+        if (!isCorrect) {
+          btn.style.background = 'var(--coral-soft)'; btn.style.borderColor = 'var(--coral)';
+        }
+        var fb = document.getElementById('qfb' + qi);
+        if (fb) {
+          fb.innerHTML = isCorrect
+            ? '<span style="color:var(--green-deep);font-weight:800">🎉 Harika! Doğru cevap!</span>'
+            : '<span style="color:var(--coral);font-weight:800">❌ Doğru cevap: <strong>' + q.answer + '</strong></span>';
+        }
+        if (isCorrect) atlasSpeak('Excellent! Correct!');
+        checkQuizComplete(quizzes.length);
+      });
+      optsGrid.appendChild(btn);
+    });
+    card.appendChild(optsGrid);
+
+    var fbDiv = document.createElement('div');
+    fbDiv.id = 'qfb' + qi;
+    fbDiv.style.cssText = 'margin-top:10px;font-size:14px;min-height:20px';
+    card.appendChild(fbDiv);
+    body.appendChild(card);
+  });
+}
+
+function checkQuizComplete(total) {
+  var answered = Object.keys(currentLesson.quizAnswers).length;
+  if (answered >= total) {
+    setTimeout(function() {
+      var correct = 0;
+      // Tüm quizlerin cevaplarını say — basit olarak answered sayısını kullan
+      correct = answered; // Simplification
+      var resultDiv = document.createElement('div');
+      resultDiv.style.cssText = 'background:var(--green-soft);border:2px solid var(--green);border-radius:16px;padding:20px;text-align:center;margin-top:16px;animation:fadeUp .4s both';
+      resultDiv.innerHTML = '<div style="font-size:48px;margin-bottom:8px">🏆</div>'
+        + '<div style="font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--green-deep)">Quiz Tamamlandı!</div>'
+        + '<div style="font-size:14px;color:var(--ink-soft);font-weight:600;margin-top:6px">Harika iş çıkardın! Oyunlara geçmeye hazır mısın?</div>';
+      var lb = document.getElementById('lessonBody');
+      if (lb) lb.appendChild(resultDiv);
+      atlasSpeak('Amazing job! Quiz complete!');
+    }, 600);
+  }
+}
+
+// ─── ADIM 7: OYUNLAR ─────────────────────────────────────────
+function renderGamesStep(body, unit) {
+  var vocab = GE_VOCAB[unit.title] || [];
+  if (vocab.length >= 2) {
+    var payload = { setName: unit.title, words: vocab.map(function(w){return{en:w.en,tr:w.tr}}), timestamp: Date.now() };
+    localStorage.setItem('ge_active_set', JSON.stringify(payload));
+    localStorage.setItem('ge_imported_set', JSON.stringify(payload));
+  }
+
+  var header = document.createElement('div');
+  header.style.cssText = 'text-align:center;margin-bottom:20px';
+
+  // Atlas kutlama
+  var atlasCele = document.createElement('div');
+  atlasCele.style.cssText = 'display:flex;flex-direction:column;align-items:center;margin-bottom:20px';
+  atlasCele.innerHTML = getAtlasTalkingKidSVG(120, false)
+    + '<div style="background:var(--green-soft);border:2px solid var(--green);border-radius:16px;padding:14px 20px;text-align:center;margin-top:-10px;max-width:280px">'
+    + '<div style="font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--green-deep);margin-bottom:4px">Üniteyi tamamladın! 🎉</div>'
+    + '<div style="font-size:13px;color:var(--ink-soft);font-weight:600">Şimdi oyunlarla pekiştir!</div>'
+    + '</div>';
+  body.appendChild(atlasCele);
+
+  var gamesList = [
+    { url:'kelime-avi-game.html', emoji:'🎮', title:'Kelime Avı', desc:'Kelimeyi dinle ve sürükle', color:'#fce4ec' },
+    { url:'gramer-quest-game.html', emoji:'📚', title:'Gramer Quest', desc:'Cümleleri tamamla', color:'#e3f2fd' },
+    { url:'dinleme-dedektifi-game.html', emoji:'👂', title:'Dinleme Dedektifi', desc:'Dinle ve doğrusunu bul', color:'#f3e5f5' },
+    { url:'yazi-sahnesi-game.html', emoji:'🎭', title:'Yazı Sahnesi', desc:'Diyaloğu tamamla', color:'#fff8e1' },
+    { url:'quiz-hizli-game.html', emoji:'⚡', title:'Hızlı Quiz', desc:'5 saniyede cevapla', color:'#fff3e0' },
+    { url:'kelime-dunyasi-worldmap.html', emoji:'🌍', title:'Kelime Dünyası', desc:'Dünya haritasını keşfet', color:'#e8f5e9', noSet: true },
+  ];
+
+  var grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px';
+
+  gamesList.forEach(function(g) {
+    var card = document.createElement('div');
+    card.style.cssText = 'background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:16px;text-align:center;cursor:pointer;transition:all .2s';
+    card.onmouseover = function() { this.style.borderColor='var(--green)'; this.style.transform='translateY(-3px)'; this.style.boxShadow='0 6px 16px rgba(30,138,83,.15)'; };
+    card.onmouseout = function() { this.style.borderColor='var(--line)'; this.style.transform=''; this.style.boxShadow=''; };
+    card.innerHTML = '<div style="width:52px;height:52px;background:' + g.color + ';border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 10px">' + g.emoji + '</div>'
+      + '<div style="font-family:var(--font-display);font-weight:800;font-size:13px;color:var(--ink);margin-bottom:3px">' + g.title + '</div>'
+      + '<div style="font-size:11px;color:var(--ink-soft);font-weight:600">' + g.desc + '</div>';
+    card.addEventListener('click', function() {
+      closeLesson();
+      setTimeout(function() {
+        window.location.href = g.url + ((!g.noSet && vocab.length >= 2) ? '?mode=imported' : '');
+      }, 300);
+    });
+    grid.appendChild(card);
+  });
+  body.appendChild(grid);
+
+  atlasSpeak('Great work! Now let us play some games!');
+}
+
+// ─── PRACTICE EXERCISES ──────────────────────────────────────
+function generatePracticeExercises(unitTitle, vocab) {
+  var exercises = [];
+  var dialogs = generateDialogue(unitTitle);
+
+  // Dialog tabanlı fill-in-the-blank
+  if (dialogs && dialogs.length >= 2) {
+    var d = dialogs[0];
+    var words = d.text.replace(/<[^>]+>/g,'').split(' ');
+    var targetWord = words.find(function(w) { return w.length > 3; }) || words[0];
+    var blank = d.text.replace(/<[^>]+>/g,'').replace(targetWord, '______');
+    exercises.push({
+      type: 'fill',
+      question: '💬 Bu cümleyi tamamla:<br><em>"' + blank + '"</em>',
+      answer: targetWord.replace(/[^a-zA-Z]/g,''),
+    });
+  }
+
+  // Kelime tabanlı eşleştirme
+  if (vocab.length >= 4) {
+    var picked = vocab.slice().sort(function(){return Math.random()-.5}).slice(0,4);
+    var correct = picked[0];
+    exercises.push({
+      type: 'match',
+      question: '🖼️ Bu resim hangi kelime?<br><div style="width:72px;height:72px;margin:10px auto">' + getWordSVG(correct.en) + '</div>',
+      options: picked.map(function(p){return p.en}).sort(function(){return Math.random()-.5}),
+      answer: correct.en,
+    });
+  }
+
+  // TR→EN çeviri
+  if (vocab.length >= 2) {
+    var w = vocab[Math.floor(Math.random()*vocab.length)];
+    exercises.push({
+      type: 'fill',
+      question: '🇹🇷→🇬🇧 <strong>"' + w.tr + '"</strong> kelimesinin İngilizcesi nedir?',
+      answer: w.en,
+    });
+  }
+
+  // Grammar fill
+  var grammar = generateGrammar(unitTitle);
+  if (grammar && grammar.fillEx) {
+    exercises.push({
+      type: 'fill',
+      question: '🧩 Boşluğu doldur:<br><em>"' + grammar.fillEx.sentence + '"</em>',
+      answer: grammar.fillEx.answer,
+    });
+  }
+
+  return exercises;
+}
+
+
 
 // ═══════════════════════════════════════
 // GAMING ENGLISH — CORE DATA & LOGIC
@@ -781,280 +2241,95 @@ function closeUnitPanel() {
 
 // ── LESSON ────────────────────────────
 var currentQuizAnswers = {};
-function openLesson(unit, map) {
-  var overlay = document.getElementById('lessonOverlay');
-  var titleEl = document.getElementById('lessonTitle');
-  var subEl = document.getElementById('lessonSub');
-  var body = document.getElementById('lessonBody');
-  var prog = document.getElementById('lessonProgress');
-  titleEl.textContent = unit.title;
-  subEl.textContent = unit.sub + ' · ' + map.title;
-  prog.style.width = '0%';
-  
-  var vocab = GE_VOCAB[unit.title] || [];
-  currentQuizAnswers = {};
-  
-  body.innerHTML = '';
-  
-  // 1. Kelimeler
-  if (vocab.length > 0) {
-    var sec1 = document.createElement('div');
-    sec1.className = 'lesson-section';
-    sec1.innerHTML = '<div class="ls-title"><span style="font-size:24px">📚</span> Bu Ünitenin Kelimeleri</div>';
-    var vgrid = document.createElement('div');
-    vgrid.className = 'vocab-grid';
-    vocab.forEach(function(w) {
-      var vc = document.createElement('div');
-      vc.className = 'vocab-card';
-      vc.innerHTML = '<div class="vocab-emoji">' + w.emoji + '</div>'
-        + '<div class="vocab-en">' + w.en + '</div>'
-        + '<div class="vocab-tr">' + w.tr + '</div>';
-      vc.addEventListener('click', function() {
-        var utt = new SpeechSynthesisUtterance(w.en);
-        utt.lang = 'en-US'; utt.rate = .88;
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utt);
-      });
-      vgrid.appendChild(vc);
-    });
-    sec1.appendChild(vgrid);
-    body.appendChild(sec1);
-  }
-  
-  // 2. Örnek Diyalog
-  var dialogs = generateDialogue(unit.title);
-  if (dialogs) {
-    var sec2 = document.createElement('div');
-    sec2.className = 'lesson-section';
-    sec2.innerHTML = '<div class="ls-title"><span style="font-size:24px">💬</span> Örnek Konuşma</div>';
-    var dbox = document.createElement('div');
-    dbox.className = 'dialogue-box';
-    dialogs.forEach(function(d) {
-      var line = document.createElement('div');
-      line.className = 'd-line ' + (d.speaker === 'B' ? 'b' : '');
-      line.innerHTML = '<div class="d-speaker">' + d.speaker + ':</div>'
-        + '<div class="d-bubble">' + d.text + '</div>';
-      dbox.appendChild(line);
-    });
-    sec2.appendChild(dbox);
-    body.appendChild(sec2);
-  }
-  
-  // 3. Gramer Kutusu
-  var grammar = generateGrammar(unit.title);
-  if (grammar) {
-    var sec3 = document.createElement('div');
-    sec3.className = 'lesson-section';
-    sec3.innerHTML = '<div class="ls-title"><span style="font-size:24px">🧩</span> Gramer Noktası</div>';
-    var gbox = document.createElement('div');
-    gbox.className = 'grammar-box';
-    gbox.innerHTML = '<div class="grammar-rule">' + grammar.rule + '</div>'
-      + '<div class="grammar-examples">' + grammar.examples.join('<br>') + '</div>';
-    sec3.appendChild(gbox);
-    body.appendChild(sec3);
-  }
-  
-  // 4. Mini Quiz
-  var quizzes = generateQuiz(unit.title, vocab);
-  if (quizzes.length > 0) {
-    var sec4 = document.createElement('div');
-    sec4.className = 'lesson-section';
-    sec4.innerHTML = '<div class="ls-title"><span style="font-size:24px">✏️</span> Mini Quiz</div>';
-    quizzes.forEach(function(q, qi) {
-      var qcard = document.createElement('div');
-      qcard.className = 'quiz-card';
-      var optsHtml = q.options.map(function(o, oi) {
-        return '<button class="quiz-opt" data-qi="' + qi + '" data-oi="' + oi + '" data-correct="' + (o === q.answer ? '1' : '0') + '">' + o + '</button>';
-      }).join('');
-      qcard.innerHTML = '<div class="quiz-q">' + q.question + '</div>'
-        + '<div class="quiz-opts">' + optsHtml + '</div>'
-        + '<div style="margin-top:10px;font-size:13px;font-weight:700;min-height:20px" id="qfb' + qi + '"></div>';
-      qcard.querySelectorAll('.quiz-opt').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          var qi2 = btn.getAttribute('data-qi');
-          var correct = btn.getAttribute('data-correct') === '1';
-          if (currentQuizAnswers[qi2]) return;
-          currentQuizAnswers[qi2] = true;
-          qcard.querySelectorAll('.quiz-opt').forEach(function(b) {
-            b.disabled = true;
-            if (b.getAttribute('data-correct') === '1') b.classList.add('correct');
-          });
-          if (!correct) btn.classList.add('wrong');
-          var fb = document.getElementById('qfb' + qi2);
-          if (fb) { fb.textContent = correct ? '🎉 Doğru!' : '❌ Yanlış — doğru cevabı gördün'; fb.style.color = correct ? 'var(--green)' : 'var(--coral)'; }
-          updateLessonProgress(quizzes.length);
-        });
-      });
-      sec4.appendChild(qcard);
-    });
-    body.appendChild(sec4);
-  }
-  
-  // 5. Oyunlar bölümü
-  var sec5 = document.createElement('div');
-  sec5.className = 'lesson-section';
-  sec5.innerHTML = '<div class="ls-title"><span style="font-size:24px">🎮</span> Bu Kelimelerle Oyna</div>';
-  var ggrid = document.createElement('div');
-  ggrid.className = 'game-grid';
-  var gameLinks = [
-    {emoji:'🎮',title:'Kelime Avı',desc:'Sürükle & bırak',url:'kelime-avi-game.html'},
-    {emoji:'📚',title:'Gramer Quest',desc:'Cümle tamamla',url:'gramer-quest-game.html'},
-    {emoji:'👂',title:'Dinleme',desc:'Dinle & seç',url:'dinleme-dedektifi-game.html'},
-    {emoji:'🎭',title:'Diyalog',desc:'Boşluk doldur',url:'yazi-sahnesi-game.html'},
-    {emoji:'⚡',title:'Hızlı Quiz',desc:'5 sn cevapla',url:'quiz-hizli-game.html'},
-  ];
-  if (vocab.length >= 2) {
-    var payload = {setName: unit.title, words: vocab.map(function(w){return {en:w.en,tr:w.tr}}), timestamp: Date.now()};
-    localStorage.setItem('ge_active_set', JSON.stringify(payload));
-    localStorage.setItem('ge_imported_set', JSON.stringify(payload));
-  }
-  gameLinks.forEach(function(g) {
-    var gc = document.createElement('div');
-    gc.className = 'game-pick-card';
-    gc.innerHTML = '<div class="gpc-emoji">' + g.emoji + '</div>'
-      + '<div class="gpc-title">' + g.title + '</div>'
-      + '<div class="gpc-desc">' + g.desc + '</div>';
-    gc.addEventListener('click', function() {
-      window.location.href = g.url + (vocab.length >= 2 ? '?mode=imported' : '');
-    });
-    ggrid.appendChild(gc);
-  });
-  sec5.appendChild(ggrid);
-  body.appendChild(sec5);
-  
-  overlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeLesson() {
-  document.getElementById('lessonOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-function updateLessonProgress(total) {
-  var answered = Object.keys(currentQuizAnswers).length;
-  var pct = Math.min(100, Math.round(answered / total * 100));
-  var bar = document.getElementById('lessonProgress');
-  if (bar) bar.style.width = pct + '%';
-}
+
+// [openLesson moved to lesson engine]
+
+
+// [closeLesson moved to lesson engine]
+
+
+// [updateLessonProgress moved to lesson engine]
+
 
 // ── DIALOGUE GENERATOR ──────────────
 function generateDialogue(unitTitle) {
   var dialogues = {
-    "Welcome! 👋": [
-      {speaker:'A', text:'<strong>Hello!</strong> My name is Emma. What is your name?'},
-      {speaker:'B', text:'<strong>Hi!</strong> My name is Kerem. Nice to meet you, Emma!'},
-      {speaker:'A', text:'Nice to meet you too! How are you?'},
-      {speaker:'B', text:'I am <strong>fine, thank you!</strong> And you?'},
-      {speaker:'A', text:'I am great, thanks! See you tomorrow!'},
-      {speaker:'B', text:'<strong>Goodbye!</strong> See you!'},
-    ],
-    "My Body 🧍": [
-      {speaker:'A', text:'Let&#39;s play Simon Says! <strong>Touch your head!</strong>'},
-      {speaker:'B', text:'Okay! (touches head) Now touch your <strong>shoulders</strong>!'},
-      {speaker:'A', text:'(touches shoulders) Now touch your <strong>knees</strong> and toes!'},
-      {speaker:'B', text:'Haha, this is fun! My <strong>legs</strong> are tired now!'},
-    ],
-    "Animals 🐾": [
-      {speaker:'A', text:'Look at that animal! It is very big and grey. What is it?'},
-      {speaker:'B', text:'It is an <strong>elephant</strong>! Elephants have a long nose called a trunk.'},
-      {speaker:'A', text:'Amazing! What does an elephant eat?'},
-      {speaker:'B', text:'Elephants eat <strong>plants, fruits and grass</strong>. They are herbivores!'},
-    ],
-    "Food & Drinks 🍎": [
-      {speaker:'A', text:'Are you hungry? What do you want for breakfast?'},
-      {speaker:'B', text:'Yes! I want <strong>toast, eggs and orange juice</strong>, please.'},
-      {speaker:'A', text:'Do you like milk?'},
-      {speaker:'B', text:'Yes, I like milk! But I <strong>do not like</strong> coffee. It is too bitter!'},
-    ],
-    "My Family 👨‍👩‍👧": [
-      {speaker:'A', text:'Who is this in the photo?'},
-      {speaker:'B', text:'This is my <strong>family</strong>! This is my mum and this is my dad.'},
-      {speaker:'A', text:'And who is the little girl?'},
-      {speaker:'B', text:'She is my <strong>sister</strong>. Her name is Zeynep. She is five years old.'},
-    ],
-    "Days & Weather ⛅": [
-      {speaker:'A', text:'What day is today?'},
-      {speaker:'B', text:'Today is <strong>Monday</strong>. What is the weather like?'},
-      {speaker:'A', text:'It is <strong>sunny and warm</strong> today! Perfect for a walk.'},
-      {speaker:'B', text:'Great! Let&#39;s go to the park after school!'},
-    ],
+"Welcome! 👋": [
+  {speaker:'A', text:'<strong>Hello!</strong> My name is Emma. What is your name?'},
+  {speaker:'B', text:'<strong>Hi!</strong> I am Kerem. It is nice to meet you, Emma!'},
+  {speaker:'A', text:'Nice to meet you too, Kerem! How are you?'},
+  {speaker:'B', text:'I am <strong>great</strong>, thank you! And you?'},
+  {speaker:'A', text:'I am <strong>wonderful</strong>! Are you a student here?'},
+  {speaker:'B', text:'Yes! I am in <strong>Class 4B</strong>. What about you?'},
+  {speaker:'A', text:'I am in <strong>Class 4A</strong>! We are neighbours!'},
+  {speaker:'B', text:'How wonderful! See you tomorrow! <strong>Goodbye</strong>!'},
+  {speaker:'A', text:'<strong>Bye bye</strong>, Kerem! Have a nice day!'},
+],
+"My Body 🧍": [
+  {speaker:'A', text:'Let us play <strong>Simon Says</strong>! Are you ready?'},
+  {speaker:'B', text:'Yes! I am ready! Let us start!'},
+  {speaker:'A', text:'Simon says... <strong>touch your head</strong>!'},
+  {speaker:'B', text:'(touches head) Okay! This is my <strong>head</strong>!'},
+  {speaker:'A', text:'Simon says... touch your <strong>shoulders</strong>!'},
+  {speaker:'B', text:'(touches shoulders) Done!'},
+  {speaker:'A', text:'Touch your <strong>nose</strong>! (No "Simon says"!)'},
+  {speaker:'B', text:'Ha! You cannot trick me! I did not move! 😄'},
+  {speaker:'A', text:'You are very good! <strong>Well done!</strong>'},
+],
+"Animals 🐾": [
+  {speaker:'A', text:'Look at that big <strong>grey</strong> animal over there!'},
+  {speaker:'B', text:'Oh! It is an <strong>elephant</strong>! Elephants are amazing!'},
+  {speaker:'A', text:'What does an elephant eat?'},
+  {speaker:'B', text:'Elephants eat <strong>plants, fruits</strong> and grass. They are herbivores!'},
+  {speaker:'A', text:'Can elephants swim?'},
+  {speaker:'B', text:'Yes! They can! Elephants are <strong>excellent swimmers</strong>!'},
+  {speaker:'A', text:'Wow! What sound does an elephant make?'},
+  {speaker:'B', text:'It goes <strong>"TRUMPET!"</strong> with its long trunk!'},
+  {speaker:'A', text:'That is so cool! Animals are <strong>incredible</strong>!'},
+],
+"Food & Drinks 🍎": [
+  {speaker:'A', text:'Good morning! Are you <strong>hungry</strong>?'},
+  {speaker:'B', text:'Yes, very hungry! What is for <strong>breakfast</strong>?'},
+  {speaker:'A', text:'We have <strong>eggs, toast</strong> and orange juice!'},
+  {speaker:'B', text:'Yummy! I love eggs! Do you have <strong>milk</strong> too?'},
+  {speaker:'A', text:'Yes, of course! Do you like <strong>cereal with milk</strong>?'},
+  {speaker:'B', text:'I like cereal! But I do <strong>not</strong> like coffee. It is too bitter!'},
+  {speaker:'A', text:'Me too! I prefer <strong>hot chocolate</strong> in winter!'},
+  {speaker:'B', text:'Oh, hot chocolate is <strong>delicious</strong>! Can I have some?'},
+  {speaker:'A', text:'Of course! Here you go! <strong>Enjoy</strong> your breakfast!'},
+],
+"My Family 👨‍👩‍👧": [
+  {speaker:'A', text:'Is this a <strong>photo</strong> of your family?'},
+  {speaker:'B', text:'Yes! This is my <strong>mum</strong> and this is my <strong>dad</strong>.'},
+  {speaker:'A', text:'They look so <strong>nice</strong>! Who is the little girl?'},
+  {speaker:'B', text:'She is my <strong>sister</strong>. Her name is Zeynep. She is five years old.'},
+  {speaker:'A', text:'And the older boy next to you?'},
+  {speaker:'B', text:'That is my <strong>brother</strong> Ali. He is twelve and very tall!'},
+  {speaker:'A', text:'How <strong>lucky</strong> you are! I have only one brother.'},
+  {speaker:'B', text:'Family is the most important thing! I <strong>love</strong> my family!'},
+],
+"Days & Weather ⛅": [
+  {speaker:'A', text:'Good morning! <strong>What day</strong> is today?'},
+  {speaker:'B', text:'Today is <strong>Wednesday</strong>! We have PE class today!'},
+  {speaker:'A', text:'Oh great! What is the <strong>weather</strong> like?'},
+  {speaker:'B', text:'It is <strong>sunny and warm</strong>! Perfect for outdoor PE!'},
+  {speaker:'A', text:'That is good! Yesterday it was very <strong>windy</strong>.'},
+  {speaker:'B', text:'Yes! My umbrella flew away! <strong>Tomorrow</strong> will be rainy.'},
+  {speaker:'A', text:'Really? Then I will bring my <strong>raincoat</strong>!'},
+  {speaker:'B', text:'Good idea! Do not forget your <strong>boots</strong> too!'},
+  {speaker:'A', text:'Thanks for the reminder! See you in the <strong>playground</strong>!'},
+],
   };
   return dialogues[unitTitle] || [
-    {speaker:'A', text:'Can you help me with this topic?'},
-    {speaker:'B', text:'Of course! Let us <strong>learn together</strong>.'},
-    {speaker:'A', text:'Thank you! This is very interesting.'},
-    {speaker:'B', text:'I agree! Practice makes <strong>perfect</strong>!'},
+    {speaker:'A', text:'Can you help me practise <strong>English</strong>?'},
+    {speaker:'B', text:'Of course! Let us <strong>learn together</strong>!'},
+    {speaker:'A', text:'This topic is very <strong>interesting</strong>!'},
+    {speaker:'B', text:'I agree! The more we practise, the <strong>better</strong> we get!'},
+    {speaker:'A', text:'You are right! Let us keep going!'},
+    {speaker:'B', text:'Yes! We can do it! <strong>Well done!</strong>'},
   ];
 }
 
-// ── GRAMMAR GENERATOR ──────────────
-function generateGrammar(unitTitle) {
-  var grammars = {
-    "Welcome! 👋": {
-      rule:'📌 "My name is..." — Tanıtma cümlesi',
-      examples:[
-        '<em>My name is</em> Emma. (Benim adım Emma.)',
-        '<em>What is your name?</em> (Senin adın ne?)',
-        '<em>Nice to meet you!</em> (Tanıştığımıza memnun oldum!)',
-        '<em>How are you? — I am fine, thank you.</em>',
-      ]
-    },
-    "My Body 🧍": {
-      rule:'📌 "I have..." — Sahip olma cümlesi',
-      examples:[
-        '<em>I have</em> two eyes. (İki gözüm var.)',
-        '<em>She has</em> long hair. (Onun uzun saçları var.)',
-        '<em>Touch your</em> nose! (Burnuna dokun!)',
-        '<em>My hands</em> are cold. (Ellerim soğuk.)',
-      ]
-    },
-    "Animals 🐾": {
-      rule:'📌 "It can... / It has..." — Hayvan tanımlama',
-      examples:[
-        'A bird <em>can fly</em>. (Bir kuş uçabilir.)',
-        'A fish <em>can swim</em>. (Bir balık yüzebilir.)',
-        'An elephant <em>has</em> a trunk. (Bir filin hortumu var.)',
-        '<em>Is it a</em> cat or a dog? (Bu kedi mi köpek mi?)',
-      ]
-    },
-    "Food & Drinks 🍎": {
-      rule:'📌 "I like / I do not like" — Tercih ifadesi',
-      examples:[
-        '<em>I like</em> apples. (Elmaları severim.)',
-        '<em>I do not like</em> spinach. (Ispanamı sevmem.)',
-        '<em>Do you like</em> chocolate? (Çikolata sever misin?)',
-        '<em>Yes, I do. / No, I do not.</em>',
-      ]
-    },
-    "My Family 👨‍👩‍👧": {
-      rule:'📌 "This is my..." — Tanıtma',
-      examples:[
-        '<em>This is my</em> mother. (Bu benim annem.)',
-        '<em>He is my</em> brother. (O benim erkek kardeşim.)',
-        '<em>Her name is</em> Ayşe. (Onun adı Ayşe.)',
-        '<em>How old are you?</em> — <em>I am</em> ten years old.',
-      ]
-    },
-    "Days & Weather ⛅": {
-      rule:'📌 "It is... today" — Hava durumu',
-      examples:[
-        '<em>It is sunny</em> today. (Bugün güneşli.)',
-        '<em>What is the weather like?</em> (Hava nasıl?)',
-        '<em>It is raining.</em> (Yağmur yağıyor.)',
-        '<em>Today is</em> Monday. (Bugün Pazartesi.)',
-      ]
-    },
-  };
-  return grammars[unitTitle] || {
-    rule: '📌 Temel cümle yapısı: Subject + Verb + Object',
-    examples: [
-      '<em>I</em> love <em>English</em>. (İngilizceden hoşlanıyorum.)',
-      '<em>She</em> speaks <em>two languages</em>.',
-      '<em>They</em> play <em>football</em> every day.',
-    ]
-  };
-}
-
-// ── QUIZ GENERATOR ──────────────────
 function generateQuiz(unitTitle, vocab) {
   if (!vocab || vocab.length < 4) return [];
   var shuffled = vocab.slice().sort(function() { return Math.random() - .5; });
