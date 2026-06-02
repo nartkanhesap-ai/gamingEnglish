@@ -310,19 +310,23 @@ firebase.auth().onAuthStateChanged(async function(user) {
   if (user) {
     try {
       var snap = await firebase.firestore().collection('users').doc(user.uid).get();
-      if (snap.exists) {
-        geStudentInfo = snap.data();
-        if (!geStudentInfo.firstName && geStudentInfo.name) {
-          var parts = geStudentInfo.name.split(' ');
-          geStudentInfo.firstName = parts[0] || 'Öğrenci';
-          geStudentInfo.lastName = parts.slice(1).join(' ') || '';
-        }
-        window.geStudentInfo = geStudentInfo;
-        window.geCurrentUser = user;
-        console.log('✅ Student:', geStudentInfo.firstName);
-        setTimeout(function(){ hideLoginModal(); updateNavbar(); }, 200);
+      geStudentInfo = snap.exists ? snap.data() : { firstName: user.email.split('@')[0], lastName: '' };
+      if (geStudentInfo && !geStudentInfo.firstName && geStudentInfo.name) {
+        var parts = geStudentInfo.name.split(' ');
+        geStudentInfo.firstName = parts[0] || 'Ogrenci';
+        geStudentInfo.lastName = parts.slice(1).join(' ') || '';
       }
-    } catch(err) { console.error('Auth error:', err); }
+      window.geStudentInfo = geStudentInfo;
+      window.geCurrentUser = user;
+      console.log('Student logged in:', user.email);
+      setTimeout(function(){ hideLoginModal(); updateNavbar(); }, 200);
+    } catch(err) {
+      console.error('Firestore error (non-fatal):', err);
+      geStudentInfo = { firstName: user.email.split('@')[0], lastName: '' };
+      window.geStudentInfo = geStudentInfo;
+      window.geCurrentUser = user;
+      setTimeout(function(){ hideLoginModal(); updateNavbar(); }, 200);
+    }
   } else {
     geStudentInfo = null;
     updateNavbar();
