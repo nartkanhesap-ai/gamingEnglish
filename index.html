@@ -1,665 +1,258 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-mode="explorer">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gaming English - 7-14 Yaş İçin İngilizce Oyunları</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Gaming English — Macera Dünyası</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+
 <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --primary-light: #667eea;
-      --primary-dark: #764ba2;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 20px;
-      transition: background 0.4s ease;
-    }
-
-    body.theme-candy {
-      background: linear-gradient(135deg, #FFB3E6 0%, #FF85D0 100%);
-      --primary-gradient: linear-gradient(135deg, #FFB3E6 0%, #FF85D0 100%);
-      --primary-light: #FFB3E6;
-      --primary-dark: #FF85D0;
-    }
-
-    body.theme-ocean {
-      background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
-      --primary-gradient: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
-      --primary-light: #4FC3F7;
-      --primary-dark: #0288D1;
-    }
-
-    body.theme-jungle {
-      background: linear-gradient(135deg, #81C784 0%, #2E7D32 100%);
-      --primary-gradient: linear-gradient(135deg, #81C784 0%, #2E7D32 100%);
-      --primary-light: #81C784;
-      --primary-dark: #2E7D32;
-    }
-
-    .navbar {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 12px;
-      padding: 20px 30px;
-      margin-bottom: 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 20px;
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-      transition: all 0.3s;
-    }
-
-    .logo {
-      font-family: 'Fredoka', sans-serif;
-      font-size: 28px;
-      font-weight: 700;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .nav-right {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 20px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.3s;
-      opacity: 0.8;
-    }
-
-    .nav-links a:hover {
-      opacity: 1;
-      transform: translateY(-2px);
-    }
-
-    .theme-selector {
-      display: flex;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 6px;
-      border-radius: 20px;
-      align-items: center;
-    }
-
-    .theme-btn {
-      width: 40px;
-      height: 40px;
-      border: 2px solid transparent;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .theme-btn:hover {
-      transform: scale(1.1);
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    .theme-btn.active {
-      border-color: white;
-      transform: scale(1.15);
-      background: rgba(255, 255, 255, 0.4);
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
-    }
-
-    .theme-btn[data-theme="default"] {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-
-    .theme-btn[data-theme="candy"] {
-      background: linear-gradient(135deg, #FFB3E6 0%, #FF85D0 100%);
-    }
-
-    .theme-btn[data-theme="ocean"] {
-      background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
-    }
-
-    .theme-btn[data-theme="jungle"] {
-      background: linear-gradient(135deg, #81C784 0%, #2E7D32 100%);
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .hero {
-      text-align: center;
-      color: white;
-      margin-bottom: 60px;
-      animation: fadeIn 0.6s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .hero h1 {
-      font-family: 'Fredoka', sans-serif;
-      font-size: 56px;
-      font-weight: 700;
-      margin-bottom: 15px;
-      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    .hero p {
-      font-size: 18px;
-      opacity: 0.95;
-      margin-bottom: 30px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .cta-button {
-      background: white;
-      color: var(--primary-dark);
-      padding: 14px 32px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 16px;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: inline-block;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    }
-
-    .cta-button:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-    }
-
-    .games-section h2 {
-      text-align: center;
-      color: white;
-      font-family: 'Fredoka', sans-serif;
-      font-size: 42px;
-      margin-bottom: 50px;
-      font-weight: 700;
-    }
-
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 30px;
-      margin-bottom: 60px;
-    }
-
-    .game-card {
-      background: white;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s;
-      cursor: pointer;
-      animation: slideUp 0.6s ease-out;
-      animation-fill-mode: both;
-      position: relative;
-    }
-
-    .game-card:nth-child(1) { animation-delay: 0.1s; }
-    .game-card:nth-child(2) { animation-delay: 0.2s; }
-    .game-card:nth-child(3) { animation-delay: 0.3s; }
-    .game-card:nth-child(4) { animation-delay: 0.4s; }
-    .game-card:nth-child(5) { animation-delay: 0.5s; }
-    .game-card:nth-child(6) { animation-delay: 0.6s; }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .game-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-    }
-
-    .game-header {
-      background: var(--primary-gradient);
-      color: white;
-      padding: 30px 20px;
-      text-align: center;
-      transition: all 0.3s;
-    }
-
-    .game-icon {
-      font-size: 60px;
-      margin-bottom: 15px;
-      display: block;
-    }
-
-    .game-title {
-      font-family: 'Fredoka', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 5px;
-    }
-
-    .game-level {
-      font-size: 12px;
-      opacity: 0.9;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .game-body {
-      padding: 25px 20px;
-    }
-
-    .game-description {
-      color: #666;
-      font-size: 14px;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-
-    .game-features {
-      list-style: none;
-      margin-bottom: 25px;
-    }
-
-    .game-features li {
-      color: #555;
-      font-size: 13px;
-      padding: 6px 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .game-features li:before {
-      content: "✓";
-      color: var(--primary-light);
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    .play-btn {
-      background: var(--primary-gradient);
-      color: white;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.3s;
-      width: 100%;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .play-btn:hover {
-      transform: scale(1.02);
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-    }
-
-    .features-section {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      padding: 50px 30px;
-      color: white;
-      margin-bottom: 60px;
-      transition: all 0.3s;
-    }
-
-    .features-section h2 {
-      font-family: 'Fredoka', sans-serif;
-      font-size: 36px;
-      font-weight: 700;
-      margin-bottom: 40px;
-      text-align: center;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 30px;
-    }
-
-    .feature-item {
-      text-align: center;
-    }
-
-    .feature-icon {
-      font-size: 50px;
-      margin-bottom: 15px;
-      display: block;
-    }
-
-    .feature-title {
-      font-weight: 600;
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
-
-    .feature-desc {
-      font-size: 13px;
-      opacity: 0.9;
-      line-height: 1.5;
-    }
-
-    footer {
-      text-align: center;
-      color: white;
-      padding: 30px 20px;
-      opacity: 0.8;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      margin-top: 60px;
-    }
-
-    .coming-soon {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #ff6b6b;
-      color: white;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 36px;
-      }
-
-      .hero p {
-        font-size: 16px;
-      }
-
-      .games-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .nav-links {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .theme-selector {
-        order: 3;
-        width: 100%;
-        justify-content: center;
-      }
-    }
-
-    * {
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .navbar, .features-section, .game-header, .play-btn, .cta-button {
-      transition: background 0.4s ease, background-color 0.4s ease;
-    }
-
-    /* ─── Kelime Oyunları Klasör Kartı ─── */
-    .folder-card {
-      background: white;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-      transition: all 0.3s;
-      cursor: pointer;
-      animation: slideUp 0.6s ease-out both;
-      animation-delay: 0.1s;
-      position: relative;
-    }
-    .folder-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-    }
-    .folder-card .game-header {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white;
-      padding: 30px 20px;
-      text-align: center;
-    }
-    .folder-card .game-header .folder-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 99px;
-      padding: 4px 14px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 14px;
-    }
-    .folder-card .folder-svg-icon {
-      font-size: 60px;
-      margin-bottom: 15px;
-      display: block;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
-    }
-    .folder-card .game-title {
-      font-family: 'Fredoka', sans-serif;
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 5px;
-    }
-    .folder-card .game-level {
-      font-size: 12px;
-      opacity: 0.9;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .folder-card .folder-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin-bottom: 20px;
-    }
-    .folder-card .folder-pill {
-      background: #f3f0ff;
-      color: #7c3aed;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 5px 11px;
-      border-radius: 99px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-
-    /* ─── Kelime Oyunları Modal ─── */
-    .ko-overlay {
-      display: none; position: fixed; inset: 0; z-index: 9000;
-      background: #fff;
-      align-items: stretch; justify-content: stretch;
-    }
-    .ko-overlay.open { display: flex; }
-    .ko-modal {
-      background: #fff; border-radius: 0;
-      width: 100vw; height: 100vh; max-height: 100vh;
-      overflow: hidden; display: flex; flex-direction: column;
-      box-shadow: none;
-      animation: koSlideIn 0.25s ease;
-    }
-    @keyframes koSlideIn {
-      from { opacity:0; transform: scale(0.88) translateY(24px); }
-      to   { opacity:1; transform: scale(1) translateY(0); }
-    }
-    .ko-header {
-      padding: 24px 28px 18px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex; align-items: center; gap: 14px;
-    }
-    .ko-header-icon { font-size: 32px; }
-    .ko-header-text h2 {
-      color: #fff; font-size: 22px; font-weight: 800; margin: 0 0 2px;
-    }
-    .ko-header-text p {
-      color: rgba(255,255,255,0.78); font-size: 13px; margin: 0;
-    }
-    .ko-close {
-      margin-left: auto; background: rgba(255,255,255,0.2);
-      border: none; border-radius: 50%; width: 36px; height: 36px;
-      cursor: pointer; font-size: 18px; color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s;
-    }
-    .ko-close:hover { background: rgba(255,255,255,0.35); }
-
-    /* Breadcrumb */
-    .ko-breadcrumb {
-      padding: 12px 28px; background: #f8fafc;
-      border-bottom: 1px solid #e8edf2;
-      font-size: 13px; color: #6b7280;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .ko-breadcrumb span { cursor: pointer; }
-    .ko-breadcrumb span:hover { color: #667eea; text-decoration: underline; }
-    .ko-breadcrumb .active { color: #1f2937; font-weight: 600; cursor: default; }
-    .ko-breadcrumb .sep { color: #d1d5db; }
-
-    /* İçerik */
-    .ko-body {
-      overflow-y: auto; flex: 1;
-      padding: 24px 28px;
-    }
-
-    /* Oyun listesi */
-    .ko-game-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px;
-    }
-    .ko-game-item {
-      border: 2px solid #e8edf2; border-radius: 16px;
-      padding: 18px; cursor: pointer;
-      transition: all 0.18s ease;
-      display: flex; flex-direction: column; gap: 10px;
-      background: #fff;
-    }
-    .ko-game-item:hover {
-      border-color: #667eea;
-      box-shadow: 0 4px 20px rgba(102,126,234,0.2);
-      transform: translateY(-2px);
-    }
-    .ko-game-item-top {
-      display: flex; align-items: center; gap: 12px;
-    }
-    .ko-game-emoji {
-      width: 48px; height: 48px; border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; flex-shrink: 0;
-    }
-    .ko-game-info h3 {
-      font-size: 15px; font-weight: 700; color: #1f2937;
-      margin: 0 0 3px;
-    }
-    .ko-game-info .level {
-      font-size: 11px; font-weight: 600; color: #667eea;
-      background: #eef2ff; padding: 2px 8px; border-radius: 99px;
-      display: inline-block;
-    }
-    .ko-game-desc {
-      font-size: 12px; color: #6b7280; line-height: 1.5;
-    }
-    .ko-game-tags {
-      display: flex; gap: 6px; flex-wrap: wrap;
-    }
-    .ko-game-tag {
-      font-size: 10px; font-weight: 600; color: #6b7280;
-      background: #f3f4f6; padding: 3px 8px; border-radius: 99px;
-    }
-    .ko-play-btn {
-      margin-top: auto; padding: 10px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: #fff; border: none; border-radius: 10px;
-      font-size: 13px; font-weight: 700; cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    .ko-play-btn:hover { opacity: 0.88; }
-
-    /* Oyun iframe görünümü */
-    .ko-game-view {
-      display: none; flex-direction: column; flex: 1; overflow: hidden;
-    }
-    .ko-game-view.active { display: flex; }
-    .ko-game-frame {
-      flex: 1; border: none; width: 100%; height: 100%;
-      display: block;
-    }
-    .ko-back-bar {
-      padding: 10px 20px;
-      background: #f8fafc; border-bottom: 1px solid #e8edf2;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .ko-back-btn {
-      background: none; border: 2px solid #e8edf2;
-      border-radius: 8px; padding: 6px 14px;
-      font-size: 13px; font-weight: 600; cursor: pointer;
-      color: #374151; display: flex; align-items: center; gap: 6px;
-      transition: all 0.15s;
-    }
-    .ko-back-btn:hover { border-color: #667eea; color: #667eea; }
-    .ko-playing-title {
-      font-size: 14px; font-weight: 700; color: #1f2937;
-    }
-
-  </style>
-
-<!-- Firebase Auth & Firestore -->
+/* ============================================================
+   GAMING ENGLISH — QUEST WORLD
+   Explorer (7-10): bright map-paper | Challenger (11-15): cyber/neon
+   ============================================================ */
+:root, [data-mode="explorer"] {
+  --paper:      #F3ECDB;
+  --paper-2:    #FBF6EA;
+  --surface:    #FFFFFF;
+  --surface-2:  #FBF7EE;
+  --ink:        #1C2E22;
+  --ink-soft:   #51645A;
+  --ink-faint:  #8A9890;
+  --green:      #1E8A53;
+  --green-deep: #14633A;
+  --green-soft: #E4F2E8;
+  --amber:      #F2A23C;
+  --amber-soft: #FCE9CC;
+  --coral:      #E5603C;
+  --coral-soft: #FBE0D6;
+  --sky:        #2E9BD6;
+  --sky-soft:   #DCEFF9;
+  --yellow:     #FFC53D;
+  --violet:     #7C6BF0;
+  --violet-soft:#E8E4FC;
+  --line:       rgba(28,46,34,0.10);
+  --line-2:     rgba(28,46,34,0.16);
+  --shadow:     0 14px 34px -12px rgba(20,60,40,0.28);
+  --shadow-sm:  0 6px 16px -8px rgba(20,60,40,0.28);
+  --topo:       rgba(28,46,34,0.045);
+  --r-xl: 30px; --r-lg: 22px; --r-md: 16px; --r-sm: 11px;
+  --display: 'Baloo 2', system-ui, sans-serif;
+  --body: 'Nunito', system-ui, sans-serif;
+}
+[data-mode="challenger"] {
+  --paper:      #080F1A;
+  --paper-2:    #0D1726;
+  --surface:    #111E30;
+  --surface-2:  #17273C;
+  --ink:        #EAF2FF;
+  --ink-soft:   #97AAC4;
+  --ink-faint:  #5F748F;
+  --green:      #19E6A0;
+  --green-deep: #0FB47E;
+  --green-soft: #0E3A30;
+  --amber:      #FFC23D;
+  --amber-soft: #3A2E14;
+  --coral:      #FF6F61;
+  --coral-soft: #3A1E1B;
+  --sky:        #4FD6F5;
+  --sky-soft:   #102E3C;
+  --yellow:     #FFD45E;
+  --violet:     #A98CFF;
+  --violet-soft:#241F44;
+  --line:       rgba(120,170,255,0.12);
+  --line-2:     rgba(120,170,255,0.22);
+  --shadow:     0 18px 44px -14px rgba(0,0,0,0.7);
+  --shadow-sm:  0 8px 22px -10px rgba(0,0,0,0.7);
+  --topo:       rgba(120,170,255,0.06);
+}
+[data-mode="challenger"] .btn-primary { box-shadow: 0 8px 0 0 var(--green-deep), 0 0 18px -2px var(--green); }
+[data-mode="challenger"] .btn-primary:hover { box-shadow: 0 10px 0 0 var(--green-deep), 0 0 26px 0 var(--green); }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body { font-family: var(--body); background: var(--paper); color: var(--ink); -webkit-font-smoothing: antialiased; overflow-x: hidden; transition: background .3s, color .3s; }
+
+/* Topographic bg */
+.topo-bg { position:absolute; inset:0; pointer-events:none;
+  background-image:
+    radial-gradient(120% 90% at 12% 18%, transparent 0, transparent 38%, var(--topo) 38.4%, transparent 39%),
+    radial-gradient(120% 90% at 12% 18%, transparent 0, transparent 48%, var(--topo) 48.4%, transparent 49%),
+    radial-gradient(120% 90% at 12% 18%, transparent 0, transparent 58%, var(--topo) 58.4%, transparent 59%),
+    radial-gradient(140% 110% at 88% 82%, transparent 0, transparent 30%, var(--topo) 30.4%, transparent 31%),
+    radial-gradient(140% 110% at 88% 82%, transparent 0, transparent 42%, var(--topo) 42.4%, transparent 43%),
+    radial-gradient(140% 110% at 88% 82%, transparent 0, transparent 54%, var(--topo) 54.4%, transparent 55%); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 99px; }
+
+/* Buttons */
+.btn { font-family: var(--display); font-weight: 700; border: none; cursor: pointer; border-radius: 99px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; transition: transform .14s cubic-bezier(.34,1.56,.64,1), box-shadow .18s; white-space: nowrap; user-select: none; line-height: 1; }
+.btn:active { transform: translateY(1px) scale(.98); }
+.btn-lg { font-size: 18px; padding: 16px 28px; }
+.btn-md { font-size: 15px; padding: 12px 20px; }
+.btn-sm { font-size: 13px; padding: 8px 15px; }
+.btn-primary { background: var(--green); color: #fff; box-shadow: 0 8px 0 0 var(--green-deep), var(--shadow-sm); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 0 0 var(--green-deep), var(--shadow); }
+.btn-primary:active { transform: translateY(4px); box-shadow: 0 3px 0 0 var(--green-deep); }
+.btn-amber { background: var(--amber); color: #3a2509; box-shadow: 0 8px 0 0 #c87f22, var(--shadow-sm); }
+.btn-amber:hover { transform: translateY(-2px); }
+.btn-ghost { background: transparent; color: var(--ink); border: 2.5px solid var(--line-2); }
+.btn-ghost:hover { border-color: var(--green); color: var(--green); transform: translateY(-2px); }
+.btn-soft { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+.btn-soft:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.card { background: var(--surface); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); border: 1.5px solid var(--line); }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--body); font-weight: 800; font-size: 12px; padding: 5px 11px; border-radius: 99px; }
+.pbar { height: 10px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.pbar > i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--green), var(--green-deep)); transition: width .8s cubic-bezier(.22,1,.36,1); }
+.pbar.amber > i { background: linear-gradient(90deg, var(--amber), #d98a25); }
+.ge-h { font-family: var(--display); font-weight: 800; color: var(--ink); }
+.row { display: flex; align-items: center; }
+.col { display: flex; flex-direction: column; }
+.gap8{gap:8px;} .gap10{gap:10px;} .gap12{gap:12px;} .gap16{gap:16px;} .gap20{gap:20px;}
+.grow{flex:1;} .wrap{flex-wrap:wrap;} .center{align-items:center;justify-content:center;} .between{justify-content:space-between;}
+@keyframes floaty { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-9px);} }
+@keyframes pop { 0%{transform:scale(.6);opacity:0;} 60%{transform:scale(1.12);} 100%{transform:scale(1);opacity:1;} }
+@keyframes fadeUp { from{transform:translateY(20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+@keyframes wiggle { 0%,100%{transform:rotate(-3deg);} 50%{transform:rotate(3deg);} }
+@keyframes shimmer { 0%{opacity:.6;} 50%{opacity:1;} 100%{opacity:.6;} }
+.floaty{animation:floaty 4s ease-in-out infinite;}
+.fade-up{animation:fadeUp .5s cubic-bezier(.22,1,.36,1) both;}
+.pop-in{animation:pop .4s cubic-bezier(.34,1.56,.64,1) both;}
+
+/* ─── SITE LAYOUT ─── */
+.ge-page-wrapper { min-height: 100vh; background: var(--paper); position: relative; overflow-x: hidden; }
+.ge-topbar { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; gap: 12px; flex-wrap: wrap; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(14px); border-bottom: 1.5px solid var(--line); }
+.ge-logo { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--ink); text-decoration: none; }
+.ge-stat { display: flex; align-items: center; gap: 6px; background: var(--surface); border-radius: 99px; padding: 6px 14px; font-family: var(--display); font-weight: 800; font-size: 14px; color: var(--ink); box-shadow: var(--shadow-sm); border: 1.5px solid var(--line); }
+.ge-page { max-width: 1160px; margin: 0 auto; padding: 32px 24px 80px; }
+
+/* ─── HERO ─── */
+.ge-hero { padding: 56px 0 40px; display: flex; align-items: center; gap: 48px; flex-wrap: wrap; }
+.ge-hero-text { flex: 1 1 380px; }
+.ge-hero-art { flex: 1 1 320px; display: flex; justify-content: center; }
+.ge-hero h1 { font-family: var(--display); font-weight: 800; font-size: clamp(38px,5.5vw,62px); line-height: 1.02; color: var(--ink); letter-spacing: -.02em; }
+.ge-hero p { font-size: 17px; color: var(--ink-soft); margin-top: 16px; line-height: 1.6; font-weight: 600; max-width: 480px; }
+.ge-hero-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 28px; }
+.ge-hero-stats { display: flex; gap: 28px; margin-top: 32px; flex-wrap: wrap; }
+.ge-hero-stat-n { font-family: var(--display); font-weight: 800; font-size: 28px; color: var(--ink); line-height: 1; }
+.ge-hero-stat-l { font-size: 12px; color: var(--ink-faint); font-weight: 700; margin-top: 2px; }
+.ge-atlas-ring { position: relative; width: 340px; height: 340px; }
+.ge-atlas-ring-bg { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, var(--green-soft), transparent 72%); }
+.ge-float-badge { position: absolute; display: flex; align-items: center; justify-content: center; width: 54px; height: 54px; border-radius: 17px; background: var(--surface); box-shadow: var(--shadow); border: 1.5px solid var(--line); }
+
+/* ─── MODE TOGGLE ─── */
+.ge-mode-toggle { display: flex; background: var(--surface); border-radius: 99px; padding: 5px; gap: 4px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--line); }
+.ge-mode-btn { border: none; cursor: pointer; border-radius: 99px; padding: 7px 14px; font-family: var(--display); font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 7px; white-space: nowrap; transition: all .18s; }
+.ge-mode-btn.active { background: var(--green); color: #fff; }
+.ge-mode-btn:not(.active) { background: transparent; color: var(--ink-soft); }
+.ge-mode-age { font-size: 10px; font-weight: 800; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 99px; opacity: .85; }
+.ge-mode-btn:not(.active) .ge-mode-age { background: var(--surface-2); }
+
+/* ─── GAMES GRID ─── */
+.ge-games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px,1fr)); gap: 22px; }
+.ge-folder-card { background: var(--surface); border-radius: var(--r-xl); overflow: hidden; box-shadow: var(--shadow); border: 1.5px solid var(--line); cursor: pointer; transition: transform .2s, box-shadow .2s; }
+.ge-folder-card:hover { transform: translateY(-8px); box-shadow: 0 28px 56px -16px rgba(20,60,40,0.32); }
+.ge-folder-header { padding: 28px 22px; color: #fff; position: relative; overflow: hidden; }
+.ge-folder-body { padding: 22px; }
+.ge-folder-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.2); border-radius: 99px; padding: 4px 12px; font-size: 11px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; margin-bottom: 14px; }
+.ge-folder-icon { font-size: 56px; display: block; margin-bottom: 12px; filter: drop-shadow(0 4px 8px rgba(0,0,0,.2)); }
+.ge-folder-title { font-family: var(--display); font-weight: 800; font-size: 24px; margin-bottom: 4px; }
+.ge-folder-level { font-size: 12px; opacity: .88; font-weight: 700; letter-spacing: .4px; }
+.ge-folder-desc { font-size: 14px; color: var(--ink-soft); line-height: 1.6; font-weight: 600; margin-bottom: 16px; }
+.ge-folder-pills { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
+.ge-folder-pill { background: var(--green-soft); color: var(--green-deep); font-size: 12px; font-weight: 700; padding: 5px 11px; border-radius: 99px; }
+.ge-folder-pill.violet { background: var(--violet-soft); color: var(--violet); }
+.ge-play-btn { width: 100%; padding: 13px; background: var(--green); color: #fff; border: none; border-radius: var(--r-md); font-family: var(--display); font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 6px 0 var(--green-deep); transition: all .16s; }
+.ge-play-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--green-deep), var(--shadow); }
+.ge-play-btn.violet-btn { background: var(--violet); box-shadow: 0 6px 0 #5a48d6; }
+
+/* ─── HOW IT WORKS / ADVENTURE MAP ─── */
+.ge-hiw { margin-top: 72px; }
+.ge-hiw-map { position: relative; height: 340px; border-radius: var(--r-xl); overflow: hidden; background: var(--surface); border: 1.5px solid var(--line); box-shadow: var(--shadow-sm); margin-top: 24px; }
+.ge-hiw-step { position: absolute; text-align: center; width: 140px; transform: translate(-50%,-50%); }
+.ge-hiw-icon { width: 62px; height: 62px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; box-shadow: var(--shadow); border: 3px solid var(--surface); }
+.ge-hiw-title { font-family: var(--display); font-weight: 800; font-size: 17px; color: var(--ink); }
+.ge-hiw-desc { font-size: 12px; color: var(--ink-soft); font-weight: 600; line-height: 1.4; margin-top: 3px; }
+
+/* ─── FEATURES ─── */
+.ge-features { margin-top: 72px; }
+.ge-features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 18px; margin-top: 28px; }
+.ge-feat-card { background: var(--surface); border-radius: var(--r-lg); padding: 24px; border: 1.5px solid var(--line); box-shadow: var(--shadow-sm); }
+.ge-feat-icon { width: 52px; height: 52px; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+.ge-feat-title { font-family: var(--display); font-weight: 800; font-size: 18px; color: var(--ink); }
+.ge-feat-desc { font-size: 14px; color: var(--ink-soft); font-weight: 600; margin-top: 6px; line-height: 1.5; }
+
+/* ─── FOOTER ─── */
+.ge-footer { margin-top: 72px; padding: 28px 0; border-top: 1.5px solid var(--line); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+
+/* ─── LOGIN MODAL ─── */
+.ge-login-modal { display: flex !important; position: fixed; inset: 0; background: rgba(8,15,26,0.72); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+.ge-login-modal.hidden { display: none !important; }
+.ge-login-box { background: var(--surface); border-radius: var(--r-xl); padding: 40px; width: min(420px,94vw); box-shadow: var(--shadow); border: 1.5px solid var(--line); animation: fadeUp .4s cubic-bezier(.22,1,.36,1) both; }
+.ge-login-header { text-align: center; margin-bottom: 28px; }
+.ge-login-header h1 { font-family: var(--display); font-weight: 800; font-size: 26px; color: var(--ink); margin-bottom: 6px; }
+.ge-login-header p { font-size: 14px; color: var(--ink-soft); font-weight: 600; }
+.ge-form-group { margin-bottom: 14px; }
+.ge-form-group label { display: block; font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+.ge-form-group input { width: 100%; padding: 11px 14px; border: 2px solid var(--line-2); border-radius: 12px; font-size: 14px; outline: none; transition: border .2s; background: var(--surface-2); color: var(--ink); font-family: var(--body); }
+.ge-form-group input:focus { border-color: var(--green); }
+.ge-error { background: var(--coral-soft); color: var(--coral); padding: 11px 14px; border-radius: 10px; font-size: 13px; font-weight: 700; margin-bottom: 14px; display: none; border: 2px solid var(--coral); }
+.ge-error.show { display: block; }
+.ge-login-btn { width: 100%; padding: 13px; background: var(--green); color: #fff; border: none; border-radius: 12px; font-family: var(--display); font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 6px 0 var(--green-deep); transition: all .16s; }
+.ge-login-btn:hover { transform: translateY(-2px); }
+.ge-login-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+.ge-signup-link { text-align: center; margin-top: 18px; font-size: 13px; color: var(--ink-soft); font-weight: 600; }
+.ge-signup-link a { color: var(--green); font-weight: 800; text-decoration: none; }
+.ge-user-info { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; color: var(--ink); }
+.ge-logout-btn { padding: 6px 13px; background: var(--surface-2); border: 1.5px solid var(--line-2); border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; color: var(--ink-soft); transition: all .16s; font-family: var(--body); }
+.ge-logout-btn:hover { border-color: var(--coral); color: var(--coral); }
+
+/* ─── KO MODAL (Kelime Oyunları) ─── */
+.ko-overlay { display:none; position:fixed; inset:0; z-index:9000; background:#fff; }
+.ko-overlay.open { display:flex; }
+[data-mode="challenger"] .ko-overlay { background: var(--paper); }
+.ko-modal { background:var(--surface); width:100vw; height:100vh; overflow:hidden; display:flex; flex-direction:column; }
+.ko-header { padding:20px 26px 16px; background:linear-gradient(135deg,var(--green),var(--green-deep)); display:flex; align-items:center; gap:12px; position:relative; overflow:hidden; }
+.ko-header .topo-bg { opacity:.4; }
+.ko-header-icon { font-size:30px; position:relative; }
+.ko-header-text { position:relative; }
+.ko-header-text h2 { color:#fff; font-family:var(--display); font-size:20px; font-weight:800; margin:0 0 2px; }
+.ko-header-text p { color:rgba(255,255,255,.78); font-size:13px; margin:0; font-weight:600; }
+.ko-close { margin-left:auto; background:rgba(255,255,255,.2); border:none; border-radius:50%; width:36px; height:36px; cursor:pointer; font-size:17px; color:#fff; display:flex; align-items:center; justify-content:center; transition:background .18s; position:relative; }
+.ko-close:hover { background:rgba(255,255,255,.35); }
+.ko-breadcrumb { padding:11px 26px; background:var(--surface-2); border-bottom:1.5px solid var(--line); font-size:13px; color:var(--ink-soft); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.ko-breadcrumb span { cursor:pointer; font-weight:700; }
+.ko-breadcrumb span:hover { color:var(--green); text-decoration:underline; }
+.ko-breadcrumb .active { color:var(--ink); font-weight:800; cursor:default; }
+.ko-body { overflow-y:auto; flex:1; padding:22px 26px; }
+.ko-game-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
+.ko-game-item { border:2px solid var(--line); border-radius:var(--r-lg); padding:18px; cursor:pointer; transition:all .18s; display:flex; flex-direction:column; gap:10px; background:var(--surface); }
+.ko-game-item:hover { border-color:var(--green); box-shadow:0 4px 20px rgba(30,138,83,.18); transform:translateY(-2px); }
+.ko-game-item-top { display:flex; align-items:center; gap:12px; }
+.ko-game-emoji { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; }
+.ko-game-info h3 { font-family:var(--display); font-size:15px; font-weight:800; color:var(--ink); margin:0 0 3px; }
+.ko-game-info .level { font-size:11px; font-weight:800; color:var(--green); background:var(--green-soft); padding:2px 8px; border-radius:99px; display:inline-block; }
+.ko-game-desc { font-size:12px; color:var(--ink-soft); line-height:1.5; font-weight:600; }
+.ko-play-btn { margin-top:auto; padding:10px; background:linear-gradient(135deg,var(--green),var(--green-deep)); color:#fff; border:none; border-radius:10px; font-family:var(--display); font-size:13px; font-weight:800; cursor:pointer; transition:opacity .18s; }
+.ko-play-btn:hover { opacity:.88; }
+.ko-set-card { border-radius:14px; padding:16px 20px; cursor:pointer; display:flex; align-items:center; gap:14px; transition:transform .15s,box-shadow .15s; box-shadow:var(--shadow-sm); color:#fff; }
+.ko-set-card:hover { transform:translateY(-2px); box-shadow:var(--shadow); }
+
+@media (max-width: 768px) {
+  .ge-hero { padding: 36px 0 24px; gap: 32px; }
+  .ge-atlas-ring { width: 260px; height: 260px; }
+  .ge-topbar { padding: 10px 16px; }
+  .ge-page { padding: 22px 16px 60px; }
+  .ko-body { padding: 16px; }
+  .ko-header { padding: 16px 18px; }
+  .ko-breadcrumb { padding: 9px 16px; }
+}
+</style>
+
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -673,19 +266,15 @@ const firebaseConfig = {
   appId: "1:975799266905:web:9dfb13cfb4918e24694b48"
 };
 firebase.initializeApp(firebaseConfig);
-// Login kalıcı olsun - her seferinde tekrar giriş gerekmez
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(e) {
-  console.warn('Persistence error:', e);
-});
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(e){ console.warn('Persistence:', e); });
 
-// English Coach'tan set ile gelindiyse URL'den oku ve login modal'ı gizle
+// English Coach set import
 (function() {
   var isImport = false;
   try {
     var params = new URLSearchParams(window.location.search);
     var geSet = params.get('ge_set');
     if (geSet) {
-      // Base64 decode - yeni format
       var json = decodeURIComponent(escape(atob(geSet)));
       var data = JSON.parse(json);
       if (data && data.words && data.words.length >= 2) {
@@ -694,7 +283,6 @@ firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(funct
         isImport = true;
       }
     } else if (params.get('set') === 'imported') {
-      // Eski format - localStorage'dan oku (aynı domain deploy ise çalışır)
       var oldImp = localStorage.getItem('ge_imported_set') || localStorage.getItem('ge_active_set');
       if (oldImp) {
         var oldData = JSON.parse(oldImp);
@@ -705,236 +293,188 @@ firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(funct
       }
     }
   } catch(e) { console.error('ge_set parse error:', e); }
-
   if (isImport) {
     document.addEventListener('DOMContentLoaded', function() {
-      var modal = document.getElementById('geLoginModal');
-      if (modal) modal.classList.add('hidden');
+      var m = document.getElementById('geLoginModal');
+      if (m) m.classList.add('hidden');
     });
-    var style = document.createElement('style');
-    style.textContent = '#geLoginModal { display: none !important; }';
-    document.head.appendChild(style);
+    var s = document.createElement('style');
+    s.textContent = '#geLoginModal{display:none!important}';
+    document.head.appendChild(s);
   }
 })();
 
-let geCurrentUser = null;
-let geStudentInfo = null;
-
-firebase.auth().onAuthStateChanged(async (user) => {
+let geCurrentUser = null, geStudentInfo = null;
+firebase.auth().onAuthStateChanged(async function(user) {
   geCurrentUser = user;
   if (user) {
     try {
-      const snap = await firebase.firestore().collection('users').doc(user.uid).get();
+      var snap = await firebase.firestore().collection('users').doc(user.uid).get();
       if (snap.exists) {
         geStudentInfo = snap.data();
-        
-        // firstName/lastName yoksa name'den ayır
         if (!geStudentInfo.firstName && geStudentInfo.name) {
-          const [first, last] = geStudentInfo.name.split(' ');
-          geStudentInfo.firstName = first || 'Öğrenci';
-          geStudentInfo.lastName = last || '';
+          var parts = geStudentInfo.name.split(' ');
+          geStudentInfo.firstName = parts[0] || 'Öğrenci';
+          geStudentInfo.lastName = parts.slice(1).join(' ') || '';
         }
-        
-        // Global'e ekle
         window.geStudentInfo = geStudentInfo;
         window.geCurrentUser = user;
-        
-        console.log('✅ Student:', geStudentInfo.firstName, geStudentInfo.lastName);
-        
-        // DOM hazır olana kadar bekle
-        setTimeout(() => {
-          hideLoginModal();
-          updateNavbar();
-        }, 200);
+        console.log('✅ Student:', geStudentInfo.firstName);
+        setTimeout(function(){ hideLoginModal(); updateNavbar(); }, 200);
       }
-    } catch (err) {
-      console.error('Error:', err);
-    }
+    } catch(err) { console.error('Auth error:', err); }
   } else {
     geStudentInfo = null;
     updateNavbar();
-    // English Coach'tan kelime setiyle gelinmişse login modal'ı gösterme
-    const isImportedSession = (function() {
-        try {
-          var imp = localStorage.getItem('ge_imported_set');
-          if (!imp) return false;
-          var d = JSON.parse(imp);
-          return (Date.now() - (d.timestamp||0)) < 600000; // 10 dakika
-        } catch(e) { return false; }
-      })();
-    if (!isImportedSession) {
-      showLoginModal();
-    }
+    var isImport = (function(){
+      try { var d = JSON.parse(localStorage.getItem('ge_imported_set')); return d && (Date.now()-(d.timestamp||0))<600000; } catch(e){ return false; }
+    })();
+    if (!isImport) showLoginModal();
   }
 });
 </script>
 
+<!-- KO Functions (head — before DOM) -->
 <script>
-
-
 window.closeImportBanner = function() {
   var b = document.getElementById('koImportBanner');
   if (b) b.remove();
   try { localStorage.removeItem('ge_imported_set'); } catch(e) {}
 };
 
-window.openKelimeOyunlari = function openKelimeOyunlari() {
-  document.getElementById('koOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  koShowSetSelector();
-}
+window.openKelimeOyunlari = function() {
+  var ov = document.getElementById('koOverlay');
+  if (ov) { ov.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  window.koShowSetSelector();
+};
 
-window.koShowSetSelector = function koShowSetSelector() {
+window.koShowSetSelector = function() {
   var body = document.getElementById('koBody');
-  var gameView = document.getElementById('koGameView');
+  var gv = document.getElementById('koGameView');
   if (body) body.style.display = 'block';
-  if (gameView) gameView.classList.remove('active');
-  document.getElementById('koBreadcrumb').innerHTML = '<span class="active">📂 Kelime Oyunları</span>';
-
-  body.innerHTML = '<div style="font-family:Fredoka,sans-serif;padding:4px">'
-    + '<div style="font-size:15px;font-weight:700;color:#374151;margin-bottom:14px">🎯 Kelime Seti Seç</div>'
-    + '<div id="koSetList"><div style="color:#9ca3af;text-align:center;padding:20px">Yükleniyor...</div></div>'
+  if (gv) gv.classList.remove('active');
+  var bc = document.getElementById('koBreadcrumb');
+  if (bc) bc.innerHTML = '<span class="active">📂 Kelime Oyunları</span>';
+  if (!body) return;
+  body.innerHTML = '<div style="font-family:var(--display)">'
+    + '<div style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:14px">🎯 Kelime Seti Seç</div>'
+    + '<div id="koSetList"><div style="color:var(--ink-faint);text-align:center;padding:20px;font-weight:700">Yükleniyor...</div></div>'
     + '</div>';
+  window.koLoadQuizletSets();
+};
 
-  // Quizlet setlerini yükle
-  koLoadQuizletSets();
-}
-
-window.koLoadQuizletSets = function koLoadQuizletSets() {
+window.koLoadQuizletSets = function() {
   var list = document.getElementById('koSetList');
   if (!list) return;
+  var gradients = [
+    'linear-gradient(135deg,#f093fb,#f5576c)',
+    'linear-gradient(135deg,#4facfe,#00f2fe)',
+    'linear-gradient(135deg,#43e97b,#38f9d7)',
+    'linear-gradient(135deg,#fa709a,#fee140)',
+    'linear-gradient(135deg,#a18cd1,#fbc2eb)'
+  ];
+  var generalCard = '<div class="ko-set-card" data-set-id="__general__" style="background:linear-gradient(135deg,var(--green),var(--green-deep))">'
+    + '<div style="font-size:26px">📚</div>'
+    + '<div><div style="font-weight:800;font-size:15px">Genel</div><div style="font-size:12px;opacity:.85">Oyunun kendi kelimeleri</div></div>'
+    + '<div style="margin-left:auto;font-size:20px;opacity:.7">›</div></div>';
 
-  // Genel seçenek her zaman var
-  var html = '<div style="display:grid;gap:10px">';
-  html += koSetCard('__general__', '📚 Genel', 'Oyunun kendi kelimeleri', 'linear-gradient(135deg,#667eea,#764ba2)');
-
-  // Firebase'den quizlet setlerini çek
   if (typeof firebase !== 'undefined' && firebase.auth().currentUser) {
     var uid = firebase.auth().currentUser.uid;
     firebase.firestore().collection('users').doc(uid).get()
       .then(function(snap) {
         var sets = (snap.exists && snap.data().quizletSets) ? snap.data().quizletSets : [];
-        var html2 = '<div style="display:grid;gap:10px">';
-        html2 += koSetCard('__general__', '📚 Genel', 'Oyunun kendi kelimeleri', 'linear-gradient(135deg,#667eea,#764ba2)');
+        var html = '<div style="display:grid;gap:10px">' + generalCard;
         sets.forEach(function(set, i) {
           if (set && set.words && set.words.length >= 2) {
-            var gradient = ['linear-gradient(135deg,#f093fb,#f5576c)',
-                            'linear-gradient(135deg,#4facfe,#00f2fe)',
-                            'linear-gradient(135deg,#43e97b,#38f9d7)',
-                            'linear-gradient(135deg,#fa709a,#fee140)',
-                            'linear-gradient(135deg,#a18cd1,#fbc2eb)'][i % 5];
-            html2 += koSetCard('__set__' + i, '📖 ' + (set.name || 'Set ' + (i+1)), set.words.length + ' kelime', gradient, set);
+            html += '<div class="ko-set-card" data-set-id="__set__' + i + '" style="background:' + gradients[i%5] + '">'
+              + '<div style="font-size:26px">📖</div>'
+              + '<div><div style="font-weight:800;font-size:15px">' + (set.name||'Set '+(i+1)) + '</div>'
+              + '<div style="font-size:12px;opacity:.85">' + set.words.length + ' kelime</div></div>'
+              + '<div style="margin-left:auto;font-size:20px;opacity:.7">›</div></div>';
           }
         });
-        html2 += '</div>';
-        list.innerHTML = html2;
-        // Event listener'ları ekle
-        koAttachSetCardEvents(sets);
+        html += '</div>';
+        list.innerHTML = html;
+        window.koAttachSetCardEvents(sets);
       })
       .catch(function(e) {
         console.error('Quizlet sets error:', e);
-        list.innerHTML = '<div style="display:grid;gap:10px">'
-          + koSetCard('__general__', '📚 Genel', 'Oyunun kendi kelimeleri', 'linear-gradient(135deg,#667eea,#764ba2)')
-          + '</div>';
-        koAttachSetCardEvents([]);
+        list.innerHTML = '<div style="display:grid;gap:10px">' + generalCard + '</div>';
+        window.koAttachSetCardEvents([]);
       });
   } else {
-    // Login değil - sadece Genel
-    list.innerHTML = '<div style="display:grid;gap:10px">'
-      + koSetCard('__general__', '📚 Genel', 'Oyunun kendi kelimeleri', 'linear-gradient(135deg,#667eea,#764ba2)')
-      + '</div>';
-    koAttachSetCardEvents([]);
+    list.innerHTML = '<div style="display:grid;gap:10px">' + generalCard + '</div>';
+    window.koAttachSetCardEvents([]);
   }
-}
+};
 
-window.koSetCard = function koSetCard(id, title, subtitle, gradient, setData) {
-  return '<div class="ko-set-card" data-set-id="' + id + '" style="'
-    + 'background:' + gradient + ';color:#fff;border-radius:14px;padding:16px 20px;'
-    + 'cursor:pointer;display:flex;align-items:center;gap:14px;'
-    + 'transition:transform .15s,box-shadow .15s;'
-    + 'box-shadow:0 4px 14px rgba(0,0,0,0.15)">'
-    + '<div style="font-size:28px">' + title.split(' ')[0] + '</div>'
-    + '<div><div style="font-weight:700;font-size:15px">' + title.split(' ').slice(1).join(' ') + '</div>'
-    + '<div style="font-size:12px;opacity:.85">' + subtitle + '</div></div>'
-    + '<div style="margin-left:auto;font-size:20px;opacity:.7">›</div>'
-    + '</div>';
-}
-
-window.koAttachSetCardEvents = function koAttachSetCardEvents(sets) {
+window.koAttachSetCardEvents = function(sets) {
   document.querySelectorAll('.ko-set-card').forEach(function(card) {
-    card.addEventListener('mouseenter', function() {
-      this.style.transform = 'translateY(-2px)';
-      this.style.boxShadow = '0 8px 24px rgba(0,0,0,0.2)';
-    });
-    card.addEventListener('mouseleave', function() {
-      this.style.transform = '';
-      this.style.boxShadow = '0 4px 14px rgba(0,0,0,0.15)';
-    });
+    card.addEventListener('mouseenter', function() { this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,.22)'; });
+    card.addEventListener('mouseleave', function() { this.style.transform=''; this.style.boxShadow=''; });
     card.addEventListener('click', function() {
       var id = this.getAttribute('data-set-id');
       if (id === '__general__') {
         localStorage.removeItem('ge_active_set');
         localStorage.removeItem('ge_imported_set');
-        koShowGameList(null);
+        window.koShowGameList(null);
       } else {
-        var idx = parseInt(id.replace('__set__', ''));
+        var idx = parseInt(id.replace('__set__',''));
         var set = sets[idx];
         if (set) {
           var payload = { setName: set.name, words: set.words, timestamp: Date.now() };
           localStorage.setItem('ge_active_set', JSON.stringify(payload));
           localStorage.setItem('ge_imported_set', JSON.stringify(payload));
-          koShowGameList(payload);
+          window.koShowGameList(payload);
         }
       }
     });
   });
-}
+};
 
-window.koShowGameList = function koShowGameList(activeSet) {
+window.koShowGameList = function(activeSet) {
   var body = document.getElementById('koBody');
   if (!body) return;
   var setLabel = activeSet ? activeSet.setName : 'Genel';
-  document.getElementById('koBreadcrumb').innerHTML =
-    '<span onclick="window.koShowSetSelector()" style="cursor:pointer">📂 Kelime Oyunları</span>'
-    + '<span style="color:#d1d5db;margin:0 6px">›</span>'
-    + '<span style="font-weight:700;color:#1f2937">' + setLabel + '</span>';
+  var bc = document.getElementById('koBreadcrumb');
+  if (bc) bc.innerHTML = '<span onclick="window.koShowSetSelector()" style="cursor:pointer">📂 Kelime Oyunları</span>'
+    + '<span style="color:var(--line-2);margin:0 6px">›</span>'
+    + '<span style="font-weight:800;color:var(--ink)">' + setLabel + '</span>';
 
-  body.innerHTML = '<div style="font-family:Fredoka,sans-serif">'
-    + (activeSet ? '<div style="background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:10px 16px;border-radius:10px;margin-bottom:16px;font-size:13px;font-weight:700">'
-      + '🎮 ' + activeSet.setName + ' · ' + activeSet.words.length + ' kelime ile oynuyorsun'
-      + '</div>' : '')
-    + '<div class="ko-game-list" id="koGameListGrid"></div>'
-    + '</div>';
+  var banner = activeSet
+    ? '<div style="background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:11px 16px;border-radius:12px;margin-bottom:16px;font-size:13px;font-weight:800">🎮 ' + activeSet.setName + ' · ' + activeSet.words.length + ' kelime ile oynuyorsun</div>'
+    : '';
+
+  body.innerHTML = '<div style="font-family:var(--display)">' + banner + '<div class="ko-game-list" id="koGameListGrid"></div></div>';
 
   var grid = document.getElementById('koGameListGrid');
-  // Kelime Dünyası hariç oyunlar - set varsa mode=imported ile aç
-  var games = [
-    ['kelime-avi-game.html',        '🎮', 'Kelime Avı',        'Dinle ve eşleştir',  '#fce4ec'],
-    ['gramer-quest-game.html',      '📚', 'Gramer Quest',      'Cümle tamamla',      '#e3f2fd'],
-    ['dinleme-dedektifi-game.html', '👂', 'Dinleme Dedektifi', 'Dinle ve bul',       '#f3e5f5'],
-    ['yazi-sahnesi-game.html',      '🎭', 'Yazı Sahnesi',      'Diyalog tamamla',    '#fff8e1'],
-    ['quiz-hizli-game.html',        '⚡', 'Hızlı Quiz',        '5 sn, hızlı cevap',  '#fff3e0'],
-  ];
+
   // Kelime Dünyası - her zaman kendi kelimeleriyle
   var kdCard = document.createElement('div');
   kdCard.className = 'ko-game-item';
   kdCard.innerHTML = '<div class="ko-game-item-top">'
-    + '<div class="ko-game-emoji" style="background:#e8f5e9">🌍</div>'
+    + '<div class="ko-game-emoji" style="background:var(--green-soft)">🌍</div>'
     + '<div class="ko-game-info"><h3>Kelime Dünyası</h3><span class="level">A1 – B1</span></div></div>'
-    + '<div class="ko-game-desc">Dünya haritasını keşfet! Ülke seç, kelimeler öğren.</div>'
+    + '<div class="ko-game-desc">Dünya haritasını keşfet! Ülke seç, kelimeler öğren, hafıza & scramble.</div>'
     + '<button class="ko-play-btn">▶ Oyna</button>';
-  kdCard.querySelector('button').addEventListener('click', function() {
-    window.location.href = 'kelime-dunyasi-worldmap.html';
-  });
+  kdCard.querySelector('button').addEventListener('click', function() { window.location.href = 'kelime-dunyasi-worldmap.html'; });
   grid.appendChild(kdCard);
+
+  var games = [
+    ['kelime-avi-game.html',        '🎮','#fce4ec','Kelime Avı',          'A1–B1', 'Dinle ve eşleştir'],
+    ['gramer-quest-game.html',      '📚','#e3f2fd','Gramer Quest',         'A1–B2', 'Cümle tamamla'],
+    ['dinleme-dedektifi-game.html', '👂','#f3e5f5','Dinleme Dedektifi',    'A1–B1', 'Dinle ve bul'],
+    ['yazi-sahnesi-game.html',      '🎭','#fff8e1','Yazı Sahnesi',         'A2–B2', 'Diyalog tamamla'],
+    ['quiz-hizli-game.html',        '⚡','#fff3e0','Hızlı Quiz',           'A1–C1', '5 sn, hızlı cevap'],
+  ];
 
   games.forEach(function(g) {
     var card = document.createElement('div');
     card.className = 'ko-game-item';
     card.innerHTML = '<div class="ko-game-item-top">'
-      + '<div class="ko-game-emoji" style="background:' + g[4] + '">' + g[1] + '</div>'
-      + '<div class="ko-game-info"><h3>' + g[2] + '</h3></div></div>'
-      + '<div class="ko-game-desc">' + g[3] + '</div>'
+      + '<div class="ko-game-emoji" style="background:' + g[2] + '">' + g[1] + '</div>'
+      + '<div class="ko-game-info"><h3>' + g[3] + '</h3><span class="level">' + g[4] + '</span></div></div>'
+      + '<div class="ko-game-desc">' + g[5] + '</div>'
       + '<button class="ko-play-btn">▶ Oyna</button>';
     var url = g[0];
     var hasSet = !!activeSet;
@@ -943,107 +483,25 @@ window.koShowGameList = function koShowGameList(activeSet) {
     });
     grid.appendChild(card);
   });
-}
+};
 
-window.koShowImportedSetBanner = function koShowImportedSetBanner(data) {
-  var existing = document.getElementById('koImportBanner');
-  if (existing) existing.remove();
-  var banner = document.createElement('div');
-  banner.id = 'koImportBanner';
-  banner.style.cssText = 'background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;padding:14px 18px;border-radius:12px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;';
-  banner.innerHTML = '<span style="font-size:22px">🎮</span>'
-    + '<div style="flex:1"><div style="font-weight:700;font-size:14px">English Coach&#39;tan Set Aktarildi!</div>'
-    + '<div style="font-size:12px;opacity:.9">' + (data.setName || 'Set') + ' · ' + (data.words||[]).length + ' kelime</div></div>'
-    + '<button onclick="koPlayWithImportedSet()" style="background:rgba(255,255,255,0.25);border:2px solid rgba(255,255,255,0.5);color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Bu Setle Oyna →</button>'
-    + '<button onclick="closeImportBanner()" style="background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;font-size:18px;padding:0 4px;">&#x2715;</button>';
-  var body = document.getElementById('koBody');
-  if (body) body.insertBefore(banner, body.firstChild);
-}
-
-window.koPlayWithImportedSet = function koPlayWithImportedSet() {
-  // Oyun seçim modalı aç - hangi oyunla oynamak istediğini sor
-  try {
-    var imp = localStorage.getItem('ge_imported_set');
-    if (!imp) return;
-    var data = JSON.parse(imp);
-    // ge_active_set olarak işaretle - oyunlar bunu kullanacak
-    localStorage.setItem('ge_active_set', JSON.stringify(data));
-    // Oyun seçim modalını göster
-    koShowGamePicker(data);
-  } catch(e) {}
-}
-
-window.koShowGamePicker = function koShowGamePicker(data) {
-  var body = document.getElementById('koBody');
-  if (!body) return;
-  body.innerHTML = '';
-
-  var wrap = document.createElement('div');
-  wrap.style.fontFamily = 'Fredoka,sans-serif';
-
-  // Header
-  var header = document.createElement('div');
-  header.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:20px';
-  var backBtn = document.createElement('button');
-  backBtn.textContent = '\u2190 Geri';
-  backBtn.style.cssText = 'background:none;border:2px solid #e5e7eb;border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;color:#6b7280';
-  backBtn.onclick = function() { window.koGoHome(); };
-  var info = document.createElement('div');
-  info.innerHTML = '<div style="font-weight:700;font-size:16px;color:#1f2937">🎮 ' + (data.setName||'Set') + '</div>'
-    + '<div style="font-size:12px;color:#6b7280">' + (data.words||[]).length + ' kelime</div>';
-  header.appendChild(backBtn);
-  header.appendChild(info);
-  wrap.appendChild(header);
-
-  // Grid
-  var grid = document.createElement('div');
-  grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px';
-
-  var games = [
-    ['kelime-avi-game.html',        '🎮', 'Kelime Av\u0131',        'Dinle ve e\u015fle\u015ftir', '#fce4ec'],
-    ['gramer-quest-game.html',      '📚', 'Gramer Quest',           'C\u00fcmle tamamla',          '#e3f2fd'],
-    ['dinleme-dedektifi-game.html', '👂', 'Dinleme Dedektifi',      'Dinle ve bul',                '#f3e5f5'],
-    ['yazi-sahnesi-game.html',      '🎭', 'Yaz\u0131 Sahnesi',      'Diyalog tamamla',             '#fff8e1'],
-    ['quiz-hizli-game.html',        '⚡', 'Quiz H\u0131zl\u0131',   '30 sn, h\u0131zl\u0131 cevap','#fff3e0'],
-    ['kelime-dunyasi-worldmap.html','🌍', 'Kelime D\u00fcnyas\u0131','Harita + 4 oyun',             '#e8f5e9'],
-  ];
-  games.forEach(function(g) {
-    grid.appendChild(window.koGamePickerCard(g[0], g[1], g[2], g[3], g[4]));
-  });
-
-  wrap.appendChild(grid);
-  body.appendChild(wrap);
-}
-
-window.koGamePickerCard = function koGamePickerCard(url, emoji, title, desc, bg) {
-  var d = document.createElement('div');
-  d.style.cssText = 'background:#fff;border:2px solid #e8edf2;border-radius:14px;padding:18px;cursor:pointer;transition:all .18s;text-align:center';
-  d.onmouseover = function() { this.style.borderColor = '#f5576c'; this.style.transform = 'translateY(-2px)'; };
-  d.onmouseout  = function() { this.style.borderColor = '#e8edf2'; this.style.transform = ''; };
-  d.onclick = (function(u) { return function() { window.koLaunchWithSet(u); }; })(url);
-  d.innerHTML = '<div style="width:48px;height:48px;background:' + bg + ';border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 10px">' + emoji + '</div>'
-    + '<div style="font-weight:700;font-size:14px;color:#1f2937;margin-bottom:4px">' + title + '</div>'
-    + '<div style="font-size:12px;color:#6b7280">' + desc + '</div>';
-  return d;
-}
-
-window.koLaunchWithSet = function koLaunchWithSet(url) {
-  // ge_active_set'i localStorage'da bırak, oyun sayfası bunu okuyacak
-  window.location.href = url + '?mode=imported';
-}
-window.closeKelimeOyunlari = function closeKelimeOyunlari() {
-  document.getElementById('koOverlay').classList.remove('open');
+window.closeKelimeOyunlari = function() {
+  var ov = document.getElementById('koOverlay');
+  if (ov) ov.classList.remove('open');
   document.body.style.overflow = '';
-  // iframe'i temizle
-  document.getElementById('koGameFrame').src = '';
-}
-window.koGoHome = function koGoHome() {
-  document.getElementById('koBody').style.display = 'block';
-  document.getElementById('koGameView').classList.remove('active');
-  if (document.getElementById('koGameFrame')) document.getElementById('koGameFrame').src = '';
+  var fr = document.getElementById('koGameFrame');
+  if (fr) fr.src = '';
+};
+
+window.koGoHome = function() {
+  var gv = document.getElementById('koGameView');
+  if (gv) gv.classList.remove('active');
+  var fr = document.getElementById('koGameFrame');
+  if (fr) fr.src = '';
   window.koShowSetSelector();
-}
-window.koPlayGame = function koPlayGame(url, name) {
+};
+
+window.koPlayGame = function(url, name) {
   try {
     var active = localStorage.getItem('ge_active_set');
     if (active) {
@@ -1055,479 +513,462 @@ window.koPlayGame = function koPlayGame(url, name) {
     }
   } catch(e) {}
   window.location.href = url;
-}
-// Overlay dışına tıklayınca kapat - DOM hazır olunca
+};
+
 document.addEventListener('DOMContentLoaded', function() {
   var ov = document.getElementById('koOverlay');
   if (ov) ov.addEventListener('click', function(e) {
     if (e.target === this && window.closeKelimeOyunlari) window.closeKelimeOyunlari();
   });
+  if (window.location.search.indexOf('ge_set') > -1 || localStorage.getItem('ge_imported_set')) {
+    setTimeout(function() { if (window.openKelimeOyunlari) window.openKelimeOyunlari(); }, 600);
+  }
 });
-
 </script>
 </head>
-<body class="theme-default">
+<body>
 
-<!-- Login Modal CSS -->
-<style>
-.ge-login-modal {
-  display: flex !important;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  z-index: 10000;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.3s ease;
-}
-.ge-login-modal.hidden {
-  display: none !important;
-}
-.ge-login-box {
-  background: white;
-  border-radius: 20px;
-  padding: 40px;
-  width: min(420px, 90vw);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-  animation: slideUp 0.4s ease;
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes slideUp {
-  from { transform: translateY(40px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-.ge-login-header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-.ge-login-header h1 {
-  font-size: 28px;
-  font-weight: 700;
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 8px;
-}
-.ge-login-header p {
-  color: #666;
-  font-size: 14px;
-}
-.ge-form-group {
-  margin-bottom: 16px;
-}
-.ge-form-group label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 6px;
-}
-.ge-form-group input {
-  width: 100%;
-  padding: 11px 14px;
-  border: 2px solid #e5e7eb;
-  border-radius: 10px;
-  font-size: 14px;
-  outline: none;
-  transition: border 0.2s;
-}
-.ge-form-group input:focus {
-  border-color: #667eea;
-}
-.ge-error {
-  background: #fee;
-  color: #c0392b;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 13px;
-  margin-bottom: 16px;
-  display: none;
-  border: 2px solid #c0392b;
-}
-.ge-error.show { display: block; }
-.ge-login-btn {
-  width: 100%;
-  padding: 12px;
-  background: var(--primary-gradient);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.2s;
-  box-shadow: 0 8px 20px rgba(102,126,234,0.4);
-}
-.ge-login-btn:hover {
-  transform: translateY(-2px);
-}
-.ge-login-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-.ge-signup-link {
-  text-align: center;
-  margin-top: 18px;
-  font-size: 13px;
-  color: #666;
-}
-.ge-signup-link a {
-  color: #667eea;
-  font-weight: 600;
-  text-decoration: none;
-}
-.ge-user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: white;
-  font-size: 13px;
-}
-.ge-user-name {
-  font-weight: 600;
-}
-.ge-logout-btn {
-  padding: 6px 12px;
-  background: rgba(255,255,255,0.2);
-  color: white;
-  border: 2px solid white;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.ge-logout-btn:hover {
-  background: rgba(255,255,255,0.3);
-}
-</style>
-
-<!-- Login Modal HTML -->
+<!-- Login Modal -->
 <div class="ge-login-modal" id="geLoginModal">
   <div class="ge-login-box">
     <div class="ge-login-header">
+      <svg width="52" height="52" viewBox="0 0 120 120" style="margin:0 auto 12px;display:block" aria-label="Atlas">
+        <defs><linearGradient id="fb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4863C"/><stop offset="1" stop-color="#E5603C"/></linearGradient></defs>
+        <ellipse cx="60" cy="110" rx="30" ry="6" fill="rgba(0,0,0,.1)"/>
+        <path d="M28 44 L34 14 L54 38 Z" fill="url(#fb)"/><path d="M92 44 L86 14 L66 38 Z" fill="url(#fb)"/>
+        <path d="M34 38 L37 22 L47 36 Z" fill="#2A1A12"/><path d="M86 38 L83 22 L73 36 Z" fill="#2A1A12"/>
+        <circle cx="60" cy="62" r="34" fill="url(#fb)"/>
+        <path d="M60 50 q26 6 22 30 q-22 14-44 0 q-4-24 22-30Z" fill="#FBF6EA"/>
+        <circle cx="48" cy="60" r="5.4" fill="#241008"/><circle cx="72" cy="60" r="5.4" fill="#241008"/>
+        <circle cx="49.6" cy="58.2" r="1.7" fill="#fff"/><circle cx="73.6" cy="58.2" r="1.7" fill="#fff"/>
+        <path d="M60 74 l-5-5 h10Z" fill="#241008"/>
+        <path d="M30 36 q30-20 60 0 q-6 6-30 6 q-24 0-30-6Z" fill="#1E8A53"/>
+        <rect x="42" y="22" width="36" height="16" rx="8" fill="#14633A"/>
+        <circle cx="60" cy="30" r="5" fill="#FFC53D"/>
+      </svg>
       <h1>🎮 Gaming English</h1>
       <p>English Coach hesabınla giriş yap</p>
     </div>
-    
     <div class="ge-error" id="geErrorMsg"></div>
-    
     <form onsubmit="geHandleLogin(event)">
-      <div class="ge-form-group">
-        <label>E-posta</label>
-        <input type="email" id="geEmail" placeholder="ornek@email.com" required>
-      </div>
-      
-      <div class="ge-form-group">
-        <label>Şifre</label>
-        <input type="password" id="gePassword" placeholder="••••••" required>
-      </div>
-      
+      <div class="ge-form-group"><label>E-posta</label><input type="email" id="geEmail" placeholder="ornek@email.com" required></div>
+      <div class="ge-form-group"><label>Şifre</label><input type="password" id="gePassword" placeholder="••••••" required></div>
       <button type="submit" class="ge-login-btn" id="geLoginBtn">Giriş Yap</button>
     </form>
-    
-    <div class="ge-signup-link">
-      Henüz English Coach'ta üye değil misiniz?<br>
-      <a href="https://englishcoaching.vercel.app/signup" target="_blank">Kaydolun</a>
+    <div class="ge-signup-link">Henüz English Coach'ta üye değil misiniz?<br><a href="https://englishcoaching.vercel.app" target="_blank">Kaydolun</a></div>
+  </div>
+</div>
+
+<div class="ge-page-wrapper">
+  <div class="topo-bg"></div>
+
+  <!-- Topbar -->
+  <header class="ge-topbar">
+    <div class="row gap12">
+      <!-- Atlas face inline SVG -->
+      <svg width="36" height="36" viewBox="0 0 48 48" id="atlasNavFace">
+        <circle cx="24" cy="24" r="22" fill="#F4863C"/>
+        <path d="M10 16 L13 5 L22 14 Z" fill="#E5603C"/><path d="M38 16 L35 5 L26 14 Z" fill="#E5603C"/>
+        <path d="M24 18 q14 3 12 17 q-12 8-24 0 q-2-14 12-17Z" fill="#FBF6EA"/>
+        <circle cx="18" cy="24" r="3" fill="#241008"/><circle cx="30" cy="24" r="3" fill="#241008"/>
+        <path d="M24 31 l-3-3 h6Z" fill="#241008"/>
+      </svg>
+      <span style="font-family:var(--display);font-weight:800;font-size:19px;color:var(--ink)">Gaming <span style="color:var(--green)">English</span></span>
+    </div>
+    <div class="row gap10 wrap">
+      <!-- Mode toggle -->
+      <div class="ge-mode-toggle" id="modeToggle">
+        <button class="ge-mode-btn active" id="modeExplorer" onclick="setMode('explorer')">
+          🧭 Kâşif <span class="ge-mode-age">7–10</span>
+        </button>
+        <button class="ge-mode-btn" id="modeChallenger" onclick="setMode('challenger')">
+          ⚡ Maceracı <span class="ge-mode-age">11–15</span>
+        </button>
+      </div>
+      <div id="geUserInfo" class="ge-user-info" style="display:none">
+        <span style="font-size:20px">🦊</span>
+        <span id="geUserName" style="font-family:var(--display);font-weight:800"></span>
+        <button class="ge-logout-btn" onclick="geLogout()">Çıkış</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="ge-page">
+
+    <!-- HERO -->
+    <div class="ge-hero">
+      <div class="ge-hero-text fade-up">
+        <div class="chip" style="background:var(--amber-soft);color:var(--amber);margin-bottom:18px">🏔️ İngilizce öğrenmenin en eğlenceli yolu</div>
+        <h1 class="ge-hero-title">Her ders bir<br><span style="color:var(--green)">macera</span> 🧭</h1>
+        <p id="heroDesc">Atlas ile haritayı keşfet, kelime topla, rozet kazan. 7–10 yaş için oyunla dolu İngilizce dünyası!</p>
+        <div class="ge-hero-btns">
+          <button class="btn btn-primary btn-lg" onclick="openKelimeOyunlari()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 1.5 5 4.5 5 9l-3 3h-4l-3-3c0-4.5 2-7.5 5-9Z"/><circle cx="12" cy="9" r="1.6"/><path d="M9 15c-2 1-3 4-3 4s3-1 4-3M15 15c2 1 3 4 3 4s-3-1-4-3"/></svg>
+            Maceraya Başla
+          </button>
+          <button class="btn btn-soft btn-lg" onclick="document.getElementById('oyunlar').scrollIntoView({behavior:'smooth'})">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4l13 8-13 8V4Z"/></svg>
+            Keşfet
+          </button>
+        </div>
+        <div class="ge-hero-stats">
+          <div><div class="ge-hero-stat-n">6</div><div class="ge-hero-stat-l">Oyun türü</div></div>
+          <div><div class="ge-hero-stat-n">A1–B1</div><div class="ge-hero-stat-l">CEFR seviye</div></div>
+          <div><div class="ge-hero-stat-n">1000+</div><div class="ge-hero-stat-l">Kelime</div></div>
+        </div>
+      </div>
+      <div class="ge-hero-art fade-up" style="animation-delay:.1s">
+        <div class="ge-atlas-ring">
+          <div class="ge-atlas-ring-bg"></div>
+          <div class="floaty" style="position:absolute;top:18px;left:60px;z-index:3">
+            <svg id="atlasHero" width="210" height="210" viewBox="0 0 120 120" aria-label="Atlas the Fox">
+              <defs><linearGradient id="fh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4863C"/><stop offset="1" stop-color="#E5603C"/></linearGradient></defs>
+              <ellipse cx="60" cy="110" rx="30" ry="6" fill="rgba(0,0,0,.1)"/>
+              <path d="M28 44 L34 14 L54 38 Z" fill="url(#fh)"/><path d="M92 44 L86 14 L66 38 Z" fill="url(#fh)"/>
+              <path d="M34 38 L37 22 L47 36 Z" fill="#2A1A12"/><path d="M86 38 L83 22 L73 36 Z" fill="#2A1A12"/>
+              <circle cx="60" cy="62" r="34" fill="url(#fh)"/>
+              <path d="M60 50 q26 6 22 30 q-22 14-44 0 q-4-24 22-30Z" fill="#FBF6EA"/>
+              <circle cx="48" cy="60" r="5.4" fill="#241008"/><circle cx="72" cy="60" r="5.4" fill="#241008"/>
+              <circle cx="49.6" cy="58.2" r="1.7" fill="#fff"/><circle cx="73.6" cy="58.2" r="1.7" fill="#fff"/>
+              <path d="M60 74 l-5-5 h10Z" fill="#241008"/>
+              <path d="M60 74 v6" stroke="#241008" stroke-width="2.4" stroke-linecap="round"/>
+              <path d="M30 36 q30-20 60 0 q-6 6-30 6 q-24 0-30-6Z" fill="#1E8A53"/>
+              <rect x="42" y="22" width="36" height="16" rx="8" fill="#14633A"/>
+              <circle cx="60" cy="30" r="5" fill="#FFC53D"/>
+              <g style="transform-origin:98px 78px;animation:wiggle 1.4s ease-in-out infinite">
+                <circle cx="100" cy="74" r="9" fill="url(#fh)"/>
+              </g>
+            </svg>
+          </div>
+          <!-- floating badges -->
+          <div class="floaty ge-float-badge" style="top:8%;left:4%;animation-delay:0s;color:var(--amber)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .7-4.4 4.1 1.2 6L12 16.8 6.6 19.4l1.2-6L3.4 9.3l6-.7L12 3Z"/></svg></div>
+          <div class="floaty ge-float-badge" style="top:4%;right:10%;animation-delay:.6s;color:var(--coral)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1 3-2 4-2 7a2 2 0 0 0 4 0c0-1 0-2-.5-3 2 1.5 3.5 3.6 3.5 6a5 5 0 0 1-10 0c0-3.5 3-5.5 5-10Z"/></svg></div>
+          <div class="floaty ge-float-badge" style="bottom:14%;right:4%;animation-delay:1.1s;color:var(--sky)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l3 6-9 12L3 9l3-6Z"/><path d="M3 9h18M9 3l3 18M15 3l-3 18"/></svg></div>
+          <div class="floaty ge-float-badge" style="bottom:8%;left:8%;animation-delay:1.6s;color:var(--violet)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M9 20h6M12 13v4"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAMES SECTION -->
+    <section id="oyunlar" style="margin-top:56px">
+      <div style="text-align:center;margin-bottom:36px">
+        <div class="chip" style="background:var(--green-soft);color:var(--green-deep);margin-bottom:14px">OYUNLAR</div>
+        <h2 style="font-family:var(--display);font-weight:800;font-size:clamp(30px,4vw,42px);color:var(--ink)">Koleksiyonlar</h2>
+        <p style="font-size:16px;color:var(--ink-soft);font-weight:600;margin-top:10px">Bir koleksiyon seç ve oynamaya başla.</p>
+      </div>
+      <div class="ge-games-grid">
+
+        <!-- Kelime Oyunları -->
+        <div class="ge-folder-card fade-up" onclick="openKelimeOyunlari()" style="animation-delay:.05s">
+          <div class="ge-folder-header" style="background:linear-gradient(135deg,#1E8A53,#14633A)">
+            <div class="topo-bg" style="opacity:.4"></div>
+            <div style="position:relative">
+              <div class="ge-folder-badge">📁 Koleksiyon · 6 Oyun</div>
+              <span class="ge-folder-icon">🎯</span>
+              <div class="ge-folder-title">Kelime Oyunları</div>
+              <div class="ge-folder-level">A1 – C1 · Tüm Seviyeler</div>
+            </div>
+          </div>
+          <div class="ge-folder-body">
+            <p class="ge-folder-desc">6 farklı kelime oyunu tek çatı altında! Harita keşfi, hafıza, harf karıştırma ve daha fazlası.</p>
+            <div class="ge-folder-pills">
+              <span class="ge-folder-pill">🌍 Kelime Dünyası</span>
+              <span class="ge-folder-pill">🎮 Kelime Avı</span>
+              <span class="ge-folder-pill">📚 Gramer Quest</span>
+              <span class="ge-folder-pill">👂 Dinleme</span>
+              <span class="ge-folder-pill">🎭 Yazı Sahnesi</span>
+              <span class="ge-folder-pill">⚡ Hızlı Quiz</span>
+            </div>
+            <button class="ge-play-btn">📂 Oyunları Aç</button>
+          </div>
+        </div>
+
+        <!-- Okul Dersleri -->
+        <div class="ge-folder-card fade-up" style="animation-delay:.12s;cursor:default">
+          <div class="ge-folder-header" style="background:linear-gradient(135deg,#7C6BF0,#5a48d6)">
+            <div class="topo-bg" style="opacity:.4"></div>
+            <div style="position:relative">
+              <div class="ge-folder-badge">📁 Koleksiyon · 4 Ders</div>
+              <span class="ge-folder-icon">🎓</span>
+              <div class="ge-folder-title">Okul Dersleri</div>
+              <div class="ge-folder-level">CLIL · Dersleri İngilizce öğren</div>
+            </div>
+          </div>
+          <div class="ge-folder-body">
+            <p class="ge-folder-desc">Matematik, Fen, Sosyal ve Müzik — okul derslerini İngilizce terimlerle, oyunla çalış.</p>
+            <div class="ge-folder-pills">
+              <span class="ge-folder-pill violet">🔢 Matematik</span>
+              <span class="ge-folder-pill violet">⚗️ Fen</span>
+              <span class="ge-folder-pill violet">🌍 Sosyal</span>
+              <span class="ge-folder-pill violet">🎵 Müzik</span>
+            </div>
+            <button class="ge-play-btn violet-btn" style="opacity:.6;cursor:not-allowed" disabled>🚧 Yakında Geliyor</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="ge-hiw">
+      <div style="text-align:center;margin-bottom:10px">
+        <div class="chip" style="background:var(--sky-soft);color:var(--sky);margin-bottom:14px">NASIL ÇALIŞIR</div>
+        <h2 style="font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,40px);color:var(--ink)">Macera Haritası</h2>
+      </div>
+      <div class="ge-hiw-map">
+        <div class="topo-bg"></div>
+        <svg style="position:absolute;inset:0;width:100%;height:100%" preserveAspectRatio="none" viewBox="0 0 100 100">
+          <path d="M10 64 C 24 34,30 26,36 26 S52 58,62 60 S80 26,88 24" fill="none" stroke="var(--line-2)" stroke-width=".7" stroke-dasharray="1.6 1.8" stroke-linecap="round"/>
+        </svg>
+        <!-- Steps -->
+        <div class="ge-hiw-step pop-in" style="left:10%;top:62%;animation-delay:.05s">
+          <div class="ge-hiw-icon" style="background:var(--green);color:#fff"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5 5-2Z"/></svg></div>
+          <div class="ge-hiw-title">1. Seç</div>
+          <div class="ge-hiw-desc">Yaşına ve seviyene uygun dünyayı seç.</div>
+        </div>
+        <div class="ge-hiw-step pop-in" style="left:35%;top:24%;animation-delay:.12s">
+          <div class="ge-hiw-icon" style="background:var(--amber);color:#fff"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2V5Z"/><path d="M4 19a2 2 0 0 1 2-2h12"/></svg></div>
+          <div class="ge-hiw-title">2. Öğren</div>
+          <div class="ge-hiw-desc">Kartlar, videolar ve oyunlarla öğren.</div>
+        </div>
+        <div class="ge-hiw-step pop-in" style="left:60%;top:60%;animation-delay:.19s">
+          <div class="ge-hiw-icon" style="background:var(--sky);color:#fff"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M7 12h3M8.5 10.5v3M15 11h.01M17.5 13h.01"/></svg></div>
+          <div class="ge-hiw-title">3. Oyna</div>
+          <div class="ge-hiw-desc">Oyunlarla pekiştir ve eğlen.</div>
+        </div>
+        <div class="ge-hiw-step pop-in" style="left:86%;top:22%;animation-delay:.26s">
+          <div class="ge-hiw-icon" style="background:var(--coral);color:#fff"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M9 20h6M12 13v4"/></svg></div>
+          <div class="ge-hiw-title">4. Fethet</div>
+          <div class="ge-hiw-desc">Rozet kazan, seviye atla, zirveye ulaş.</div>
+        </div>
+        <!-- Atlas floaty in corner -->
+        <div class="floaty" style="position:absolute;right:20px;bottom:12px">
+          <svg width="80" height="80" viewBox="0 0 120 120"><use href="#atlasHero"/></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="ge-features">
+      <div style="text-align:center;margin-bottom:10px">
+        <div class="chip" style="background:var(--amber-soft);color:var(--amber);margin-bottom:14px">ÖZELLİKLER</div>
+        <h2 style="font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,40px);color:var(--ink)">Neden çocuklar bayılıyor?</h2>
+      </div>
+      <div class="ge-features-grid">
+        <div class="ge-feat-card fade-up" style="animation-delay:.04s"><div class="ge-feat-icon" style="background:var(--violet-soft);color:var(--violet)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 0 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-1.5 2-1.5h1a4 4 0 0 0 4-4c0-4-4-8-8-8Z"/><circle cx="8" cy="11" r="1"/><circle cx="12" cy="8" r="1"/><circle cx="16" cy="11" r="1"/></svg></div><div class="ge-feat-title">Avatar & Mağaza</div><div class="ge-feat-desc">Karakterini tasarla, mücevherle eşya al.</div></div>
+        <div class="ge-feat-card fade-up" style="animation-delay:.08s"><div class="ge-feat-icon" style="background:var(--green-soft);color:var(--green)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg></div><div class="ge-feat-title">Macera Haritası</div><div class="ge-feat-desc">Seviye seviye ilerle, zirveye tırman.</div></div>
+        <div class="ge-feat-card fade-up" style="animation-delay:.12s"><div class="ge-feat-icon" style="background:var(--sky-soft);color:var(--sky)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5"/><path d="M16 5.2A3.2 3.2 0 0 1 18 11M21 20c0-3-1.6-4.6-4-4.9"/></svg></div><div class="ge-feat-title">Arkadaş Yarışı</div><div class="ge-feat-desc">Lider tablosunda yerini al, meydan oku.</div></div>
+        <div class="ge-feat-card fade-up" style="animation-delay:.16s"><div class="ge-feat-icon" style="background:var(--amber-soft);color:var(--amber)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6l8-3Z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="ge-feat-title">Rozetler</div><div class="ge-feat-desc">Başarılarını rozetlerle topla ve göster.</div></div>
+        <div class="ge-feat-card fade-up" style="animation-delay:.2s"><div class="ge-feat-icon" style="background:var(--coral-soft);color:var(--coral)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8Z"/></svg></div><div class="ge-feat-title">Anında Geri Bildirim</div><div class="ge-feat-desc">Doğru/yanlış anında, eğlenceli efektlerle.</div></div>
+        <div class="ge-feat-card fade-up" style="animation-delay:.24s"><div class="ge-feat-icon" style="background:var(--green-soft);color:var(--green)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></div><div class="ge-feat-title">Okul Dersleri</div><div class="ge-feat-desc">Matematik, Fen, Müzik... İngilizce öğren.</div></div>
+      </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <div class="card fade-up" style="margin-top:72px;padding:44px 36px;text-align:center;background:linear-gradient(135deg,var(--amber),var(--coral));border:none;color:#fff;position:relative;overflow:hidden">
+      <div class="topo-bg" style="opacity:.4"></div>
+      <div style="position:relative">
+        <div class="floaty" style="display:inline-block;margin-bottom:8px">
+          <svg width="90" height="90" viewBox="0 0 120 120" aria-hidden="true">
+            <use href="#atlasHero"/>
+          </svg>
+        </div>
+        <h2 style="font-family:var(--display);font-weight:800;font-size:36px;margin-bottom:8px">Macera seni bekliyor!</h2>
+        <p style="font-size:17px;opacity:.95;font-weight:600;margin-bottom:22px">Ücretsiz — özel öğrencilerime özel. Hemen kâşif ol.</p>
+        <button class="btn btn-soft btn-lg" style="color:var(--coral)" onclick="openKelimeOyunlari()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 1.5 5 4.5 5 9l-3 3h-4l-3-3c0-4.5 2-7.5 5-9Z"/><circle cx="12" cy="9" r="1.6"/><path d="M9 15c-2 1-3 4-3 4s3-1 4-3M15 15c2 1 3 4 3 4s-3-1-4-3"/></svg>
+          Maceraya Başla
+        </button>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="ge-footer">
+      <div class="row gap10">
+        <svg width="28" height="28" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#F4863C"/><path d="M10 16 L13 5 L22 14 Z" fill="#E5603C"/><path d="M38 16 L35 5 L26 14 Z" fill="#E5603C"/><path d="M24 18 q14 3 12 17 q-12 8-24 0 q-2-14 12-17Z" fill="#FBF6EA"/><circle cx="18" cy="24" r="3" fill="#241008"/><circle cx="30" cy="24" r="3" fill="#241008"/><path d="M24 31 l-3-3 h6Z" fill="#241008"/></svg>
+        <span style="font-family:var(--display);font-weight:800;color:var(--ink-soft)">Gaming English</span>
+      </div>
+      <span style="font-size:13px;color:var(--ink-faint);font-weight:700">© 2026 · Atlas ile öğren 🦊 | <a href="https://github.com/nartkanhesap-ai" target="_blank" style="color:var(--green)">GitHub</a></span>
+    </footer>
+  </main>
+</div>
+
+<!-- ─── Kelime Oyunları Modal ─── -->
+<div class="ko-overlay" id="koOverlay">
+  <div class="ko-modal">
+    <div class="ko-header">
+      <div class="topo-bg"></div>
+      <div class="ko-header-icon">📂</div>
+      <div class="ko-header-text"><h2>Kelime Oyunları</h2><p>Bir oyun seç ve oynamaya başla!</p></div>
+      <button class="ko-close" onclick="closeKelimeOyunlari()">✕</button>
+    </div>
+    <div class="ko-breadcrumb" id="koBreadcrumb">
+      <span class="active">📂 Kelime Oyunları</span>
+    </div>
+    <div class="ko-body" id="koBody"></div>
+    <div id="koGameView" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+      <div style="padding:10px 20px;background:var(--surface-2);border-bottom:1.5px solid var(--line);display:flex;align-items:center;gap:10px">
+        <button class="btn btn-ghost btn-sm" onclick="koGoHome()">← Oyunlar</button>
+        <span style="font-family:var(--display);font-weight:800;font-size:14px;color:var(--ink)" id="koPlayingTitle"></span>
+      </div>
+      <iframe id="koGameFrame" src="" allowfullscreen style="flex:1;border:none;width:100%;height:100%;display:block"></iframe>
     </div>
   </div>
 </div>
 
-  <nav class="navbar">
-    <div class="logo">🎮 Gaming English</div>
-    <div class="nav-right">
-      <ul class="nav-links">
-        <li><a href="#oyunlar">Oyunlar</a></li>
-        <li><a href="#özellikler">Özellikler</a></li>
-        <li><a href="https://github.com/nartkanhesap-ai/gamingEnglish" target="_blank">GitHub</a></li>
-      </ul>
-      <div class="theme-selector">
-        <button class="theme-btn active" data-theme="default" onclick="setTheme('default')" title="Purple (Varsayılan)">🎨</button>
-        <button class="theme-btn" data-theme="candy" onclick="setTheme('candy')" title="Candy Dream">🍭</button>
-        <button class="theme-btn" data-theme="ocean" onclick="setTheme('ocean')" title="Ocean Adventure">🌊</button>
-        <button class="theme-btn" data-theme="jungle" onclick="setTheme('jungle')" title="Jungle Paradise">🌿</button>
-      
-      <div id="geUserInfo" class="ge-user-info" style="display:none;">
-        <span>👤</span>
-        <span class="ge-user-name" id="geUserName"></span>
-        <button class="ge-logout-btn" onclick="geLogout()">Çıkış</button>
-      </div></div>
-    </div>
-  </nav>
-
-  <div class="container">
-    <div class="hero">
-      <h1>Gaming English 🎯</h1>
-      <p>7-14 yaş öğrencileri için eğlenceli, interaktif İngilizce oyunları. Oyun oynayarak öğren, puan kazan ve rozet topla!</p>
-      <a href="#oyunlar" class="cta-button">Oyunları Keşfet</a>
-    </div>
-
-    <section class="games-section" id="oyunlar">
-      <h2>Oyunlar</h2>
-      <div class="games-grid">
-
-        <!-- ─── Kelime Oyunları Klasörü ─── -->
-        <div class="folder-card" onclick="openKelimeOyunlari()">
-          <div class="game-header">
-            <div class="folder-badge">📁 Koleksiyon · 6 Oyun</div>
-            <span class="folder-svg-icon">🎯</span>
-            <div class="game-title">Kelime Oyunları</div>
-            <div class="game-level">A1 – C1 · Tüm Seviyeler</div>
-          </div>
-          <div class="game-body">
-            <p class="game-description">
-              6 farklı kelime oyunu tek çatı altında! Harita keşfi, hafıza, harf karıştırma ve daha fazlası.
-            </p>
-            <div class="folder-pills">
-              <span class="folder-pill">🌍 Dünya Haritası</span>
-              <span class="folder-pill">🧠 Hafıza</span>
-              <span class="folder-pill">🔤 Harf Karışık</span>
-              <span class="folder-pill">⚡ Hızlı Yaz</span>
-              <span class="folder-pill">🎮 Kelime Avı</span>
-              <span class="folder-pill">📚 Gramer Quest</span>
-            </div>
-            <button class="play-btn">📂 Oyunları Aç</button>
-          </div>
-        </div>
-
-      </div></div>
-    </section>
-
-    <section class="features-section" id="özellikler">
-      <h2>Platform Özellikleri</h2>
-      <div class="features-grid">
-        <div class="feature-item">
-          <span class="feature-icon">⭐</span>
-          <div class="feature-title">Puan & Rozet Sistemi</div>
-          <div class="feature-desc">Oyunları oynayarak puan kazan ve özel rozetleri açmış kapa!</div>
-        </div>
-        <div class="feature-item">
-          <span class="feature-icon">👤</span>
-          <div class="feature-title">Avatar Özelleştirmesi</div>
-          <div class="feature-desc">Kendi karakterini tasarla ve seviye atladıkça geliştir!</div>
-        </div>
-        <div class="feature-item">
-          <span class="feature-icon">📊</span>
-          <div class="feature-title">İlerleme Takibi</div>
-          <div class="feature-desc">Grafikleri inceleyerek hangi konuları çalışman gerektiğini gör!</div>
-        </div>
-        <div class="feature-item">
-          <span class="feature-icon">👥</span>
-          <div class="feature-title">Sosyal Oyunlar</div>
-          <div class="feature-desc">Arkadaşlarıyla oynay, meydan okuma gönder ve yarış!</div>
-        </div>
-        <div class="feature-item">
-          <span class="feature-icon">🎓</span>
-          <div class="feature-title">Öğretmen Paneli</div>
-          <div class="feature-desc">Öğretmenler öğrenci ilerlemesini izleyebilir ve görev atayabilir.</div>
-        </div>
-        <div class="feature-item">
-          <span class="feature-icon">📱</span>
-          <div class="feature-title">Mobil Uyumlu</div>
-          <div class="feature-desc">Telefon, tablet veya bilgisayardan istediğin zaman oyna!</div>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <footer>
-    <p>&copy; 2024 Gaming English. Tüm hakları saklıdır. | <a href="https://github.com/nartkanhesap-ai/gamingEnglish" target="_blank" style="color: white; text-decoration: underline;">GitHub</a></p>
-  </footer>
-
-  <script>
-    function setTheme(themeName) {
-      localStorage.setItem('gamingEnglishTheme', themeName);
-      document.body.className = '';
-      document.body.classList.add(`theme-${themeName}`);
-      document.querySelectorAll('.theme-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      document.querySelector(`[data-theme="${themeName}"]`).classList.add('active');
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedTheme = localStorage.getItem('gamingEnglishTheme') || 'default';
-      setTheme(savedTheme);
-    
-      // English Coach'tan yönlendirme var mı?
-      if (window.location.search.indexOf('ge_set') > -1 || localStorage.getItem('ge_imported_set')) {
-        setTimeout(function() { if (window.openKelimeOyunlari) window.openKelimeOyunlari(); }, 500);
-      }
-    });
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-    });
-  </script>
-
 <script>
-// ─── Login Fonksiyonları ───────────────────────────────────
-
+// ─── Auth functions ───────────────────────────────────
 function hideLoginModal() {
-  const modal = document.getElementById('geLoginModal');
-  if (modal) modal.classList.add('hidden');
+  var m = document.getElementById('geLoginModal');
+  if (m) m.classList.add('hidden');
 }
-
 function showLoginModal() {
-  const modal = document.getElementById('geLoginModal');
-  if (modal) modal.classList.remove('hidden');
+  var m = document.getElementById('geLoginModal');
+  if (m) m.classList.remove('hidden');
 }
-
 function updateNavbar() {
-  const userInfoDiv = document.getElementById('geUserInfo');
-  const userNameSpan = document.getElementById('geUserName');
-  
-  console.log('📊 updateNavbar çağrıldı:', {
-    currentUser: !!window.geCurrentUser,
-    studentInfo: !!window.geStudentInfo,
-    userInfoDiv: !!userInfoDiv,
-    userNameSpan: !!userNameSpan
-  });
-  
+  var userDiv = document.getElementById('geUserInfo');
+  var nameSpan = document.getElementById('geUserName');
   if (window.geCurrentUser && window.geStudentInfo) {
-    // Logged in
-    if (userInfoDiv && userNameSpan) {
-      const fullName = (window.geStudentInfo.firstName || '') + ' ' + (window.geStudentInfo.lastName || '');
-      userNameSpan.textContent = fullName.trim() || 'Öğrenci';
-      userInfoDiv.style.display = 'flex';
-      console.log('✅ Navbar güncellendi:', fullName);
-    } else {
-      console.warn('⚠️ User info elementleri bulunamadı');
+    if (userDiv && nameSpan) {
+      nameSpan.textContent = (window.geStudentInfo.firstName||'')+ ' '+(window.geStudentInfo.lastName||'').trim() || 'Öğrenci';
+      userDiv.style.display = 'flex';
     }
   } else {
-    // Logged out
-    if (userInfoDiv) {
-      userInfoDiv.style.display = 'none';
-    }
-    // English Coach'tan set ile gelinmişse login modal'ı gösterme
+    if (userDiv) userDiv.style.display = 'none';
     if (!window.geCurrentUser) {
-      const fromImport = (function() {
-          try {
-            var imp = localStorage.getItem('ge_imported_set');
-            if (!imp) return false;
-            var d = JSON.parse(imp);
-            return (Date.now() - (d.timestamp||0)) < 600000;
-          } catch(e) { return false; }
-        })();
+      var fromImport = (function(){
+        try { var d = JSON.parse(localStorage.getItem('ge_imported_set')); return d && (Date.now()-(d.timestamp||0))<600000; } catch(e){ return false; }
+      })();
       if (!fromImport) showLoginModal();
     }
   }
 }
-
 async function geHandleLogin(e) {
   e.preventDefault();
-  
-  const email = document.getElementById('geEmail').value.trim();
-  const password = document.getElementById('gePassword').value;
-  const btn = document.getElementById('geLoginBtn');
-  const errorEl = document.getElementById('geErrorMsg');
-  
-  btn.disabled = true;
-  btn.textContent = '⏳ Giriş yapılıyor...';
-  errorEl.classList.remove('show');
-  
+  var email = document.getElementById('geEmail').value.trim();
+  var password = document.getElementById('gePassword').value;
+  var btn = document.getElementById('geLoginBtn');
+  var err = document.getElementById('geErrorMsg');
+  btn.disabled = true; btn.textContent = '⏳ Giriş yapılıyor...';
+  err.classList.remove('show');
   try {
-    console.log('🔐 Signing in:', email);
     await firebase.auth().signInWithEmailAndPassword(email, password);
-    console.log('✅ Login başarılı');
     document.getElementById('geEmail').value = '';
     document.getElementById('gePassword').value = '';
-  } catch (err) {
-    console.error('❌ Login hatası:', err.code, err.message);
-    
-    let msg = '❌ Giriş başarısız';
-    if (err.code === 'auth/user-not-found') msg = '❌ Bu e-posta kaydedilmemiş';
-    if (err.code === 'auth/wrong-password') msg = '❌ Şifre yanlış';
-    if (err.code === 'auth/invalid-email') msg = '❌ E-posta geçersiz';
-    if (err.code === 'auth/requests-from-referer-null-are-blocked') msg = '❌ Firestore yapılandırması hatası - sistem yöneticisine başvur';
-    
-    errorEl.textContent = msg;
-    errorEl.classList.add('show');
+  } catch(e) {
+    var msg = '❌ Giriş başarısız';
+    if (e.code==='auth/user-not-found') msg = '❌ Bu e-posta kaydedilmemiş';
+    if (e.code==='auth/wrong-password') msg = '❌ Şifre yanlış';
+    if (e.code==='auth/invalid-email') msg = '❌ E-posta geçersiz';
+    if (e.code==='auth/invalid-credential') msg = '❌ E-posta veya şifre hatalı';
+    err.textContent = msg; err.classList.add('show');
   } finally {
-    btn.disabled = false;
-    btn.textContent = 'Giriş Yap';
+    btn.disabled = false; btn.textContent = 'Giriş Yap';
+  }
+}
+function geLogout() {
+  firebase.auth().signOut().then(function(){
+    geCurrentUser = null; geStudentInfo = null;
+    window.geCurrentUser = null; window.geStudentInfo = null;
+    showLoginModal(); updateNavbar();
+  });
+}
+window.addEventListener('load', function(){ console.log('🎮 Gaming English yüklendi'); updateNavbar(); });
+
+// ─── Mode toggle ───────────────────────────────────
+function setMode(m) {
+  document.documentElement.setAttribute('data-mode', m);
+  try { localStorage.setItem('ge_mode', m); } catch(e){}
+  var eb = document.getElementById('modeExplorer');
+  var cb = document.getElementById('modeChallenger');
+  if (eb) eb.classList.toggle('active', m==='explorer');
+  if (cb) cb.classList.toggle('active', m==='challenger');
+  // Hero description
+  var d = document.getElementById('heroDesc');
+  if (d) d.textContent = m==='explorer'
+    ? 'Atlas ile haritayı keşfet, kelime topla, rozet kazan. 7–10 yaş için oyunla dolu İngilizce dünyası!'
+    : 'Seviye atla, arkadaşlarınla yarış, zirveyi fethet. 11–15 yaş için meydan okuma dolu İngilizce evreni.';
+  // Atlas morphing in challenger mode
+  updateAtlasForMode(m);
+}
+
+function updateAtlasForMode(m) {
+  var hero = document.getElementById('atlasHero');
+  var nav = document.getElementById('atlasNavFace');
+  if (!hero) return;
+  if (m === 'challenger') {
+    // Teen Atlas SVG
+    hero.innerHTML = '<defs><linearGradient id="fhT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8895A"/><stop offset="1" stop-color="#C9553A"/></linearGradient><linearGradient id="hoodT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A3242"/><stop offset="1" stop-color="#1B2230"/></linearGradient></defs>'
+      + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="rgba(0,0,0,.18)"/>'
+      + '<path d="M22 116 q4-34 38-34 q34 0 38 34Z" fill="url(#hoodT)"/>'
+      + '<path d="M44 88 q16 12 32 0 l-2 12 q-14 9-28 0Z" fill="#222a38"/>'
+      + '<path d="M54 92 v16" stroke="#19D89B" stroke-width="2.6" stroke-linecap="round"/>'
+      + '<path d="M66 92 v16" stroke="#19D89B" stroke-width="2.6" stroke-linecap="round"/>'
+      + '<circle cx="54" cy="110" r="2.4" fill="#19D89B"/><circle cx="66" cy="110" r="2.4" fill="#19D89B"/>'
+      + '<path d="M30 92 q30 18 60 0" fill="none" stroke="#11161f" stroke-width="5" stroke-linecap="round"/>'
+      + '<rect x="24" y="84" width="12" height="18" rx="5" fill="#11161f"/>'
+      + '<rect x="84" y="84" width="12" height="18" rx="5" fill="#11161f"/>'
+      + '<rect x="26" y="87" width="8" height="12" rx="4" fill="#19D89B" opacity=".85"/>'
+      + '<path d="M28 42 L33 13 L53 36Z" fill="url(#fhT)"/><path d="M92 42 L87 13 L67 36Z" fill="url(#fhT)"/>'
+      + '<path d="M34 35 L36 21 L46 34Z" fill="#2A1A12"/><path d="M86 35 L84 21 L74 34Z" fill="#2A1A12"/>'
+      + '<circle cx="90" cy="44" r="2.6" fill="#9B8CFF"/>'
+      + '<circle cx="60" cy="60" r="33" fill="url(#fhT)"/>'
+      + '<path d="M60 50 q24 6 20 28 q-20 13-40 0 q-4-22 20-28Z" fill="#F0E6D6"/>'
+      + '<path d="M42 58 q6-5 12 0" fill="none" stroke="#241008" stroke-width="3.4" stroke-linecap="round"/>'
+      + '<path d="M66 58 q6-5 12 0" fill="none" stroke="#241008" stroke-width="3.4" stroke-linecap="round"/>'
+      + '<path d="M60 70 l-4-4 h8Z" fill="#241008"/>'
+      + '<path d="M58 78 q8 4 14-2" fill="none" stroke="#241008" stroke-width="2.2" stroke-linecap="round"/>'
+      + '<path d="M30 40 q30-30 60 0 q-30-8-60 0Z" fill="url(#hoodT)"/>'
+      + '<path d="M28 38 q32-34 64 0 q-32-12-64 0Z" fill="#28303f"/>'
+      + '<rect x="28" y="34" width="64" height="9" rx="4" fill="#19D89B"/>'
+      + '<g style="transform-origin:96px 86px;animation:wiggle 2.4s ease-in-out infinite"><circle cx="98" cy="82" r="8.5" fill="url(#fhT)"/></g>';
+    if (nav) nav.innerHTML = '<circle cx="24" cy="24" r="22" fill="#D9744E"/>'
+      + '<path d="M10 16 L13 5 L22 14Z" fill="#C9553A"/><path d="M38 16 L35 5 L26 14Z" fill="#C9553A"/>'
+      + '<path d="M24 19 q13 3 11 16 q-11 8-22 0 q-2-13 11-16Z" fill="#F0E6D6"/>'
+      + '<path d="M14 23 q4-3 8 0" fill="none" stroke="#241008" stroke-width="2.6" stroke-linecap="round"/>'
+      + '<path d="M26 23 q4-3 8 0" fill="none" stroke="#241008" stroke-width="2.6" stroke-linecap="round"/>'
+      + '<path d="M24 30 l-2.6-2.6 h5.2Z" fill="#241008"/>'
+      + '<path d="M9 16 q15-16 30 0 q-15-6-30 0Z" fill="#28303f"/>'
+      + '<rect x="9" y="13" width="30" height="5" rx="2.5" fill="#19D89B"/>';
+  } else {
+    // Kid Atlas SVG
+    hero.innerHTML = '<defs><linearGradient id="fh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4863C"/><stop offset="1" stop-color="#E5603C"/></linearGradient></defs>'
+      + '<ellipse cx="60" cy="110" rx="30" ry="6" fill="rgba(0,0,0,.1)"/>'
+      + '<path d="M28 44 L34 14 L54 38Z" fill="url(#fh)"/><path d="M92 44 L86 14 L66 38Z" fill="url(#fh)"/>'
+      + '<path d="M34 38 L37 22 L47 36Z" fill="#2A1A12"/><path d="M86 38 L83 22 L73 36Z" fill="#2A1A12"/>'
+      + '<circle cx="60" cy="62" r="34" fill="url(#fh)"/>'
+      + '<path d="M60 50 q26 6 22 30 q-22 14-44 0 q-4-24 22-30Z" fill="#FBF6EA"/>'
+      + '<circle cx="48" cy="60" r="5.4" fill="#241008"/><circle cx="72" cy="60" r="5.4" fill="#241008"/>'
+      + '<circle cx="49.6" cy="58.2" r="1.7" fill="#fff"/><circle cx="73.6" cy="58.2" r="1.7" fill="#fff"/>'
+      + '<path d="M60 74 l-5-5 h10Z" fill="#241008"/>'
+      + '<path d="M60 74 v6" stroke="#241008" stroke-width="2.4" stroke-linecap="round"/>'
+      + '<path d="M30 36 q30-20 60 0 q-6 6-30 6 q-24 0-30-6Z" fill="#1E8A53"/>'
+      + '<rect x="42" y="22" width="36" height="16" rx="8" fill="#14633A"/>'
+      + '<circle cx="60" cy="30" r="5" fill="#FFC53D"/>'
+      + '<g style="transform-origin:98px 78px;animation:wiggle 1.4s ease-in-out infinite"><circle cx="100" cy="74" r="9" fill="url(#fh)"/></g>';
+    if (nav) nav.innerHTML = '<circle cx="24" cy="24" r="22" fill="#F4863C"/>'
+      + '<path d="M10 16 L13 5 L22 14Z" fill="#E5603C"/><path d="M38 16 L35 5 L26 14Z" fill="#E5603C"/>'
+      + '<path d="M24 18 q14 3 12 17 q-12 8-24 0 q-2-14 12-17Z" fill="#FBF6EA"/>'
+      + '<circle cx="18" cy="24" r="3" fill="#241008"/><circle cx="30" cy="24" r="3" fill="#241008"/>'
+      + '<path d="M24 31 l-3-3 h6Z" fill="#241008"/>';
   }
 }
 
-function geLogout() {
-  console.log('🚪 Logging out...');
-  firebase.auth().signOut().then(() => {
-    console.log('✅ Logged out successfully');
-    // State reset
-    geCurrentUser = null;
-    geStudentInfo = null;
-    window.geCurrentUser = null;
-    window.geStudentInfo = null;
-    // Login modalı göster
-    showLoginModal();
-    updateNavbar();
-    console.log('📲 Login modal gösterildi');
-  }).catch(err => {
-    console.error('❌ Logout error:', err);
+window.addEventListener('DOMContentLoaded', function() {
+  var saved = 'explorer';
+  try { saved = localStorage.getItem('ge_mode') || 'explorer'; } catch(e){}
+  setMode(saved);
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      var t = document.querySelector(a.getAttribute('href'));
+      if (t) t.scrollIntoView({behavior:'smooth'});
+    });
   });
-}
-
-// Sayfa yüklendiğinde kontrol et
-window.addEventListener('load', () => {
-  console.log('🎮 Gaming English yüklendi');
-  updateNavbar();
 });
 </script>
-<script>
-// Oyunlar bölümünü koruma
-function protectGamesSection() {
-  // Oyunlar her zaman görünür - login sadece siteye giriş için gerekli
-}
-
-// İlk yükleme ve auth değiştiğinde çalıştır
-document.addEventListener('DOMContentLoaded', protectGamesSection);
-firebase.auth().onAuthStateChanged(() => {
-  setTimeout(protectGamesSection, 100);
-});
-</script>
-
-<!-- ─── Kelime Oyunları Modal ─── -->
-<div class="ko-overlay" id="koOverlay">
-  <div class="ko-modal" id="koModal">
-    <div class="ko-header">
-      <div class="ko-header-icon">📂</div>
-      <div class="ko-header-text">
-        <h2>Kelime Oyunları</h2>
-        <p>Bir oyun seç ve oynamaya başla!</p>
-      </div>
-      <button class="ko-close" onclick="closeKelimeOyunlari()">✕</button>
-    </div>
-
-    <!-- Breadcrumb -->
-    <div class="ko-breadcrumb" id="koBreadcrumb">
-      <span onclick="koGoHome()">📂 Kelime Oyunları</span>
-    </div>
-
-    <!-- Oyun Listesi - JS ile doldurulur -->
-    <div class="ko-body" id="koBody">
-    </div>
-
-    <!-- Oyun iframe alanı (gizli başlar) -->
-    <div class="ko-game-view" id="koGameView">
-      <div class="ko-back-bar">
-        <button class="ko-back-btn" onclick="koGoHome()">← Oyunlar</button>
-        <span class="ko-playing-title" id="koPlayingTitle"></span>
-      </div>
-      <iframe class="ko-game-frame" id="koGameFrame" src="" allowfullscreen></iframe>
-    </div>
-  </div>
-</div>
-
-
 
 </body>
 </html>
