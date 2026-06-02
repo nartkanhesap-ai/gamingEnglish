@@ -3,505 +3,218 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hızlı Quiz - İngilizce Oyunu</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+  <title>Hızlı Quiz — Gaming English</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap');
 
-    :root {
-      --theme-primary: #667eea;
-      --theme-secondary: #764ba2;
-    }
+:root {
+  --paper:      #F3ECDB;
+  --paper-2:    #FBF6EA;
+  --surface:    #FFFFFF;
+  --surface-2:  #FBF7EE;
+  --ink:        #1C2E22;
+  --ink-soft:   #51645A;
+  --ink-faint:  #8A9890;
+  --green:      #1E8A53;
+  --green-deep: #14633A;
+  --green-soft: #E4F2E8;
+  --amber:      #F2A23C;
+  --amber-soft: #FCE9CC;
+  --coral:      #E5603C;
+  --coral-soft: #FBE0D6;
+  --sky:        #2E9BD6;
+  --sky-soft:   #DCEFF9;
+  --violet:     #7C6BF0;
+  --violet-soft:#E8E4FC;
+  --line:       rgba(28,46,34,0.10);
+  --line-2:     rgba(28,46,34,0.16);
+  --shadow:     0 14px 34px -12px rgba(20,60,40,0.28);
+  --shadow-sm:  0 6px 16px -8px rgba(20,60,40,0.20);
+  --r-xl: 28px; --r-lg: 20px; --r-md: 14px; --r-sm: 10px;
+  --display: 'Baloo 2', system-ui, sans-serif;
+  --body: 'Nunito', system-ui, sans-serif;
+}
 
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      transition: background 0.4s ease;
-    }
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { height:100%; }
+body { font-family:var(--body); background:var(--paper); color:var(--ink); -webkit-font-smoothing:antialiased; min-height:100vh; }
+::-webkit-scrollbar { width:8px; } ::-webkit-scrollbar-thumb { background:var(--line-2); border-radius:99px; }
 
-    .container {
-      width: 100%;
-      max-width: 900px;
-      background: white;
-      border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      overflow: hidden;
-      animation: slideUp 0.6s ease-out;
-    }
+/* Topographic bg */
+.topo-bg { position:absolute; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    radial-gradient(120% 90% at 12% 18%, transparent 0, transparent 38%, rgba(28,46,34,0.045) 38.4%, transparent 39%),
+    radial-gradient(120% 90% at 12% 18%, transparent 0, transparent 48%, rgba(28,46,34,0.045) 48.4%, transparent 49%),
+    radial-gradient(140% 110% at 88% 82%, transparent 0, transparent 30%, rgba(28,46,34,0.045) 30.4%, transparent 31%),
+    radial-gradient(140% 110% at 88% 82%, transparent 0, transparent 44%, rgba(28,46,34,0.045) 44.4%, transparent 45%); }
 
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+/* Layout */
+.game-shell { min-height:100vh; display:flex; flex-direction:column; }
 
-    .header {
-      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
-      color: white;
-      padding: 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 15px;
-      transition: background 0.4s ease;
-    }
+/* Topbar */
+.game-topbar { background:var(--green); color:#fff; padding:14px 22px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; position:relative; overflow:hidden; box-shadow:var(--shadow-sm); }
+.game-topbar .topo-bg { opacity:.35; }
+.game-title-area { display:flex; align-items:center; gap:10px; position:relative; }
+.game-emoji { font-size:26px; }
+.game-title { font-family:var(--display); font-weight:800; font-size:20px; color:#fff; }
+.home-btn { background:rgba(255,255,255,0.2); border:2px solid rgba(255,255,255,0.5); color:#fff; border-radius:99px; padding:7px 16px; font-family:var(--display); font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:7px; text-decoration:none; transition:background .16s; }
+.home-btn:hover { background:rgba(255,255,255,0.32); }
+.score-row { display:flex; align-items:center; gap:10px; position:relative; flex-wrap:wrap; }
+.score-box { background:rgba(255,255,255,0.18); border:1.5px solid rgba(255,255,255,0.35); border-radius:12px; padding:7px 14px; display:flex; align-items:center; gap:7px; }
+.score-label { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; opacity:.82; }
+.score-value { font-family:var(--display); font-weight:800; font-size:20px; line-height:1; }
 
-    .title {
-      font-family: 'Fredoka', sans-serif;
-      font-size: 32px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+/* Difficulty / Set pill bar */
+.diff-bar { background:var(--surface); border-bottom:1.5px solid var(--line); padding:10px 22px; display:flex; align-items:center; gap:8px; }
+.diff-label { font-size:12px; font-weight:800; color:var(--ink-faint); letter-spacing:.4px; }
+.diff-btn { border:2px solid var(--line-2); background:transparent; color:var(--ink-soft); border-radius:99px; padding:6px 14px; font-family:var(--display); font-weight:700; font-size:12.5px; cursor:pointer; transition:all .16s; }
+.diff-btn.active, .diff-btn:hover { border-color:var(--green); background:var(--green-soft); color:var(--green-deep); }
+.diff-btn.active { background:var(--green); color:#fff; border-color:var(--green); }
 
-    .home-btn {
-      background: rgba(255, 255, 255, 0.2);
-      border: 2px solid white;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 13px;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+/* Progress bar */
+.progress-wrap { padding:0 22px 14px; background:var(--surface); border-bottom:1.5px solid var(--line); }
+.progress-track { height:8px; border-radius:99px; background:var(--line); overflow:hidden; }
+.progress-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--green),var(--green-deep)); transition:width .6s cubic-bezier(.22,1,.36,1); }
 
-    .home-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-2px);
-    }
+/* Game area */
+.game-area { flex:1; padding:22px; max-width:680px; margin:0 auto; width:100%; }
 
-    .score-box {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-    }
+/* Card */
+.card { background:var(--surface); border-radius:var(--r-lg); box-shadow:var(--shadow-sm); border:1.5px solid var(--line); }
 
-    .stat {
-      text-align: center;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 10px 16px;
-      border-radius: 12px;
-      backdrop-filter: blur(10px);
-    }
+/* Buttons */
+.btn { font-family:var(--display); font-weight:700; border:none; cursor:pointer; border-radius:99px; display:inline-flex; align-items:center; justify-content:center; gap:8px; transition:transform .14s cubic-bezier(.34,1.56,.64,1), box-shadow .18s; white-space:nowrap; line-height:1; user-select:none; }
+.btn:active { transform:translateY(1px) scale(.98); }
+.btn-lg { font-size:17px; padding:15px 28px; }
+.btn-md { font-size:15px; padding:12px 20px; }
+.btn-sm { font-size:13px; padding:8px 15px; }
+.btn-primary { background:var(--green); color:#fff; box-shadow:0 7px 0 var(--green-deep), var(--shadow-sm); }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 9px 0 var(--green-deep), var(--shadow); }
+.btn-primary:active { transform:translateY(4px); box-shadow:0 2px 0 var(--green-deep); }
+.btn-ghost { background:transparent; color:var(--ink); border:2px solid var(--line-2); }
+.btn-ghost:hover { border-color:var(--green); color:var(--green); transform:translateY(-2px); }
+.btn-soft { background:var(--surface); color:var(--ink); box-shadow:var(--shadow-sm); border:1.5px solid var(--line); }
+.btn-soft:hover { transform:translateY(-2px); box-shadow:var(--shadow); }
+.btn-amber { background:var(--amber); color:#3a2509; box-shadow:0 7px 0 #c87f22; }
+.btn-amber:hover { transform:translateY(-2px); }
 
-    .stat-label {
-      font-size: 12px;
-      opacity: 0.9;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+/* Result feedback modal */
+.result-overlay { display:none; position:fixed; inset:0; z-index:500; background:rgba(12,24,18,0.52); backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:20px; }
+.result-overlay.active { display:flex; }
+.result-modal { background:var(--surface); border-radius:var(--r-xl); padding:32px 28px; text-align:center; width:min(420px,94vw); box-shadow:var(--shadow); border:1.5px solid var(--line); animation:popIn .35s cubic-bezier(.34,1.56,.64,1); }
+@keyframes popIn { from{transform:scale(.7);opacity:0;} to{transform:scale(1);opacity:1;} }
+@keyframes shake { 0%,100%{transform:translateX(0);} 20%,60%{transform:translateX(-7px);} 40%,80%{transform:translateX(7px);} }
+@keyframes correctPulse { 0%{transform:scale(1);} 40%{transform:scale(1.06);} 100%{transform:scale(1);} }
+@keyframes floaty { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+@keyframes fadeUp { from{transform:translateY(16px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+.result-icon { font-size:58px; margin-bottom:8px; line-height:1; }
+.result-title { font-family:var(--display); font-weight:800; font-size:26px; color:var(--ink); margin-bottom:6px; }
+.result-text { font-size:15px; color:var(--ink-soft); font-weight:600; margin-bottom:18px; }
+.result-points { font-family:var(--display); font-weight:800; font-size:20px; color:var(--amber); margin-bottom:20px; }
 
-    .stat-value {
-      font-size: 24px;
-      font-weight: 700;
-      margin-top: 4px;
-    }
+/* Option buttons (quiz/game choices) */
+.option-btn { width:100%; padding:15px 18px; border-radius:var(--r-md); border:2px solid var(--line); background:var(--surface-2); color:var(--ink); font-family:var(--body); font-weight:800; font-size:15.5px; cursor:pointer; text-align:left; display:flex; align-items:center; gap:12px; transition:all .18s; }
+.option-btn:hover:not(:disabled) { border-color:var(--sky); background:var(--sky-soft); transform:translateX(4px); }
+.option-btn.correct { background:var(--green-soft); border-color:var(--green); color:var(--green-deep); animation:correctPulse .5s; }
+.option-btn.wrong { background:var(--coral-soft); border-color:var(--coral); color:var(--coral); }
+.option-btn:disabled { cursor:default; }
+.option-letter { width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:800; font-size:14px; background:var(--surface); color:var(--ink-soft); flex-shrink:0; transition:all .18s; }
+.option-btn.correct .option-letter { background:var(--green); color:#fff; }
+.option-btn.wrong .option-letter { background:var(--coral); color:#fff; }
 
-    .difficulty-selector {
-      display: flex;
-      gap: 8px;
-    }
+/* Chip */
+.chip { display:inline-flex; align-items:center; gap:5px; font-family:var(--body); font-weight:800; font-size:12px; padding:5px 11px; border-radius:99px; }
+.chip-green { background:var(--green-soft); color:var(--green-deep); }
+.chip-amber { background:var(--amber-soft); color:#b5781e; }
+.chip-violet { background:var(--violet-soft); color:var(--violet); }
+.chip-sky { background:var(--sky-soft); color:var(--sky); }
+.chip-coral { background:var(--coral-soft); color:var(--coral); }
 
-    .diff-btn {
-      padding: 8px 16px;
-      border: 2px solid white;
-      background: transparent;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 12px;
-      transition: all 0.3s;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+/* Feedback banner */
+.feedback-bar { padding:12px 16px; border-radius:var(--r-md); display:flex; align-items:center; gap:10px; font-weight:800; font-size:14.5px; margin-top:14px; animation:fadeUp .3s cubic-bezier(.22,1,.36,1); }
+.feedback-bar.correct { background:var(--green-soft); color:var(--green-deep); border:1.5px solid var(--green); }
+.feedback-bar.wrong   { background:var(--coral-soft); color:var(--coral); border:1.5px solid var(--coral); }
 
-    .diff-btn.active {
-      background: white;
-      color: var(--theme-primary);
-    }
+/* Set import banner */
+.import-banner { position:fixed; top:72px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#f093fb,#f5576c); color:#fff; padding:10px 22px; border-radius:99px; font-family:var(--display); font-size:13px; font-weight:800; z-index:9999; box-shadow:0 4px 16px rgba(240,83,240,.4); white-space:nowrap; pointer-events:none; animation:fadeUp .4s cubic-bezier(.22,1,.36,1); }
 
-    .diff-btn:hover:not(.active) {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .game-area {
-      padding: 40px 30px;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 6px;
-      background: #e0e0e0;
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 30px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
-      transition: width 0.3s;
-    }
-
-    .question-display {
-      text-align: center;
-      margin-bottom: 40px;
-      animation: fadeIn 0.4s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    .instruction {
-      color: #999;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 20px;
-      font-weight: 500;
-    }
-
-    .question-text {
-      background: #f5f5f5;
-      padding: 25px;
-      border-radius: 12px;
-      font-size: 18px;
-      line-height: 1.8;
-      margin-bottom: 30px;
-      border-left: 4px solid var(--theme-primary);
-    }
-
-    .timer {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-weight: 600;
-      font-size: 14px;
-      margin-bottom: 20px;
-    }
-
-    .options-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 30px;
-    }
-
-    .option-btn {
-      background: white;
-      border: 2px solid #e0e0e0;
-      padding: 15px 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-      transition: all 0.3s;
-      text-align: center;
-      line-height: 1.4;
-    }
-
-    .option-btn:hover {
-      border-color: var(--theme-primary);
-      background: #f9f9f9;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .option-btn.selected {
-      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
-      color: white;
-      border-color: var(--theme-primary);
-    }
-
-    .option-btn.correct {
-      animation: correctPulse 0.6s ease-out;
-    }
-
-    @keyframes correctPulse {
-      0% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
-
-    .option-btn.wrong {
-      animation: wrongShake 0.4s ease-out;
-    }
-
-    @keyframes wrongShake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-8px); }
-      75% { transform: translateX(8px); }
-    }
-
-    .button-group {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    button {
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
-      color: white;
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .btn-secondary {
-      background: white;
-      color: var(--theme-primary);
-      border: 2px solid var(--theme-primary);
-    }
-
-    .btn-secondary:hover {
-      background: #f5f5f5;
-    }
-
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      z-index: 1000;
-    }
-
-    .modal.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .modal-content {
-      background: white;
-      padding: 40px;
-      border-radius: 24px;
-      text-align: center;
-      max-width: 400px;
-      animation: bounceIn 0.5s ease-out;
-    }
-
-    @keyframes bounceIn {
-      0% {
-        transform: scale(0.8);
-        opacity: 0;
-      }
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    .modal-icon {
-      font-size: 80px;
-      margin-bottom: 20px;
-      display: block;
-    }
-
-    .modal-title {
-      font-family: 'Fredoka', sans-serif;
-      font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      color: var(--theme-primary);
-    }
-
-    .modal-text {
-      color: #666;
-      margin-bottom: 30px;
-      line-height: 1.6;
-    }
-
-    .feedback-text {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
-
-    @media (max-width: 768px) {
-      .options-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .title {
-        font-size: 24px;
-      }
-
-      .header {
-        padding: 20px;
-      }
-
-      .game-area {
-        padding: 20px;
-      }
-
-      .question-text {
-        font-size: 16px;
-      }
-    }
-
-    * {
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .header, .btn-primary {
-      transition: background 0.4s ease, background-color 0.4s ease;
-    }
-  </style>
+@media (max-width:640px) {
+  .game-area { padding:14px 14px 30px; }
+  .game-topbar { padding:12px 16px; }
+  .game-title { font-size:17px; }
+  .score-value { font-size:17px; }
+}
+</style>
 </head>
 <body>
+<div class="game-shell">
 
-<style>
-  #ge-back-btn {
-    position: fixed; top: 14px; right: 16px; z-index: 99999;
-    background: rgba(255,255,255,0.92);
-    border: 2px solid rgba(0,0,0,0.1);
-    border-radius: 50%;
-    width: 40px; height: 40px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; cursor: pointer; color: #374151;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-    backdrop-filter: blur(8px);
-    transition: all 0.2s;
-    text-decoration: none;
-  }
-  #ge-back-btn:hover {
-    background: #fff;
-    transform: scale(1.1);
-    box-shadow: 0 6px 24px rgba(0,0,0,0.2);
-  }
-</style>
-<a id="ge-back-btn" href="index.html" title="Ana Sayfaya Dön">✕</a>
-
-  <div class="container">
-    <div class="header">
-      <div class="title">⚡ Hızlı Quiz</div>
-      <a href="index.html" class="home-btn">← Ana Sayfa</a>
-      <div class="score-box">
-        <div class="stat">
-          <div class="stat-label">Skor</div>
-          <div class="stat-value" id="score">0</div>
+  <div class="game-topbar" style="background:linear-gradient(135deg,#F2A23C,#d98a25)">
+    <div class="topo-bg"></div>
+    <div class="game-title-area">
+      <span class="game-emoji">⚡</span>
+      <span class="game-title">Hızlı Quiz</span>
+    </div>
+    <a href="index.html" class="home-btn">← Ana Sayfa</a>
+  </div>
+  <div style="background:var(--surface);border-bottom:1.5px solid var(--line)">
+    <div style="padding:12px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div class="score-row">
+        <div class="score-box" style="background:var(--green-soft);border-color:var(--green)">
+          <span class="score-label" style="color:var(--green-deep)">Skor</span>
+          <span class="score-value" style="color:var(--ink)" id="score">0</span>
         </div>
-        <div class="stat">
-          <div class="stat-label">Doğru</div>
-          <div class="stat-value" id="correct">0</div>
+        <div class="score-box" style="background:var(--green-soft);border-color:var(--green)">
+          <span class="score-label" style="color:var(--green-deep)">Doğru</span>
+          <span class="score-value" style="color:var(--green-deep)" id="correct">0</span>
         </div>
-        <div class="stat">
-          <div class="stat-label">Yanlış</div>
-          <div class="stat-value" id="wrong">0</div>
+        <div class="score-box" style="background:var(--coral-soft);border-color:var(--coral)">
+          <span class="score-label" style="color:var(--coral)">Yanlış</span>
+          <span class="score-value" style="color:var(--coral)" id="wrong">0</span>
         </div>
-        <div class="difficulty-selector">
-          <button class="diff-btn active" onclick="setDifficulty('easy')">Easy</button>
-          <button class="diff-btn" onclick="setDifficulty('medium')">Med</button>
-          <button class="diff-btn" onclick="setDifficulty('hard')">Hard</button>
-        </div>
+      </div>
+      <div id="diffButtons" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span style="font-size:11px;font-weight:800;color:var(--ink-faint);letter-spacing:.4px">SEVİYE</span>
+        <button class="diff-btn active" onclick="setDifficulty('easy')">Kolay</button>
+        <button class="diff-btn" onclick="setDifficulty('medium')">Orta</button>
+        <button class="diff-btn" onclick="setDifficulty('hard')">Zor</button>
       </div>
     </div>
-
-    <div class="game-area">
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-      </div>
-
-      <div class="question-display">
-        <div class="instruction">Hızlı cevap ver, puan kazan!</div>
-        <div class="timer" id="timer">⏱️ 5s</div>
-      </div>
-
-      <div class="question-text" id="questionText">
-        What is the opposite of "big"?
-      </div>
-
-      <div class="options-grid" id="optionsGrid">
-        <!-- Seçenekler buraya gelecek -->
-      </div>
-
-      <div class="button-group">
-        <button class="btn-secondary" onclick="skipQuestion()">Atla</button>
-        <button class="btn-secondary" onclick="resetGame()">Sıfırla</button>
-      </div>
+    <div style="padding:0 22px 12px">
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:5%"></div></div>
     </div>
   </div>
+  <div class="game-area" style="animation:fadeUp .4s cubic-bezier(.22,1,.36,1)">
 
-  <div class="modal" id="resultModal">
-    <div class="modal-content">
-      <span class="modal-icon" id="resultIcon">✅</span>
-      <div class="modal-title" id="resultTitle">Harika!</div>
-      <div class="modal-text" id="resultText">Doğru cevap!</div>
-      <div class="feedback-text">+<span id="pointsEarned">10</span> Puan</div>
-      <button class="btn-primary" onclick="nextQuestion()" style="width: 100%;">Sonraki Soru</button>
+    <div class="card" style="padding:26px;margin-bottom:18px;position:relative;overflow:hidden">
+      <!-- Timer ring -->
+      <div style="position:absolute;top:16px;right:16px">
+        <div id="timerDisplay" style="width:50px;height:50px;border-radius:50%;background:var(--amber-soft);border:3px solid var(--amber);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:20px;color:var(--amber);transition:all .4s">5</div>
+      </div>
+      <div style="font-size:12px;font-weight:800;color:var(--ink-faint);letter-spacing:.5px;margin-bottom:14px;text-transform:uppercase">Hızlı Cevap!</div>
+      <div id="questionText" style="font-family:var(--display);font-weight:800;font-size:21px;color:var(--ink);line-height:1.35;margin-bottom:22px;padding-right:60px;min-height:52px">—</div>
+      <div id="optionsGrid" class="col" style="gap:10px">
+        <!-- JS ile doldurulur -->
+      </div>
+      <div id="feedbackBar" style="display:none" class="feedback-bar correct"></div>
     </div>
-  </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-ghost btn-md" style="flex:1" onclick="skipQuestion()">Atla</button>
+      <button class="btn btn-ghost btn-md" style="flex:1" onclick="resetGame()">Sıfırla</button>
+    </div>
 
-  <script>
+  </div>
+</div>
+<div class="result-overlay" id="resultModal">
+  <div class="result-modal">
+    <div class="result-icon" id="resultIcon">🎯</div>
+    <div class="result-title" id="resultTitle">—</div>
+    <div class="result-text" id="resultText">—</div>
+    <div class="result-points" id="pointsEarned">+0</div>
+    <button class="btn btn-primary btn-lg" style="width:100%" onclick="nextQuestion()">Devam Et →</button>
+  </div>
+</div>
+<script>
+
     const fallbackDatabase = {
       easy: [
         { question: 'What is the opposite of "big"?', options: ['small', 'large', 'huge', 'tall'], correct: 'small', type: 'vocabulary' },
@@ -601,19 +314,9 @@
       })();
 }
 
-    function applyThemeToGame(themeName) {
-      const themes = {
-        default: { primary: '#667eea', secondary: '#764ba2' },
-        candy: { primary: '#FFB3E6', secondary: '#FF85D0' },
-        ocean: { primary: '#4FC3F7', secondary: '#0288D1' },
-        jungle: { primary: '#81C784', secondary: '#2E7D32' }
-      };
-
-      const theme = themes[themeName] || themes.default;
-      document.documentElement.style.setProperty('--theme-primary', theme.primary);
-      document.documentElement.style.setProperty('--theme-secondary', theme.secondary);
-      document.querySelector('.header').style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-    }
+    function applyThemeToGame(t) {
+  // Quest World design - tema otomatik CSS token'lardan
+}
 
     function setDifficulty(level) {
       document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
@@ -875,6 +578,7 @@ function showImportBanner(setName, wordCount) {
   document.body.appendChild(banner);
   setTimeout(function() { if (banner.parentNode) banner.remove(); }, 3000);
 }
+
 </script>
 </body>
 </html>
