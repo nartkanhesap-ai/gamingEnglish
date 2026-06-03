@@ -918,7 +918,7 @@ function getIntroContent(unitTitle) {
 
 "Welcome! 👋": {
   atlasText: "Merhaba! Ben Atlas! Bugün İngilizce'de nasıl selam verileceğini öğreneceğiz. Hadi başlayalım! 🦊",
-  atlasSpeak: "Hello! I am Atlas! Today we will learn how to say hello in English. Let us start!",
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
   slides: [
     {
       icon: '👋',
@@ -970,7 +970,7 @@ function getIntroContent(unitTitle) {
 
 "My Body 🧍": {
   atlasText: "Vücudumuzun İngilizce adlarını öğrenelim! Kafadan ayağa kadar her şeyi biliyor olacaksın! 🦊",
-  atlasSpeak: "Let us learn the parts of our body in English! From head to toe!",
+  atlasSpeak: ['hello', 'today_learn', 'new_words'],
   slides: [
     {
       icon: '👤',
@@ -1013,7 +1013,7 @@ function getIntroContent(unitTitle) {
 
 "Animals 🐾": {
   atlasText: "Hayvanları seviyorum! 🦊 Ben de bir hayvanım! Bugün pek çok hayvanın İngilizce adını öğreneceğiz!",
-  atlasSpeak: "I love animals! I am an animal too! Today we learn animal names in English!",
+  atlasSpeak: ['hello', 'today_learn', 'new_words'],
   slides: [
     {
       icon: '🐾',
@@ -1070,7 +1070,7 @@ function getIntroContent(unitTitle) {
 
 "Food & Drinks 🍎": {
   atlasText: "Yemek çok severim! Favori yiyeceklerinin İngilizce adlarını öğrenelim! 🍕🍎",
-  atlasSpeak: "I love food! Let us learn the names of foods in English!",
+  atlasSpeak: ['hello', 'new_words'],
   slides: [
     {
       icon: '🍎',
@@ -1125,7 +1125,7 @@ function getIntroContent(unitTitle) {
 
 "My Family 👨‍👩‍👧": {
   atlasText: "Ailem benim için çok önemli! Aile üyelerinin İngilizce adlarını öğrenelim! 👨‍👩‍👧",
-  atlasSpeak: "My family is very important to me! Let us learn family words in English!",
+  atlasSpeak: ['hello', 'new_words'],
   slides: [
     {
       icon: '👨‍👩‍👧',
@@ -1168,7 +1168,7 @@ function getIntroContent(unitTitle) {
 
 "Days & Weather ⛅": {
   atlasText: "Bugün hava nasıl? Ve bugün hangi gün? Bunları İngilizce söylemeyi öğrenelim! ⛅",
-  atlasSpeak: "What is the weather like today? And what day is it? Let us learn in English!",
+  atlasSpeak: ['hello', 'today_learn'],
   slides: [
     {
       icon: '📅',
@@ -1216,7 +1216,7 @@ function getIntroContent(unitTitle) {
 
   return contents[unitTitle] || {
     atlasText: "Bu ünitede yeni kelimeler ve cümleler öğreneceğiz! Hazır mısın? 🦊",
-    atlasSpeak: "In this unit we will learn new words and sentences! Are you ready?",
+    atlasSpeak: ['hello', 'quiz_time'],
     slides: [
       {
         icon: '📖',
@@ -1486,9 +1486,49 @@ function speakWord(text, onEnd) {
   speakWithWebSpeech(text, onEnd);
 }
 
-// atlasSpeak — Atlas cümleleri için (Jessica sesi önce, fallback Web Speech)
+// atlasPlayKey — tek bir ses anahtarını çal
+function atlasPlayKey(audioKey, onEnd) {
+  var dataUrl = ATLAS_AUDIO[audioKey];
+  if (!dataUrl) { if (onEnd) onEnd(); return; }
+  var aud = new Audio(dataUrl);
+  aud.volume = 1.0;
+  aud.onloadedmetadata = function() { startAtlasTalk(aud.duration * 1000 + 300); };
+  aud.onended = function() {
+    var m = document.getElementById('atlasMouth');
+    if (m) m.classList.remove('talking');
+    if (onEnd) onEnd();
+  };
+  aud.onerror = function() { if (onEnd) onEnd(); };
+  aud.play().catch(function() { if (onEnd) onEnd(); });
+}
+
+// atlasPlaySequence — birden fazla sesi sırayla çal
+function atlasPlaySequence(keys, onEnd) {
+  if (!keys || keys.length === 0) { if (onEnd) onEnd(); return; }
+  var idx = 0;
+  function playNext() {
+    if (idx >= keys.length) { if (onEnd) onEnd(); return; }
+    var key = keys[idx++];
+    if (ATLAS_AUDIO[key]) {
+      atlasPlayKey(key, function() { setTimeout(playNext, 200); });
+    } else {
+      setTimeout(playNext, 100);
+    }
+  }
+  playNext();
+}
+
+// atlasSpeak — Atlas cümleleri için
+// text: string (tek cümle) VEYA array (sıralı ses anahtarları)
 function atlasSpeak(text, onEnd) {
   startAtlasTalk(2500);
+
+  // Eğer array gelirse direkt sıralı çal
+  if (Array.isArray(text)) {
+    atlasPlaySequence(text, onEnd);
+    return;
+  }
+
   var key = text.toLowerCase().replace(/[^a-z ]/g, '').trim();
 
   // En uzun eşleşen anahtarı bul
@@ -1503,19 +1543,8 @@ function atlasSpeak(text, onEnd) {
   var dataUrl = audioKey ? ATLAS_AUDIO[audioKey] : null;
 
   if (dataUrl) {
-    // Jessica MP3 çal
-    var aud = new Audio(dataUrl);
-    aud.volume = 1.0;
-    aud.onloadedmetadata = function() { startAtlasTalk(aud.duration * 1000 + 300); };
-    aud.onended = function() {
-      var m = document.getElementById('atlasMouth');
-      if (m) m.classList.remove('talking');
-      if (onEnd) onEnd();
-    };
-    aud.onerror = function() { speakWithWebSpeech(text, onEnd); };
-    aud.play().catch(function() { speakWithWebSpeech(text, onEnd); });
+    atlasPlayKey(audioKey, onEnd);
   } else {
-    // Fallback: Web Speech
     speakWithWebSpeech(text, onEnd);
   }
 }
@@ -1713,7 +1742,7 @@ function renderIntroStep(body, unit, map) {
   atlasBubble.style.cssText = 'flex:1;background:#fff;border-radius:16px 16px 16px 4px;padding:16px 18px;box-shadow:0 2px 12px rgba(0,0,0,.08);border:1.5px solid rgba(28,46,34,.08)';
   atlasBubble.innerHTML = '<div style="font-size:13px;font-weight:800;color:var(--green-deep);margin-bottom:6px">🦊 Atlas diyor ki:</div>'
     + '<div id="atlasIntroText" style="font-size:16px;font-weight:600;color:var(--ink);line-height:1.6">' + introData.atlasText + '</div>'
-    + '<button onclick="atlasSpeak(\'' + introData.atlasSpeak.replace(/'/g,"&#39;") + '\')" style="margin-top:10px;background:var(--green-soft);border:none;border-radius:99px;padding:6px 14px;font-size:12px;font-weight:800;color:var(--green-deep);cursor:pointer">🔊 Dinle</button>';
+    + '<button onclick="atlasSpeak(window._introSpeak_cache)" style="margin-top:10px;background:var(--green-soft);border:none;border-radius:99px;padding:6px 14px;font-size:12px;font-weight:800;color:var(--green-deep);cursor:pointer">🔊 Dinle</button>';
 
   atlasSection.appendChild(atlasSVG);
   atlasSection.appendChild(atlasBubble);
@@ -1753,6 +1782,7 @@ function renderIntroStep(body, unit, map) {
   });
 
   // Atlas konuşmayı otomatik başlat
+  window._introSpeak_cache = introData.atlasSpeak;
   setTimeout(function() { atlasSpeak(introData.atlasSpeak); }, 500);
 }
 
