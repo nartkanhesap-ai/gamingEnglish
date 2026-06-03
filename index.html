@@ -1337,19 +1337,205 @@ function generateGrammar(unitTitle) {
 
 var currentLesson = { unit: null, map: null, step: 0, steps: [], quizAnswers: {} };
 
-// Atlas sesi — çocuksu: yüksek pitch, yavaş rate
-function atlasSpeak(text, onEnd) {
+// ═══════════════════════════════════════
+// SES SİSTEMİ — Hibrit (ElevenLabs + Web Speech)
+// ═══════════════════════════════════════
+
+// ElevenLabs ses haritası - MP3 yüklendiğinde dolar
+var ATLAS_AUDIO = {};
+var _bestVoice = null;
+var _voiceReady = false;
+
+// Atlas cümlelerini ElevenLabs MP3'e map et
+// ── Atlas MP3 ses haritası ──────────────────────────────────
+// GitHub'a yüklendikten sonra loadAtlasAudio() çağrılır
+var ATLAS_PHRASES = {
+  // Giriş & genel
+  'hello':                              'hello.mp3',
+  'i am atlas':                         'hello.mp3',
+  'today we are going':                 'today_learn.mp3',
+  'something new and exciting':         'today_learn.mp3',
+  'let us start':                       'lets_start.mp3',
+  'listen carefully':                   'listen.mp3',
+  'can you repeat':                     'repeat.mp3',
+  'repeat after me':                    'repeat.mp3',
+  // Olumlu geri bildirim
+  'very good':                          'very_good.mp3',
+  'excellent':                          'excellent.mp3',
+  'amazing':                            'amazing.mp3',
+  'well done':                          'well_done.mp3',
+  'perfect':                            'perfect.mp3',
+  'that is correct':                    'correct.mp3',
+  'correct':                            'correct.mp3',
+  // Düzeltme
+  'try again':                          'try_again.mp3',
+  'almost there':                       'almost.mp3',
+  'not quite':                          'not_quite.mp3',
+  // Motivasyon
+  'you are doing great':                'doing_great.mp3',
+  'doing great':                        'doing_great.mp3',
+  'i am so proud':                      'proud.mp3',
+  'proud of you':                       'proud.mp3',
+  'you are a superstar':                'superstar.mp3',
+  'superstar':                          'superstar.mp3',
+  'keep going':                         'keep_going.mp3',
+  'practice makes perfect':             'practice.mp3',
+  // Ders geçişleri
+  'now let us learn some new words':    'new_words.mp3',
+  'new words':                          'new_words.mp3',
+  'this word means':                    'word_means.mp3',
+  'in english we say':                  'in_english.mp3',
+  'in english':                         'in_english.mp3',
+  'do you remember this word':          'remember.mp3',
+  'this is very important':             'important.mp3',
+  'let us move on':                     'next_part.mp3',
+  'next part':                          'next_part.mp3',
+  'now it is your turn':                'your_turn.mp3',
+  'your turn':                          'your_turn.mp3',
+  'time for grammar':                   'grammar_time.mp3',
+  'grammar':                            'grammar_time.mp3',
+  'let us read a dialogue':             'dialogue.mp3',
+  'dialogue':                           'dialogue.mp3',
+  'time for practice':                  'practice_time.mp3',
+  'quiz time':                          'quiz_time.mp3',
+  'are you ready':                      'quiz_time.mp3',
+  // Tamamlama
+  'lesson complete':                    'lesson_complete.mp3',
+  'you did it':                         'you_did_it.mp3',
+  'congratulations':                    'you_did_it.mp3',
+  'now let us play a game':             'play_game.mp3',
+  'play a game':                        'play_game.mp3',
+  'great job today':                    'great_job.mp3',
+  'great job':                          'great_job.mp3',
+  'see you next time':                  'see_you.mp3',
+  'see you':                            'see_you.mp3',
+};
+
+// En iyi erkek sesi seç
+function getBestMaleVoice() {
+  var voices = window.speechSynthesis.getVoices();
+  var preferred = [
+    'Microsoft Guy Online (Natural) - English (United States)',
+    'Microsoft Christopher Online (Natural) - English (United States)',
+    'Microsoft Eric Online (Natural) - English (United States)',
+    'Microsoft Ryan Online (Natural) - English (United Kingdom)',
+    'Google UK English Male',
+    'Daniel (Enhanced)',
+    'Daniel',
+    'Google US English',
+    'Alex',
+    'Tom',
+  ];
+  for (var i = 0; i < preferred.length; i++) {
+    var found = voices.find(function(v) { return v.name === preferred[i]; });
+    if (found) { return found; }
+  }
+  // Fallback: herhangi İngilizce erkek
+  var male = voices.find(function(v) {
+    var n = v.name.toLowerCase();
+    return (v.lang === 'en-US' || v.lang === 'en-GB') &&
+      (n.includes('male') || n.includes('guy') || n.includes('daniel') ||
+       n.includes('david') || n.includes('james') || n.includes('eric') ||
+       n.includes('mark') || n.includes('tom') || n.includes('alex') ||
+       n.includes('chris') || n.includes('ryan') || n.includes('matthew'));
+  });
+  if (male) return male;
+  var gb = voices.find(function(v) { return v.lang === 'en-GB'; });
+  if (gb) return gb;
+  return voices.find(function(v) { return v.lang.startsWith('en'); }) || voices[0];
+}
+
+function initVoice() {
+  var v = window.speechSynthesis.getVoices();
+  if (v.length > 0) { _bestVoice = getBestMaleVoice(); _voiceReady = true; return; }
+  window.speechSynthesis.onvoiceschanged = function() {
+    _bestVoice = getBestMaleVoice();
+    _voiceReady = true;
+  };
+}
+
+// Web Speech - takılma sorunu çözülmüş
+function speakWithWebSpeech(text, onEnd) {
   if (!window.speechSynthesis) { if(onEnd) onEnd(); return; }
   window.speechSynthesis.cancel();
-  var u = new SpeechSynthesisUtterance(text);
-  u.lang = 'en-US';
-  u.rate = 0.72;
-  u.pitch = 1.55;
-  u.volume = 1.0;
-  if (onEnd) u.onend = onEnd;
-  window.speechSynthesis.speak(u);
-  startAtlasTalk();
+  setTimeout(function() {
+    var u = new SpeechSynthesisUtterance(text);
+    u.voice = _bestVoice || getBestMaleVoice();
+    u.lang = 'en-GB';
+    u.rate = 0.82;
+    u.pitch = 1.0;
+    u.volume = 1.0;
+    var done = false;
+    var timer = setInterval(function() {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.pause();
+        window.speechSynthesis.resume();
+      } else { clearInterval(timer); }
+    }, 8000);
+    u.onend = function() {
+      clearInterval(timer);
+      if (!done) { done = true; if(onEnd) onEnd(); }
+    };
+    u.onerror = function() {
+      clearInterval(timer);
+      if (!done) { done = true; if(onEnd) onEnd(); }
+    };
+    window.speechSynthesis.speak(u);
+  }, 50);
 }
+
+// Atlas konuşma - önce ElevenLabs MP3 dene, yoksa Web Speech
+function atlasSpeak(text, onEnd) {
+  startAtlasTalk(2500);
+  var key = text.toLowerCase().replace(/[^a-z ]/g, '').trim();
+  // ElevenLabs MP3 eşleştirme - en uzun eşleşen anahtarı bul
+  var bestKey = null, bestLen = 0;
+  Object.keys(ATLAS_PHRASES).forEach(function(k) {
+    if ((key.indexOf(k) > -1 || k.indexOf(key) > -1) && k.length > bestLen) {
+      bestKey = k; bestLen = k.length;
+    }
+  });
+  var mp3file = bestKey ? ATLAS_PHRASES[bestKey] : null;
+  var mp3url = mp3file ? ATLAS_AUDIO[mp3file] : null;
+  if (mp3url) {
+    var aud = new Audio(mp3url);
+    aud.volume = 1.0;
+    var talkDur = 2500;
+    aud.onloadedmetadata = function() { talkDur = aud.duration * 1000 + 200; };
+    aud.onplay = function() { startAtlasTalk(talkDur); };
+    aud.onended = function() {
+      var m = document.getElementById('atlasMouth');
+      if (m) m.classList.remove('talking');
+      if (onEnd) onEnd();
+    };
+    aud.onerror = function() { speakWithWebSpeech(text, onEnd); };
+    aud.play().catch(function() { speakWithWebSpeech(text, onEnd); });
+  } else {
+    speakWithWebSpeech(text, onEnd);
+  }
+}
+
+// ElevenLabs MP3 yükle - GitHub raw URL ile
+function loadAtlasAudio(baseUrl) {
+  var files = Object.values(ATLAS_PHRASES).filter(function(v, i, a) { return a.indexOf(v) === i; });
+  files.forEach(function(fname) {
+    ATLAS_AUDIO[fname] = baseUrl + fname;
+  });
+  console.log('[Atlas Audio] Hazir -', files.length, 'ses dosyasi:', baseUrl);
+}
+
+// Atlas Jessica sesi - gaming-english repo
+loadAtlasAudio("https://raw.githubusercontent.com/nartkanhesap-ai/gaming-english/main/atlas_audio/");
+
+
+// Init
+(function() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initVoice);
+  } else {
+    initVoice();
+  }
+})();
 
 var _talkTimer = null;
 function startAtlasTalk(dur) {
