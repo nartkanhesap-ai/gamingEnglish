@@ -3552,9 +3552,33 @@ window.koPlayGame = function(url) {
 window.addEventListener('DOMContentLoaded', function() {
   // Mode from localStorage
   try{setMode(localStorage.getItem('ge_mode')||'explorer');}catch(e){setMode('explorer');}
-  // Auto open KO if imported
+
   var params = new URLSearchParams(window.location.search);
-  if (params.get('ge_set') || params.get('set')==='imported' || localStorage.getItem('ge_imported_set')) {
+
+  // Oyun dosyasından "Başka Oyunlar Oyna" ile gelince → üniteyi aç, games adımına git
+  var openLessonTitle = params.get('openLesson');
+  if (openLessonTitle) {
+    var foundUnit = null, foundMap = null;
+    GE_MAPS.forEach(function(map) {
+      map.units.forEach(function(unit) {
+        if (unit.title === openLessonTitle) { foundUnit = unit; foundMap = map; }
+      });
+    });
+    if (foundUnit && foundMap) {
+      setTimeout(function() {
+        openLesson(foundUnit, foundMap);
+        // games adımına atla (son adım)
+        setTimeout(function() {
+          var stepsLen = currentLesson.steps.length;
+          currentLesson.step = stepsLen - 1;
+          renderLessonStep();
+        }, 100);
+      }, 400);
+    }
+  }
+
+  // Auto open KO - sadece Quizlet'ten ?set=imported ile gelinince
+  if (params.get('ge_set') || params.get('set')==='imported') {
     try{
       var imp = JSON.parse(localStorage.getItem('ge_imported_set'));
       if (imp && (Date.now()-(imp.timestamp||0))<600000) {
@@ -3562,6 +3586,7 @@ window.addEventListener('DOMContentLoaded', function() {
       }
     }catch(e){}
   }
+
   // Unit overlay click-outside
   document.getElementById('unitOverlay').addEventListener('click', function(e) {
     if (e.target === this) closeUnitPanel();
