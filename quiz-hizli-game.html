@@ -530,7 +530,18 @@ body { font-family:var(--body); background:var(--paper); color:var(--ink); -webk
       var otherGamesBtn = document.createElement('button');
       otherGamesBtn.className = 'btn-secondary-games';
       otherGamesBtn.textContent = '🎮 Başka Oyunlar Oyna';
-      otherGamesBtn.onclick = function() { history.back(); };
+      otherGamesBtn.onclick = function() {
+        try {
+          var activeSet = JSON.parse(localStorage.getItem('ge_active_set'));
+          if (activeSet && activeSet.setName) {
+            window.location.href = 'index.html?openLesson=' + encodeURIComponent(activeSet.setName);
+          } else {
+            window.location.href = 'index.html';
+          }
+        } catch(e) {
+          window.location.href = 'index.html';
+        }
+      };
       btn.parentNode.insertBefore(otherGamesBtn, btn.nextSibling);
 
 
