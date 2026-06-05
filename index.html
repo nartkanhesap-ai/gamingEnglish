@@ -2146,20 +2146,34 @@ function renderIntroStep(body, unit, map) {
 
   // Atlas konuşmayı otomatik başlat
   // introData.atlasSpeak array ise ilk gerçek cümleyi ATLAS_ALL_AUDIO'dan çal
-  var introSpeakText = introData.atlasSpeak;
-  window._introSpeak_cache = introSpeakText;
+  // Üniteye özel intro sesini çal
+  var introSafe = unit.title.replace(/[^\w\s]/g,'').trim().replace(/\s+/g,'_').toLowerCase().replace(/_+/g,'_').replace(/^_|_$/g,'');
+  var introUrl = "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_" + introSafe + ".mp3";
+  window._currentIntroUrl = introUrl;
+
+  // Dinle butonunu güncelle
+  var dinleBtn = atlasBubble.querySelector('button');
+  if (dinleBtn) {
+    dinleBtn.onclick = function() {
+      stopAllAudio();
+      var a = new Audio(introUrl);
+      _currentAudio = a;
+      a.play().catch(function(){});
+    };
+  }
+
+  // Otomatik başlat
   setTimeout(function() {
-    if (Array.isArray(introSpeakText)) {
-      // Array: eski ATLAS_AUDIO anahtarları - atlasPlaySequence ile çal
-      atlasPlaySequence(introSpeakText, null);
-    } else {
-      atlasSpeak(introSpeakText, null);
-    }
-  }, 500);
+    stopAllAudio();
+    var a = new Audio(introUrl);
+    _currentAudio = a;
+    a.play().catch(function(){});
+  }, 600);
 }
 
 // ─── ADIM 2: KELİMELER ────────────────────────────────────────
 function renderVocabStep(body, unit) {
+  stopAllAudio();
   var vocab = GE_VOCAB[unit.title] || [];
   if (!vocab.length) { lessonNextStep(); return; }
 
@@ -2213,6 +2227,7 @@ function renderVocabStep(body, unit) {
 
 // ─── ADIM 3: GRAMER ──────────────────────────────────────────
 function renderGrammarStep(body, unit) {
+  stopAllAudio();
   var grammar = generateGrammar(unit.title);
   if (!grammar) { lessonNextStep(); return; }
 
@@ -2275,6 +2290,7 @@ function renderGrammarStep(body, unit) {
 
 // ─── ADIM 4: DİYALOG ─────────────────────────────────────────
 function renderDialogueStep(body, unit) {
+  stopAllAudio();
   var dialogs = generateDialogue(unit.title);
   if (!dialogs) { lessonNextStep(); return; }
 
@@ -2350,6 +2366,7 @@ function renderDialogueStep(body, unit) {
 
 // ─── ADIM 5: ALIŞTIRMA ───────────────────────────────────────
 function renderPracticeStep(body, unit) {
+  stopAllAudio();
   var vocab = GE_VOCAB[unit.title] || [];
   var grammar = generateGrammar(unit.title);
 
@@ -2454,6 +2471,7 @@ function renderPracticeStep(body, unit) {
 
 // ─── ADIM 6: QUİZ ────────────────────────────────────────────
 function renderQuizStep(body, unit) {
+  stopAllAudio();
   var vocab = GE_VOCAB[unit.title] || [];
   var quizzes = generateQuiz(unit.title, vocab);
   currentLesson.quizAnswers = {};
@@ -2559,6 +2577,7 @@ function checkQuizComplete(total) {
 
 // ─── ADIM 7: OYUNLAR ─────────────────────────────────────────
 function renderGamesStep(body, unit) {
+  stopAllAudio();
   var vocab = GE_VOCAB[unit.title] || [];
   if (vocab.length >= 2) {
     var payload = { setName: unit.title, words: vocab.map(function(w){return{en:w.en,tr:w.tr}}), timestamp: Date.now() };
@@ -3348,6 +3367,36 @@ window.openKelimeOyunlari = function() {
   if (ov) { ov.classList.add('open'); document.body.style.overflow = 'hidden'; }
   window.koShowSetSelector();
 };
+
+var _UNUSED = {
+  "intro_welcome": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_welcome.mp3",
+  "intro_my_body": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_my_body.mp3",
+  "intro_colors_shapes": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_colors_shapes.mp3",
+  "intro_numbers_math": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_numbers_math.mp3",
+  "intro_animals": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_animals.mp3",
+  "intro_food_drinks": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_food_drinks.mp3",
+  "intro_my_house": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_my_house.mp3",
+  "intro_my_family": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_my_family.mp3",
+  "intro_days_weather": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_days_weather.mp3",
+  "intro_school_life": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_school_life.mp3",
+  "intro_clothes_fashion": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_clothes_fashion.mp3",
+  "intro_transport": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_transport.mp3",
+  "intro_sports_hobbies": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_sports_hobbies.mp3",
+  "intro_nature_seasons": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_nature_seasons.mp3",
+  "intro_shopping": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_shopping.mp3",
+  "intro_in_the_city": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_in_the_city.mp3",
+  "intro_daily_routine": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_daily_routine.mp3",
+  "intro_my_friends": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_my_friends.mp3",
+  "intro_health_body": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_health_body.mp3",
+  "intro_jobs_careers": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_jobs_careers.mp3",
+  "intro_travel_tourism": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_travel_tourism.mp3",
+  "intro_technology": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_technology.mp3",
+  "intro_environment": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_environment.mp3",
+  "intro_celebrations": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_celebrations.mp3",
+  "intro_food_culture": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_food_culture.mp3",
+  "intro_past_history": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_past_history.mp3",
+  "intro_future_plans": "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/intro_future_plans.mp3"
+};
 window.closeKelimeOyunlari = function() {
   var ov = document.getElementById('koOverlay');
   if (ov) ov.classList.remove('open');
@@ -3487,6 +3536,17 @@ window.addEventListener('DOMContentLoaded', function() {
 
 window.addEventListener('load', function() { updateNavbar(); });
 
+</script>
+
+<script>
+window.addEventListener('load', function() {
+  var urls = ["https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/hello.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/today_learn.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/lets_start.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/listen.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/repeat.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/very_good.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/excellent.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/amazing.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/well_done.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/well_done_long.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/perfect.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/correct.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/try_again.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/almost.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/not_quite.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/doing_great.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/proud.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/superstar.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/keep_going.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/practice.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/new_words.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/grammar_time.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/dialogue.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/practice_time.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/quiz_time.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/lesson_complete.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/you_did_it.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/play_game.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/great_job.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/see_you.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/important.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/in_english.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/next_part.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/remember.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/word_means.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/your_turn.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/correct_well_done.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/correct_short.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/excellent_correct.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/amazing_quiz.mp3", "https://cdn.jsdelivr.net/gh/nartkanhesap-ai/gamingEnglish/sounds/atlas/great_work.mp3"];
+  urls.forEach(function(url) {
+    var a = new Audio();
+    a.preload = 'auto';
+    a.src = url;
+  });
+});
 </script>
 </body>
 </html>
