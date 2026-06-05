@@ -534,17 +534,13 @@ body { font-family:var(--body); background:var(--paper); color:var(--ink); -webk
 
 // ── Quizlet Set Converter: Gramer Quest ──────────────────
 function convertSetForGramer(words) {
-  var sentences = [
-    'I ___ to school every day.',      // go/like/have
-    'She ___ a beautiful flower.',      // saw/has/loves
-    'They ___ in the park yesterday.',  // played/were/walked
-    'He ___ his homework every night.', // does/finishes/starts
-    'We ___ very happy today.',         // are/feel/seem
-    'The cat ___ on the chair.',        // sits/sleeps/jumps
-    'My friend ___ me a message.',      // sent/gave/wrote
-    'Can you ___ me with this?',        // help/show/tell
-    'I always ___ breakfast at home.',  // eat/have/make
-    'She ___ to music every morning.',  // listens/dances/sings
+  // Her kelime için anlamlı boşluk doldurma sorusu oluştur
+  var templates = [
+    function(en, tr) { return '"' + tr + '" kelimesinin İngilizcesi: ___.'; },
+    function(en, tr) { return 'The English word for "' + tr + '" is ___.'; },
+    function(en, tr) { return '"' + tr + '" = ___ (in English)'; },
+    function(en, tr) { return 'Translate to English: "' + tr + '" → ___'; },
+    function(en, tr) { return '"' + tr + '" means ___ in English.'; },
   ];
   return words.map(function(w, i) {
     var others = words.filter(function(x,j){ return j!==i; })
@@ -552,13 +548,11 @@ function convertSetForGramer(words) {
     var correct = w.en || '';
     var wrong = others.map(function(x){ return x.en||''; })
                       .filter(function(x){ return x !== correct; }).slice(0,3);
-    while(wrong.length < 3) wrong.push('...');
+    while(wrong.length < 3) wrong.push(words[Math.floor(Math.random()*words.length)].en || '?');
     var options = [correct].concat(wrong).sort(function(){ return Math.random()-.5; });
-    var sentence = sentences[i % sentences.length].replace('___', '"' + correct + '"');
-    // Cümlede kelimeyi boşluğa çevir
-    var question = sentences[i % sentences.length];
+    var tmpl = templates[i % templates.length];
     return {
-      sentence: '"' + (w.tr||'') + '" = ? (' + question + ')',
+      sentence: tmpl(correct, w.tr || ''),
       options: options,
       correct: correct,
       explanation: correct + ' = ' + (w.tr||'')
