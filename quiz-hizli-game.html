@@ -558,30 +558,45 @@ function convertSetForQuiz(words) {
   words.forEach(function(w, i) {
     var others = words.filter(function(x, j) { return j !== i; })
                       .sort(function() { return Math.random()-0.5; }).slice(0, 3);
+    var en = w.en || '';
+    var tr = w.tr || '';
 
-    // TR → EN sorusu
-    var wrongEN = others.map(function(x) { return x.en || ''; })
-                        .filter(function(x) { return x !== (w.en||''); }).slice(0, 3);
-    while (wrongEN.length < 3) { wrongEN.push('???'); }
-    var optEN = [w.en||''].concat(wrongEN).sort(function() { return Math.random()-0.5; });
-    result.push({
-      question: '"' + (w.tr||'') + '" kelimesinin İngilizcesi?',
-      options: optEN,
-      correct: w.en || '',
-      type: 'vocabulary'
-    });
+    // Soru tipi: kelime sayısına göre çeşitlendir
+    var qType = i % 4;
 
-    // EN → TR sorusu
-    var wrongTR = others.map(function(x) { return x.tr || ''; })
-                        .filter(function(x) { return x !== (w.tr||''); }).slice(0, 3);
-    while (wrongTR.length < 3) { wrongTR.push('???'); }
-    var optTR = [w.tr||''].concat(wrongTR).sort(function() { return Math.random()-0.5; });
-    result.push({
-      question: '"' + (w.en||'') + '" kelimesinin Türkçesi?',
-      options: optTR,
-      correct: w.tr || '',
-      type: 'vocabulary'
-    });
+    if (qType === 0) {
+      // TR → EN çeviri
+      var wrongEN = others.map(function(x) { return x.en || ''; })
+                          .filter(function(x) { return x !== en; }).slice(0, 3);
+      while (wrongEN.length < 3) wrongEN.push(words[Math.floor(Math.random()*words.length)].en || '?');
+      var optEN = [en].concat(wrongEN).sort(function() { return Math.random()-0.5; });
+      result.push({ question: '"' + tr + '" kelimesinin İngilizcesi hangisidir?', options: optEN, correct: en, type: 'vocabulary' });
+
+    } else if (qType === 1) {
+      // EN → TR çeviri
+      var wrongTR = others.map(function(x) { return x.tr || ''; })
+                          .filter(function(x) { return x !== tr; }).slice(0, 3);
+      while (wrongTR.length < 3) wrongTR.push(words[Math.floor(Math.random()*words.length)].tr || '?');
+      var optTR = [tr].concat(wrongTR).sort(function() { return Math.random()-0.5; });
+      result.push({ question: '"' + en + '" kelimesi Türkçede ne anlama gelir?', options: optTR, correct: tr, type: 'vocabulary' });
+
+    } else if (qType === 2) {
+      // Hangi kelime? (EN seçeneklerden doğru TR karşılığı)
+      var wrongEN2 = others.map(function(x) { return x.en || ''; })
+                           .filter(function(x) { return x !== en; }).slice(0, 3);
+      while (wrongEN2.length < 3) wrongEN2.push(words[Math.floor(Math.random()*words.length)].en || '?');
+      var optEN2 = [en].concat(wrongEN2).sort(function() { return Math.random()-0.5; });
+      result.push({ question: '"' + tr + '" anlamına gelen İngilizce kelime hangisidir?', options: optEN2, correct: en, type: 'vocabulary' });
+
+    } else {
+      // Harflerle ipucu: ilk harfi verilen kelimeyi bul
+      var wrongEN3 = others.map(function(x) { return x.en || ''; })
+                           .filter(function(x) { return x !== en; }).slice(0, 3);
+      while (wrongEN3.length < 3) wrongEN3.push(words[Math.floor(Math.random()*words.length)].en || '?');
+      var optEN3 = [en].concat(wrongEN3).sort(function() { return Math.random()-0.5; });
+      var hint = en.charAt(0).toUpperCase() + '_'.repeat(Math.max(1, en.length - 1));
+      result.push({ question: '"' + tr + '" = ' + hint + '  (İngilizce kelimeyi seç)', options: optEN3, correct: en, type: 'vocabulary' });
+    }
   });
   return result;
 }
