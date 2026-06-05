@@ -143,6 +143,21 @@ body { font-family:var(--body); background:var(--paper); color:var(--ink); -webk
   .game-title { font-size:17px; }
   .score-value { font-size:17px; }
 }
+
+  .btn-secondary-games {
+    background: #fff;
+    color: var(--primary, #1E8A53);
+    border: 2px solid var(--primary, #1E8A53);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+    font-family: inherit;
+  }
+  .btn-secondary-games:hover { background: #f0faf4; }
 </style>
 </head>
 <body>
@@ -537,6 +552,13 @@ body { font-family:var(--body); background:var(--paper); color:var(--ink); -webk
       const btn = document.querySelector('#resultModal .btn-primary');
       btn.textContent = 'Yeniden Başla';
       btn.onclick = resetGame;
+      // Başka oyunlar oyna butonu
+      var otherGamesBtn = document.createElement('button');
+      otherGamesBtn.className = 'btn-secondary-games';
+      otherGamesBtn.textContent = '🎮 Başka Oyunlar Oyna';
+      otherGamesBtn.onclick = function() { history.back(); };
+      btn.parentNode.insertBefore(otherGamesBtn, btn.nextSibling);
+
 
       modal.classList.add('active');
     }
