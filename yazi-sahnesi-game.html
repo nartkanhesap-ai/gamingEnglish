@@ -707,33 +707,53 @@ function convertSetForYazi(words) {
   var dialogTemplates = [
     function(en, tr) { return {
       lines: [
-        { speaker: 'A', text: 'Hey, do you know what "_____" means in Turkish?' },
-        { speaker: 'B', text: 'Yes! It means "' + tr + '" in Turkish.' },
-        { speaker: 'A', text: 'Great! Can you use "_____" in a sentence?' },
-        { speaker: 'B', text: 'Sure! I can see a _____ over there.' }
+        { speaker: 'Emma', text: 'Hi Kerem! How do you say "' + tr + '" in English?' },
+        { speaker: 'Kerem', text: 'It is "_____"! Easy to remember.' },
+        { speaker: 'Emma', text: 'Great! So "_____" means "' + tr + '" in Turkish.' },
+        { speaker: 'Kerem', text: 'Exactly! You are a fast learner, Emma.' }
       ],
-      answers: [en, en, en],
-      blanks: [0, 2, 3]
+      answers: [en, en],
+      blanks: [1, 2]
     }; },
     function(en, tr) { return {
       lines: [
-        { speaker: 'A', text: 'What is the English word for "' + tr + '"?' },
-        { speaker: 'B', text: 'The English word is "_____".' },
-        { speaker: 'A', text: 'Perfect. So we can say: "I have a _____."' },
-        { speaker: 'B', text: 'Exactly! "_____" is a very common word.' }
+        { speaker: 'Teacher', text: 'Class, who knows the English word for "' + tr + '"?' },
+        { speaker: 'Student', text: 'I know! It is "_____"!' },
+        { speaker: 'Teacher', text: 'That is correct! "_____" — well done!' },
+        { speaker: 'Student', text: 'Thank you! I studied it last night.' }
       ],
-      answers: [en, en, en],
-      blanks: [1, 2, 3]
+      answers: [en, en],
+      blanks: [1, 2]
     }; },
     function(en, tr) { return {
       lines: [
-        { speaker: 'A', text: 'Can you teach me the word "' + tr + '" in English?' },
-        { speaker: 'B', text: 'Of course! It is "_____".' },
-        { speaker: 'A', text: 'How do you spell "_____"?' },
-        { speaker: 'B', text: 'Just like it sounds: _____.' }
+        { speaker: 'Ali', text: 'I am learning English. What is "_____" in Turkish?' },
+        { speaker: 'Zeynep', text: 'Oh! "_____" means "' + tr + '" in Turkish!' },
+        { speaker: 'Ali', text: 'Ah, so "' + tr + '" = "_____". Got it!' },
+        { speaker: 'Zeynep', text: 'You will remember it next time for sure!' }
       ],
       answers: [en, en, en],
-      blanks: [1, 2, 3]
+      blanks: [1, 1, 2]
+    }; },
+    function(en, tr) { return {
+      lines: [
+        { speaker: 'Mum', text: 'Can you tell me the English word for "' + tr + '"?' },
+        { speaker: 'Child', text: 'Yes! In English we say "_____".' },
+        { speaker: 'Mum', text: 'Perfect! Use it in a sentence for me.' },
+        { speaker: 'Child', text: 'Sure! I can see a _____ right now!' }
+      ],
+      answers: [en, en],
+      blanks: [1, 3]
+    }; },
+    function(en, tr) { return {
+      lines: [
+        { speaker: 'Atlas', text: 'Let us practise! The Turkish word is "' + tr + '".' },
+        { speaker: 'You', text: 'I know! The English word is "_____"!' },
+        { speaker: 'Atlas', text: 'Excellent! "_____" is the correct answer.' },
+        { speaker: 'You', text: 'I am getting better at English every day!' }
+      ],
+      answers: [en, en],
+      blanks: [1, 2]
     }; },
   ];
   return words.map(function(w, i) {
