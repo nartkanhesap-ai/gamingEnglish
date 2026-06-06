@@ -372,6 +372,7 @@ firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(funct
 })();
 
 var geCurrentUser=null,geStudentInfo=null;
+var geAuthResolved=false;
 firebase.auth().onAuthStateChanged(async function(user){
   geCurrentUser=user;
   if(user){
@@ -385,14 +386,21 @@ firebase.auth().onAuthStateChanged(async function(user){
       }
       window.geStudentInfo=geStudentInfo;
       window.geCurrentUser=user;
-      setTimeout(function(){hideLoginModal();updateNavbar();},200);
+      geAuthResolved=true;
+      hideLoginModal();
+      updateNavbar();
     }catch(err){
       geStudentInfo={firstName:user.email.split("@")[0],lastName:""};
       window.geStudentInfo=geStudentInfo;window.geCurrentUser=user;
-      setTimeout(function(){hideLoginModal();updateNavbar();},200);
+      geAuthResolved=true;
+      hideLoginModal();
+      updateNavbar();
     }
   }else{
     geStudentInfo=null;
+    window.geCurrentUser=null;
+    window.geStudentInfo=null;
+    geAuthResolved=true;
     var fromImp=(function(){
       try{var d=JSON.parse(localStorage.getItem("ge_imported_set"));return d&&(Date.now()-(d.timestamp||0))<600000;}catch(e){return false;}
     })();
@@ -405,7 +413,7 @@ firebase.auth().onAuthStateChanged(async function(user){
 <body>
 
 <!-- Login Modal -->
-<div class="ge-login-modal" id="geLoginModal">
+<div class="ge-login-modal hidden" id="geLoginModal">
   <div class="ge-login-box">
     <div class="ge-login-header">
       <div style="font-size:52px;margin-bottom:10px">🦊</div>
@@ -532,7 +540,7 @@ firebase.auth().onAuthStateChanged(async function(user){
   <div class="page-wrap">
     <div class="section-label chip" style="background:var(--violet-soft);color:var(--violet);margin-bottom:14px">OYUNLAR</div>
     <div class="section-title">Kelime Oyunları</div>
-    <div class="section-sub">Kendi Quizlet setinle veya oyunun kelimeleriyle oyna.</div>
+    <div class="section-sub">Oyun seç ve oynamaya başla! Quizlet kelimelerinle çalışabilirsin.</div>
 
     <!-- Quizlet Butonu -->
     <div id="gamesQuizletBanner" style="margin-bottom:28px"></div>
@@ -3342,12 +3350,11 @@ function renderGamesView() {
     var hasQuizlet = sets && sets.length > 0;
 
     if (!hasQuizlet) {
-      // Quizlet seti yok - subtle bilgi kartı
       banner.innerHTML = '<div style="'
         + 'display:flex;align-items:center;gap:16px;'
         + 'background:linear-gradient(135deg,#f0f4ff,#e8edff);'
         + 'border:2px dashed #c5cdf0;border-radius:20px;'
-        + 'padding:20px 24px;cursor:default">'
+        + 'padding:20px 24px">'
         + '<div style="width:56px;height:56px;background:#e0e7ff;border-radius:16px;'
         + 'display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">📚</div>'
         + '<div><div style="font-family:var(--font-display);font-weight:800;font-size:15px;color:#4a5568;margin-bottom:3px">Quizlet Seti Bağlı Değil</div>'
@@ -3356,9 +3363,7 @@ function renderGamesView() {
       return;
     }
 
-    // Quizlet seti var
     if (activeSet) {
-      // Aktif set göster
       banner.innerHTML = '<div id="gqBtn" style="'
         + 'display:flex;align-items:center;gap:18px;cursor:pointer;'
         + 'background:linear-gradient(135deg,#667eea,#764ba2);'
@@ -3375,7 +3380,6 @@ function renderGamesView() {
         + '<div style="background:rgba(255,255,255,0.22);border-radius:12px;padding:10px 18px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;white-space:nowrap">Değiştir ›</div>'
         + '</div>';
     } else {
-      // Set var ama aktif değil
       banner.innerHTML = '<div id="gqBtn" style="'
         + 'display:flex;align-items:center;gap:18px;cursor:pointer;'
         + 'background:linear-gradient(135deg,#667eea,#764ba2);'
@@ -3386,7 +3390,7 @@ function renderGamesView() {
         + 'display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0">✨</div>'
         + '<div style="flex:1">'
         + '<div style="font-family:var(--font-display);font-weight:800;font-size:20px;color:#fff;margin-bottom:4px">Quizlet Kelimeleriyle Oyna</div>'
-        + '<div style="font-size:13px;color:rgba(255,255,255,0.8)">' + sets.length + ' Quizlet setin var · Bir set seçerek oyunlarda kullan</div>'
+        + '<div style="font-size:13px;color:rgba(255,255,255,0.8)">' + sets.length + ' Quizlet setin var — bir set seçerek oyunlarda kullan</div>'
         + '</div>'
         + '<div style="background:rgba(255,255,255,0.22);border-radius:12px;padding:10px 18px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">Seç ›</div>'
         + '</div>';
@@ -3394,23 +3398,15 @@ function renderGamesView() {
 
     var btn = document.getElementById('gqBtn');
     if (btn) {
-      btn.addEventListener('mouseover', function() {
-        this.style.transform = 'translateY(-3px)';
-        this.style.boxShadow = '0 16px 40px rgba(102,126,234,0.50)';
-      });
-      btn.addEventListener('mouseout', function() {
-        this.style.transform = '';
-        this.style.boxShadow = '0 10px 32px rgba(102,126,234,0.38)';
-      });
-      btn.addEventListener('click', function() {
-        showGamesQuizletPicker(sets);
-      });
+      btn.addEventListener('mouseover', function() { this.style.transform='translateY(-3px)'; this.style.boxShadow='0 16px 40px rgba(102,126,234,0.50)'; });
+      btn.addEventListener('mouseout', function() { this.style.transform=''; this.style.boxShadow='0 10px 32px rgba(102,126,234,0.38)'; });
+      btn.addEventListener('click', function() { showGamesQuizletPicker(sets, banner); });
     }
   }
 
-  // ─ Quizlet Set Seçici (inline açılır) ─
-  window.showGamesQuizletPicker = function(sets) {
-    if (!banner) return;
+  window.showGamesQuizletPicker = function(sets, bannerEl) {
+    if (!bannerEl) bannerEl = document.getElementById('gamesQuizletBanner');
+    if (!bannerEl) return;
     var gradients = [
       'linear-gradient(135deg,#f093fb,#f5576c)',
       'linear-gradient(135deg,#4facfe,#00f2fe)',
@@ -3418,36 +3414,29 @@ function renderGamesView() {
       'linear-gradient(135deg,#fa709a,#fee140)',
       'linear-gradient(135deg,#a18cd1,#fbc2eb)'
     ];
-    var html = '<div style="background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:20px;margin-bottom:4px">'
+    var html = '<div style="background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:20px">'
       + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
       + '<div style="font-family:var(--font-display);font-weight:800;font-size:16px;color:var(--ink)">📚 Quizlet Seti Seç</div>'
       + '<button onclick="renderGamesView()" style="background:var(--surface-2);border:none;border-radius:99px;padding:6px 14px;cursor:pointer;font-weight:700;font-size:13px;color:var(--ink-soft)">✕ Kapat</button>'
       + '</div><div style="display:grid;gap:8px">';
-
-    // Genel seçeneği
     html += '<div class="ko-set-card" onclick="localStorage.removeItem('ge_active_set');localStorage.removeItem('ge_imported_set');renderGamesView();" style="background:linear-gradient(135deg,var(--green),var(--green-deep))">'
       + '<div style="font-size:22px">🎯</div><div><div style="font-weight:800;font-size:14px">Genel</div><div style="font-size:12px;opacity:.85">Oyunun kendi kelimeleri</div></div><div style="margin-left:auto;font-size:18px;opacity:.7">›</div></div>';
-
     sets.forEach(function(set, i) {
       if (!set || !set.words || set.words.length < 2) return;
-      var payload = JSON.stringify({setName: set.name, words: set.words, timestamp: Date.now()}).replace(/'/g, "\'");
-      html += '<div class="ko-set-card" onclick="var p=' + payload + ';localStorage.setItem('ge_active_set',JSON.stringify(p));localStorage.setItem('ge_imported_set',JSON.stringify(p));renderGamesView();" style="background:' + gradients[i%5] + '">'
+      html += '<div class="ko-set-card" style="background:' + gradients[i%5] + ';cursor:pointer" onclick="(function(){var p={setName:'' + set.name.replace(/'/g,"\'") + '',words:' + JSON.stringify(set.words) + ',timestamp:Date.now()};localStorage.setItem('ge_active_set',JSON.stringify(p));localStorage.setItem('ge_imported_set',JSON.stringify(p));renderGamesView();})()">'
         + '<div style="font-size:22px">📖</div>'
         + '<div><div style="font-weight:800;font-size:14px">' + (set.name || 'Set '+(i+1)) + '</div>'
         + '<div style="font-size:12px;opacity:.85">' + set.words.length + ' kelime</div></div>'
         + '<div style="margin-left:auto;font-size:18px;opacity:.7">›</div></div>';
     });
-
     html += '</div></div>';
-    banner.innerHTML = html;
+    bannerEl.innerHTML = html;
   };
 
-  // Firebase'den setleri çek, banner'ı kur
+  // Firebase'den setleri çek
   if (typeof firebase !== 'undefined' && firebase.auth().currentUser) {
     firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).get()
-      .then(function(snap) {
-        buildQuizletBanner((snap.exists && snap.data().quizletSets) || []);
-      })
+      .then(function(snap) { buildQuizletBanner((snap.exists && snap.data().quizletSets) || []); })
       .catch(function() { buildQuizletBanner([]); });
   } else {
     buildQuizletBanner([]);
@@ -3613,7 +3602,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
   var params = new URLSearchParams(window.location.search);
 
-  // Oyun dosyasından "Başka Oyunlar Oyna" ile gelince → üniteyi aç, games adımına git
+  // Oyun dosyasından 'Başka Oyunlar Oyna' ile gelince -> üniteyi aç, games adımına git
   var openLessonTitle = params.get('openLesson');
   if (openLessonTitle) {
     var foundUnit = null, foundMap = null;
@@ -3633,7 +3622,8 @@ window.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // Auto open KO - sadece ?set=imported veya ?ge_set= ile gelinince
+  // Auto open KO - SADECE ?set=imported veya ?ge_set= parametresiyle gelinince
+  // ge_imported_set localStorage'ı artik otomatik açılım tetiklemez
   if (params.get('ge_set') || params.get('set')==='imported') {
     try{
       var imp = JSON.parse(localStorage.getItem('ge_imported_set'));
@@ -3649,7 +3639,6 @@ window.addEventListener('DOMContentLoaded', function() {
   });
   console.log('🎮 Gaming English loaded');
 });
-
 window.addEventListener('load', function() { updateNavbar(); });
 
 </script>
