@@ -82,10 +82,7 @@ body{font-family:var(--font-body);background:var(--paper);color:var(--ink);-webk
 .pop-in{animation:popIn .4s cubic-bezier(.34,1.56,.64,1) both}
 
 /* ── TOPBAR ─── */
-.ge-topbar{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;
-  padding:11px 22px;gap:12px;flex-wrap:wrap;
-  background:color-mix(in srgb,var(--paper) 88%,transparent);
-  backdrop-filter:blur(14px);border-bottom:1.5px solid var(--line)}
+.ge-topbar{display:none}
 .ge-logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;font-size:19px;color:var(--ink)}
 .ge-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .ge-nav-btn{font-family:var(--font-display);font-weight:700;font-size:13px;padding:7px 14px;border-radius:99px;
@@ -104,7 +101,7 @@ body{font-family:var(--font-body);background:var(--paper);color:var(--ink);-webk
 .ge-user{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:800;font-size:14px}
 
 /* ── VIEWS ─── */
-.view{display:none;min-height:calc(100vh - 60px)}
+.view{display:none;min-height:calc(100vh - 70px)}
 .view.active{display:block}
 .page-wrap{max-width:1160px;margin:0 auto;padding:32px 22px 80px}
 
@@ -331,6 +328,193 @@ body{font-family:var(--font-body);background:var(--paper);color:var(--ink);-webk
 .atlas-eye-r{animation:atlasBlink 3.8s 0.3s ease-in-out infinite;transform-origin:72px 60px}
 .atlas-paw{animation:atlasWiggle 1.4s ease-in-out infinite;transform-origin:98px 74px}
 .atlas-mouth.talking{animation:atlasTalk .3s ease-in-out infinite;transform-origin:60px 78px}
+
+/* ════════════════════════════════════════════
+   ÜS / HOME DASHBOARD — yeni tasarım
+════════════════════════════════════════════ */
+
+/* ─── app shell: sidebar + main ─── */
+.ge-appshell{display:flex;min-height:100vh;background:var(--paper)}
+.ge-sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1.5px solid var(--line);
+  display:flex;flex-direction:column;padding:20px 14px;gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:100}
+.ge-sidebar-logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;
+  font-size:17px;color:var(--ink);padding:4px 6px 18px;border-bottom:1.5px solid var(--line);margin-bottom:8px}
+.ge-sidebar-navbtn{font-family:var(--font-display);font-weight:700;font-size:13.5px;
+  padding:10px 14px;border-radius:12px;border:none;cursor:pointer;background:transparent;
+  color:var(--ink-soft);display:flex;align-items:center;gap:10px;text-align:left;width:100%;transition:all .16s}
+.ge-sidebar-navbtn:hover{background:var(--green-soft);color:var(--green-deep)}
+.ge-sidebar-navbtn.active{background:var(--green-soft);color:var(--green-deep);font-weight:800}
+.ge-sidebar-navbtn .nav-icon{width:20px;text-align:center;font-size:17px}
+.ge-sidebar-bottom{margin-top:auto;padding-top:14px;border-top:1.5px solid var(--line);display:flex;flex-direction:column;gap:4px}
+
+/* ─── main content area ─── */
+.ge-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.ge-topbar-new{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 24px;gap:14px;background:color-mix(in srgb,var(--paper) 88%,transparent);
+  backdrop-filter:blur(14px);border-bottom:1.5px solid var(--line)}
+.ge-topbar-stats{display:flex;align-items:center;gap:8px}
+.ge-stat-pill{display:flex;align-items:center;gap:6px;background:var(--surface);
+  border:1.5px solid var(--line);border-radius:99px;padding:6px 13px;
+  font-family:var(--font-display);font-weight:800;font-size:13px;color:var(--ink)}
+
+/* ─── mobile bottom nav ─── */
+.ge-bottomnav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:300;
+  background:color-mix(in srgb,var(--surface) 96%,transparent);backdrop-filter:blur(14px);
+  border-top:1.5px solid var(--line);padding:8px 4px env(safe-area-inset-bottom)}
+.ge-bnbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  border:none;background:transparent;cursor:pointer;padding:6px 4px;
+  font-family:var(--font-body);font-size:10px;font-weight:700;color:var(--ink-faint);transition:all .16s}
+.ge-bnbtn .bn-icon{font-size:20px}
+.ge-bnbtn.active{color:var(--green)}
+.ge-bnbtn:hover{color:var(--ink)}
+
+/* ─── page wrapper ─── */
+.page-wrap-new{max-width:1080px;margin:0 auto;padding:28px 24px 100px;width:100%}
+
+/* ─── HOME: Hero section ─── */
+.hero-new{display:flex;align-items:center;gap:36px;flex-wrap:wrap;padding:10px 0 36px}
+.hero-new-text{flex:1 1 340px}
+.hero-new-art{flex:1 1 280px;display:flex;justify-content:center;position:relative}
+.hero-new h1{font-family:var(--font-display);font-weight:800;
+  font-size:clamp(34px,4.5vw,56px);line-height:1.04;color:var(--ink);letter-spacing:-.02em}
+.hero-new-desc{font-size:16px;color:var(--ink-soft);margin-top:14px;line-height:1.6;font-weight:600;max-width:460px}
+.hero-btns-new{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.hero-stats-new{display:flex;gap:28px;margin-top:26px;flex-wrap:wrap}
+.hsn{text-align:center}
+.hsn-n{font-family:var(--font-display);font-weight:800;font-size:26px;color:var(--ink)}
+.hsn-l{font-size:11px;color:var(--ink-faint);font-weight:700;margin-top:2px;letter-spacing:.3px}
+
+/* ─── HOME: Avatar/profile stage ─── */
+.avatar-stage{position:relative;width:200px;height:200px;display:flex;align-items:center;justify-content:center}
+.avatar-xp-ring{position:absolute;inset:0}
+.avatar-level-badge{position:absolute;bottom:-4px;background:var(--amber);color:#3a2509;
+  font-family:var(--font-display);font-weight:800;font-size:12px;padding:3px 13px;
+  border-radius:99px;border:2.5px solid var(--surface);box-shadow:var(--shadow-sm)}
+
+/* ─── HOME: floating badges around atlas ─── */
+.hero-float-badge{position:absolute;background:var(--surface);border:1.5px solid var(--line);
+  border-radius:16px;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;
+  width:52px;height:52px;font-size:22px}
+
+/* ─── HOME: Quest / görev kartı ─── */
+.quest-card{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-lg);padding:22px;overflow:hidden;position:relative}
+.quest-row{display:flex;align-items:center;gap:13px;padding:11px 13px;border-radius:14px;
+  background:var(--surface-2);border:1.5px solid var(--line)}
+.quest-icon{width:42px;height:42px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.quest-claim-btn{border:none;cursor:pointer;border-radius:99px;font-family:var(--font-display);font-weight:800;font-size:12px;
+  padding:8px 14px;flex-shrink:0;transition:all .18s}
+
+/* ─── HOME: Level roadmap mini ─── */
+.mini-roadmap-track{display:flex;align-items:center;gap:0;overflow-x:auto;padding:8px 0}
+.mini-stop{display:flex;flex-direction:column;align-items:center;min-width:80px;cursor:pointer;transition:all .18s}
+.mini-stop:hover .stop-dot{transform:scale(1.15)}
+.stop-dot{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:20px;border:3px solid var(--surface);box-shadow:var(--shadow-sm);margin-bottom:6px;transition:transform .2s}
+.stop-dot.done{background:var(--green);color:#fff}
+.stop-dot.current{background:var(--amber);color:#fff;box-shadow:0 0 0 4px var(--amber-soft),var(--shadow-sm)}
+.stop-dot.locked{background:var(--surface-2);color:var(--ink-faint);border:2px dashed var(--line-2)}
+.stop-label{font-size:10px;font-weight:800;color:var(--ink-soft);text-align:center;max-width:72px;line-height:1.3}
+.stop-label.current{color:var(--amber)}
+.stop-connector{flex:1;height:3px;background:var(--line-2);min-width:16px;margin-bottom:22px}
+.stop-connector.done-line{background:var(--green)}
+
+/* ─── HOME: Badge shelf ─── */
+.badge-shelf{display:flex;flex-wrap:wrap;gap:10px}
+.badge-item{display:flex;flex-direction:column;align-items:center;gap:5px;
+  background:var(--surface-2);border:1.5px solid var(--line);border-radius:14px;padding:12px 10px;min-width:72px;cursor:default}
+.badge-icon-wrap{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px}
+.badge-name{font-size:10px;font-weight:800;color:var(--ink-soft);text-align:center;line-height:1.2}
+.badge-item.earned .badge-name{color:var(--ink)}
+
+/* ─── HOME: Leaderboard ─── */
+.lb-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:var(--surface-2);border:1.5px solid var(--line)}
+.lb-row.you{background:var(--green-soft);border-color:var(--green)}
+.lb-rank{font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--ink-faint);width:20px;text-align:center}
+.lb-avatar{width:36px;height:36px;border-radius:50%;background:var(--surface);
+  border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:18px}
+.lb-name{flex:1;font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--ink)}
+.lb-xp{font-family:var(--font-display);font-weight:800;font-size:13px;color:var(--amber)}
+
+/* ─── MAPS: yeni düzen ─── */
+.maps-hero{padding:20px 0 32px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.maps-hero-text{flex:1 1 280px}
+.maps-grid-new{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+
+/* ─── MAP CARD — yeni ─── */
+.map-card-new{border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--shadow-sm);
+  border:1.5px solid var(--line);transition:transform .22s,box-shadow .22s;background:var(--surface);cursor:pointer}
+.map-card-new:hover{transform:translateY(-10px);box-shadow:0 30px 60px -16px rgba(20,60,40,.32)}
+.map-card-new.locked{cursor:not-allowed;opacity:.68}
+.map-card-new.locked:hover{transform:none;box-shadow:var(--shadow-sm)}
+.mcn-header{padding:28px 22px 22px;color:#fff;position:relative;overflow:hidden;min-height:180px;
+  display:flex;flex-direction:column;justify-content:flex-end}
+.mcn-header .topo{opacity:.35}
+.mcn-badge{position:absolute;top:16px;left:16px;display:inline-flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.22);border-radius:99px;padding:4px 12px;
+  font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;backdrop-filter:blur(4px)}
+.mcn-prog{position:absolute;top:16px;right:16px;background:rgba(0,0,0,.25);
+  border-radius:99px;padding:4px 11px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px}
+.mcn-emoji{font-size:54px;display:block;margin-bottom:12px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.22));position:relative}
+.mcn-title{font-family:var(--font-display);font-weight:800;font-size:23px;position:relative}
+.mcn-cefr{font-size:12px;opacity:.88;font-weight:700;letter-spacing:.4px;position:relative;margin-top:4px}
+.mcn-body{padding:18px 20px 20px}
+.mcn-desc{font-size:13.5px;color:var(--ink-soft);line-height:1.6;font-weight:600;margin-bottom:14px}
+.mcn-progress-bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin-bottom:14px}
+.mcn-progress-bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--green-deep));transition:width .8s}
+.mcn-footer{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mcn-unit-count{font-size:12px;color:var(--ink-faint);font-weight:700}
+.mcn-start-btn{font-family:var(--font-display);font-weight:800;font-size:13px;padding:10px 18px;
+  border:none;border-radius:99px;cursor:pointer;color:#fff;transition:all .18s}
+.mcn-start-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.mcn-start-btn.locked-btn{background:var(--surface-2);color:var(--ink-faint);cursor:not-allowed}
+
+/* ─── MAPS: Ünite popup (zone preview) ─── */
+.zone-popup-overlay{display:none;position:fixed;inset:0;z-index:9600;
+  background:rgba(12,24,18,.55);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px}
+.zone-popup-overlay.open{display:flex}
+.zone-popup{background:var(--surface);border-radius:var(--r-xl);width:min(600px,96vw);
+  max-height:88vh;overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:var(--shadow);border:1.5px solid var(--line);animation:popIn .35s both}
+.zp-header{padding:26px 24px 22px;color:#fff;position:relative;overflow:hidden;flex-shrink:0}
+.zp-header .topo{opacity:.35}
+.zp-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.22);border:none;
+  border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:18px;color:#fff;
+  display:flex;align-items:center;justify-content:center;z-index:1;transition:all .18s}
+.zp-close:hover{background:rgba(255,255,255,.38)}
+.zp-body{overflow-y:auto;padding:22px 24px;flex:1}
+.zp-power-badge{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:12px;
+  font-family:var(--font-display);font-weight:800;font-size:13px;margin-bottom:16px;border:1.5px solid}
+.zp-vocab-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.zp-vocab-pill{font-size:12px;font-weight:700;padding:5px 11px;border-radius:99px;
+  background:var(--green-soft);color:var(--green-deep)}
+.zp-example{background:var(--surface-2);border-left:4px solid var(--green);border-radius:0 12px 12px 0;
+  padding:13px 16px;font-size:14px;color:var(--ink-soft);font-weight:600;line-height:1.55}
+.zp-example strong{color:var(--green-deep);font-weight:800}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px){
+  .ge-sidebar{display:none}
+  .ge-bottomnav{display:flex}
+  .ge-appshell{display:block}
+  .ge-main{padding-bottom:60px}
+  .page-wrap-new{padding:20px 16px 90px}
+  .hero-new{padding:16px 0 24px;gap:20px}
+  .hero-new h1{font-size:clamp(28px,7vw,42px)}
+  .maps-grid-new{grid-template-columns:1fr}
+  .ge-topbar-new{padding:10px 16px}
+}
+@media(max-width:480px){
+  .avatar-stage{width:160px;height:160px}
+  .hero-new{flex-direction:column-reverse}
+  .hero-new-art{flex:none;margin-bottom:0}
+}
+
+/* confetti */
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(200px) rotate(720deg);opacity:0}}
+.confetti-piece{position:absolute;width:8px;height:8px;border-radius:2px;animation:confettiFall .9s ease-in forwards}
+
+
+@media(max-width:900px){.mobile-logo{display:block!important}}
 </style>
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -413,6 +597,65 @@ firebase.auth().onAuthStateChanged(async function(user){
 <body>
 
 <!-- Login Modal -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ZONE POPUP (Harita ünite önizleme)
+════════════════════════════════════════════════════════════════ -->
+<div class="zone-popup-overlay" id="zonePopupOverlay" onclick="closeZonePopup()">
+  <div class="zone-popup" onclick="event.stopPropagation()" id="zonePopup">
+    <div class="zp-header" id="zpHeader">
+      <div class="topo"></div>
+      <button class="zp-close" onclick="closeZonePopup()">✕</button>
+      <div style="position:relative">
+        <span id="zpLandmark" style="font-size:48px;display:block;margin-bottom:10px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.2))">🏝️</span>
+        <div id="zpName" style="font-family:var(--font-display);font-weight:800;font-size:22px"></div>
+        <div id="zpCEFR" style="font-size:12px;opacity:.88;font-weight:700;margin-top:3px"></div>
+      </div>
+    </div>
+    <div class="zp-body">
+      <div id="zpBiome" style="font-size:14px;color:var(--ink-soft);font-weight:600;line-height:1.6;margin-bottom:18px"></div>
+
+      <!-- Grammar power -->
+      <div class="zp-power-badge" id="zpPowerBadge" style="background:var(--violet-soft);color:var(--violet);border-color:var(--violet)">
+        <span>⚡</span> <span id="zpPower"></span>
+      </div>
+      <div id="zpPowerDesc" style="font-size:13px;color:var(--ink-soft);font-weight:600;line-height:1.6;margin-bottom:18px"></div>
+
+      <!-- Example -->
+      <div style="font-size:12px;font-weight:800;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Örnek Cümle</div>
+      <div class="zp-example" id="zpExample"></div>
+
+      <!-- Vocab pills -->
+      <div style="font-size:12px;font-weight:800;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.5px;margin-top:16px;margin-bottom:8px">Bu ünitede öğreneceklerin</div>
+      <div class="zp-vocab-grid" id="zpVocab"></div>
+
+      <!-- Lesson listesi -->
+      <div id="zpLessonList" style="margin-top:16px;display:flex;flex-direction:column;gap:8px"></div>
+
+      <!-- Start button -->
+      <button class="btn btn-primary btn-lg" id="zpStartBtn" style="width:100%;margin-top:20px">▶ Derse Başla</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MOBILE BOTTOM NAV ── -->
+<div class="ge-bottomnav">
+  <button class="ge-bnbtn active" id="bnav-home" onclick="showView('home')">
+    <span class="bn-icon">🏠</span><span>Üs</span>
+  </button>
+  <button class="ge-bnbtn" id="bnav-maps" onclick="showView('maps')">
+    <span class="bn-icon">🗺️</span><span>Harita</span>
+  </button>
+  <button class="ge-bnbtn" id="bnav-games" onclick="showView('games')">
+    <span class="bn-icon">🎮</span><span>Oyunlar</span>
+  </button>
+  <button class="ge-bnbtn" id="bnav-school" onclick="showView('school')">
+    <span class="bn-icon">📚</span><span>Okul</span>
+  </button>
+</div>
+</div><!-- ge-main -->
+</div><!-- ge-appshell -->
+
 <div class="ge-login-modal hidden" id="geLoginModal">
   <div class="ge-login-box">
     <div class="ge-login-header">
@@ -434,103 +677,217 @@ firebase.auth().onAuthStateChanged(async function(user){
 
 <div id="app">
 <!-- TOPBAR -->
-<header class="ge-topbar">
-  <div class="ge-logo">
-    <span style="font-size:26px">🦊</span>
-    <span>Gaming <span style="color:var(--green)">English</span></span>
+<div class="ge-appshell" id="app">
+
+<!-- ── SIDEBAR (desktop) ── -->
+<aside class="ge-sidebar">
+  <div class="ge-sidebar-logo">
+    <svg width="36" height="36" viewBox="0 0 120 120" aria-hidden="true">
+      <defs><linearGradient id="fb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4863C"/><stop offset="1" stop-color="#E5603C"/></linearGradient></defs>
+      <path d="M28 44 L34 14 L54 38 Z" fill="url(#fb)"/><path d="M92 44 L86 14 L66 38 Z" fill="url(#fb)"/>
+      <path d="M34 38 L37 22 L47 36 Z" fill="#2A1A12"/><path d="M86 38 L83 22 L73 36 Z" fill="#2A1A12"/>
+      <circle cx="60" cy="62" r="34" fill="url(#fb)"/>
+      <path d="M60 50 q130 30 110 150 q-110 70 -220 0 q-20 -120 110 -150 Z" transform="scale(0.3) translate(140,100)" fill="#FBF6EA"/>
+      <path d="M60 50 q26 6 22 30 q-22 14 -44 0 q-4 -24 22 -30 Z" fill="#FBF6EA"/>
+      <circle cx="48" cy="60" r="5.4" fill="#241008"/><circle cx="72" cy="60" r="5.4" fill="#241008"/>
+      <circle cx="49.6" cy="58.2" r="1.7" fill="#fff"/><circle cx="73.6" cy="58.2" r="1.7" fill="#fff"/>
+      <path d="M60 74 l-5 -5 h10 Z" fill="#241008"/>
+      <path d="M30 36 q30 -20 60 0 q-6 6 -30 6 q-24 0 -30 -6 Z" fill="#1E8A53"/>
+      <rect x="42" y="22" width="36" height="16" rx="8" fill="#14633A"/>
+      <circle cx="60" cy="30" r="5" fill="#FFC53D"/>
+    </svg>
+    <div>Gaming <span style="color:var(--green)">English</span></div>
   </div>
-  <nav class="ge-nav">
-    <button class="ge-nav-btn active" onclick="showView('home')">🏠 Ana Sayfa</button>
-    <button class="ge-nav-btn" onclick="showView('maps')">🗺️ Haritalar</button>
-    <button class="ge-nav-btn" onclick="showView('games')">🎮 Oyunlar</button>
-    <button class="ge-nav-btn" onclick="showView('school')">📚 Okul</button>
-  </nav>
-  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="modeExp" onclick="setMode('explorer')">🧭 Kaşif <span class="age-tag">7–10</span></button>
-      <button class="mode-btn" id="modeCh" onclick="setMode('challenger')">⚡ Maceracı <span class="age-tag">11–15</span></button>
+
+  <button class="ge-sidebar-navbtn active" id="snav-home" onclick="showView('home')">
+    <span class="nav-icon">🏠</span> Üs
+  </button>
+  <button class="ge-sidebar-navbtn" id="snav-maps" onclick="showView('maps')">
+    <span class="nav-icon">🗺️</span> Harita
+  </button>
+  <button class="ge-sidebar-navbtn" id="snav-games" onclick="showView('games')">
+    <span class="nav-icon">🎮</span> Oyunlar
+  </button>
+  <button class="ge-sidebar-navbtn" id="snav-school" onclick="showView('school')">
+    <span class="nav-icon">📚</span> Okul
+  </button>
+
+  <div class="ge-sidebar-bottom">
+    <div class="mode-toggle" style="width:100%;flex-direction:column;padding:5px;gap:4px">
+      <button class="mode-btn active" id="modeExp" onclick="setMode('explorer')" style="width:100%;justify-content:center">🧭 Kâşif <span class="age-tag">7–10</span></button>
+      <button class="mode-btn" id="modeCh" onclick="setMode('challenger')" style="width:100%;justify-content:center">⚡ Maceracı <span class="age-tag">11–15</span></button>
     </div>
-    <div class="ge-user" id="geUserInfo" style="display:none">
-      <span style="font-size:20px">🦊</span>
-      <span id="geUserName" style="font-family:var(--font-display)"></span>
+    <div class="ge-user" id="geUserInfo" style="display:none;padding:10px 6px;gap:8px">
+      <span style="font-size:18px">🦊</span>
+      <span id="geUserName" style="font-family:var(--font-display);font-size:13px;font-weight:800;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
       <button class="ge-logout-btn" onclick="geLogout()">Çıkış</button>
     </div>
   </div>
-</header>
+</aside>
+
+<!-- ── MAIN CONTENT ── -->
+<div class="ge-main">
+
+<!-- topbar -->
+<div class="ge-topbar-new">
+  <div style="font-family:var(--font-display);font-weight:800;font-size:16px;color:var(--ink);display:none" class="mobile-logo">
+    Gaming <span style="color:var(--green)">English</span>
+  </div>
+  <div class="ge-topbar-stats">
+    <div class="ge-stat-pill"><span>🔥</span> <span id="statStreak">7</span></div>
+    <div class="ge-stat-pill" style="color:var(--sky)"><span>💎</span> <span id="statGems">480</span></div>
+    <div class="ge-stat-pill" style="color:var(--amber)"><span>⭐</span> <span id="statXP">2310</span> XP</div>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════════════════════════════
      VIEW: HOME
 ════════════════════════════════════════════════════════════════ -->
 <div id="view-home" class="view active">
-  <div class="page-wrap">
-    <!-- Hero -->
-    <div class="ge-hero">
-      <div class="ge-hero-text fade-up">
-        <div class="chip" style="background:var(--amber-soft);color:#b5781e;margin-bottom:16px">🏔️ A1'den B2'ye kesintisiz macera</div>
-        <h1 id="heroTitle">Her ders bir<br><span style="color:var(--green)">macera</span> 🧭</h1>
-        <p id="heroDesc">Atlas ile haritayı keşfet, kelime topla, rozet kazan. 7-10 yaş için oyunla dolu İngilizce dünyası!</p>
-        <div class="hero-btns">
-          <button class="btn btn-primary btn-lg" onclick="showView('maps')">🗺️ Haritaları Keşfet</button>
-          <button class="btn btn-soft btn-lg" onclick="openKelimeOyunlari()">🎮 Oyunlar</button>
-        </div>
-        <div class="hero-stats">
-          <div><div class="hero-stat-n">5</div><div class="hero-stat-l">Harita</div></div>
-          <div><div class="hero-stat-n">42</div><div class="hero-stat-l">Ünite</div></div>
-          <div><div class="hero-stat-n">6</div><div class="hero-stat-l">Oyun</div></div>
-          <div><div class="hero-stat-n">A1→B2</div><div class="hero-stat-l">Seviye</div></div>
-        </div>
+<div class="page-wrap-new">
+
+  <!-- ── Hero ── -->
+  <div class="hero-new">
+    <!-- sol: metin -->
+    <div class="hero-new-text fade-up">
+      <div class="chip" style="background:var(--amber-soft);color:#b5781e;margin-bottom:16px">🏔️ A1'den B2'ye kesintisiz macera</div>
+      <h1 id="heroTitle">Her ders bir<br><span style="color:var(--green)">macera</span> 🧭</h1>
+      <p class="hero-new-desc" id="heroDesc">Atlas ile haritayı keşfet, kelime topla, rozet kazan. 7–10 yaş için oyunla dolu İngilizce dünyası!</p>
+      <div class="hero-btns-new">
+        <button class="btn btn-primary btn-lg" onclick="showView('maps')">🗺️ Haritaları Keşfet</button>
+        <button class="btn btn-soft btn-lg" onclick="openKelimeOyunlari()">🎮 Oyunlar</button>
       </div>
-      <div class="ge-hero-art fade-up" style="animation-delay:.1s">
-        <div class="floaty" style="font-size:180px;filter:drop-shadow(0 16px 32px rgba(20,60,40,.2))">🗺️</div>
+      <div class="hero-stats-new">
+        <div class="hsn"><div class="hsn-n">5</div><div class="hsn-l">Harita</div></div>
+        <div class="hsn"><div class="hsn-n">42</div><div class="hsn-l">Ünite</div></div>
+        <div class="hsn"><div class="hsn-n">6</div><div class="hsn-l">Oyun türü</div></div>
+        <div class="hsn"><div class="hsn-n">A1→B2</div><div class="hsn-l">Seviye</div></div>
       </div>
     </div>
 
-    <!-- Quick access -->
-    <div style="margin-top:52px">
-      <div class="section-label chip" style="background:var(--green-soft);color:var(--green-deep)">HIZLI ERİŞİM</div>
-      <div class="section-title">Nereye gitmek istersin?</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px">
-        <div class="card" style="padding:22px;cursor:pointer;text-align:center;transition:all .2s" onclick="showView('maps')"
-          onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
-          <div style="font-size:48px;margin-bottom:10px">🗺️</div>
-          <div style="font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--ink);margin-bottom:5px">Macera Haritaları</div>
-          <div style="font-size:13px;color:var(--ink-soft);font-weight:600">5 harita · A1'den B2'ye</div>
-        </div>
-        <div class="card" style="padding:22px;cursor:pointer;text-align:center;transition:all .2s" onclick="openKelimeOyunlari()"
-          onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
-          <div style="font-size:48px;margin-bottom:10px">🎮</div>
-          <div style="font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--ink);margin-bottom:5px">Kelime Oyunları</div>
-          <div style="font-size:13px;color:var(--ink-soft);font-weight:600">6 oyun · Kendi setin</div>
-        </div>
-        <div class="card" style="padding:22px;cursor:pointer;text-align:center;transition:all .2s" onclick="showView('school')"
-          onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
-          <div style="font-size:48px;margin-bottom:10px">🏫</div>
-          <div style="font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--ink);margin-bottom:5px">Okul Dersleri</div>
-          <div style="font-size:13px;color:var(--ink-soft);font-weight:600">Türkçe müfredatı İngilizce öğren</div>
-        </div>
-        <div class="card" style="padding:22px;text-align:center;opacity:.7">
-          <div style="font-size:48px;margin-bottom:10px">🏆</div>
-          <div style="font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--ink);margin-bottom:5px">Lider Tablosu</div>
-          <div style="font-size:13px;color:var(--ink-soft);font-weight:600">Yakında...</div>
-        </div>
+    <!-- sağ: Atlas avatar + XP ring -->
+    <div class="hero-new-art fade-up" style="animation-delay:.1s">
+      <div class="avatar-stage">
+        <!-- XP ring SVG -->
+        <svg class="avatar-xp-ring" width="200" height="200" style="transform:rotate(-90deg)" aria-hidden="true">
+          <circle cx="100" cy="100" r="88" fill="none" stroke="var(--line)" stroke-width="8"/>
+          <circle cx="100" cy="100" r="88" fill="none" stroke="var(--amber)" stroke-width="8"
+            stroke-linecap="round" id="xpRingCircle"
+            stroke-dasharray="553" stroke-dashoffset="138"
+            style="transition:stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1)"/>
+        </svg>
+        <!-- Atlas SVG (mevcut sistem kullanır) -->
+        <div id="homeAtlas" style="position:relative;z-index:2"></div>
+        <!-- Seviye badge -->
+        <div class="avatar-level-badge">Lv <span id="heroLevel">6</span></div>
+      </div>
+      <!-- floating ikonlar -->
+      <div class="hero-float-badge floaty" style="top:10px;right:30px;animation-delay:.2s">⭐</div>
+      <div class="hero-float-badge floaty" style="top:60px;right:-10px;animation-delay:.8s">🔥</div>
+      <div class="hero-float-badge floaty" style="bottom:50px;right:20px;animation-delay:1.4s">💎</div>
+      <div class="hero-float-badge floaty" style="bottom:10px;left:20px;animation-delay:.5s">🏆</div>
+    </div>
+  </div>
+
+  <!-- ── Günlük Görevler ── -->
+  <div style="margin-top:40px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">🎯</span>
+        <span style="font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--ink)">Günlük Görevler</span>
+      </div>
+      <div class="chip" style="background:var(--coral-soft);color:var(--coral)">⏰ 14s kaldı</div>
+    </div>
+    <div class="quest-card">
+      <div style="display:flex;flex-direction:column;gap:10px" id="questList">
+        <!-- JS ile doldurulur -->
       </div>
     </div>
   </div>
+
+  <!-- ── İki kolonlu alt bölüm ── -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:28px" class="home-two-col">
+
+    <!-- Seviye Yolculuğu -->
+    <div class="card" style="padding:22px">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:18px">
+        <span style="font-size:20px">🏔️</span>
+        <span style="font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--ink)">Seviye Yolculuğu</span>
+      </div>
+      <div class="mini-roadmap-track" id="miniRoadmap">
+        <!-- JS ile doldurulur -->
+      </div>
+    </div>
+
+    <!-- Rozetler -->
+    <div class="card" style="padding:22px">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:18px">
+        <span style="font-size:20px">🎖️</span>
+        <span style="font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--ink)">Rozetlerim</span>
+      </div>
+      <div class="badge-shelf" id="badgeShelf">
+        <!-- JS ile doldurulur -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Sınıf Sıralaması ── -->
+  <div style="margin-top:22px">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px">
+      <span style="font-size:20px">👥</span>
+      <span style="font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--ink)">Sınıf Sıralaması</span>
+    </div>
+    <div class="card" style="padding:18px">
+      <div style="display:flex;flex-direction:column;gap:8px" id="leaderboard">
+        <!-- JS ile doldurulur -->
+      </div>
+    </div>
+  </div>
+
+</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
      VIEW: MAPS
 ════════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════════
+     VIEW: MAPS
+════════════════════════════════════════════════════════════════ -->
 <div id="view-maps" class="view">
-  <div class="page-wrap">
-    <div class="section-label chip" style="background:var(--green-soft);color:var(--green-deep);margin-bottom:14px">MACERA HARİTALARI</div>
-    <div class="section-title">Yolculuğunu Seç</div>
-    <div class="section-sub">A1'den başla, B2'ye kadar ilerle. Her haritada 8-9 ünite seni bekliyor.</div>
+<div class="page-wrap-new">
 
-    <div class="maps-grid" id="mapsGrid">
-      <!-- JS ile doldurulur -->
+  <!-- Maps hero -->
+  <div class="maps-hero">
+    <div class="maps-hero-text fade-up">
+      <div class="chip" style="background:var(--green-soft);color:var(--green-deep);margin-bottom:14px">🗺️ MACERA HARİTALARI</div>
+      <div style="font-family:var(--font-display);font-weight:800;font-size:clamp(28px,4vw,42px);color:var(--ink);margin-bottom:8px">Yolculuğunu Seç</div>
+      <div style="font-size:15px;color:var(--ink-soft);font-weight:600;max-width:480px">A1'den başla, B2'ye kadar ilerle. Her haritada 8–9 ünite seni bekliyor.</div>
+    </div>
+    <div class="fade-up" style="animation-delay:.1s">
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div class="card" style="padding:14px 18px;text-align:center;min-width:80px">
+          <div style="font-family:var(--font-display);font-weight:800;font-size:24px;color:var(--green)">5</div>
+          <div style="font-size:11px;color:var(--ink-faint);font-weight:700">Harita</div>
+        </div>
+        <div class="card" style="padding:14px 18px;text-align:center;min-width:80px">
+          <div style="font-family:var(--font-display);font-weight:800;font-size:24px;color:var(--amber)">42</div>
+          <div style="font-size:11px;color:var(--ink-faint);font-weight:700">Ünite</div>
+        </div>
+        <div class="card" style="padding:14px 18px;text-align:center;min-width:80px">
+          <div style="font-family:var(--font-display);font-weight:800;font-size:24px;color:var(--violet)">A1→B2</div>
+          <div style="font-size:11px;color:var(--ink-faint);font-weight:700">Seviye</div>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Maps grid -->
+  <div class="maps-grid-new" id="mapsGrid">
+    <!-- JS ile doldurulur -->
+  </div>
+
+</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
@@ -2771,15 +3128,21 @@ const GE_VOCAB = {"Welcome! 👋": [{"en": "Hello", "tr": "Merhaba", "emoji": "�
 // ── View System ──────────────────────
 function showView(name) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.ge-nav-btn').forEach(b => b.classList.remove('active'));
   var view = document.getElementById('view-' + name);
   if (view) view.classList.add('active');
-  var btn = document.querySelector('[onclick="showView(\'' + name + '\')"]');
-  if (btn) btn.classList.add('active');
+  // sidebar nav
+  document.querySelectorAll('.ge-sidebar-navbtn').forEach(b => b.classList.remove('active'));
+  var snav = document.getElementById('snav-' + name);
+  if (snav) snav.classList.add('active');
+  // bottom nav
+  document.querySelectorAll('.ge-bnbtn').forEach(b => b.classList.remove('active'));
+  var bnav = document.getElementById('bnav-' + name);
+  if (bnav) bnav.classList.add('active');
   window.scrollTo(0, 0);
   if (name === 'maps') renderMaps();
   if (name === 'school') renderSchool();
   if (name === 'games') renderGamesView();
+  if (name === 'home') renderHomeDashboard();
 }
 
 // ── Mode Toggle ──────────────────────
@@ -2856,33 +3219,57 @@ function renderMaps() {
   var grid = document.getElementById('mapsGrid');
   if (!grid) return;
   grid.innerHTML = '';
-  GE_MAPS.forEach(function(map) {
+  var unlockedCount = 0;
+  try { unlockedCount = parseInt(localStorage.getItem('ge_unlocked_maps') || '1'); } catch(e) { unlockedCount = 1; }
+
+  GE_MAPS.forEach(function(map, idx) {
     var card = document.createElement('div');
-    card.className = 'map-card' + (map.unlocked ? '' : ' locked');
-    var unitPills = map.units.slice(0, 6).map(function(u, i) {
-      return '<span class="map-unit-pill' + (i >= 3 && !map.unlocked ? ' locked-pill' : '') + '">' + u.title.split(' ')[0] + ' ' + (u.title.split(' ')[1]||'') + '</span>';
-    }).join('');
-    if (map.units.length > 6) unitPills += '<span class="map-unit-pill" style="background:var(--surface-2);color:var(--ink-faint)">+' + (map.units.length - 6) + ' daha</span>';
-    var btn = map.unlocked
-      ? '<button class="map-start-btn" style="background:linear-gradient(135deg,' + map.color1 + ',' + map.color2 + ');color:#fff;box-shadow:0 5px 0 ' + map.color2 + '">▶ Başla</button>'
-      : '<button class="map-start-btn" style="background:var(--surface-2);color:var(--ink-faint);cursor:not-allowed" disabled>🔒 Kilitli — önceki haritayı tamamla</button>';
-    card.innerHTML = '<div class="map-header" style="background:linear-gradient(135deg,' + map.color1 + ',' + map.color2 + ')">'
-      + '<div class="topo" style="opacity:.4"></div>'
-      + '<div class="map-badge">' + (map.unlocked ? '🔓 AÇIK' : '🔒 KİLİTLİ') + '</div>'
-      + '<span class="map-emoji">' + map.emoji + '</span>'
-      + '<div class="map-title" style="position:relative">' + map.title + '</div>'
-      + '<div class="map-level" style="position:relative">' + map.level + '</div>'
+    var isLocked = !map.unlocked;
+    card.className = 'map-card-new fade-up' + (isLocked ? ' locked' : '');
+    card.style.animationDelay = (idx * 0.08) + 's';
+
+    // Ünite tamamlama yüzdesi (mock)
+    var doneUnits = 0;
+    try { doneUnits = parseInt(localStorage.getItem('ge_done_' + map.id) || '0'); } catch(e) {}
+    var totalUnits = map.units.length;
+    var pct = totalUnits > 0 ? Math.min(100, Math.round((doneUnits / totalUnits) * 100)) : 0;
+
+    var progText = isLocked ? '🔒 Kilitli' : (pct + '% tamamlandı');
+
+    card.innerHTML = 
+      '<div class="mcn-header" style="background:linear-gradient(145deg,' + map.color1 + ',' + map.color2 + ')">'
+      + '<div class="topo" style="opacity:.35"></div>'
+      + '<div class="mcn-badge">' + (isLocked ? '🔒 KİLİTLİ' : '🔓 AÇIK') + '</div>'
+      + '<div class="mcn-prog">' + progText + '</div>'
+      + '<span class="mcn-emoji">' + map.emoji + '</span>'
+      + '<div class="mcn-title">' + map.title + '</div>'
+      + '<div class="mcn-cefr">' + map.level + '</div>'
       + '</div>'
-      + '<div class="map-body">'
-      + '<p class="map-desc">' + map.desc + '</p>'
-      + '<div class="map-units">' + unitPills + '</div>'
-      + btn
+      + '<div class="mcn-body">'
+      + '<p class="mcn-desc">' + map.desc + '</p>'
+      + '<div class="mcn-progress-bar"><i style="width:' + pct + '%"></i></div>'
+      + '<div class="mcn-footer">'
+      + '<span class="mcn-unit-count">📖 ' + totalUnits + ' ünite</span>'
+      + (isLocked
+          ? '<button class="mcn-start-btn locked-btn" disabled>🔒 Kilitli</button>'
+          : '<button class="mcn-start-btn" style="background:linear-gradient(135deg,' + map.color1 + ',' + map.color2 + ');box-shadow:0 5px 0 ' + map.color2 + '">▶ Keşfet</button>'
+        )
+      + '</div>'
       + '</div>';
-    if (map.unlocked) {
-      card.querySelector('button').addEventListener('click', function() {
-        openUnitPanel(map);
+
+    if (!isLocked) {
+      card.querySelector('.mcn-start-btn').addEventListener('click', function() {
+        openZonePopup(map);
+      });
+      card.addEventListener('click', function(e) {
+        if (e.target.tagName !== 'BUTTON') openZonePopup(map);
       });
     }
+    grid.appendChild(card);
+  });
+}
+
+
     grid.appendChild(card);
   });
 }
@@ -3689,6 +4076,385 @@ window.addEventListener('load', function() {
     a.src = url;
   });
 });
+
+// ════════════════════════════════════════
+//  HOME DASHBOARD — render fonksiyonları
+// ════════════════════════════════════════
+
+var GE_QUESTS = [
+  { id: 'q1', icon: '📖', title: 'Bir ders tamamla', xp: 40, goal: 1, done: 0, color: 'var(--green)', colorSoft: 'var(--green-soft)' },
+  { id: 'q2', icon: '🔤', title: '10 kelime öğren', xp: 30, goal: 10, done: 6, color: 'var(--amber)', colorSoft: 'var(--amber-soft)' },
+  { id: 'q3', icon: '🎮', title: 'Bir oyun oyna', xp: 25, goal: 1, done: 0, color: 'var(--sky)', colorSoft: 'var(--sky-soft)' },
+  { id: 'q4', icon: '🔥', title: 'Seriyi koru', xp: 15, goal: 1, done: 1, color: 'var(--coral)', colorSoft: 'var(--coral-soft)' },
+];
+
+var GE_BADGES = [
+  { icon: '🔥', name: '7 Gün Serisi', color: 'var(--coral-soft)', earned: true },
+  { icon: '📖', name: 'İlk Ders', color: 'var(--green-soft)', earned: true },
+  { icon: '🎯', name: '100 Kelime', color: 'var(--amber-soft)', earned: true },
+  { icon: '👂', name: 'Keskin Kulak', color: 'var(--sky-soft)', earned: true },
+  { icon: '⚡', name: 'Hız Şampiyonu', color: 'var(--violet-soft)', earned: false },
+  { icon: '🏆', name: 'Zirve Fatihi', color: 'var(--amber-soft)', earned: false },
+];
+
+var GE_LEADERBOARD = [
+  { name: 'Defne', xp: 2840, you: false, av: '🦉', rank: 1 },
+  { name: 'Sen', xp: 2310, you: true, av: '🦊', rank: 2 },
+  { name: 'Kerem', xp: 2190, you: false, av: '🐻', rank: 3 },
+  { name: 'Zeynep', xp: 1760, you: false, av: '🐰', rank: 4 },
+  { name: 'Arda', xp: 1320, you: false, av: '🦅', rank: 5 },
+];
+
+function renderHomeDashboard() {
+  renderQuestList();
+  renderMiniRoadmap();
+  renderBadgeShelf();
+  renderLeaderboard();
+  renderHomeAtlas();
+  updateStatPills();
+}
+
+function updateStatPills() {
+  var streak = 7, gems = 480, xp = 2310, level = 6;
+  try {
+    streak = parseInt(localStorage.getItem('ge_streak') || '7');
+    gems = parseInt(localStorage.getItem('ge_gems') || '480');
+    xp = parseInt(localStorage.getItem('ge_xp') || '2310');
+    level = Math.floor(xp / 500) + 1;
+  } catch(e) {}
+  var el = function(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; };
+  el('statStreak', streak);
+  el('statGems', gems);
+  el('statXP', xp.toLocaleString('tr-TR'));
+  el('heroLevel', level);
+  // XP ring
+  var ring = document.getElementById('xpRingCircle');
+  if (ring) {
+    var xpInLevel = xp % 500;
+    var pct = xpInLevel / 500;
+    var circ = 553;
+    ring.setAttribute('stroke-dashoffset', (circ * (1 - pct)).toFixed(1));
+  }
+}
+
+function renderHomeAtlas() {
+  var el = document.getElementById('homeAtlas');
+  if (!el) return;
+  // Mevcut Atlas SVG sistemi kullan
+  if (typeof renderAtlas === 'function') {
+    el.innerHTML = '';
+    el.appendChild(renderAtlas(140));
+  } else {
+    // Fallback: inline atlas
+    el.innerHTML = createAtlasSVG(140);
+  }
+}
+
+function createAtlasSVG(size) {
+  var mode = document.documentElement.getAttribute('data-mode') || 'explorer';
+  if (mode === 'challenger') {
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 120 120" aria-label="Atlas (Teen)">'
+      + '<defs><linearGradient id="fbt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8895A"/><stop offset="1" stop-color="#C9553A"/></linearGradient>'
+      + '<linearGradient id="hoodt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A3242"/><stop offset="1" stop-color="#1B2230"/></linearGradient></defs>'
+      + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="rgba(0,0,0,0.18)"/>'
+      + '<path d="M22 116 q4 -34 38 -34 q34 0 38 34 Z" fill="url(#hoodt)"/>'
+      + '<path d="M54 92 v16" stroke="#19D89B" stroke-width="2.6" stroke-linecap="round"/>'
+      + '<path d="M66 92 v16" stroke="#19D89B" stroke-width="2.6" stroke-linecap="round"/>'
+      + '<path d="M30 92 q30 18 60 0" fill="none" stroke="#11161f" stroke-width="5" stroke-linecap="round"/>'
+      + '<rect x="24" y="84" width="12" height="18" rx="5" fill="#11161f"/>'
+      + '<rect x="84" y="84" width="12" height="18" rx="5" fill="#11161f"/>'
+      + '<rect x="26" y="87" width="8" height="12" rx="4" fill="#19D89B" opacity="0.85"/>'
+      + '<path d="M28 42 L33 13 L53 36 Z" fill="url(#fbt)"/><path d="M92 42 L87 13 L67 36 Z" fill="url(#fbt)"/>'
+      + '<circle cx="60" cy="60" r="33" fill="url(#fbt)"/>'
+      + '<path d="M60 50 q24 6 20 28 q-20 13 -40 0 q-4 -22 20 -28 Z" fill="#F0E6D6"/>'
+      + '<path d="M42 58 q6 -5 12 0" fill="none" stroke="#241008" stroke-width="3.4" stroke-linecap="round"/>'
+      + '<path d="M66 58 q6 -5 12 0" fill="none" stroke="#241008" stroke-width="3.4" stroke-linecap="round"/>'
+      + '<path d="M60 70 l-4 -4 h8 Z" fill="#241008"/>'
+      + '<path d="M58 78 q8 4 14 -2" fill="none" stroke="#241008" stroke-width="2.2" stroke-linecap="round"/>'
+      + '<path d="M28 38 q32 -34 64 0 q-32 -12 -64 0 Z" fill="#28303f"/>'
+      + '<rect x="28" y="34" width="64" height="9" rx="4" fill="#19D89B"/>'
+      + '<g class="atlas-paw"><circle cx="100" cy="82" r="8.5" fill="url(#fbt)"/></g>'
+      + '</svg>';
+  }
+  // Kids version
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 120 120" aria-label="Atlas the Fox">'
+    + '<defs><linearGradient id="fb2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4863C"/><stop offset="1" stop-color="#E5603C"/></linearGradient></defs>'
+    + '<ellipse cx="60" cy="110" rx="30" ry="6" fill="rgba(0,0,0,0.10)"/>'
+    + '<path d="M28 44 L34 14 L54 38 Z" fill="url(#fb2)"/><path d="M92 44 L86 14 L66 38 Z" fill="url(#fb2)"/>'
+    + '<path d="M34 38 L37 22 L47 36 Z" fill="#2A1A12"/><path d="M86 38 L83 22 L73 36 Z" fill="#2A1A12"/>'
+    + '<g class="atlas-bob"><circle cx="60" cy="62" r="34" fill="url(#fb2)"/>'
+    + '<path d="M60 50 q26 6 22 30 q-22 14 -44 0 q-4 -24 22 -30 Z" fill="#FBF6EA"/>'
+    + '<circle cx="48" cy="60" r="5.4" fill="#241008" class="atlas-eye-l"/><circle cx="72" cy="60" r="5.4" fill="#241008" class="atlas-eye-r"/>'
+    + '<circle cx="49.6" cy="58.2" r="1.7" fill="#fff"/><circle cx="73.6" cy="58.2" r="1.7" fill="#fff"/>'
+    + '<path d="M60 74 l-5 -5 h10 Z" fill="#241008"/>'
+    + '<path d="M60 74 v6" stroke="#241008" stroke-width="2.4" stroke-linecap="round"/>'
+    + '<path d="M30 36 q30 -20 60 0 q-6 6 -30 6 q-24 0 -30 -6 Z" fill="#1E8A53"/>'
+    + '<rect x="42" y="22" width="36" height="16" rx="8" fill="#14633A"/>'
+    + '<circle cx="60" cy="30" r="5" fill="#FFC53D"/></g>'
+    + '<g class="atlas-paw"><circle cx="100" cy="74" r="9" fill="url(#fb2)"/></g>'
+    + '</svg>';
+}
+
+function renderQuestList() {
+  var el = document.getElementById('questList');
+  if (!el) return;
+  el.innerHTML = '';
+  GE_QUESTS.forEach(function(q) {
+    var done = q.done;
+    var complete = done >= q.goal;
+    try { var saved = parseInt(localStorage.getItem('ge_quest_' + q.id) || '0'); if (saved > done) done = saved; complete = done >= q.goal; } catch(e) {}
+    var claimed = false;
+    try { claimed = localStorage.getItem('ge_quest_claimed_' + q.id) === '1'; } catch(e) {}
+
+    var row = document.createElement('div');
+    row.className = 'quest-row';
+    var pct = Math.min(100, (done / q.goal) * 100);
+    row.innerHTML = 
+      '<div class="quest-icon" style="background:' + q.colorSoft + '">' + q.icon + '</div>'
+      + '<div style="flex:1;min-width:0">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px">'
+      + '<span style="font-weight:800;font-size:14px;color:var(--ink)">' + q.title + '</span>'
+      + '<span style="font-family:var(--font-display);font-weight:800;font-size:12px;color:var(--amber);white-space:nowrap">+' + q.xp + ' XP</span>'
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:8px;margin-top:6px">'
+      + '<div class="pbar" style="flex:1;height:6px"><i style="width:' + pct + '%"></i></div>'
+      + '<span style="font-size:11px;font-weight:800;color:var(--ink-faint)">' + Math.min(done, q.goal) + '/' + q.goal + '</span>'
+      + '</div></div>'
+      + '<button class="quest-claim-btn" style="background:' + (claimed ? 'var(--line)' : complete ? q.color : 'var(--surface)') + ';color:' + (claimed ? 'var(--ink-faint)' : complete ? '#fff' : 'var(--ink)') + ';border:' + (complete && !claimed ? 'none' : '1.5px solid var(--line)') + ';box-shadow:' + (complete && !claimed ? '0 4px 0 rgba(0,0,0,.2)' : 'none') + '"'
+      + ' data-qid="' + q.id + '" data-xp="' + q.xp + '" data-complete="' + (complete && !claimed) + '"'
+      + '>' + (claimed ? '✓ Alındı' : complete ? 'Topla!' : 'Git →') + '</button>';
+
+    row.querySelector('.quest-claim-btn').addEventListener('click', function() {
+      var btn = this;
+      var qid = btn.getAttribute('data-qid');
+      var xpAmt = parseInt(btn.getAttribute('data-xp'));
+      var canClaim = btn.getAttribute('data-complete') === 'true';
+      if (canClaim) {
+        try { localStorage.setItem('ge_quest_claimed_' + qid, '1'); } catch(e) {}
+        // XP ekle
+        var curXP = parseInt(localStorage.getItem('ge_xp') || '2310');
+        localStorage.setItem('ge_xp', curXP + xpAmt);
+        // Gem ekle
+        var curGems = parseInt(localStorage.getItem('ge_gems') || '480');
+        localStorage.setItem('ge_gems', curGems + Math.round(xpAmt / 2));
+        spawnConfetti(btn);
+        updateStatPills();
+        renderQuestList();
+      } else {
+        showView('maps');
+      }
+    });
+    el.appendChild(row);
+  });
+}
+
+function renderMiniRoadmap() {
+  var el = document.getElementById('miniRoadmap');
+  if (!el || !window.GE_MAPS) return;
+  el.innerHTML = '';
+  var maps = GE_MAPS.slice(0, 5);
+  var curIdx = 0;
+  try { curIdx = parseInt(localStorage.getItem('ge_current_map') || '0'); } catch(e) {}
+
+  maps.forEach(function(map, i) {
+    var state = i < curIdx ? 'done' : i === curIdx ? 'current' : 'locked';
+    if (!map.unlocked && i > 0) state = 'locked';
+
+    // Connector
+    if (i > 0) {
+      var conn = document.createElement('div');
+      conn.className = 'stop-connector' + (state === 'done' || i <= curIdx ? ' done-line' : '');
+      el.appendChild(conn);
+    }
+
+    var stop = document.createElement('div');
+    stop.className = 'mini-stop';
+    var dot = document.createElement('div');
+    dot.className = 'stop-dot ' + state;
+    dot.textContent = state === 'done' ? '✓' : map.emoji;
+    var label = document.createElement('div');
+    label.className = 'stop-label' + (state === 'current' ? ' current' : '');
+    label.textContent = map.title.length > 12 ? map.title.substring(0, 12) + '…' : map.title;
+    stop.appendChild(dot);
+    stop.appendChild(label);
+    if (map.unlocked) {
+      stop.addEventListener('click', function() { showView('maps'); });
+      stop.style.cursor = 'pointer';
+    }
+    el.appendChild(stop);
+  });
+}
+
+function renderBadgeShelf() {
+  var el = document.getElementById('badgeShelf');
+  if (!el) return;
+  el.innerHTML = '';
+  GE_BADGES.forEach(function(b) {
+    var item = document.createElement('div');
+    item.className = 'badge-item' + (b.earned ? ' earned' : '');
+    item.style.opacity = b.earned ? '1' : '0.45';
+    item.innerHTML = 
+      '<div class="badge-icon-wrap" style="background:' + b.color + '">' + b.icon + '</div>'
+      + '<div class="badge-name">' + b.name + '</div>';
+    if (!b.earned) item.title = 'Henüz kazanılmadı';
+    el.appendChild(item);
+  });
+}
+
+function renderLeaderboard() {
+  var el = document.getElementById('leaderboard');
+  if (!el) return;
+  el.innerHTML = '';
+  GE_LEADERBOARD.forEach(function(entry) {
+    var row = document.createElement('div');
+    row.className = 'lb-row' + (entry.you ? ' you' : '');
+    var rankIcon = entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank;
+    row.innerHTML = 
+      '<div class="lb-rank">' + rankIcon + '</div>'
+      + '<div class="lb-avatar">' + entry.av + '</div>'
+      + '<div class="lb-name">' + entry.name + (entry.you ? ' <span style="font-size:10px;background:var(--green);color:#fff;padding:1px 7px;border-radius:99px">Sen</span>' : '') + '</div>'
+      + '<div class="lb-xp">' + entry.xp.toLocaleString('tr-TR') + ' XP</div>';
+    el.appendChild(row);
+  });
+}
+
+// ── Confetti efekti ──
+function spawnConfetti(anchor) {
+  var colors = ['#1E8A53', '#F2A23C', '#E5603C', '#7C6BF0', '#2E9BD6'];
+  var rect = anchor ? anchor.getBoundingClientRect() : { left: window.innerWidth/2, top: window.innerHeight/2 };
+  for (var i = 0; i < 16; i++) {
+    var piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.cssText = 'position:fixed;left:' + (rect.left + rect.width/2 + (Math.random()-0.5)*80) + 'px;top:' + (rect.top + rect.height/2) + 'px;background:' + colors[Math.floor(Math.random()*colors.length)] + ';z-index:99999;pointer-events:none;width:8px;height:8px;border-radius:2px;animation:confettiFall ' + (0.6 + Math.random()*0.6) + 's ' + (Math.random()*0.3) + 's ease-in forwards;transform:rotate(' + (Math.random()*360) + 'deg)';
+    document.body.appendChild(piece);
+    setTimeout(function(p) { p.remove(); }, 1500, piece);
+  }
+}
+
+// ════════════════════════════════════════
+//  ZONE POPUP fonksiyonları
+// ════════════════════════════════════════
+
+var _currentZoneMap = null;
+
+function openZonePopup(map) {
+  _currentZoneMap = map;
+  var overlay = document.getElementById('zonePopupOverlay');
+  var header = document.getElementById('zpHeader');
+  if (!overlay || !header) { openUnitPanel(map); return; }
+
+  // Header gradient
+  header.style.background = 'linear-gradient(145deg,' + map.color1 + ',' + map.color2 + ')';
+
+  // İçerik
+  var mode = document.documentElement.getAttribute('data-mode') || 'explorer';
+  var isKids = mode !== 'challenger';
+
+  // Map'in zone verisi var mı?
+  var zoneName = map.title;
+  var zoneEmoji = map.emoji;
+  var cefr = map.level;
+  var biome = map.desc;
+  var power = null, powerDesc = null, example = null;
+  var vocab = [];
+
+  // Zone verisi GE_MAPS'ten al
+  if (map.grammarPower) {
+    power = map.grammarPower.name;
+    powerDesc = map.grammarPower.desc;
+    example = map.grammarPower.example;
+  }
+  if (map.vocab) vocab = map.vocab;
+
+  setText('zpLandmark', zoneEmoji);
+  setText('zpName', zoneName);
+  setText('zpCEFR', cefr);
+  setText('zpBiome', biome);
+
+  var powerEl = document.getElementById('zpPower');
+  var powerBadge = document.getElementById('zpPowerBadge');
+  var powerDescEl = document.getElementById('zpPowerDesc');
+  var exampleEl = document.getElementById('zpExample');
+  if (power && powerEl) {
+    powerEl.textContent = power;
+    if (powerBadge) powerBadge.style.display = 'inline-flex';
+    if (powerDescEl) powerDescEl.textContent = powerDesc || '';
+  } else {
+    if (powerBadge) powerBadge.style.display = 'none';
+    if (powerDescEl) powerDescEl.textContent = '';
+  }
+  if (example && exampleEl) {
+    exampleEl.innerHTML = example.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    exampleEl.parentElement.style.display = 'block';
+  } else if (exampleEl) {
+    exampleEl.parentElement.style.display = 'none';
+  }
+
+  // Vocab pills
+  var vocabEl = document.getElementById('zpVocab');
+  if (vocabEl) {
+    if (vocab.length > 0) {
+      vocabEl.innerHTML = vocab.slice(0, 12).map(function(v) {
+        return '<span class="zp-vocab-pill">' + v + '</span>';
+      }).join('');
+      vocabEl.style.display = 'flex';
+    } else {
+      vocabEl.style.display = 'none';
+    }
+  }
+
+  // Ünite listesi
+  var lessonListEl = document.getElementById('zpLessonList');
+  if (lessonListEl) {
+    lessonListEl.innerHTML = map.units.slice(0, 6).map(function(u, i) {
+      return '<div onclick="closeZonePopup();openLesson(' + JSON.stringify(u) + ',' + JSON.stringify(map) + ')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='' + map.color1 + '';this.style.background='var(--green-soft)'" onmouseout="this.style.borderColor='var(--line)';this.style.background='var(--surface-2)'">'
+        + '<div style="width:32px;height:32px;border-radius:10px;background:' + map.color1 + '22;color:' + map.color1 + ';display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:13px">' + (i + 1) + '</div>'
+        + '<div style="flex:1"><div style="font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--ink)">' + u.title + '</div>'
+        + '<div style="font-size:11px;color:var(--ink-soft);font-weight:600">' + (u.sub || '') + '</div></div>'
+        + '<span style="color:var(--ink-faint);font-size:16px">›</span></div>';
+    }).join('');
+    if (map.units.length > 6) {
+      lessonListEl.innerHTML += '<div style="text-align:center;font-size:12px;color:var(--ink-faint);font-weight:700;padding:8px">+' + (map.units.length - 6) + ' ünite daha…</div>';
+    }
+  }
+
+  // Start button
+  var startBtn = document.getElementById('zpStartBtn');
+  if (startBtn) {
+    startBtn.style.background = 'linear-gradient(135deg,' + map.color1 + ',' + map.color2 + ')';
+    startBtn.style.boxShadow = '0 6px 0 ' + map.color2;
+    startBtn.onclick = function() {
+      closeZonePopup();
+      if (map.units && map.units.length > 0) openLesson(map.units[0], map);
+    };
+  }
+
+  overlay.classList.add('open');
+}
+
+function closeZonePopup() {
+  var overlay = document.getElementById('zonePopupOverlay');
+  if (overlay) overlay.classList.remove('open');
+}
+
+function setText(id, val) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+// İlk yüklemede dashboard'u render et
+document.addEventListener('DOMContentLoaded', function() {
+  renderHomeDashboard();
+});
+
+// ── CSS responsive: home two-col ──
+(function addHomeTwoColCSS() {
+  var style = document.createElement('style');
+  style.textContent = '@media(max-width:700px){.home-two-col{grid-template-columns:1fr!important}}';
+  document.head.appendChild(style);
+})();
+
+
 </script>
 </body>
 </html>
