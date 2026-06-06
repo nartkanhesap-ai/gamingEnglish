@@ -346,7 +346,7 @@ const firebaseConfig={
   appId:"1:975799266905:web:9dfb13cfb4918e24694b48"
 };
 firebase.initializeApp(firebaseConfig);
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(e){console.warn(e)});
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(function(e){console.warn(e)});
 
 // English Coach set import via URL
 (function(){
@@ -3414,23 +3414,60 @@ function renderGamesView() {
       'linear-gradient(135deg,#fa709a,#fee140)',
       'linear-gradient(135deg,#a18cd1,#fbc2eb)'
     ];
-    var html = '<div style="background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:20px">'
-      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
-      + '<div style="font-family:var(--font-display);font-weight:800;font-size:16px;color:var(--ink)">📚 Quizlet Seti Seç</div>'
-      + '<button onclick="renderGamesView()" style="background:var(--surface-2);border:none;border-radius:99px;padding:6px 14px;cursor:pointer;font-weight:700;font-size:13px;color:var(--ink-soft)">✕ Kapat</button>'
-      + '</div><div style="display:grid;gap:8px">';
-    html += '<div class="ko-set-card" onclick="localStorage.removeItem('ge_active_set');localStorage.removeItem('ge_imported_set');renderGamesView();" style="background:linear-gradient(135deg,var(--green),var(--green-deep))">'
-      + '<div style="font-size:22px">🎯</div><div><div style="font-weight:800;font-size:14px">Genel</div><div style="font-size:12px;opacity:.85">Oyunun kendi kelimeleri</div></div><div style="margin-left:auto;font-size:18px;opacity:.7">›</div></div>';
+
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:20px';
+
+    // Başlık + kapat butonu
+    var header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:14px';
+    header.innerHTML = '<div style="font-family:var(--font-display);font-weight:800;font-size:16px;color:var(--ink)">📚 Quizlet Seti Seç</div>';
+    var closeBtn = document.createElement('button');
+    closeBtn.textContent = '✕ Kapat';
+    closeBtn.style.cssText = 'background:var(--surface-2);border:none;border-radius:99px;padding:6px 14px;cursor:pointer;font-weight:700;font-size:13px;color:var(--ink-soft)';
+    closeBtn.addEventListener('click', function() { renderGamesView(); });
+    header.appendChild(closeBtn);
+    wrap.appendChild(header);
+
+    var list = document.createElement('div');
+    list.style.cssText = 'display:grid;gap:8px';
+
+    // Genel seçeneği
+    var genCard = document.createElement('div');
+    genCard.className = 'ko-set-card';
+    genCard.style.background = 'linear-gradient(135deg,var(--green),var(--green-deep))';
+    genCard.innerHTML = '<div style="font-size:22px">🎯</div><div><div style="font-weight:800;font-size:14px">Genel</div><div style="font-size:12px;opacity:.85">Oyunun kendi kelimeleri</div></div><div style="margin-left:auto;font-size:18px;opacity:.7">›</div>';
+    genCard.addEventListener('click', function() {
+      localStorage.removeItem('ge_active_set');
+      localStorage.removeItem('ge_imported_set');
+      renderGamesView();
+    });
+    list.appendChild(genCard);
+
+    // Quizlet setleri
     sets.forEach(function(set, i) {
       if (!set || !set.words || set.words.length < 2) return;
-      html += '<div class="ko-set-card" style="background:' + gradients[i%5] + ';cursor:pointer" onclick="(function(){var p={setName:'' + set.name.replace(/'/g,"\'") + '',words:' + JSON.stringify(set.words) + ',timestamp:Date.now()};localStorage.setItem('ge_active_set',JSON.stringify(p));localStorage.setItem('ge_imported_set',JSON.stringify(p));renderGamesView();})()">'
-        + '<div style="font-size:22px">📖</div>'
-        + '<div><div style="font-weight:800;font-size:14px">' + (set.name || 'Set '+(i+1)) + '</div>'
+      var sc = document.createElement('div');
+      sc.className = 'ko-set-card';
+      sc.style.background = gradients[i % 5];
+      sc.innerHTML = '<div style="font-size:22px">📖</div>'
+        + '<div><div style="font-weight:800;font-size:14px">' + (set.name || 'Set ' + (i+1)) + '</div>'
         + '<div style="font-size:12px;opacity:.85">' + set.words.length + ' kelime</div></div>'
-        + '<div style="margin-left:auto;font-size:18px;opacity:.7">›</div></div>';
+        + '<div style="margin-left:auto;font-size:18px;opacity:.7">›</div>';
+      (function(s) {
+        sc.addEventListener('click', function() {
+          var p = { setName: s.name, words: s.words, timestamp: Date.now() };
+          localStorage.setItem('ge_active_set', JSON.stringify(p));
+          localStorage.setItem('ge_imported_set', JSON.stringify(p));
+          renderGamesView();
+        });
+      })(set);
+      list.appendChild(sc);
     });
-    html += '</div></div>';
-    bannerEl.innerHTML = html;
+
+    wrap.appendChild(list);
+    bannerEl.innerHTML = '';
+    bannerEl.appendChild(wrap);
   };
 
   // Firebase'den setleri çek
