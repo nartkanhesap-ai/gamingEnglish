@@ -2900,6 +2900,38 @@ function App() {
         ← Ana Sayfa
       </a>
 
+      <WorldMap
+        activeId={activeId}
+        hoverId={hoverId}
+        onHover={setHoverId}
+        onClick={handleContinentClick}
+        hoverIntensity={t.hoverIntensity}
+        density={t.density}
+        theme={palette}
+        projection={t.projection}
+        showLens={t.showLens}
+        lensPos={lensPos}
+        setLensPos={setLensPos}
+        ambient={t.ambient}
+        editMode={t.rearrangeMode}
+        offsets={t.continentOffsets || {}}
+        onOffsetsChange={(id, off) => {
+          const next = { ...(t.continentOffsets || {}), [id]: off };
+          setTweak('continentOffsets', next);
+        }}
+      />
+
+      <CountryPanel
+        activeId={activeId}
+        onClose={() => setActiveId(null)}
+        onPickCountry={handlePickCountry}
+        countryPositions={t.countryPositions || {}}
+        onCountryPositionsChange={(id, pos) => {
+          const next = { ...(t.countryPositions || {}), [id]: pos };
+          setTweak('countryPositions', next);
+        }}
+      />
+
       {!activeId && (
         <div className="hint">
           <span>Bir kıtanın üzerine gel</span>
