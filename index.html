@@ -534,13 +534,8 @@ firebase.auth().onAuthStateChanged(async function(user){
     <div class="section-title">Kelime Oyunları</div>
     <div class="section-sub">Kendi Quizlet setinle veya oyunun kelimeleriyle oyna.</div>
 
-    <div class="maps-grid" style="margin-bottom:32px">
-      <!-- Set selector + game cards -->
-      <div class="card" style="padding:24px;grid-column:1/-1">
-        <div style="font-family:var(--font-display);font-weight:800;font-size:16px;color:var(--ink);margin-bottom:14px">🎯 Kelime Seti Seç</div>
-        <div id="gamesSetList"><div style="color:var(--ink-faint);font-weight:700">Giriş yapılınca setlerin görünür...</div></div>
-      </div>
-    </div>
+    <!-- Quizlet Butonu -->
+    <div id="gamesQuizletBanner" style="margin-bottom:28px"></div>
 
     <div class="section-title" style="font-size:22px;margin-bottom:16px">Oyunları Seç</div>
     <div class="ko-game-list" id="gamesGameList">
@@ -618,11 +613,11 @@ firebase.auth().onAuthStateChanged(async function(user){
     <div class="ko-header">
       <div class="topo"></div>
       <div style="position:relative">
-        <div style="font-size:28px">🎮</div>
+        <div style="font-size:28px">📂</div>
       </div>
       <div style="position:relative">
         <h2>Kelime Oyunları</h2>
-        <p>Oyun seç ve oynamaya başla!</p>
+        <p>Set seç ve oynamaya başla!</p>
       </div>
       <button class="ko-close" onclick="closeKelimeOyunlari()">✕</button>
     </div>
@@ -3331,78 +3326,141 @@ function openSubjectLesson(sub) {
 
 // ── GAMES VIEW ────────────────────────
 function renderGamesView() {
-  var setList = document.getElementById('gamesSetList');
+  var banner = document.getElementById('gamesQuizletBanner');
   var gameList = document.getElementById('gamesGameList');
-  if (!setList || !gameList) return;
-  
-  // Set selector
-  setList.innerHTML = '<div style="color:var(--ink-faint);font-weight:700;padding:12px 0">Yükleniyor...</div>';
-  
-  var gradients = [
-    'linear-gradient(135deg,#f093fb,#f5576c)',
-    'linear-gradient(135deg,#4facfe,#00f2fe)',
-    'linear-gradient(135deg,#43e97b,#38f9d7)',
-    'linear-gradient(135deg,#fa709a,#fee140)',
-    'linear-gradient(135deg,#a18cd1,#fbc2eb)'
-  ];
-  
-  function buildSetCards(sets) {
-    setList.innerHTML = '';
-    var genCard = document.createElement('div');
-    genCard.className = 'ko-set-card';
-    genCard.style.background = 'linear-gradient(135deg,var(--green),var(--green-deep))';
-    genCard.style.marginBottom = '8px';
-    genCard.innerHTML = '<div style="font-size:22px">📚</div><div><div style="font-weight:800;font-size:14px">Genel</div><div style="font-size:12px;opacity:.85">Oyunun kendi kelimeleri</div></div><div style="margin-left:auto">›</div>';
-    genCard.addEventListener('click', function() {
-      localStorage.removeItem('ge_active_set');
-      localStorage.removeItem('ge_imported_set');
-      alert('Genel mod seçildi! Oyuna gidince oyunun kendi kelimeleri kullanılacak.');
-    });
-    setList.appendChild(genCard);
-    
+  if (!gameList) return;
+
+  // ─ Quizlet Banner ─
+  function buildQuizletBanner(sets) {
+    if (!banner) return;
+    var activeSet = null;
+    try {
+      var raw = localStorage.getItem('ge_active_set');
+      if (raw) { var p = JSON.parse(raw); if (p && p.words && p.words.length >= 2) activeSet = p; }
+    } catch(e) {}
+
+    var hasQuizlet = sets && sets.length > 0;
+
+    if (!hasQuizlet) {
+      // Quizlet seti yok - subtle bilgi kartı
+      banner.innerHTML = '<div style="'
+        + 'display:flex;align-items:center;gap:16px;'
+        + 'background:linear-gradient(135deg,#f0f4ff,#e8edff);'
+        + 'border:2px dashed #c5cdf0;border-radius:20px;'
+        + 'padding:20px 24px;cursor:default">'
+        + '<div style="width:56px;height:56px;background:#e0e7ff;border-radius:16px;'
+        + 'display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">📚</div>'
+        + '<div><div style="font-family:var(--font-display);font-weight:800;font-size:15px;color:#4a5568;margin-bottom:3px">Quizlet Seti Bağlı Değil</div>'
+        + '<div style="font-size:13px;color:#718096">Profil sekmesinden Quizlet setini ekleyerek oyunlarda kullanabilirsin.</div></div>'
+        + '</div>';
+      return;
+    }
+
+    // Quizlet seti var
+    if (activeSet) {
+      // Aktif set göster
+      banner.innerHTML = '<div id="gqBtn" style="'
+        + 'display:flex;align-items:center;gap:18px;cursor:pointer;'
+        + 'background:linear-gradient(135deg,#667eea,#764ba2);'
+        + 'border-radius:22px;padding:22px 26px;'
+        + 'box-shadow:0 10px 32px rgba(102,126,234,0.38);'
+        + 'transition:transform .18s,box-shadow .18s">'
+        + '<div style="width:62px;height:62px;background:rgba(255,255,255,0.18);border-radius:18px;'
+        + 'display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0">📖</div>'
+        + '<div style="flex:1;min-width:0">'
+        + '<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:.09em;text-transform:uppercase;margin-bottom:3px">Aktif Quizlet Seti</div>'
+        + '<div style="font-family:var(--font-display);font-weight:800;font-size:19px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + activeSet.setName + '</div>'
+        + '<div style="font-size:13px;color:rgba(255,255,255,0.75);margin-top:2px">' + activeSet.words.length + ' kelime · Tüm oyunlarda aktif</div>'
+        + '</div>'
+        + '<div style="background:rgba(255,255,255,0.22);border-radius:12px;padding:10px 18px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;white-space:nowrap">Değiştir ›</div>'
+        + '</div>';
+    } else {
+      // Set var ama aktif değil
+      banner.innerHTML = '<div id="gqBtn" style="'
+        + 'display:flex;align-items:center;gap:18px;cursor:pointer;'
+        + 'background:linear-gradient(135deg,#667eea,#764ba2);'
+        + 'border-radius:22px;padding:22px 26px;'
+        + 'box-shadow:0 10px 32px rgba(102,126,234,0.38);'
+        + 'transition:transform .18s,box-shadow .18s">'
+        + '<div style="width:62px;height:62px;background:rgba(255,255,255,0.18);border-radius:18px;'
+        + 'display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0">✨</div>'
+        + '<div style="flex:1">'
+        + '<div style="font-family:var(--font-display);font-weight:800;font-size:20px;color:#fff;margin-bottom:4px">Quizlet Kelimeleriyle Oyna</div>'
+        + '<div style="font-size:13px;color:rgba(255,255,255,0.8)">' + sets.length + ' Quizlet setin var · Bir set seçerek oyunlarda kullan</div>'
+        + '</div>'
+        + '<div style="background:rgba(255,255,255,0.22);border-radius:12px;padding:10px 18px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">Seç ›</div>'
+        + '</div>';
+    }
+
+    var btn = document.getElementById('gqBtn');
+    if (btn) {
+      btn.addEventListener('mouseover', function() {
+        this.style.transform = 'translateY(-3px)';
+        this.style.boxShadow = '0 16px 40px rgba(102,126,234,0.50)';
+      });
+      btn.addEventListener('mouseout', function() {
+        this.style.transform = '';
+        this.style.boxShadow = '0 10px 32px rgba(102,126,234,0.38)';
+      });
+      btn.addEventListener('click', function() {
+        showGamesQuizletPicker(sets);
+      });
+    }
+  }
+
+  // ─ Quizlet Set Seçici (inline açılır) ─
+  window.showGamesQuizletPicker = function(sets) {
+    if (!banner) return;
+    var gradients = [
+      'linear-gradient(135deg,#f093fb,#f5576c)',
+      'linear-gradient(135deg,#4facfe,#00f2fe)',
+      'linear-gradient(135deg,#43e97b,#38f9d7)',
+      'linear-gradient(135deg,#fa709a,#fee140)',
+      'linear-gradient(135deg,#a18cd1,#fbc2eb)'
+    ];
+    var html = '<div style="background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:20px;margin-bottom:4px">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+      + '<div style="font-family:var(--font-display);font-weight:800;font-size:16px;color:var(--ink)">📚 Quizlet Seti Seç</div>'
+      + '<button onclick="renderGamesView()" style="background:var(--surface-2);border:none;border-radius:99px;padding:6px 14px;cursor:pointer;font-weight:700;font-size:13px;color:var(--ink-soft)">✕ Kapat</button>'
+      + '</div><div style="display:grid;gap:8px">';
+
+    // Genel seçeneği
+    html += '<div class="ko-set-card" onclick="localStorage.removeItem('ge_active_set');localStorage.removeItem('ge_imported_set');renderGamesView();" style="background:linear-gradient(135deg,var(--green),var(--green-deep))">'
+      + '<div style="font-size:22px">🎯</div><div><div style="font-weight:800;font-size:14px">Genel</div><div style="font-size:12px;opacity:.85">Oyunun kendi kelimeleri</div></div><div style="margin-left:auto;font-size:18px;opacity:.7">›</div></div>';
+
     sets.forEach(function(set, i) {
       if (!set || !set.words || set.words.length < 2) return;
-      var sc = document.createElement('div');
-      sc.className = 'ko-set-card';
-      sc.style.background = gradients[i%5];
-      sc.style.marginBottom = '8px';
-      sc.innerHTML = '<div style="font-size:22px">📖</div>'
-        + '<div><div style="font-weight:800;font-size:14px">' + (set.name||'Set '+(i+1)) + '</div>'
+      var payload = JSON.stringify({setName: set.name, words: set.words, timestamp: Date.now()}).replace(/'/g, "\'");
+      html += '<div class="ko-set-card" onclick="var p=' + payload + ';localStorage.setItem('ge_active_set',JSON.stringify(p));localStorage.setItem('ge_imported_set',JSON.stringify(p));renderGamesView();" style="background:' + gradients[i%5] + '">'
+        + '<div style="font-size:22px">📖</div>'
+        + '<div><div style="font-weight:800;font-size:14px">' + (set.name || 'Set '+(i+1)) + '</div>'
         + '<div style="font-size:12px;opacity:.85">' + set.words.length + ' kelime</div></div>'
-        + '<div style="margin-left:auto">›</div>';
-      sc.addEventListener('click', function() {
-        var payload = {setName: set.name, words: set.words, timestamp: Date.now()};
-        localStorage.setItem('ge_active_set', JSON.stringify(payload));
-        localStorage.setItem('ge_imported_set', JSON.stringify(payload));
-        sc.style.outline = '3px solid #fff';
-        setTimeout(function(){sc.style.outline=''}, 1500);
-      });
-      setList.appendChild(sc);
+        + '<div style="margin-left:auto;font-size:18px;opacity:.7">›</div></div>';
     });
-  }
-  
+
+    html += '</div></div>';
+    banner.innerHTML = html;
+  };
+
+  // Firebase'den setleri çek, banner'ı kur
   if (typeof firebase !== 'undefined' && firebase.auth().currentUser) {
     firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).get()
       .then(function(snap) {
-        var sets = (snap.exists && snap.data().quizletSets) ? snap.data().quizletSets : [];
-        buildSetCards(sets);
+        buildQuizletBanner((snap.exists && snap.data().quizletSets) || []);
       })
-      .catch(function() { buildSetCards([]); });
+      .catch(function() { buildQuizletBanner([]); });
   } else {
-    buildSetCards([]);
+    buildQuizletBanner([]);
   }
-  
-  // Game cards (Kelime Dünyası zaten HTML'de var)
+
+  // ─ Oyun kartları ─
   var games = [
-    ['kelime-avi-game.html','🎮','#fce4ec','Kelime Avı','A1–B1','Dinle ve eşleştir'],
-    ['gramer-quest-game.html','📚','#e3f2fd','Gramer Quest','A1–B2','Cümle tamamla'],
-    ['dinleme-dedektifi-game.html','👂','#f3e5f5','Dinleme Dedektifi','A1–B1','Dinle ve bul'],
-    ['yazi-sahnesi-game.html','🎭','#fff8e1','Yazı Sahnesi','A2–B2','Diyalog tamamla'],
-    ['quiz-hizli-game.html','⚡','#fff3e0','Hızlı Quiz','A1–C1','5 sn, hızlı cevap'],
+    ['kelime-avi-game.html','🎮','linear-gradient(135deg,#f093fb,#f5576c)','Kelime Avı','A1–B1','Dinle ve eşleştir'],
+    ['gramer-quest-game.html','📚','linear-gradient(135deg,#4facfe,#00f2fe)','Gramer Quest','A1–B2','Cümle tamamla'],
+    ['dinleme-dedektifi-game.html','👂','linear-gradient(135deg,#a18cd1,#fbc2eb)','Dinleme Dedektifi','A1–B1','Dinle ve bul'],
+    ['yazi-sahnesi-game.html','🎭','linear-gradient(135deg,#fa709a,#fee140)','Yazı Sahnesi','A2–B2','Diyalog tamamla'],
+    ['quiz-hizli-game.html','⚡','linear-gradient(135deg,#f6d365,#fda085)','Hızlı Quiz','A1–C1','5 sn, hızlı cevap'],
   ];
-  // Kelime Dünyası zaten statik olarak HTML'de var, sadece diğerleri ekle
-  var existing = gameList.querySelector('.ko-game-item');
-  // Diğer oyunları ekle
   var addedCount = gameList.querySelectorAll('.ko-game-item').length;
   if (addedCount <= 1) {
     games.forEach(function(g) {
@@ -3441,178 +3499,60 @@ window.koShowSetSelector = function() {
   var body = document.getElementById('koBody');
   var bc = document.getElementById('koBreadcrumb');
   if (!body) return;
-  if (bc) bc.innerHTML = '<span class="active">🎮 Kelime Oyunları</span>';
-
-  // Aktif Quizlet set var mı?
-  var activeSet = null;
-  try {
-    var raw = localStorage.getItem('ge_active_set');
-    if (raw) {
-      var parsed = JSON.parse(raw);
-      if (parsed && parsed.words && parsed.words.length >= 2) activeSet = parsed;
-    }
-  } catch(e) {}
-
-  // Quizlet setlerini Firebase'den çek
-  function buildPage(quizletSets) {
-    var hasQuizlet = quizletSets && quizletSets.length > 0;
-
-    // Quizlet banner HTML
-    var quizletHtml = '';
-    if (hasQuizlet) {
-      // Aktif set varsa ona özel tasarım
-      if (activeSet) {
-        quizletHtml = '<div id="ko-quizlet-btn" style="'
-          + 'background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);'
-          + 'border-radius:18px;padding:18px 20px;cursor:pointer;'
-          + 'display:flex;align-items:center;gap:16px;margin-bottom:20px;'
-          + 'box-shadow:0 8px 24px rgba(102,126,234,0.35);'
-          + 'transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden">'
-          + '<div style="width:52px;height:52px;background:rgba(255,255,255,0.2);border-radius:14px;'
-          + 'display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">📖</div>'
-          + '<div style="flex:1;min-width:0">'
-          + '<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.75);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px">Aktif Quizlet Seti</div>'
-          + '<div style="font-family:var(--font-display);font-weight:800;font-size:16px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + activeSet.setName + '</div>'
-          + '<div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:2px">' + activeSet.words.length + ' kelime · Oyunlarda aktif</div>'
-          + '</div>'
-          + '<div style="background:rgba(255,255,255,0.25);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">Değiştir ›</div>'
-          + '</div>';
-      } else {
-        quizletHtml = '<div id="ko-quizlet-btn" style="'
-          + 'background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);'
-          + 'border-radius:18px;padding:20px;cursor:pointer;'
-          + 'display:flex;align-items:center;gap:16px;margin-bottom:20px;'
-          + 'box-shadow:0 8px 24px rgba(102,126,234,0.35);'
-          + 'transition:transform .2s,box-shadow .2s">'
-          + '<div style="width:56px;height:56px;background:rgba(255,255,255,0.2);border-radius:16px;'
-          + 'display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">📚</div>'
-          + '<div style="flex:1">'
-          + '<div style="font-family:var(--font-display);font-weight:800;font-size:17px;color:#fff;margin-bottom:3px">Quizlet Kelimeleriyle Çalış</div>'
-          + '<div style="font-size:13px;color:rgba(255,255,255,0.8)">' + quizletSets.length + ' setinden birini seç, oyunlarda kullan</div>'
-          + '</div>'
-          + '<div style="font-size:28px;color:rgba(255,255,255,0.7)">›</div>'
-          + '</div>';
-      }
-    } else {
-      quizletHtml = '<div style="'
-        + 'background:linear-gradient(135deg,#f8f9ff 0%,#eef1ff 100%);'
-        + 'border:2px dashed #c5cdf0;border-radius:18px;padding:20px;'
-        + 'display:flex;align-items:center;gap:16px;margin-bottom:20px">'
-        + '<div style="width:52px;height:52px;background:#eef1ff;border-radius:14px;'
-        + 'display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">📚</div>'
-        + '<div style="flex:1">'
-        + '<div style="font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--ink);margin-bottom:3px">Quizlet Seti Yok</div>'
-        + '<div style="font-size:12px;color:var(--ink-faint)">English Coach\'ta Quizlet setlerin yüklü değil. Profil sekmesinden ekleyebilirsin.</div>'
-        + '</div>'
-        + '</div>';
-    }
-
-    body.innerHTML = quizletHtml
-      + '<div style="font-family:var(--font-display);font-size:14px;font-weight:800;color:var(--ink-soft);'
-      + 'letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px">🎮 Oyunları Seç</div>'
-      + '<div class="ko-game-list" id="koGameGrid"></div>';
-
-    // Quizlet butonuna tıklama
-    var qBtn = document.getElementById('ko-quizlet-btn');
-    if (qBtn && hasQuizlet) {
-      qBtn.addEventListener('mouseover', function() { this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 32px rgba(102,126,234,0.45)'; });
-      qBtn.addEventListener('mouseout', function() { this.style.transform=''; this.style.boxShadow='0 8px 24px rgba(102,126,234,0.35)'; });
-      qBtn.addEventListener('click', function() {
-        // Set seçim modalını göster
-        koShowQuizletPicker(quizletSets);
-      });
-    }
-
-    // Oyun kartları - mevcut activeSet ile
-    var grid = document.getElementById('koGameGrid');
-    var games2 = [
-      ['kelime-dunyasi-worldmap.html','🌍','linear-gradient(135deg,#43e97b,#38f9d7)','Kelime Dünyası','A1–B1','Dünya haritasını keşfet',true],
-      ['kelime-avi-game.html','🎮','linear-gradient(135deg,#f093fb,#f5576c)','Kelime Avı','A1–B1','Dinle ve eşleştir',false],
-      ['gramer-quest-game.html','📚','linear-gradient(135deg,#4facfe,#00f2fe)','Gramer Quest','A1–B2','Cümle tamamla',false],
-      ['dinleme-dedektifi-game.html','👂','linear-gradient(135deg,#a18cd1,#fbc2eb)','Dinleme Dedektifi','A1–B1','Dinle ve bul',false],
-      ['yazi-sahnesi-game.html','🎭','linear-gradient(135deg,#fa709a,#fee140)','Yazı Sahnesi','A2–B2','Diyalog tamamla',false],
-      ['quiz-hizli-game.html','⚡','linear-gradient(135deg,#f6d365,#fda085)','Hızlı Quiz','A1–C1','5 sn, hızlı cevap',false],
-    ];
-    games2.forEach(function(g) {
-      var card = document.createElement('div');
-      card.className = 'ko-game-item';
-      var setTag = activeSet && !g[6]
-        ? '<div style="display:inline-block;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px;margin-top:4px">📖 ' + activeSet.setName + '</div>'
-        : '';
-      card.innerHTML = '<div class="ko-game-item-top">'
-        + '<div style="width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:' + g[2] + '">' + g[1] + '</div>'
-        + '<div class="ko-game-info"><h3>' + g[3] + '</h3><span class="level">' + g[4] + '</span></div></div>'
-        + '<div class="ko-game-desc">' + g[5] + setTag + '</div>'
-        + '<button class="ko-play-btn">▶ Oyna</button>';
-      var url = g[0];
-      var noSet = g[6];
-      card.querySelector('button').addEventListener('click', function() {
-        if (activeSet && !noSet) {
-          window.location.href = url + '?mode=imported&from=lesson';
-        } else {
-          window.location.href = url;
-        }
-      });
-      grid.appendChild(card);
+  if (bc) bc.innerHTML = '<span class="active">📂 Kelime Oyunları</span>';
+  body.innerHTML = '<div style="font-family:var(--font-display);font-size:15px;font-weight:800;color:var(--ink);margin-bottom:14px">🎯 Kelime Seti Seç</div>'
+    + '<div id="koSetList"><div style="color:var(--ink-faint);font-weight:700">Yükleniyor...</div></div>';
+  
+  var gradients2 = ['linear-gradient(135deg,#f093fb,#f5576c)','linear-gradient(135deg,#4facfe,#00f2fe)','linear-gradient(135deg,#43e97b,#38f9d7)','linear-gradient(135deg,#fa709a,#fee140)','linear-gradient(135deg,#a18cd1,#fbc2eb)'];
+  
+  function buildKoSets(sets) {
+    var list = document.getElementById('koSetList');
+    if (!list) return;
+    list.innerHTML = '';
+    
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'display:grid;gap:10px';
+    
+    var genCard = document.createElement('div');
+    genCard.className = 'ko-set-card';
+    genCard.style.background = 'linear-gradient(135deg,var(--green),var(--green-deep))';
+    genCard.innerHTML = '<div style="font-size:24px">📚</div><div><div style="font-weight:800;font-size:15px">Genel</div><div style="font-size:12px;opacity:.85">Oyunun kendi kelimeleri</div></div><div style="margin-left:auto;font-size:20px;opacity:.7">›</div>';
+    genCard.addEventListener('click', function() {
+      localStorage.removeItem('ge_active_set');
+      localStorage.removeItem('ge_imported_set');
+      koShowGameList(null);
     });
+    wrap.appendChild(genCard);
+    
+    sets.forEach(function(set, i) {
+      if (!set || !set.words || set.words.length < 2) return;
+      var sc = document.createElement('div');
+      sc.className = 'ko-set-card';
+      sc.style.background = gradients2[i%5];
+      sc.innerHTML = '<div style="font-size:24px">📖</div>'
+        + '<div><div style="font-weight:800;font-size:15px">' + (set.name||'Set '+(i+1)) + '</div>'
+        + '<div style="font-size:12px;opacity:.85">' + set.words.length + ' kelime</div></div>'
+        + '<div style="margin-left:auto;font-size:20px;opacity:.7">›</div>';
+      (function(s){
+        sc.addEventListener('click', function() {
+          var p={setName:s.name,words:s.words,timestamp:Date.now()};
+          localStorage.setItem('ge_active_set',JSON.stringify(p));
+          localStorage.setItem('ge_imported_set',JSON.stringify(p));
+          koShowGameList(p);
+        });
+      })(set);
+      wrap.appendChild(sc);
+    });
+    list.appendChild(wrap);
   }
-
-  // Firebase'den quizlet setleri çek
+  
   if (typeof firebase !== 'undefined' && firebase.auth().currentUser) {
     firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).get()
-      .then(function(snap) { buildPage((snap.exists && snap.data().quizletSets) || []); })
-      .catch(function() { buildPage([]); });
+      .then(function(snap) { buildKoSets((snap.exists&&snap.data().quizletSets)||[]); })
+      .catch(function() { buildKoSets([]); });
   } else {
-    buildPage([]);
+    buildKoSets([]);
   }
-};
-
-// Quizlet set seçici alt panel
-window.koShowQuizletPicker = function(sets) {
-  var body = document.getElementById('koBody');
-  if (!body) return;
-
-  var gradients = ['linear-gradient(135deg,#f093fb,#f5576c)','linear-gradient(135deg,#4facfe,#00f2fe)','linear-gradient(135deg,#43e97b,#38f9d7)','linear-gradient(135deg,#fa709a,#fee140)','linear-gradient(135deg,#a18cd1,#fbc2eb)'];
-
-  var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">'
-    + '<button onclick="window.koShowSetSelector()" style="background:var(--surface-2);border:none;border-radius:99px;padding:8px 14px;cursor:pointer;font-weight:700;font-size:13px;color:var(--ink)">← Geri</button>'
-    + '<div style="font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--ink)">Quizlet Seti Seç</div>'
-    + '</div><div style="display:grid;gap:10px" id="koQuizletList"></div>';
-  body.innerHTML = html;
-
-  var list = document.getElementById('koQuizletList');
-
-  // Genel seçeneği
-  var genCard = document.createElement('div');
-  genCard.className = 'ko-set-card';
-  genCard.style.background = 'linear-gradient(135deg,var(--green),var(--green-deep))';
-  genCard.innerHTML = '<div style="font-size:24px">🎯</div><div><div style="font-weight:800;font-size:15px">Genel (Oyunun kelimeleri)</div><div style="font-size:12px;opacity:.85">Quizlet seti olmadan oyna</div></div><div style="margin-left:auto;font-size:20px;opacity:.7">›</div>';
-  genCard.addEventListener('click', function() {
-    localStorage.removeItem('ge_active_set');
-    localStorage.removeItem('ge_imported_set');
-    window.koShowSetSelector();
-  });
-  list.appendChild(genCard);
-
-  sets.forEach(function(set, i) {
-    if (!set || !set.words || set.words.length < 2) return;
-    var sc = document.createElement('div');
-    sc.className = 'ko-set-card';
-    sc.style.background = gradients[i % 5];
-    sc.innerHTML = '<div style="font-size:24px">📖</div>'
-      + '<div><div style="font-weight:800;font-size:15px">' + (set.name || 'Set ' + (i+1)) + '</div>'
-      + '<div style="font-size:12px;opacity:.85">' + set.words.length + ' kelime</div></div>'
-      + '<div style="margin-left:auto;font-size:20px;opacity:.7">›</div>';
-    (function(s) {
-      sc.addEventListener('click', function() {
-        var p = { setName: s.name, words: s.words, timestamp: Date.now() };
-        localStorage.setItem('ge_active_set', JSON.stringify(p));
-        localStorage.setItem('ge_imported_set', JSON.stringify(p));
-        window.koShowSetSelector();
-      });
-    })(set);
-    list.appendChild(sc);
-  });
 };
 
 window.koShowGameList = function(activeSet) {
@@ -3686,8 +3626,7 @@ window.addEventListener('DOMContentLoaded', function() {
       setTimeout(function() {
         openLesson(foundUnit, foundMap);
         setTimeout(function() {
-          var stepsLen = currentLesson.steps.length;
-          currentLesson.step = stepsLen - 1;
+          currentLesson.step = currentLesson.steps.length - 1;
           renderLessonStep();
         }, 100);
       }, 400);
