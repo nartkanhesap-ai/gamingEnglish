@@ -653,28 +653,6 @@ firebase.auth().onAuthStateChanged(async function(user){
   </div>
 </div>
 
-<!-- ── MOBILE BOTTOM NAV ── -->
-<div class="ge-bottomnav">
-  <button class="ge-bnbtn active" id="bnav-home" onclick="showView('home')">
-    <svg class="bn-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg>
-    <span>Üs</span>
-  </button>
-  <button class="ge-bnbtn" id="bnav-maps" onclick="showView('maps')">
-    <svg class="bn-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>
-    <span>Harita</span>
-  </button>
-  <button class="ge-bnbtn" id="bnav-games" onclick="showView('games')">
-    <svg class="bn-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M7 12h3M8.5 10.5v3M15 11h.01M17.5 13h.01"/></svg>
-    <span>Oyunlar</span>
-  </button>
-  <button class="ge-bnbtn" id="bnav-school" onclick="showView('school')">
-    <svg class="bn-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2V5Z"/><path d="M4 19a2 2 0 0 1 2-2h12"/></svg>
-    <span>Okul</span>
-  </button>
-</div>
-</div><!-- ge-main -->
-</div><!-- ge-appshell -->
-
 <div class="ge-login-modal hidden" id="geLoginModal">
   <div class="ge-login-box">
     <div class="ge-login-header">
@@ -694,8 +672,6 @@ firebase.auth().onAuthStateChanged(async function(user){
   </div>
 </div>
 
-<div id="app">
-<!-- TOPBAR -->
 <div class="ge-appshell" id="app">
 
 <!-- ── SIDEBAR (desktop) ── -->
@@ -1035,9 +1011,30 @@ firebase.auth().onAuthStateChanged(async function(user){
       <!-- JS ile doldurulur -->
     </div>
   </div>
+</div><!-- /view-school -->
+
+<!-- ── MOBILE BOTTOM NAV ── -->
+<div class="ge-bottomnav">
+  <button class="ge-bnbtn active" id="bnav-home" onclick="showView('home')">
+    <svg class="bn-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg>
+    <span>Üs</span>
+  </button>
+  <button class="ge-bnbtn" id="bnav-maps" onclick="showView('maps')">
+    <svg class="bn-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>
+    <span>Harita</span>
+  </button>
+  <button class="ge-bnbtn" id="bnav-games" onclick="showView('games')">
+    <svg class="bn-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M7 12h3M8.5 10.5v3M15 11h.01M17.5 13h.01"/></svg>
+    <span>Oyunlar</span>
+  </button>
+  <button class="ge-bnbtn" id="bnav-school" onclick="showView('school')">
+    <svg class="bn-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2V5Z"/><path d="M4 19a2 2 0 0 1 2-2h12"/></svg>
+    <span>Okul</span>
+  </button>
 </div>
 
-</div><!-- #app -->
+</div><!-- /ge-main -->
+</div><!-- /ge-appshell #app -->
 
 <!-- ══════════════════════════════════════════
      UNIT PANEL (overlay)
