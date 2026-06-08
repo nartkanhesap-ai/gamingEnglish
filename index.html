@@ -330,71 +330,85 @@ body{font-family:var(--font-body);background:var(--paper);color:var(--ink);-webk
 .atlas-mouth.talking{animation:atlasTalk .3s ease-in-out infinite;transform-origin:60px 78px}
 
 /* ════════════════════════════════════════════
-   ÜS / HOME DASHBOARD — yeni tasarım
+   ÜS / HOME DASHBOARD — referans tasarım
 ════════════════════════════════════════════ */
 
 /* ─── app shell: sidebar + main ─── */
-.ge-appshell{display:flex;min-height:100vh;background:var(--paper)}
-.ge-sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1.5px solid var(--line);
-  display:flex;flex-direction:column;padding:20px 14px;gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:100}
-.ge-sidebar-logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;
-  font-size:17px;color:var(--ink);padding:4px 6px 18px;border-bottom:1.5px solid var(--line);margin-bottom:8px}
-.ge-sidebar-navbtn{font-family:var(--font-display);font-weight:700;font-size:13.5px;
-  padding:10px 14px;border-radius:12px;border:none;cursor:pointer;background:transparent;
-  color:var(--ink-soft);display:flex;align-items:center;gap:10px;text-align:left;width:100%;transition:all .16s}
-.ge-sidebar-navbtn:hover{background:var(--green-soft);color:var(--green-deep)}
-.ge-sidebar-navbtn.active{background:var(--green-soft);color:var(--green-deep);font-weight:800}
-.ge-sidebar-navbtn .nav-icon{width:20px;text-align:center;font-size:17px}
-.ge-sidebar-bottom{margin-top:auto;padding-top:14px;border-top:1.5px solid var(--line);display:flex;flex-direction:column;gap:4px}
+.ge-appshell{display:flex;height:100vh;background:var(--paper)}
+
+/* Referans: dar 96px ikon-only sidebar */
+.ge-sidebar{width:96px;flex-shrink:0;padding:18px 12px;
+  background:var(--surface);border-right:1.5px solid var(--line);
+  display:flex;flex-direction:column;gap:6px;z-index:20}
+.ge-sidebar-logo{display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 6px 18px;margin-bottom:0}
+.ge-sidebar-logo-text{font-family:var(--font-display);font-weight:800;font-size:12px;color:var(--ink);text-align:center;line-height:1.2}
+.ge-sidebar-navbtn{border:none;background:transparent;cursor:pointer;
+  border-radius:16px;padding:12px 6px;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  font-family:var(--font-display);font-weight:700;font-size:12px;
+  color:var(--ink-soft);transition:all .16s;width:100%}
+.ge-sidebar-navbtn:hover{background:var(--surface-2);color:var(--ink)}
+.ge-sidebar-navbtn.active{background:var(--green-soft);color:var(--green-deep)}
+.ge-sidebar-navbtn .nav-icon{font-size:0} /* hide emoji, use SVG icons via text */
+.ge-sidebar-bottom{margin-top:auto;display:flex;flex-direction:column;gap:4px}
 
 /* ─── main content area ─── */
-.ge-main{flex:1;min-width:0;display:flex;flex-direction:column}
-.ge-topbar-new{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;
-  padding:12px 24px;gap:14px;background:color-mix(in srgb,var(--paper) 88%,transparent);
-  backdrop-filter:blur(14px);border-bottom:1.5px solid var(--line)}
+.ge-main{flex:1;overflow-y:auto;position:relative}
+
+/* Topbar */
+.ge-topbar-new{position:sticky;top:0;z-index:15;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 26px;gap:14px;flex-wrap:wrap;
+  background:color-mix(in srgb,var(--paper) 86%,transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1.5px solid var(--line)}
 .ge-topbar-stats{display:flex;align-items:center;gap:8px}
 .ge-stat-pill{display:flex;align-items:center;gap:6px;background:var(--surface);
-  border:1.5px solid var(--line);border-radius:99px;padding:6px 13px;
-  font-family:var(--font-display);font-weight:800;font-size:13px;color:var(--ink)}
+  border:1.5px solid var(--line);border-radius:99px;padding:7px 14px;
+  font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--ink);
+  box-shadow:var(--shadow-sm)}
+
+/* Avatar button */
+.ge-avatarbtn{border:2.5px solid var(--green);background:var(--surface);
+  border-radius:50%;width:46px;height:46px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;padding:0;
+  box-shadow:var(--shadow-sm);transition:transform .15s}
+.ge-avatarbtn:hover{transform:scale(1.05)}
 
 /* ─── mobile bottom nav ─── */
-.ge-bottomnav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:300;
-  background:color-mix(in srgb,var(--surface) 96%,transparent);backdrop-filter:blur(14px);
-  border-top:1.5px solid var(--line);padding:8px 4px env(safe-area-inset-bottom)}
-.ge-bnbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
-  border:none;background:transparent;cursor:pointer;padding:6px 4px;
-  font-family:var(--font-body);font-size:10px;font-weight:700;color:var(--ink-faint);transition:all .16s}
-.ge-bnbtn .bn-icon{font-size:20px}
+.ge-bottomnav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:var(--surface);border-top:1.5px solid var(--line);
+  padding:8px 6px calc(8px + env(safe-area-inset-bottom));justify-content:space-around;
+  box-shadow:0 -8px 24px -12px rgba(0,0,0,0.2)}
+.ge-bnbtn{border:none;background:transparent;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-family:var(--font-display);font-weight:700;font-size:10.5px;
+  color:var(--ink-faint);padding:4px 8px;border-radius:12px;flex:1;transition:color .16s}
+.ge-bnbtn .bn-icon{font-size:22px}
 .ge-bnbtn.active{color:var(--green)}
 .ge-bnbtn:hover{color:var(--ink)}
 
 /* ─── page wrapper ─── */
-.page-wrap-new{max-width:1080px;margin:0 auto;padding:28px 24px 100px;width:100%}
+.page-wrap-new{max-width:1180px;margin:0 auto;padding:26px;width:100%}
 
-/* ─── HOME: Hero section ─── */
-.hero-new{display:flex;align-items:center;gap:36px;flex-wrap:wrap;padding:10px 0 36px}
-.hero-new-text{flex:1 1 340px}
-.hero-new-art{flex:1 1 280px;display:flex;justify-content:center;position:relative}
-.hero-new h1{font-family:var(--font-display);font-weight:800;
-  font-size:clamp(34px,4.5vw,56px);line-height:1.04;color:var(--ink);letter-spacing:-.02em}
-.hero-new-desc{font-size:16px;color:var(--ink-soft);margin-top:14px;line-height:1.6;font-weight:600;max-width:460px}
-.hero-btns-new{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
-.hero-stats-new{display:flex;gap:28px;margin-top:26px;flex-wrap:wrap}
-.hsn{text-align:center}
-.hsn-n{font-family:var(--font-display);font-weight:800;font-size:26px;color:var(--ink)}
-.hsn-l{font-size:11px;color:var(--ink-faint);font-weight:700;margin-top:2px;letter-spacing:.3px}
+/* ─── HOME: HeroCard (referans: gradient header + topo + avatar + stats) ─── */
+.hero-card{border-radius:var(--r-lg);overflow:hidden;position:relative}
+.hero-card-header{background:linear-gradient(135deg,var(--green),var(--green-deep));padding:24px 26px;color:#fff;position:relative}
+.hero-card-header .topo{opacity:.4}
+[data-mode="challenger"] .hero-card-header{background:linear-gradient(135deg,var(--violet),#5a48d6)}
+.hero-card-body{padding:16px 26px;background:var(--surface);display:flex;flex-wrap:wrap;gap:0}
+.hero-stat-block{display:flex;align-items:center;gap:11px;flex:1 1 130px;padding:4px 0}
+.hero-stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.hero-stat-val{font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--ink);line-height:1}
+.hero-stat-lab{font-size:11.5px;color:var(--ink-faint);font-weight:700;margin-top:1px}
+.hero-xp-bar-wrap{flex:1 1 100%;margin-top:8px}
 
 /* ─── HOME: Avatar/profile stage ─── */
-.avatar-stage{position:relative;width:200px;height:200px;display:flex;align-items:center;justify-content:center}
+.avatar-stage{position:relative;width:160px;height:160px;display:flex;align-items:center;justify-content:center}
 .avatar-xp-ring{position:absolute;inset:0}
-.avatar-level-badge{position:absolute;bottom:-4px;background:var(--amber);color:#3a2509;
-  font-family:var(--font-display);font-weight:800;font-size:12px;padding:3px 13px;
+.avatar-level-badge{position:absolute;bottom:-6px;background:var(--amber);color:#3a2509;
+  font-family:var(--font-display);font-weight:800;font-size:13px;padding:3px 12px;
   border-radius:99px;border:2.5px solid var(--surface);box-shadow:var(--shadow-sm)}
-
-/* ─── HOME: floating badges around atlas ─── */
-.hero-float-badge{position:absolute;background:var(--surface);border:1.5px solid var(--line);
-  border-radius:16px;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;
-  width:52px;height:52px;font-size:22px}
 
 /* ─── HOME: Quest / görev kartı ─── */
 .quest-card{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-lg);padding:22px;overflow:hidden;position:relative}
@@ -402,38 +416,39 @@ body{font-family:var(--font-body);background:var(--paper);color:var(--ink);-webk
   background:var(--surface-2);border:1.5px solid var(--line)}
 .quest-icon{width:42px;height:42px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
 .quest-claim-btn{border:none;cursor:pointer;border-radius:99px;font-family:var(--font-display);font-weight:800;font-size:12px;
-  padding:8px 14px;flex-shrink:0;transition:all .18s}
+  padding:8px 14px;flex-shrink:0;transition:all .18s;line-height:1}
 
 /* ─── HOME: Level roadmap mini ─── */
-.mini-roadmap-track{display:flex;align-items:center;gap:0;overflow-x:auto;padding:8px 0}
-.mini-stop{display:flex;flex-direction:column;align-items:center;min-width:80px;cursor:pointer;transition:all .18s}
-.mini-stop:hover .stop-dot{transform:scale(1.15)}
-.stop-dot{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:20px;border:3px solid var(--surface);box-shadow:var(--shadow-sm);margin-bottom:6px;transition:transform .2s}
+.mini-roadmap-track{display:flex;align-items:center;gap:0;overflow-x:auto;padding:8px 0 6px}
+.mini-stop{display:flex;flex-direction:column;align-items:center;min-width:100px;cursor:pointer;text-align:center;flex-shrink:0;opacity:1;transition:opacity .3s}
+.mini-stop:hover .stop-dot{transform:scale(1.12)}
+.stop-dot{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:22px;box-shadow:var(--shadow-sm);margin:0 auto 7px;transition:transform .2s;border:3px solid transparent}
 .stop-dot.done{background:var(--green);color:#fff}
-.stop-dot.current{background:var(--amber);color:#fff;box-shadow:0 0 0 4px var(--amber-soft),var(--shadow-sm)}
-.stop-dot.locked{background:var(--surface-2);color:var(--ink-faint);border:2px dashed var(--line-2)}
-.stop-label{font-size:10px;font-weight:800;color:var(--ink-soft);text-align:center;max-width:72px;line-height:1.3}
-.stop-label.current{color:var(--amber)}
-.stop-connector{flex:1;height:3px;background:var(--line-2);min-width:16px;margin-bottom:22px}
+.stop-dot.current{background:var(--amber);color:#fff;border-color:var(--amber-soft);animation:floaty 3s ease-in-out infinite;box-shadow:var(--shadow-sm)}
+.stop-dot.locked{background:var(--surface-2);color:var(--ink-faint);opacity:.5}
+.stop-label{font-family:var(--font-display);font-weight:800;font-size:11.5px;color:var(--ink);text-align:center;max-width:88px;line-height:1.15}
+.stop-connector{flex-shrink:0;width:24px;height:3px;border-radius:9px;background:var(--line-2);margin-top:28px}
 .stop-connector.done-line{background:var(--green)}
 
-/* ─── HOME: Badge shelf ─── */
-.badge-shelf{display:flex;flex-wrap:wrap;gap:10px}
-.badge-item{display:flex;flex-direction:column;align-items:center;gap:5px;
-  background:var(--surface-2);border:1.5px solid var(--line);border-radius:14px;padding:12px 10px;min-width:72px;cursor:default}
-.badge-icon-wrap{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px}
-.badge-name{font-size:10px;font-weight:800;color:var(--ink-soft);text-align:center;line-height:1.2}
+/* ─── HOME: Badge shelf (Medallion style) ─── */
+.badge-shelf{display:grid;grid-template-columns:repeat(auto-fit,minmax(78px,1fr));gap:12px}
+.badge-item{text-align:center}
+.badge-medallion{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin:0 auto;box-shadow:inset 0 -4px 0 rgba(0,0,0,.15),var(--shadow-sm);
+  border:3px solid rgba(255,255,255,.5);transition:transform .2s}
+.badge-medallion.locked{box-shadow:none;border:3px dashed var(--line-2);filter:grayscale(1);opacity:.7}
+.badge-medallion:hover{transform:scale(1.08)}
+.badge-name{font-size:10.5px;font-weight:800;color:var(--ink-faint);margin-top:6px;line-height:1.2}
 .badge-item.earned .badge-name{color:var(--ink)}
 
 /* ─── HOME: Leaderboard ─── */
-.lb-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:var(--surface-2);border:1.5px solid var(--line)}
+.lb-row{display:flex;align-items:center;gap:12px;padding:9px 13px;border-radius:12px;background:var(--surface-2);border:1.5px solid var(--line)}
 .lb-row.you{background:var(--green-soft);border-color:var(--green)}
-.lb-rank{font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--ink-faint);width:20px;text-align:center}
-.lb-avatar{width:36px;height:36px;border-radius:50%;background:var(--surface);
-  border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:18px}
-.lb-name{flex:1;font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--ink)}
-.lb-xp{font-family:var(--font-display);font-weight:800;font-size:13px;color:var(--amber)}
+.lb-rank{font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--ink-faint);width:22px;text-align:center}
+.lb-avatar{width:36px;height:36px;border-radius:50%;background:var(--surface);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:20px}
+.lb-name{flex:1;font-family:var(--font-display);font-weight:800;font-size:14.5px;color:var(--ink)}
+.lb-xp{font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--ink)}
 
 /* ─── MAPS: yeni düzen ─── */
 .maps-hero{padding:20px 0 32px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
@@ -492,21 +507,21 @@ body{font-family:var(--font-body);background:var(--paper);color:var(--ink);-webk
 .zp-example strong{color:var(--green-deep);font-weight:800}
 
 /* ─── RESPONSIVE ─── */
-@media(max-width:900px){
+@media(max-width:860px){
   .ge-sidebar{display:none}
   .ge-bottomnav{display:flex}
   .ge-appshell{display:block}
-  .ge-main{padding-bottom:60px}
-  .page-wrap-new{padding:20px 16px 90px}
-  .hero-new{padding:16px 0 24px;gap:20px}
-  .hero-new h1{font-size:clamp(28px,7vw,42px)}
+  .ge-main{padding-bottom:76px}
+  .page-wrap-new{padding:18px 16px 100px}
+  .hero-card-header{padding:20px 18px}
+  .hero-card-body{padding:14px 18px}
+}
+@media(max-width:820px){
   .maps-grid-new{grid-template-columns:1fr}
-  .ge-topbar-new{padding:10px 16px}
+  .home-two-col{grid-template-columns:1fr!important}
 }
 @media(max-width:480px){
-  .avatar-stage{width:160px;height:160px}
-  .hero-new{flex-direction:column-reverse}
-  .hero-new-art{flex:none;margin-bottom:0}
+  .badge-shelf{grid-template-columns:repeat(auto-fit,minmax(68px,1fr))}
 }
 
 /* confetti */
@@ -641,16 +656,20 @@ firebase.auth().onAuthStateChanged(async function(user){
 <!-- ── MOBILE BOTTOM NAV ── -->
 <div class="ge-bottomnav">
   <button class="ge-bnbtn active" id="bnav-home" onclick="showView('home')">
-    <span class="bn-icon">🏠</span><span>Üs</span>
+    <svg class="bn-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg>
+    <span>Üs</span>
   </button>
   <button class="ge-bnbtn" id="bnav-maps" onclick="showView('maps')">
-    <span class="bn-icon">🗺️</span><span>Harita</span>
+    <svg class="bn-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>
+    <span>Harita</span>
   </button>
   <button class="ge-bnbtn" id="bnav-games" onclick="showView('games')">
-    <span class="bn-icon">🎮</span><span>Oyunlar</span>
+    <svg class="bn-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M7 12h3M8.5 10.5v3M15 11h.01M17.5 13h.01"/></svg>
+    <span>Oyunlar</span>
   </button>
   <button class="ge-bnbtn" id="bnav-school" onclick="showView('school')">
-    <span class="bn-icon">📚</span><span>Okul</span>
+    <svg class="bn-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2V5Z"/><path d="M4 19a2 2 0 0 1 2-2h12"/></svg>
+    <span>Okul</span>
   </button>
 </div>
 </div><!-- ge-main -->
@@ -681,47 +700,52 @@ firebase.auth().onAuthStateChanged(async function(user){
 
 <!-- ── SIDEBAR (desktop) ── -->
 <aside class="ge-sidebar">
+  <!-- Atlas logo -->
   <div class="ge-sidebar-logo">
-    <svg width="36" height="36" viewBox="0 0 120 120" aria-hidden="true">
-      <defs><linearGradient id="fb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4863C"/><stop offset="1" stop-color="#E5603C"/></linearGradient></defs>
-      <path d="M28 44 L34 14 L54 38 Z" fill="url(#fb)"/><path d="M92 44 L86 14 L66 38 Z" fill="url(#fb)"/>
-      <path d="M34 38 L37 22 L47 36 Z" fill="#2A1A12"/><path d="M86 38 L83 22 L73 36 Z" fill="#2A1A12"/>
-      <circle cx="60" cy="62" r="34" fill="url(#fb)"/>
-      <path d="M60 50 q130 30 110 150 q-110 70 -220 0 q-20 -120 110 -150 Z" transform="scale(0.3) translate(140,100)" fill="#FBF6EA"/>
-      <path d="M60 50 q26 6 22 30 q-22 14 -44 0 q-4 -24 22 -30 Z" fill="#FBF6EA"/>
-      <circle cx="48" cy="60" r="5.4" fill="#241008"/><circle cx="72" cy="60" r="5.4" fill="#241008"/>
-      <circle cx="49.6" cy="58.2" r="1.7" fill="#fff"/><circle cx="73.6" cy="58.2" r="1.7" fill="#fff"/>
-      <path d="M60 74 l-5 -5 h10 Z" fill="#241008"/>
-      <path d="M30 36 q30 -20 60 0 q-6 6 -30 6 q-24 0 -30 -6 Z" fill="#1E8A53"/>
-      <rect x="42" y="22" width="36" height="16" rx="8" fill="#14633A"/>
-      <circle cx="60" cy="30" r="5" fill="#FFC53D"/>
+    <svg width="40" height="40" viewBox="0 0 48 48" aria-hidden="true">
+      <circle cx="24" cy="24" r="22" fill="#F4863C"/>
+      <path d="M10 16 L13 5 L22 14 Z" fill="#E5603C"/>
+      <path d="M38 16 L35 5 L26 14 Z" fill="#E5603C"/>
+      <path d="M24 18 q14 3 12 17 q-12 8 -24 0 q-2 -14 12 -17 Z" fill="#FBF6EA"/>
+      <circle cx="18" cy="24" r="3" fill="#241008"/>
+      <circle cx="30" cy="24" r="3" fill="#241008"/>
+      <path d="M24 31 l-3 -3 h6 Z" fill="#241008"/>
+      <path d="M14 14 q10 -12 20 0 q-10 -4 -20 0 Z" fill="#1E8A53"/>
+      <rect x="16" y="10" width="16" height="6" rx="3" fill="#14633A"/>
+      <circle cx="24" cy="13" r="2.5" fill="#FFC53D"/>
     </svg>
-    <div>Gaming <span style="color:var(--green)">English</span></div>
+    <div class="ge-sidebar-logo-text">Gaming<br>English</div>
   </div>
 
   <button class="ge-sidebar-navbtn active" id="snav-home" onclick="showView('home')">
-    <span class="nav-icon">🏠</span> Üs
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg>
+    <span>Üs</span>
   </button>
   <button class="ge-sidebar-navbtn" id="snav-maps" onclick="showView('maps')">
-    <span class="nav-icon">🗺️</span> Harita
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>
+    <span>Harita</span>
   </button>
   <button class="ge-sidebar-navbtn" id="snav-games" onclick="showView('games')">
-    <span class="nav-icon">🎮</span> Oyunlar
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M7 12h3M8.5 10.5v3M15 11h.01M17.5 13h.01"/></svg>
+    <span>Oyunlar</span>
   </button>
   <button class="ge-sidebar-navbtn" id="snav-school" onclick="showView('school')">
-    <span class="nav-icon">📚</span> Okul
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2V5Z"/><path d="M4 19a2 2 0 0 1 2-2h12"/></svg>
+    <span>Okul</span>
   </button>
 
+  <div style="flex:1"></div>
+
   <div class="ge-sidebar-bottom">
-    <div class="mode-toggle" style="width:100%;flex-direction:column;padding:5px;gap:4px">
-      <button class="mode-btn active" id="modeExp" onclick="setMode('explorer')" style="width:100%;justify-content:center">🧭 Kâşif <span class="age-tag">7–10</span></button>
-      <button class="mode-btn" id="modeCh" onclick="setMode('challenger')" style="width:100%;justify-content:center">⚡ Maceracı <span class="age-tag">11–15</span></button>
-    </div>
-    <div class="ge-user" id="geUserInfo" style="display:none;padding:10px 6px;gap:8px">
-      <span style="font-size:18px">🦊</span>
-      <span id="geUserName" style="font-family:var(--font-display);font-size:13px;font-weight:800;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
-      <button class="ge-logout-btn" onclick="geLogout()">Çıkış</button>
-    </div>
+    <!-- Mode toggle compact -->
+    <button class="ge-sidebar-navbtn" id="modeToggleBtn" onclick="toggleMode()" title="Mod değiştir">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      <span id="modeBtnLabel">Kâşif</span>
+    </button>
+    <button class="ge-sidebar-navbtn" onclick="geLogout()" id="logoutNavBtn" style="display:none">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M13 18l6-6-6-6"/></svg>
+      <span>Çıkış</span>
+    </button>
   </div>
 </aside>
 
@@ -730,13 +754,37 @@ firebase.auth().onAuthStateChanged(async function(user){
 
 <!-- topbar -->
 <div class="ge-topbar-new">
-  <div style="font-family:var(--font-display);font-weight:800;font-size:16px;color:var(--ink);display:none" class="mobile-logo">
-    Gaming <span style="color:var(--green)">English</span>
+  <div style="display:flex;align-items:center;gap:10px">
+    <!-- Mode toggle -->
+    <div class="mode-toggle" style="display:flex;background:var(--surface);border-radius:99px;padding:4px;gap:3px;box-shadow:var(--shadow-sm);border:1.5px solid var(--line)">
+      <button class="mode-btn active" id="modeExp" onclick="setMode('explorer')" style="border:none;cursor:pointer;border-radius:99px;padding:6px 13px;font-family:var(--font-display);font-weight:700;font-size:12px;display:flex;align-items:center;gap:5px;transition:all .18s">
+        🧭 Kâşif <span style="font-size:10px;font-weight:800;padding:2px 6px;border-radius:99px;background:rgba(255,255,255,.2)">7–10</span>
+      </button>
+      <button class="mode-btn" id="modeCh" onclick="setMode('challenger')" style="border:none;cursor:pointer;border-radius:99px;padding:6px 13px;font-family:var(--font-display);font-weight:700;font-size:12px;display:flex;align-items:center;gap:5px;transition:all .18s;background:transparent;color:var(--ink-soft)">
+        ⚡ Maceracı <span style="font-size:10px;font-weight:800;padding:2px 6px;border-radius:99px;background:var(--surface-2)">11–15</span>
+      </button>
+    </div>
   </div>
   <div class="ge-topbar-stats">
-    <div class="ge-stat-pill"><span>🔥</span> <span id="statStreak">7</span></div>
-    <div class="ge-stat-pill" style="color:var(--sky)"><span>💎</span> <span id="statGems">480</span></div>
-    <div class="ge-stat-pill" style="color:var(--amber)"><span>⭐</span> <span id="statXP">2310</span> XP</div>
+    <div class="ge-stat-pill">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="2.4" stroke-linecap="round"><path d="M12 3c1 3-2 4-2 7a2 2 0 0 0 4 0c0-1 0-2-.5-3 2 1.5 3.5 3.6 3.5 6a5 5 0 0 1-10 0c0-3.5 3-5.5 5-10Z"/></svg>
+      <b id="statStreak">7</b>
+    </div>
+    <div class="ge-stat-pill">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sky)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l3 6-9 12L3 9l3-6Z"/><path d="M3 9h18M9 3l3 18M15 3l-3 18"/></svg>
+      <b id="statGems">480</b>
+    </div>
+    <div class="ge-stat-pill">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .7-4.4 4.1 1.2 6L12 16.8 6.6 19.4l1.2-6L3.4 9.3l6-.7L12 3Z"/></svg>
+      <b id="statXP">2310</b>
+    </div>
+    <button class="ge-avatarbtn" onclick="showView('home')" id="geAvatarBtn">
+      <svg width="28" height="28" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#F4863C"/><path d="M10 16 L13 5 L22 14 Z" fill="#E5603C"/><path d="M38 16 L35 5 L26 14 Z" fill="#E5603C"/><path d="M24 18 q14 3 12 17 q-12 8 -24 0 q-2 -14 12 -17 Z" fill="#FBF6EA"/><circle cx="18" cy="24" r="3" fill="#241008"/><circle cx="30" cy="24" r="3" fill="#241008"/><path d="M24 31 l-3 -3 h6 Z" fill="#241008"/></svg>
+    </button>
+    <div id="geUserInfo" style="display:none;align-items:center;gap:6px">
+      <span id="geUserName" style="font-family:var(--font-display);font-size:13px;font-weight:800;color:var(--ink);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+      <button class="ge-logout-btn" onclick="geLogout()">Çıkış</button>
+    </div>
   </div>
 </div>
 
@@ -746,107 +794,163 @@ firebase.auth().onAuthStateChanged(async function(user){
 <div id="view-home" class="view active">
 <div class="page-wrap-new">
 
-  <!-- ── Hero ── -->
-  <div class="hero-new">
-    <!-- sol: metin -->
-    <div class="hero-new-text fade-up">
-      <div class="chip" style="background:var(--amber-soft);color:#b5781e;margin-bottom:16px">🏔️ A1'den B2'ye kesintisiz macera</div>
-      <h1 id="heroTitle">Her ders bir<br><span style="color:var(--green)">macera</span> 🧭</h1>
-      <p class="hero-new-desc" id="heroDesc">Atlas ile haritayı keşfet, kelime topla, rozet kazan. 7–10 yaş için oyunla dolu İngilizce dünyası!</p>
-      <div class="hero-btns-new">
-        <button class="btn btn-primary btn-lg" onclick="showView('maps')">🗺️ Haritaları Keşfet</button>
-        <button class="btn btn-soft btn-lg" onclick="openKelimeOyunlari()">🎮 Oyunlar</button>
-      </div>
-      <div class="hero-stats-new">
-        <div class="hsn"><div class="hsn-n">5</div><div class="hsn-l">Harita</div></div>
-        <div class="hsn"><div class="hsn-n">42</div><div class="hsn-l">Ünite</div></div>
-        <div class="hsn"><div class="hsn-n">6</div><div class="hsn-l">Oyun türü</div></div>
-        <div class="hsn"><div class="hsn-n">A1→B2</div><div class="hsn-l">Seviye</div></div>
-      </div>
-    </div>
-
-    <!-- sağ: Atlas avatar + XP ring -->
-    <div class="hero-new-art fade-up" style="animation-delay:.1s">
-      <div class="avatar-stage">
-        <!-- XP ring SVG -->
-        <svg class="avatar-xp-ring" width="200" height="200" style="transform:rotate(-90deg)" aria-hidden="true">
-          <circle cx="100" cy="100" r="88" fill="none" stroke="var(--line)" stroke-width="8"/>
-          <circle cx="100" cy="100" r="88" fill="none" stroke="var(--amber)" stroke-width="8"
-            stroke-linecap="round" id="xpRingCircle"
-            stroke-dasharray="553" stroke-dashoffset="138"
-            style="transition:stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1)"/>
-        </svg>
-        <!-- Atlas SVG (mevcut sistem kullanır) -->
-        <div id="homeAtlas" style="position:relative;z-index:2"></div>
-        <!-- Seviye badge -->
-        <div class="avatar-level-badge">Lv <span id="heroLevel">6</span></div>
-      </div>
-      <!-- floating ikonlar -->
-      <div class="hero-float-badge floaty" style="top:10px;right:30px;animation-delay:.2s">⭐</div>
-      <div class="hero-float-badge floaty" style="top:60px;right:-10px;animation-delay:.8s">🔥</div>
-      <div class="hero-float-badge floaty" style="bottom:50px;right:20px;animation-delay:1.4s">💎</div>
-      <div class="hero-float-badge floaty" style="bottom:10px;left:20px;animation-delay:.5s">🏆</div>
-    </div>
-  </div>
-
-  <!-- ── Günlük Görevler ── -->
-  <div style="margin-top:40px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:22px">🎯</span>
-        <span style="font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--ink)">Günlük Görevler</span>
-      </div>
-      <div class="chip" style="background:var(--coral-soft);color:var(--coral)">⏰ 14s kaldı</div>
-    </div>
-    <div class="quest-card">
-      <div style="display:flex;flex-direction:column;gap:10px" id="questList">
-        <!-- JS ile doldurulur -->
+  <!-- ── HeroCard (referans birebir) ── -->
+  <div class="hero-card card fade-up">
+    <!-- Gradient header -->
+    <div class="hero-card-header">
+      <div class="topo"></div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:20px;position:relative">
+        <!-- Sol: karşılama + butonlar -->
+        <div style="flex:1 1 240px">
+          <div style="font-size:14px;font-weight:800;opacity:.9" id="heroGreeting">Tekrar hoş geldin, Kâşif! 👋</div>
+          <h1 style="font-family:var(--font-display);font-weight:800;font-size:clamp(26px,4vw,38px);line-height:1.05;margin-top:4px">Bugün hangi maceraya<br>atılıyoruz?</h1>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+            <button class="btn btn-amber btn-md" onclick="showView('maps')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 4l13 8-13 8V4Z"/></svg>
+              Derse Devam Et
+            </button>
+            <button class="btn btn-soft btn-md" style="color:var(--green-deep)" onclick="openKelimeOyunlari()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M7 12h3M8.5 10.5v3M15 11h.01M17.5 13h.01"/></svg>
+              Oyun Oyna
+            </button>
+          </div>
+        </div>
+        <!-- Sağ: Atlas avatar + XP ring -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div class="avatar-stage" style="width:150px;height:150px">
+            <svg class="avatar-xp-ring" width="150" height="150" style="transform:rotate(-90deg)" aria-hidden="true">
+              <circle cx="75" cy="75" r="66" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="7"/>
+              <circle cx="75" cy="75" r="66" fill="none" stroke="var(--amber)" stroke-width="7"
+                stroke-linecap="round" id="xpRingCircle"
+                stroke-dasharray="414" stroke-dashoffset="103"
+                style="transition:stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1)"/>
+            </svg>
+            <div id="homeAtlas" style="position:relative;z-index:2"></div>
+            <div class="avatar-level-badge">Lv <span id="heroLevel">6</span></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-soft btn-sm" style="color:var(--violet);padding:7px 12px" onclick="showView('school')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 1.5 5 4.5 5 9l-3 3h-4l-3-3c0-4.5 2-7.5 5-9Z"/><circle cx="12" cy="9" r="1.6"/></svg>
+              Özelleştir
+            </button>
+            <button class="btn btn-soft btn-sm" style="color:var(--sky);padding:7px 12px" onclick="openKelimeOyunlari()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.6"/><circle cx="17" cy="20" r="1.6"/><path d="M3 4h2l2 11h11l2-7H6"/></svg>
+              Mağaza
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- ── İki kolonlu alt bölüm ── -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:28px" class="home-two-col">
-
-    <!-- Seviye Yolculuğu -->
-    <div class="card" style="padding:22px">
-      <div style="display:flex;align-items:center;gap:9px;margin-bottom:18px">
-        <span style="font-size:20px">🏔️</span>
-        <span style="font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--ink)">Seviye Yolculuğu</span>
+    <!-- Stats row -->
+    <div class="hero-card-body">
+      <div class="hero-stat-block">
+        <div class="hero-stat-icon" style="background:var(--coral-soft);color:var(--coral)">🔥</div>
+        <div><div class="hero-stat-val" id="heroStreak">7</div><div class="hero-stat-lab">gün seri</div></div>
       </div>
-      <div class="mini-roadmap-track" id="miniRoadmap">
-        <!-- JS ile doldurulur -->
+      <div class="hero-stat-block">
+        <div class="hero-stat-icon" style="background:var(--amber-soft);color:var(--amber)">⭐</div>
+        <div><div class="hero-stat-val" id="heroXP">2310</div><div class="hero-stat-lab">toplam XP</div></div>
       </div>
-    </div>
-
-    <!-- Rozetler -->
-    <div class="card" style="padding:22px">
-      <div style="display:flex;align-items:center;gap:9px;margin-bottom:18px">
-        <span style="font-size:20px">🎖️</span>
-        <span style="font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--ink)">Rozetlerim</span>
+      <div class="hero-stat-block">
+        <div class="hero-stat-icon" style="background:var(--sky-soft);color:var(--sky)">💎</div>
+        <div><div class="hero-stat-val" id="heroGems">480</div><div class="hero-stat-lab">mücevher</div></div>
       </div>
-      <div class="badge-shelf" id="badgeShelf">
-        <!-- JS ile doldurulur -->
+      <div class="hero-stat-block">
+        <div class="hero-stat-icon" style="background:var(--green-soft);color:var(--green)">🏆</div>
+        <div><div class="hero-stat-val" id="heroBadges">3</div><div class="hero-stat-lab">rozet</div></div>
       </div>
-    </div>
-
-  </div>
-
-  <!-- ── Sınıf Sıralaması ── -->
-  <div style="margin-top:22px">
-    <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px">
-      <span style="font-size:20px">👥</span>
-      <span style="font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--ink)">Sınıf Sıralaması</span>
-    </div>
-    <div class="card" style="padding:18px">
-      <div style="display:flex;flex-direction:column;gap:8px" id="leaderboard">
-        <!-- JS ile doldurulur -->
+      <div class="hero-xp-bar-wrap">
+        <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+          <span style="font-size:12px;font-weight:800;color:var(--ink-soft)">Sonraki seviyeye</span>
+          <span style="font-size:12px;font-weight:800;color:var(--ink-faint)" id="xpBarLabel">2310/2800 XP</span>
+        </div>
+        <div class="pbar" style="height:10px"><i id="xpBarFill" style="width:82%"></i></div>
       </div>
     </div>
   </div>
+
+  <!-- ── Dashboard grid: Görevler + Yolculuk | Sıralama + Rozetler ── -->
+  <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-top:18px" class="home-two-col ge-dash-grid">
+
+    <!-- Sol kolon -->
+    <div style="display:flex;flex-direction:column;gap:18px">
+
+      <!-- Günlük Görevler -->
+      <div class="card" style="padding:22px;position:relative;overflow:hidden">
+        <div id="questConfetti" style="position:absolute;inset:0;pointer-events:none;z-index:10"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:9px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/></svg>
+            <span style="font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--ink)">Günlük Görevler</span>
+          </div>
+          <div class="chip" style="background:var(--coral-soft);color:var(--coral)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            14s kaldı
+          </div>
+        </div>
+        <div class="quest-card" style="padding:0;border:none;background:transparent;box-shadow:none">
+          <div style="display:flex;flex-direction:column;gap:11px" id="questList">
+            <!-- JS ile doldurulur -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Seviye Yolculuğu -->
+      <div class="card" style="padding:22px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:9px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>
+            <span style="font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--ink)">Yolculuğun</span>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="showView('maps')">Tüm harita →</button>
+        </div>
+        <div class="mini-roadmap-track" id="miniRoadmap">
+          <!-- JS ile doldurulur -->
+        </div>
+      </div>
+
+    </div><!-- /sol kolon -->
+
+    <!-- Sağ kolon -->
+    <div style="display:flex;flex-direction:column;gap:18px">
+
+      <!-- Sınıf Sıralaması -->
+      <div class="card" style="padding:22px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:9px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--sky)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5"/><path d="M16 5.2A3.2 3.2 0 0 1 18 11M21 20c0-3-1.6-4.6-4-4.9"/></svg>
+            <span style="font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--ink)">Arkadaş Tablosu</span>
+          </div>
+          <div class="chip" style="background:var(--sky-soft);color:var(--sky)">Bu hafta</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px" id="leaderboard">
+          <!-- JS ile doldurulur -->
+        </div>
+        <button class="btn btn-soft btn-sm" style="width:100%;margin-top:14px" onclick="showView('maps')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="2.4" stroke-linecap="round"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
+          Arkadaşına meydan oku
+        </button>
+      </div>
+
+      <!-- Rozetler -->
+      <div class="card" style="padding:22px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:9px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6l8-3Z"/><path d="M9 12l2 2 4-4"/></svg>
+            <span style="font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--ink)">Rozetler</span>
+          </div>
+          <div class="chip" id="badgeCountChip" style="background:var(--amber-soft);color:#b5781e">3/6</div>
+        </div>
+        <div class="badge-shelf" id="badgeShelf">
+          <!-- JS ile doldurulur -->
+        </div>
+      </div>
+
+    </div><!-- /sağ kolon -->
+  </div><!-- /grid -->
 
 </div>
-</div>
+</div><!-- /view-home -->
 
 <!-- ═══════════════════════════════════════════════════════════════
      VIEW: MAPS
@@ -3153,15 +3257,9 @@ function setMode(m) {
   var cBtn = document.getElementById('modeCh');
   if (eBtn) eBtn.classList.toggle('active', m === 'explorer');
   if (cBtn) cBtn.classList.toggle('active', m === 'challenger');
-  var d = document.getElementById('heroDesc');
-  var t = document.getElementById('heroTitle');
-  if (m === 'challenger') {
-    if (d) d.textContent = 'Seviye atla, arkadaşlarınla yarış, zirveyi fethet. 11-15 yaş için meydan okuma dolu İngilizce evreni.';
-    if (t) t.innerHTML = 'Zirveyi<br><span style="color:var(--green)">fethet</span> ⚡';
-  } else {
-    if (d) d.textContent = 'Atlas ile haritayı keşfet, kelime topla, rozet kazan. 7-10 yaş için oyunla dolu İngilizce dünyası!';
-    if (t) t.innerHTML = 'Her ders bir<br><span style="color:var(--green)">macera</span> 🧭';
-  }
+  // HeroCard header rengi CSS [data-mode] ile otomatik değişiyor
+  renderHomeAtlas();
+  updateStatPills();
 }
 
 // ── Auth functions ──────────────────
@@ -3176,11 +3274,15 @@ function showLoginModal() {
 function updateNavbar() {
   var ui = document.getElementById('geUserInfo');
   var ns = document.getElementById('geUserName');
+  var logoutBtn = document.getElementById('logoutNavBtn');
   if (window.geCurrentUser && window.geStudentInfo) {
-    if (ns) ns.textContent = (window.geStudentInfo.firstName||'') + ' ' + (window.geStudentInfo.lastName||'');
-    if (ui) ui.style.display = 'flex';
+    var name = (window.geStudentInfo.firstName||'') + (window.geStudentInfo.lastName ? ' ' + window.geStudentInfo.lastName : '');
+    if (ns) ns.textContent = name.trim();
+    if (ui) { ui.style.display = 'flex'; }
+    if (logoutBtn) logoutBtn.style.display = 'flex';
   } else {
     if (ui) ui.style.display = 'none';
+    if (logoutBtn) logoutBtn.style.display = 'none';
   }
 }
 async function geHandleLogin(e) {
@@ -4122,19 +4224,60 @@ function updateStatPills() {
     xp = parseInt(localStorage.getItem('ge_xp') || '2310');
     level = Math.floor(xp / 500) + 1;
   } catch(e) {}
+  // Topbar pills
   var el = function(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; };
   el('statStreak', streak);
   el('statGems', gems);
   el('statXP', xp.toLocaleString('tr-TR'));
+  // HeroCard stats
+  el('heroStreak', streak);
+  el('heroXP', xp.toLocaleString('tr-TR'));
+  el('heroGems', gems);
   el('heroLevel', level);
-  // XP ring
+  el('heroBadges', GE_BADGES ? GE_BADGES.filter(function(b){return b.earned}).length : 3);
+  // XP bar label
+  var xpForNext = Math.ceil(xp / 500) * 500;
+  el('xpBarLabel', xp.toLocaleString('tr-TR') + '/' + xpForNext.toLocaleString('tr-TR') + ' XP');
+  var xpBarFill = document.getElementById('xpBarFill');
+  if (xpBarFill) {
+    var pct = ((xp % 500) / 500 * 100).toFixed(1);
+    xpBarFill.style.width = pct + '%';
+  }
+  // XP ring (HeroCard)
   var ring = document.getElementById('xpRingCircle');
   if (ring) {
     var xpInLevel = xp % 500;
-    var pct = xpInLevel / 500;
-    var circ = 553;
-    ring.setAttribute('stroke-dashoffset', (circ * (1 - pct)).toFixed(1));
+    var pctRing = xpInLevel / 500;
+    var circ = 2 * Math.PI * 66; // r=66
+    ring.setAttribute('stroke-dasharray', circ.toFixed(1));
+    ring.setAttribute('stroke-dashoffset', (circ * (1 - pctRing)).toFixed(1));
   }
+  // Greeting with student name
+  var greeting = document.getElementById('heroGreeting');
+  if (greeting && window.geStudentInfo && geStudentInfo.firstName) {
+    greeting.textContent = 'Tekrar hoş geldin, ' + geStudentInfo.firstName + '! 👋';
+  }
+  // Badge count chip
+  var bc = document.getElementById('badgeCountChip');
+  if (bc && GE_BADGES) {
+    var earned = GE_BADGES.filter(function(b){return b.earned}).length;
+    bc.textContent = earned + '/' + GE_BADGES.length;
+  }
+  // Challenger mode avatar btn swap
+  var mode = document.documentElement.getAttribute('data-mode') || 'explorer';
+  var modeLabel = document.getElementById('modeBtnLabel');
+  if (modeLabel) modeLabel.textContent = mode === 'challenger' ? 'Maceracı' : 'Kâşif';
+  var modeExp = document.getElementById('modeExp');
+  var modeCh = document.getElementById('modeCh');
+  if (modeExp) modeExp.style.background = mode === 'explorer' ? 'var(--green)' : 'transparent';
+  if (modeExp) modeExp.style.color = mode === 'explorer' ? '#fff' : 'var(--ink-soft)';
+  if (modeCh) modeCh.style.background = mode === 'challenger' ? 'var(--green)' : 'transparent';
+  if (modeCh) modeCh.style.color = mode === 'challenger' ? '#fff' : 'var(--ink-soft)';
+}
+
+function toggleMode() {
+  var mode = document.documentElement.getAttribute('data-mode') || 'explorer';
+  setMode(mode === 'explorer' ? 'challenger' : 'explorer');
 }
 
 function renderHomeAtlas() {
@@ -4252,7 +4395,7 @@ function renderMiniRoadmap() {
   var el = document.getElementById('miniRoadmap');
   if (!el || !window.GE_MAPS) return;
   el.innerHTML = '';
-  var maps = GE_MAPS.slice(0, 5);
+  var maps = GE_MAPS.slice(0, 6);
   var curIdx = 0;
   try { curIdx = parseInt(localStorage.getItem('ge_current_map') || '0'); } catch(e) {}
 
@@ -4263,23 +4406,30 @@ function renderMiniRoadmap() {
     // Connector
     if (i > 0) {
       var conn = document.createElement('div');
-      conn.className = 'stop-connector' + (state === 'done' || i <= curIdx ? ' done-line' : '');
+      conn.className = 'stop-connector' + (i <= curIdx ? ' done-line' : '');
       el.appendChild(conn);
     }
 
     var stop = document.createElement('div');
     stop.className = 'mini-stop';
+    if (state === 'locked') stop.style.opacity = '0.5';
+
+    var dotIcon = state === 'done' ? '✓' : state === 'locked' ? '🔒' : (map.emoji || '📍');
     var dot = document.createElement('div');
     dot.className = 'stop-dot ' + state;
-    dot.textContent = state === 'done' ? '✓' : map.emoji;
+    dot.textContent = dotIcon;
+
     var label = document.createElement('div');
-    label.className = 'stop-label' + (state === 'current' ? ' current' : '');
-    label.textContent = map.title.length > 12 ? map.title.substring(0, 12) + '…' : map.title;
+    label.className = 'stop-label';
+    var name = map.title || '';
+    label.textContent = name.length > 14 ? name.substring(0, 13) + '…' : name;
+
     stop.appendChild(dot);
     stop.appendChild(label);
-    if (map.unlocked) {
-      stop.addEventListener('click', function() { showView('maps'); });
+
+    if (state !== 'locked') {
       stop.style.cursor = 'pointer';
+      stop.addEventListener('click', function() { showView('maps'); });
     }
     el.appendChild(stop);
   });
@@ -4292,28 +4442,29 @@ function renderBadgeShelf() {
   GE_BADGES.forEach(function(b) {
     var item = document.createElement('div');
     item.className = 'badge-item' + (b.earned ? ' earned' : '');
-    item.style.opacity = b.earned ? '1' : '0.45';
-    item.innerHTML = 
-      '<div class="badge-icon-wrap" style="background:' + b.color + '">' + b.icon + '</div>'
+    var bgColor = b.earned ? b.color : 'var(--line)';
+    item.innerHTML =
+      '<div class="badge-medallion' + (b.earned ? '' : ' locked') + '" style="background:' + bgColor + '">' + b.icon + '</div>'
       + '<div class="badge-name">' + b.name + '</div>';
-    if (!b.earned) item.title = 'Henüz kazanılmadı';
     el.appendChild(item);
   });
+  var bc = document.getElementById('badgeCountChip');
+  if (bc) bc.textContent = GE_BADGES.filter(function(b){return b.earned}).length + '/' + GE_BADGES.length;
 }
 
 function renderLeaderboard() {
   var el = document.getElementById('leaderboard');
   if (!el) return;
   el.innerHTML = '';
-  GE_LEADERBOARD.forEach(function(entry) {
+  GE_LEADERBOARD.forEach(function(entry, i) {
     var row = document.createElement('div');
     row.className = 'lb-row' + (entry.you ? ' you' : '');
-    var rankIcon = entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank;
-    row.innerHTML = 
-      '<div class="lb-rank">' + rankIcon + '</div>'
+    var rankColor = i < 3 ? 'var(--amber)' : 'var(--ink-faint)';
+    row.innerHTML =
+      '<span style="font-family:var(--font-display);font-weight:800;font-size:15px;color:' + rankColor + ';width:22px">' + (entry.rank <= 3 ? ['🥇','🥈','🥉'][i] : entry.rank) + '</span>'
       + '<div class="lb-avatar">' + entry.av + '</div>'
-      + '<div class="lb-name">' + entry.name + (entry.you ? ' <span style="font-size:10px;background:var(--green);color:#fff;padding:1px 7px;border-radius:99px">Sen</span>' : '') + '</div>'
-      + '<div class="lb-xp">' + entry.xp.toLocaleString('tr-TR') + ' XP</div>';
+      + '<span class="lb-name">' + entry.name + (entry.you ? ' <span style="font-size:11px;color:var(--green-deep)">(sen)</span>' : '') + '</span>'
+      + '<span style="font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--ink)">' + entry.xp.toLocaleString('tr-TR') + ' XP</span>';
     el.appendChild(row);
   });
 }
