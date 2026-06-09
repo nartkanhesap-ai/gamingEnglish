@@ -496,7 +496,7 @@ body{font-family:var(--font-body);background:var(--paper);color:var(--ink);-webk
   border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:18px;color:#fff;
   display:flex;align-items:center;justify-content:center;z-index:1;transition:all .18s}
 .zp-close:hover{background:rgba(255,255,255,.38)}
-.zp-body{overflow-y:auto;padding:22px 24px;flex:1}
+.zp-body{overflow-y:auto;padding:22px 24px;flex:1;min-height:0}
 .zp-power-badge{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:12px;
   font-family:var(--font-display);font-weight:800;font-size:13px;margin-bottom:16px;border:1.5px solid}
 .zp-vocab-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
@@ -4553,19 +4553,37 @@ function openZonePopup(map) {
     }
   }
 
-  // Ünite listesi
+  // Ünite listesi - inline JSON yerine index kullan
   var lessonListEl = document.getElementById('zpLessonList');
   if (lessonListEl) {
-    lessonListEl.innerHTML = map.units.slice(0, 6).map(function(u, i) {
-      return '<div onclick="closeZonePopup();openLesson(' + JSON.stringify(u).replace(/'/g,"&#39;") + ',' + JSON.stringify(map).replace(/'/g,"&#39;") + ')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor=&quot;' + map.color1 + '&quot;;this.style.background=&quot;var(--green-soft)&quot;" onmouseout="this.style.borderColor=&quot;var(--line)&quot;;this.style.background=&quot;var(--surface-2)&quot;">'
-        + '<div style="width:32px;height:32px;border-radius:10px;background:' + map.color1 + '22;color:' + map.color1 + ';display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:13px">' + (i + 1) + '</div>'
-        + '<div style="flex:1"><div style="font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--ink)">' + u.title + '</div>'
+    lessonListEl.innerHTML = map.units.slice(0, 8).map(function(u, i) {
+      return '<div class="zp-unit-row" data-unit-idx="' + i + '" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer;transition:all .18s">'
+        + '<div style="width:32px;height:32px;border-radius:10px;background:' + map.color1 + '22;color:' + map.color1 + ';display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:13px;flex-shrink:0">' + (i + 1) + '</div>'
+        + '<div style="flex:1;min-width:0"><div style="font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--ink)">' + u.title + '</div>'
         + '<div style="font-size:11px;color:var(--ink-soft);font-weight:600">' + (u.sub || '') + '</div></div>'
-        + '<span style="color:var(--ink-faint);font-size:16px">›</span></div>';
+        + '<span style="color:var(--ink-faint);font-size:18px;flex-shrink:0">›</span></div>';
     }).join('');
-    if (map.units.length > 6) {
-      lessonListEl.innerHTML += '<div style="text-align:center;font-size:12px;color:var(--ink-faint);font-weight:700;padding:8px">+' + (map.units.length - 6) + ' ünite daha…</div>';
+
+    if (map.units.length > 8) {
+      lessonListEl.innerHTML += '<div style="text-align:center;font-size:12px;color:var(--ink-faint);font-weight:700;padding:8px">+' + (map.units.length - 8) + ' ünite daha…</div>';
     }
+
+    // Event listener'ları sonradan ekle - inline onclick yok
+    lessonListEl.querySelectorAll('.zp-unit-row').forEach(function(row) {
+      var idx = parseInt(row.getAttribute('data-unit-idx'));
+      row.addEventListener('click', function() {
+        closeZonePopup();
+        openLesson(map.units[idx], map);
+      });
+      row.addEventListener('mouseover', function() {
+        this.style.borderColor = map.color1;
+        this.style.background = 'var(--green-soft)';
+      });
+      row.addEventListener('mouseout', function() {
+        this.style.borderColor = 'var(--line)';
+        this.style.background = 'var(--surface-2)';
+      });
+    });
   }
 
   // Start button
