@@ -572,6 +572,12 @@ firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(fun
 
 var geCurrentUser=null,geStudentInfo=null;
 var geAuthResolved=false;
+
+// Auth callback'ten önce tanımlanmalı
+window.showLoginModal=function(){var m=document.getElementById('geLoginModal');if(m)m.classList.remove('hidden');};
+window.hideLoginModal=function(){var m=document.getElementById('geLoginModal');if(m)m.classList.add('hidden');};
+window.updateNavbar=window.updateNavbar||function(){};
+
 firebase.auth().onAuthStateChanged(async function(user){
   geCurrentUser=user;
   if(user){
@@ -3369,10 +3375,6 @@ function renderMaps() {
 }
 
 
-    grid.appendChild(card);
-  });
-}
-
 // ── UNIT PANEL ────────────────────────
 function openUnitPanel(map) {
   var overlay = document.getElementById('unitOverlay');
@@ -4555,7 +4557,7 @@ function openZonePopup(map) {
   var lessonListEl = document.getElementById('zpLessonList');
   if (lessonListEl) {
     lessonListEl.innerHTML = map.units.slice(0, 6).map(function(u, i) {
-      return '<div onclick="closeZonePopup();openLesson(' + JSON.stringify(u) + ',' + JSON.stringify(map) + ')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='' + map.color1 + '';this.style.background='var(--green-soft)'" onmouseout="this.style.borderColor='var(--line)';this.style.background='var(--surface-2)'">'
+      return '<div onclick="closeZonePopup();openLesson(' + JSON.stringify(u).replace(/'/g,"&#39;") + ',' + JSON.stringify(map).replace(/'/g,"&#39;") + ')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor=&quot;' + map.color1 + '&quot;;this.style.background=&quot;var(--green-soft)&quot;" onmouseout="this.style.borderColor=&quot;var(--line)&quot;;this.style.background=&quot;var(--surface-2)&quot;">'
         + '<div style="width:32px;height:32px;border-radius:10px;background:' + map.color1 + '22;color:' + map.color1 + ';display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:13px">' + (i + 1) + '</div>'
         + '<div style="flex:1"><div style="font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--ink)">' + u.title + '</div>'
         + '<div style="font-size:11px;color:var(--ink-soft);font-weight:600">' + (u.sub || '') + '</div></div>'
