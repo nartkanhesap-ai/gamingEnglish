@@ -643,8 +643,10 @@ firebase.auth().onAuthStateChanged(async function(user){
       <div id="zpPowerDesc" style="font-size:13px;color:var(--ink-soft);font-weight:600;line-height:1.6;margin-bottom:18px"></div>
 
       <!-- Example -->
-      <div style="font-size:12px;font-weight:800;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Örnek Cümle</div>
-      <div class="zp-example" id="zpExample"></div>
+      <div id="zpExampleWrap">
+        <div style="font-size:12px;font-weight:800;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Örnek Cümle</div>
+        <div class="zp-example" id="zpExample"></div>
+      </div>
 
       <!-- Vocab pills -->
       <div style="font-size:12px;font-weight:800;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.5px;margin-top:16px;margin-bottom:8px">Bu ünitede öğreneceklerin</div>
@@ -4535,9 +4537,11 @@ function openZonePopup(map) {
   }
   if (example && exampleEl) {
     exampleEl.innerHTML = example.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    exampleEl.parentElement.style.display = 'block';
+    var wrap = document.getElementById('zpExampleWrap');
+    if (wrap) wrap.style.display = 'block';
   } else if (exampleEl) {
-    exampleEl.parentElement.style.display = 'none';
+    var wrap = document.getElementById('zpExampleWrap');
+    if (wrap) wrap.style.display = 'none';
   }
 
   // Vocab pills
