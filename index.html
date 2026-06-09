@@ -594,12 +594,14 @@ firebase.auth().onAuthStateChanged(async function(user){
       geAuthResolved=true;
       hideLoginModal();
       updateNavbar();
+      loadUserProgress(user.uid);
     }catch(err){
       geStudentInfo={firstName:user.email.split("@")[0],lastName:""};
       window.geStudentInfo=geStudentInfo;window.geCurrentUser=user;
       geAuthResolved=true;
       hideLoginModal();
       updateNavbar();
+      loadUserProgress(user.uid);
     }
   }else{
     geStudentInfo=null;
@@ -2620,10 +2622,23 @@ function renderLessonNav(body, idx, total, stepType) {
     rightBtn.className = 'btn btn-amber btn-md';
     rightBtn.innerHTML = '🏆 Üniteyi Tamamla!';
     rightBtn.onclick = function() {
+      // Üniteyi tamamlandı olarak işaretle — kişiye özel Firestore kaydı
+      var map = currentLesson.map;
+      var unit = currentLesson.unit;
+      var mapKey = map.id || map.title;
+      var unitIdx = map.units.findIndex(function(u) { return u.title === unit.title; });
+      if (unitIdx >= 0) markUnitComplete(mapKey, unitIdx);
+
       closeLesson();
-      // Skor göster
+      // XP ekle
+      try {
+        var xp = parseInt(localStorage.getItem('ge_xp') || '0') + 150;
+        localStorage.setItem('ge_xp', xp);
+      } catch(e) {}
+
+      // Tamamlama kutlaması
       setTimeout(function() {
-        if (confirm('Tebrikler! ' + currentLesson.unit.title + ' ünitesini tamamladın! 🎉\n\nOyunlarla pekiştirmek ister misin?')) {
+        if (confirm('Tebrikler! ' + unit.title + ' ünitesini tamamladın! 🎉\n\n+150 XP kazandın!\n\nOyunlarla pekiştirmek ister misin?')) {
           openKelimeOyunlari();
         }
       }, 300);
@@ -3313,6 +3328,106 @@ async function geHandleLogin(e) {
     btn.disabled = false; btn.textContent = 'Giriş Yap';
   }
 }
+// ══════════════════════════════════════════════════════
+// KİŞİSEL İLERLEME SİSTEMİ — Firestore tabanlı
+// Her kullanıcının ilerlemesi kendi uid'i altında tutulur
+// ══════════════════════════════════════════════════════
+
+// Bellekte tutulan tamamlanan üniteler: { "mapId__unitIdx": true }
+window._userCompletedUnits = {};
+
+// Firestore'dan bu kullanıcının tüm ilerlemesini yükle
+async function loadUserProgress(uid) {
+  if (!uid) return;
+  try {
+    var doc = await firebase.firestore()
+      .collection('gamingEnglishProgress')
+      .doc(uid)
+      .get();
+    if (doc.exists) {
+      window._userCompletedUnits = doc.data().completed || {};
+    } else {
+      window._userCompletedUnits = {};
+    }
+  } catch(e) {
+    // Firestore erişim hatası - localStorage'a düş
+    try {
+      var saved = localStorage.getItem('ge_progress_' + uid);
+      window._userCompletedUnits = saved ? JSON.parse(saved) : {};
+    } catch(e2) { window._userCompletedUnits = {}; }
+  }
+  // Dashboard ve harita kartlarını güncelle
+  renderHomeDashboard();
+  if (document.getElementById('view-maps') && document.getElementById('view-maps').classList.contains('active')) {
+    renderMaps();
+  }
+}
+
+// Ünite tamamlandığında Firestore'a kaydet
+async function markUnitComplete(mapId, unitIdx) {
+  var uid = window.geCurrentUser && window.geCurrentUser.uid;
+  if (!uid) return;
+  var key = mapId + '__' + unitIdx;
+  window._userCompletedUnits[key] = true;
+
+  // Firestore'a kaydet
+  try {
+    await firebase.firestore()
+      .collection('gamingEnglishProgress')
+      .doc(uid)
+      .set({ completed: window._userCompletedUnits }, { merge: true });
+  } catch(e) {
+    console.warn('Firestore kayıt hatası, localStorage kullanılıyor:', e);
+  }
+  // localStorage yedek
+  try {
+    localStorage.setItem('ge_progress_' + uid, JSON.stringify(window._userCompletedUnits));
+  } catch(e) {}
+
+  // Harita kartlarını güncelle (% sayacı)
+  refreshMapProgress();
+}
+
+// Harita kartlarındaki % barlarını güncelle (sayfa yeniden render etmeden)
+function refreshMapProgress() {
+  GE_MAPS.forEach(function(map) {
+    var mapKey = map.id || map.title;
+    var done = map.units.filter(function(u, i) {
+      return !!(window._userCompletedUnits[mapKey + '__' + i]);
+    }).length;
+    var pct = Math.round(done / map.units.length * 100);
+
+    // Kart progress bar
+    var cards = document.querySelectorAll('.map-card-new');
+    cards.forEach(function(card) {
+      var titleEl = card.querySelector('.mcn-title');
+      if (titleEl && titleEl.textContent === map.title) {
+        var bar = card.querySelector('.mcn-progress-bar i');
+        if (bar) bar.style.width = pct + '%';
+        var progEl = card.querySelector('.mcn-prog');
+        if (progEl) progEl.textContent = pct + '% tamamlandı';
+      }
+    });
+  });
+
+  // Dashboard'daki XP ve rozet sayısını da güncelle
+  updateStatPills();
+}
+
+// Toplam tamamlanma yüzdesini hesapla (tüm 45 ünite üzerinden)
+function calcOverallProgress() {
+  var total = 0;
+  var done = 0;
+  GE_MAPS.forEach(function(map) {
+    var mapKey = map.id || map.title;
+    total += map.units.length;
+    done += map.units.filter(function(u, i) {
+      return !!(window._userCompletedUnits[mapKey + '__' + i]);
+    }).length;
+  });
+  return total > 0 ? Math.round(done / total * 100) : 0;
+}
+
 function geLogout() {
   firebase.auth().signOut().then(function() {
     geCurrentUser = null; geStudentInfo = null;
@@ -3335,9 +3450,11 @@ function renderMaps() {
     card.className = 'map-card-new fade-up' + (isLocked ? ' locked' : '');
     card.style.animationDelay = (idx * 0.08) + 's';
 
-    // Ünite tamamlama yüzdesi (mock)
-    var doneUnits = 0;
-    try { doneUnits = parseInt(localStorage.getItem('ge_done_' + map.id) || '0'); } catch(e) {}
+    // Ünite tamamlama yüzdesi — Firestore'dan kişisel veri
+    var mapKey = map.id || map.title;
+    var doneUnits = map.units.filter(function(u, i) {
+      return !!(window._userCompletedUnits && window._userCompletedUnits[mapKey + '__' + i]);
+    }).length;
     var totalUnits = map.units.length;
     var pct = totalUnits > 0 ? Math.min(100, Math.round((doneUnits / totalUnits) * 100)) : 0;
 
@@ -4557,22 +4674,47 @@ function openZonePopup(map) {
     }
   }
 
-  // Ünite listesi - inline JSON yerine index kullan
+  // Ünite listesi - tüm üniteler, index-based event listener
   var lessonListEl = document.getElementById('zpLessonList');
   if (lessonListEl) {
-    lessonListEl.innerHTML = map.units.slice(0, 8).map(function(u, i) {
-      return '<div class="zp-unit-row" data-unit-idx="' + i + '" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:var(--surface-2);border:1.5px solid var(--line);cursor:pointer;transition:all .18s">'
+    // Her üyenin kendi ilerlemesini yükle
+    var completedSet = window._userCompletedUnits || {};
+    var mapKey = map.id || map.title;
+
+    lessonListEl.innerHTML = map.units.map(function(u, i) {
+      var unitKey = mapKey + '__' + i;
+      var isDone = !!(completedSet[unitKey]);
+      var doneStyle = isDone
+        ? 'background:var(--green-soft);border-color:var(--green);'
+        : 'background:var(--surface-2);border:1.5px solid var(--line);';
+      var checkIcon = isDone
+        ? '<span style="color:var(--green);font-size:18px;flex-shrink:0">✓</span>'
+        : '<span style="color:var(--ink-faint);font-size:18px;flex-shrink:0">›</span>';
+      return '<div class="zp-unit-row" data-unit-idx="' + i + '" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;cursor:pointer;transition:all .18s;' + doneStyle + '">'
         + '<div style="width:32px;height:32px;border-radius:10px;background:' + map.color1 + '22;color:' + map.color1 + ';display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:13px;flex-shrink:0">' + (i + 1) + '</div>'
         + '<div style="flex:1;min-width:0"><div style="font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--ink)">' + u.title + '</div>'
         + '<div style="font-size:11px;color:var(--ink-soft);font-weight:600">' + (u.sub || '') + '</div></div>'
-        + '<span style="color:var(--ink-faint);font-size:18px;flex-shrink:0">›</span></div>';
+        + checkIcon + '</div>';
     }).join('');
 
-    if (map.units.length > 8) {
-      lessonListEl.innerHTML += '<div style="text-align:center;font-size:12px;color:var(--ink-faint);font-weight:700;padding:8px">+' + (map.units.length - 8) + ' ünite daha…</div>';
+    // Tamamlanan ünite sayısı başlığa ekle
+    var doneCount = map.units.filter(function(u, i) {
+      return !!(completedSet[(map.id || map.title) + '__' + i]);
+    }).length;
+    var pct = Math.round(doneCount / map.units.length * 100);
+    var zpName2 = document.getElementById('zpName');
+    if (zpName2) {
+      var pctBadge = document.getElementById('zpProgressBadge');
+      if (!pctBadge) {
+        pctBadge = document.createElement('span');
+        pctBadge.id = 'zpProgressBadge';
+        pctBadge.style.cssText = 'font-size:12px;font-weight:800;padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.22);margin-left:10px;vertical-align:middle';
+        zpName2.parentNode.insertBefore(pctBadge, zpName2.nextSibling);
+      }
+      pctBadge.textContent = '%' + pct + ' tamamlandı';
     }
 
-    // Event listener'ları sonradan ekle - inline onclick yok
+    // Event listener'lar
     lessonListEl.querySelectorAll('.zp-unit-row').forEach(function(row) {
       var idx = parseInt(row.getAttribute('data-unit-idx'));
       row.addEventListener('click', function() {
@@ -4584,8 +4726,10 @@ function openZonePopup(map) {
         this.style.background = 'var(--green-soft)';
       });
       row.addEventListener('mouseout', function() {
-        this.style.borderColor = 'var(--line)';
-        this.style.background = 'var(--surface-2)';
+        var unitKey = (map.id || map.title) + '__' + idx;
+        var done = !!(window._userCompletedUnits && window._userCompletedUnits[unitKey]);
+        this.style.borderColor = done ? 'var(--green)' : 'var(--line)';
+        this.style.background = done ? 'var(--green-soft)' : 'var(--surface-2)';
       });
     });
   }
