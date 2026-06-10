@@ -2644,10 +2644,17 @@ function renderLessonNav(body, idx, total, stepType) {
       // Kaydet
       if (unitIdx >= 0) markUnitComplete(mapKey, unitIdx);
       awardGems(earnedGems);
-      try {
-        var xp = parseInt(localStorage.getItem('ge_xp') || '0') + earnedXP;
-        localStorage.setItem('ge_xp', xp);
-      } catch(e) {}
+      awardXP(earnedXP, 'unit_complete');
+
+      // Doğru cevap sayısını Firestore'a ekle
+      var uid = window.geCurrentUser && window.geCurrentUser.uid;
+      if (uid && correctCount > 0) {
+        try {
+          firebase.firestore().collection('users').doc(uid).set({
+            correctAnswers: firebase.firestore.FieldValue.increment(correctCount)
+          }, { merge: true });
+        } catch(e) {}
+      }
 
       // Güzel tamamlama modalı göster
       showCompletionModal(unit, map, earnedGems, earnedXP);
@@ -3157,7 +3164,18 @@ function checkQuizComplete(total) {
       var correct = Object.values(currentLesson.quizAnswers).filter(Boolean).length;
       var allCorrect = correct === total;
       var bonusGems = allCorrect ? 10 : 0;
-      if (bonusGems > 0) awardGems(bonusGems);
+      if (bonusGems > 0) {
+        awardGems(bonusGems);
+        // Perfect quiz sayacını artır
+        var uid2 = window.geCurrentUser && window.geCurrentUser.uid;
+        if (uid2) {
+          try {
+            firebase.firestore().collection('users').doc(uid2).set({
+              perfectQuizzes: firebase.firestore.FieldValue.increment(1)
+            }, { merge: true });
+          } catch(e) {}
+        }
+      }
       var resultDiv = document.createElement('div');
       resultDiv.style.cssText = 'background:var(--green-soft);border:2px solid var(--green);border-radius:16px;padding:20px;text-align:center;margin-top:16px;animation:fadeUp .4s both';
       resultDiv.innerHTML = '<div style="font-size:48px;margin-bottom:8px">🏆</div>'
@@ -3358,21 +3376,34 @@ window._userCompletedUnits = {};
 async function loadUserProgress(uid) {
   if (!uid) return;
   try {
-    // Ana kullanıcı dökümanından gem'i de çek
+    // Ana kullanıcı dökümanından tüm verileri çek
     var userDoc = await firebase.firestore().collection('users').doc(uid).get();
     if (userDoc.exists) {
       var data = userDoc.data();
+      // Gems
       var gems = data.gems !== undefined ? data.gems : 0;
       try { localStorage.setItem('ge_gems', gems); } catch(e) {}
+      // XP
+      if (data.xp !== undefined) {
+        try { localStorage.setItem('ge_xp', data.xp); } catch(e) {}
+      }
+      // Streak
+      if (data.streak !== undefined) {
+        try { localStorage.setItem('ge_streak', data.streak); } catch(e) {}
+      }
+      // Rozetler
+      if (data.badges) {
+        _userEarnedBadges = data.badges;
+      }
     }
 
-    // Gaming progress
-    var doc = await firebase.firestore()
+    // Gaming progress (tamamlanan üniteler)
+    var progressDoc = await firebase.firestore()
       .collection('users').doc(uid)
       .collection('gamingProgress').doc('progress')
       .get();
-    if (doc.exists) {
-      window._userCompletedUnits = doc.data().completed || {};
+    if (progressDoc.exists) {
+      window._userCompletedUnits = progressDoc.data().completed || {};
     } else {
       window._userCompletedUnits = {};
     }
@@ -3382,6 +3413,10 @@ async function loadUserProgress(uid) {
       window._userCompletedUnits = saved ? JSON.parse(saved) : {};
     } catch(e2) { window._userCompletedUnits = {}; }
   }
+
+  // Günlük giriş streak ve XP kontrolü
+  await handleDailyLogin();
+
   renderHomeDashboard();
   if (document.getElementById('view-maps') && document.getElementById('view-maps').classList.contains('active')) {
     renderMaps();
@@ -3446,27 +3481,24 @@ function refreshMapProgress() {
 // Gem ver — Firestore + localStorage
 async function awardGems(amount) {
   if (!amount || amount <= 0) return;
-  // localStorage güncelle
   var cur = 0;
   try { cur = parseInt(localStorage.getItem('ge_gems') || '0'); } catch(e) {}
   cur += amount;
   try { localStorage.setItem('ge_gems', cur); } catch(e) {}
 
-  // Firestore'a kaydet
   var uid = window.geCurrentUser && window.geCurrentUser.uid;
   if (uid) {
     try {
-      await firebase.firestore().collection('users').doc(uid)
-        .set({ gems: firebase.firestore.FieldValue.increment(amount) }, { merge: true });
+      await firebase.firestore().collection('users').doc(uid).set({
+        gems: firebase.firestore.FieldValue.increment(amount),
+        totalGemsEarned: firebase.firestore.FieldValue.increment(amount)
+      }, { merge: true });
     } catch(e) {
-      // FieldValue increment desteklenmiyorsa set ile yaz
       try {
-        await firebase.firestore().collection('users').doc(uid)
-          .set({ gems: cur }, { merge: true });
+        await firebase.firestore().collection('users').doc(uid).set({ gems: cur }, { merge: true });
       } catch(e2) {}
     }
   }
-  // Topbar ve hero card güncelle
   updateStatPills();
 }
 
@@ -4482,22 +4514,347 @@ var GE_QUESTS = [
   { id: 'q4', icon: '🔥', title: 'Seriyi koru', xp: 15, goal: 1, done: 1, color: 'var(--coral)', colorSoft: 'var(--coral-soft)' },
 ];
 
-var GE_BADGES = [
-  { icon: '🔥', name: '7 Gün Serisi', color: 'var(--coral-soft)', earned: true },
-  { icon: '📖', name: 'İlk Ders', color: 'var(--green-soft)', earned: true },
-  { icon: '🎯', name: '100 Kelime', color: 'var(--amber-soft)', earned: true },
-  { icon: '👂', name: 'Keskin Kulak', color: 'var(--sky-soft)', earned: true },
-  { icon: '⚡', name: 'Hız Şampiyonu', color: 'var(--violet-soft)', earned: false },
-  { icon: '🏆', name: 'Zirve Fatihi', color: 'var(--amber-soft)', earned: false },
+// ══════════════════════════════════════════════════════════════════
+// ROZET TANIMI — 18 rozet, Firestore'dan earned durumu güncellenir
+// ══════════════════════════════════════════════════════════════════
+var GE_BADGE_DEFS = [
+  // Giriş & Streak
+  { id:'first_login',    icon:'🌟', name:'İlk Adım',        desc:'Sisteme ilk kez giriş yaptın',           color:'#FFC53D', check: function(s){ return s.totalLogins >= 1; } },
+  { id:'streak3',        icon:'🔥', name:'3 Gün Serisi',    desc:'3 gün üst üste giriş yaptın',           color:'#E5603C', check: function(s){ return s.streak >= 3; } },
+  { id:'streak7',        icon:'💥', name:'Hafta Dolusu',    desc:'7 gün üst üste giriş yaptın',           color:'#E5603C', check: function(s){ return s.streak >= 7; } },
+  { id:'streak30',       icon:'🌋', name:'Bir Ay Boyunca',  desc:'30 gün üst üste giriş yaptın',          color:'#E5603C', check: function(s){ return s.streak >= 30; } },
+  // Ünite & Ders
+  { id:'first_unit',     icon:'📖', name:'İlk Ders',        desc:'İlk üniteni tamamladın',                color:'#1E8A53', check: function(s){ return s.completedUnits >= 1; } },
+  { id:'units5',         icon:'📚', name:'Beş Ünite',       desc:'5 ünite tamamladın',                    color:'#1E8A53', check: function(s){ return s.completedUnits >= 5; } },
+  { id:'units20',        icon:'🎓', name:'Azimli Öğrenci',  desc:'20 ünite tamamladın',                   color:'#1E8A53', check: function(s){ return s.completedUnits >= 20; } },
+  { id:'map_complete',   icon:'🗺️', name:'Harita Fatihi',   desc:'Bir haritanın tüm ünitelerini bitirdin', color:'#2E9BD6', check: function(s){ return s.completedMaps >= 1; } },
+  // XP & Seviye
+  { id:'xp500',          icon:'⭐', name:'İlk 500',         desc:'500 XP kazandın',                       color:'#F2A23C', check: function(s){ return s.xp >= 500; } },
+  { id:'xp2000',         icon:'🌠', name:'XP Avcısı',       desc:'2000 XP kazandın',                      color:'#F2A23C', check: function(s){ return s.xp >= 2000; } },
+  { id:'level5',         icon:'🚀', name:'Seviye 5',        desc:'Seviye 5\'e ulaştın',                   color:'#7C6BF0', check: function(s){ return s.level >= 5; } },
+  { id:'level10',        icon:'💫', name:'Çift Hane',       desc:'Seviye 10\'a ulaştın',                  color:'#7C6BF0', check: function(s){ return s.level >= 10; } },
+  // Quiz & Doğruluk
+  { id:'perfect_quiz',   icon:'🎯', name:'Nişancı',         desc:'Bir quizde tüm soruları doğru cevapladın', color:'#E5603C', check: function(s){ return s.perfectQuizzes >= 1; } },
+  { id:'quiz50',         icon:'🧠', name:'Quiz Ustası',     desc:'50 quiz sorusunu doğru cevapladın',     color:'#E5603C', check: function(s){ return s.correctAnswers >= 50; } },
+  // Gem & Oyun
+  { id:'gems100',        icon:'💎', name:'Mücevher Avcısı', desc:'100 mücevher topladın',                 color:'#2E9BD6', check: function(s){ return s.totalGemsEarned >= 100; } },
+  { id:'gems500',        icon:'💠', name:'Hazine Bekçisi',  desc:'500 mücevher topladın',                 color:'#2E9BD6', check: function(s){ return s.totalGemsEarned >= 500; } },
+  { id:'games5',         icon:'🎮', name:'Oyun Tutkunu',    desc:'5 farklı oyunu oynadın',                color:'#7C6BF0', check: function(s){ return s.uniqueGamesPlayed >= 5; } },
+  { id:'all_games',      icon:'🏅', name:'Her Şeyi Dene',   desc:'Tüm 6 oyunu en az bir kez oynadın',    color:'#F2A23C', check: function(s){ return s.uniqueGamesPlayed >= 6; } },
 ];
 
+// Kullanıcının kazandığı rozet id'leri (Firestore'dan gelir)
+var _userEarnedBadges = {};
+
+// Leaderboard statik (ileride Firestore'dan çekilebilir)
 var GE_LEADERBOARD = [
   { name: 'Defne', xp: 2840, you: false, av: '🦉', rank: 1 },
-  { name: 'Sen', xp: 2310, you: true, av: '🦊', rank: 2 },
+  { name: 'Sen',   xp: 2310, you: true,  av: '🦊', rank: 2 },
   { name: 'Kerem', xp: 2190, you: false, av: '🐻', rank: 3 },
-  { name: 'Zeynep', xp: 1760, you: false, av: '🐰', rank: 4 },
-  { name: 'Arda', xp: 1320, you: false, av: '🦅', rank: 5 },
+  { name: 'Zeynep',xp: 1760, you: false, av: '🐰', rank: 4 },
+  { name: 'Arda',  xp: 1320, you: false, av: '🦅', rank: 5 },
 ];
+
+// GE_BADGES — renderBadgeShelf için uyumlu format üret
+function getGeBadges() {
+  return GE_BADGE_DEFS.map(function(b) {
+    return Object.assign({}, b, { earned: !!_userEarnedBadges[b.id] });
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// XP & SEVİYE — katlanarak artan sistem (500, 1000, 1500, ...)
+// level N için gereken toplam XP: 500*N*(N+1)/2
+// ══════════════════════════════════════════════════════════════════
+function xpForLevel(n) {
+  // Seviye n'e ulaşmak için gereken toplam XP
+  return 500 * n * (n + 1) / 2;
+}
+function getLevelFromXP(xp) {
+  var level = 0;
+  while (xpForLevel(level + 1) <= xp) level++;
+  return Math.max(1, level);
+}
+function xpInCurrentLevel(xp) {
+  var level = getLevelFromXP(xp);
+  var prev = level > 1 ? xpForLevel(level - 1) : 0;
+  return xp - prev;
+}
+function xpNeededForNextLevel(xp) {
+  var level = getLevelFromXP(xp);
+  var prev = level > 1 ? xpForLevel(level - 1) : 0;
+  var next = xpForLevel(level);
+  return next - prev;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// STREAK — Türkiye saati (UTC+3) tabanlı
+// ══════════════════════════════════════════════════════════════════
+function getTRDateString() {
+  var now = new Date();
+  var tr = new Date(now.getTime() + (3 * 60 * 60 * 1000));
+  return tr.toISOString().slice(0, 10); // "2026-06-10"
+}
+
+async function handleDailyLogin() {
+  var uid = window.geCurrentUser && window.geCurrentUser.uid;
+  if (!uid) return;
+
+  var today = getTRDateString();
+  var lastLogin = null;
+  var streak = 0;
+  var streakProtectionUsed = false;
+  var loginXP = 2;
+
+  try {
+    var doc = await firebase.firestore().collection('users').doc(uid).get();
+    if (doc.exists) {
+      var d = doc.data();
+      lastLogin = d.lastLoginDate || null;
+      streak = d.streak || 0;
+      streakProtectionUsed = d.streakProtectionUsed || false;
+    }
+  } catch(e) {}
+
+  if (lastLogin === today) {
+    // Bugün zaten giriş yapılmış, sadece güncelle
+    try { localStorage.setItem('ge_streak', streak); } catch(e) {}
+    updateStatPills();
+    return;
+  }
+
+  // Dün mü giriş yapıldı?
+  var yesterday = new Date(new Date().getTime() + 3*3600*1000 - 86400*1000).toISOString().slice(0,10);
+  var twoDaysAgo = new Date(new Date().getTime() + 3*3600*1000 - 2*86400*1000).toISOString().slice(0,10);
+
+  var newStreak = streak;
+  var newProtectionUsed = false;
+
+  if (lastLogin === yesterday) {
+    // Dün giriş yapıldı — streak devam
+    newStreak = streak + 1;
+    newProtectionUsed = false;
+  } else if (lastLogin === twoDaysAgo && !streakProtectionUsed) {
+    // 1 gün atlandı ama koruma kullanılmadı — streak kurtarıldı
+    newStreak = streak + 1;
+    newProtectionUsed = true; // bu hafta koruma hakkı kullanıldı
+    showStreakProtectionToast();
+  } else if (lastLogin === null) {
+    // İlk giriş
+    newStreak = 1;
+    newProtectionUsed = false;
+  } else {
+    // Streak kırıldı
+    if (streak > 0) showStreakBrokenToast(streak);
+    newStreak = 1;
+    newProtectionUsed = false;
+  }
+
+  // Giriş XP hesapla: 2 * 2^(streak gün sayısı cinsinden katsayı), max 128
+  // Her ardışık gün 2 katı: 2, 4, 8, 16, 32, 64, 128 (7+ gün sonrası sabit 128)
+  loginXP = Math.min(128, Math.pow(2, Math.min(newStreak, 7)));
+
+  // Firestore güncelle
+  var updates = {
+    lastLoginDate: today,
+    streak: newStreak,
+    streakProtectionUsed: newProtectionUsed,
+    totalLogins: firebase.firestore.FieldValue.increment(1),
+    xp: firebase.firestore.FieldValue.increment(loginXP),
+    gems: firebase.firestore.FieldValue.increment(newStreak >= 7 ? 5 : 1), // streak bonusu
+  };
+  try {
+    await firebase.firestore().collection('users').doc(uid).set(updates, { merge: true });
+  } catch(e) { console.warn('Streak update failed:', e); }
+
+  // localStorage güncelle
+  try {
+    localStorage.setItem('ge_streak', newStreak);
+    var curXP = parseInt(localStorage.getItem('ge_xp') || '0') + loginXP;
+    localStorage.setItem('ge_xp', curXP);
+  } catch(e) {}
+
+  // Bildirim göster
+  if (newStreak > 1) {
+    showLoginXPToast(newStreak, loginXP);
+  }
+
+  // Rozet kontrolü
+  await checkAndAwardBadges();
+  updateStatPills();
+}
+
+function showStreakProtectionToast() {
+  showToast('🛡️ Streak Koruması Devreye Girdi!', 'Dün atlasaydın streak\'in kırılacaktı. Haftada 1 hakkın vardı!', 'var(--amber)');
+}
+function showStreakBrokenToast(oldStreak) {
+  showToast('💔 ' + oldStreak + ' Günlük Streak Kırıldı', 'Üzme kendini! Bugünden yeni seri başlıyor 💪', 'var(--coral)');
+}
+function showLoginXPToast(streak, xp) {
+  showToast('🔥 ' + streak + ' Günlük Seri! +' + xp + ' XP', streak >= 7 ? 'Muhteşem seri! +5 💎 bonus!' : 'Her gün giriş yap, ödüller katlanır!', 'var(--green)');
+}
+
+// Genel toast bildirimi
+function showToast(title, message, color) {
+  var existing = document.getElementById('geToast');
+  if (existing) existing.remove();
+  var toast = document.createElement('div');
+  toast.id = 'geToast';
+  toast.style.cssText = 'position:fixed;bottom:88px;left:50%;transform:translateX(-50%);z-index:99999;'
+    + 'background:var(--surface);border:2px solid ' + (color||'var(--green)') + ';border-radius:20px;'
+    + 'padding:14px 22px;box-shadow:0 8px 32px rgba(0,0,0,.2);min-width:280px;max-width:420px;'
+    + 'animation:popIn .4s cubic-bezier(.34,1.56,.64,1);';
+  toast.innerHTML = '<div style="font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--ink)">' + title + '</div>'
+    + '<div style="font-size:13px;color:var(--ink-soft);margin-top:3px">' + message + '</div>';
+  document.body.appendChild(toast);
+  setTimeout(function() {
+    toast.style.animation = 'fadeIn .3s reverse forwards';
+    setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 350);
+  }, 3500);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ROZET KONTROLÜ — her önemli olaydan sonra çalıştır
+// ══════════════════════════════════════════════════════════════════
+async function checkAndAwardBadges() {
+  var uid = window.geCurrentUser && window.geCurrentUser.uid;
+  if (!uid) return;
+
+  // Mevcut istatistikleri topla
+  var xp = 0, streak = 0, totalLogins = 0, correctAnswers = 0, perfectQuizzes = 0;
+  var totalGemsEarned = 0, uniqueGamesPlayed = 0;
+  try {
+    xp = parseInt(localStorage.getItem('ge_xp') || '0');
+    streak = parseInt(localStorage.getItem('ge_streak') || '0');
+  } catch(e) {}
+
+  // Firestore'dan tam istatistikleri çek
+  try {
+    var doc = await firebase.firestore().collection('users').doc(uid).get();
+    if (doc.exists) {
+      var d = doc.data();
+      xp = d.xp || xp;
+      streak = d.streak || streak;
+      totalLogins = d.totalLogins || 0;
+      correctAnswers = d.correctAnswers || 0;
+      perfectQuizzes = d.perfectQuizzes || 0;
+      totalGemsEarned = d.totalGemsEarned || 0;
+      uniqueGamesPlayed = (d.gamesPlayed ? Object.keys(d.gamesPlayed).length : 0);
+    }
+  } catch(e) {}
+
+  // Tamamlanan ünite ve harita sayısı
+  var completedUnits = Object.keys(window._userCompletedUnits || {}).length;
+  var completedMaps = 0;
+  if (window.GE_MAPS) {
+    GE_MAPS.forEach(function(map) {
+      var mapKey = map.id || map.title;
+      var done = map.units.filter(function(u, i) {
+        return !!(window._userCompletedUnits && window._userCompletedUnits[mapKey + '__' + i]);
+      }).length;
+      if (done === map.units.length) completedMaps++;
+    });
+  }
+
+  var stats = {
+    xp: xp,
+    level: getLevelFromXP(xp),
+    streak: streak,
+    totalLogins: totalLogins,
+    completedUnits: completedUnits,
+    completedMaps: completedMaps,
+    correctAnswers: correctAnswers,
+    perfectQuizzes: perfectQuizzes,
+    totalGemsEarned: totalGemsEarned,
+    uniqueGamesPlayed: uniqueGamesPlayed,
+  };
+
+  // Yeni kazanılan rozetleri bul
+  var newlyEarned = [];
+  GE_BADGE_DEFS.forEach(function(badge) {
+    if (!_userEarnedBadges[badge.id] && badge.check(stats)) {
+      _userEarnedBadges[badge.id] = true;
+      newlyEarned.push(badge);
+    }
+  });
+
+  if (newlyEarned.length > 0) {
+    // Firestore'a kaydet
+    var badgeUpdate = {};
+    newlyEarned.forEach(function(b) { badgeUpdate['badges.' + b.id] = true; });
+    try {
+      await firebase.firestore().collection('users').doc(uid).set(badgeUpdate, { merge: true });
+    } catch(e) {}
+
+    // Her rozet için kutlama göster (art arda)
+    newlyEarned.forEach(function(badge, i) {
+      setTimeout(function() { showBadgeEarnedModal(badge); }, i * 4000);
+    });
+
+    // Rozet rafını güncelle
+    renderBadgeShelf();
+    updateStatPills();
+  }
+}
+
+// Rozet kazanıldı modalı
+function showBadgeEarnedModal(badge) {
+  var existing = document.getElementById('badgeModal');
+  if (existing) existing.remove();
+  var overlay = document.createElement('div');
+  overlay.id = 'badgeModal';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:99995;display:flex;align-items:center;justify-content:center;'
+    + 'background:rgba(8,15,26,.6);backdrop-filter:blur(4px);padding:20px;';
+  overlay.innerHTML = '<div style="background:var(--surface);border-radius:24px;padding:32px 36px;text-align:center;'
+    + 'box-shadow:0 32px 80px rgba(0,0,0,.4);animation:popIn .4s cubic-bezier(.34,1.56,.64,1);max-width:340px;width:100%">'
+    + '<div style="font-size:64px;margin-bottom:12px;animation:wiggle 1s ease-in-out">' + badge.icon + '</div>'
+    + '<div style="font-size:13px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Yeni Rozet!</div>'
+    + '<div style="font-family:var(--font-display);font-weight:800;font-size:22px;color:var(--ink);margin-bottom:8px">' + badge.name + '</div>'
+    + '<div style="font-size:14px;color:var(--ink-soft);margin-bottom:22px">' + badge.desc + '</div>'
+    + '<button onclick="document.getElementById(\'badgeModal\').remove()" class="btn btn-primary btn-md" style="width:100%;justify-content:center">Harika! 🎉</button>'
+    + '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  setTimeout(function() { if (overlay.parentNode) overlay.remove(); }, 5000);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// XP ÖDÜLLENDIRME — Firestore + localStorage senkron
+// ══════════════════════════════════════════════════════════════════
+async function awardXP(amount, reason) {
+  if (!amount || amount <= 0) return;
+  var uid = window.geCurrentUser && window.geCurrentUser.uid;
+
+  // localStorage güncelle
+  var cur = 0;
+  try { cur = parseInt(localStorage.getItem('ge_xp') || '0'); } catch(e) {}
+  var oldLevel = getLevelFromXP(cur);
+  cur += amount;
+  try { localStorage.setItem('ge_xp', cur); } catch(e) {}
+  var newLevel = getLevelFromXP(cur);
+
+  // Firestore
+  if (uid) {
+    try {
+      await firebase.firestore().collection('users').doc(uid)
+        .set({ xp: firebase.firestore.FieldValue.increment(amount) }, { merge: true });
+    } catch(e) {}
+  }
+
+  // Seviye atladı mı?
+  if (newLevel > oldLevel) {
+    showLevelUpModal(newLevel);
+    awardGems(newLevel * 10); // seviye başına gem ödülü
+  }
+
+  updateStatPills();
+  await checkAndAwardBadges();
+}
+
+// Seviye atladı modalı
+function showLevelUpModal(newLevel) {
+  showToast('🚀 SEVİYE ' + newLevel + '!', 'Tebrikler! +' + (newLevel * 10) + ' 💎 bonus gem kazandın!', 'var(--violet)');
+}
 
 function renderHomeDashboard() {
   renderQuestList();
@@ -4509,62 +4866,66 @@ function renderHomeDashboard() {
 }
 
 function updateStatPills() {
-  var streak = 7, gems = 480, xp = 2310, level = 6;
+  var streak = 0, gems = 0, xp = 0, level = 1;
   try {
-    streak = parseInt(localStorage.getItem('ge_streak') || '7');
-    gems = parseInt(localStorage.getItem('ge_gems') || '0');
-    xp = parseInt(localStorage.getItem('ge_xp') || '2310');
-    level = Math.floor(xp / 500) + 1;
+    streak = parseInt(localStorage.getItem('ge_streak') || '0');
+    gems   = parseInt(localStorage.getItem('ge_gems')   || '0');
+    xp     = parseInt(localStorage.getItem('ge_xp')     || '0');
+    level  = getLevelFromXP(xp);
   } catch(e) {}
+
+  var set = function(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; };
+
   // Topbar pills
-  var el = function(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; };
-  el('statStreak', streak);
-  el('statGems', gems);
-  el('statXP', xp.toLocaleString('tr-TR'));
-  // HeroCard stats
-  el('heroStreak', streak);
-  el('heroXP', xp.toLocaleString('tr-TR'));
-  el('heroGems', gems);
-  el('heroLevel', level);
-  el('heroBadges', GE_BADGES ? GE_BADGES.filter(function(b){return b.earned}).length : 3);
-  // XP bar label
-  var xpForNext = Math.ceil(xp / 500) * 500;
-  el('xpBarLabel', xp.toLocaleString('tr-TR') + '/' + xpForNext.toLocaleString('tr-TR') + ' XP');
+  set('statStreak', streak);
+  set('statGems',   gems);
+  set('statXP',     xp.toLocaleString('tr-TR'));
+
+  // HeroCard
+  set('heroStreak', streak);
+  set('heroXP',     xp.toLocaleString('tr-TR'));
+  set('heroGems',   gems);
+  set('heroLevel',  level);
+
+  var earnedCount = GE_BADGE_DEFS.filter(function(b){ return !!_userEarnedBadges[b.id]; }).length;
+  set('heroBadges', earnedCount);
+
+  // XP bar — bu seviyedeki ilerleme
+  var inLevel  = xpInCurrentLevel(xp);
+  var needed   = xpNeededForNextLevel(xp);
+  var pct      = needed > 0 ? Math.min(100, (inLevel / needed * 100)).toFixed(1) : 100;
+  var xpForNxt = xpForLevel(level);
+  var xpPrev   = level > 1 ? xpForLevel(level - 1) : 0;
+  set('xpBarLabel', xp.toLocaleString('tr-TR') + ' / ' + xpForNxt.toLocaleString('tr-TR') + ' XP');
   var xpBarFill = document.getElementById('xpBarFill');
-  if (xpBarFill) {
-    var pct = ((xp % 500) / 500 * 100).toFixed(1);
-    xpBarFill.style.width = pct + '%';
-  }
-  // XP ring (HeroCard)
+  if (xpBarFill) xpBarFill.style.width = pct + '%';
+
+  // XP ring
   var ring = document.getElementById('xpRingCircle');
   if (ring) {
-    var xpInLevel = xp % 500;
-    var pctRing = xpInLevel / 500;
-    var circ = 2 * Math.PI * 66; // r=66
+    var circ = 2 * Math.PI * 66;
     ring.setAttribute('stroke-dasharray', circ.toFixed(1));
-    ring.setAttribute('stroke-dashoffset', (circ * (1 - pctRing)).toFixed(1));
+    ring.setAttribute('stroke-dashoffset', (circ * (1 - pct / 100)).toFixed(1));
   }
-  // Greeting with student name
+
+  // İsim selamlama
   var greeting = document.getElementById('heroGreeting');
   if (greeting && window.geStudentInfo && geStudentInfo.firstName) {
     greeting.textContent = 'Tekrar hoş geldin, ' + geStudentInfo.firstName + '! 👋';
   }
-  // Badge count chip
+
+  // Rozet chip
   var bc = document.getElementById('badgeCountChip');
-  if (bc && GE_BADGES) {
-    var earned = GE_BADGES.filter(function(b){return b.earned}).length;
-    bc.textContent = earned + '/' + GE_BADGES.length;
-  }
-  // Challenger mode avatar btn swap
+  if (bc) bc.textContent = earnedCount + '/' + GE_BADGE_DEFS.length;
+
+  // Mode buton renkleri
   var mode = document.documentElement.getAttribute('data-mode') || 'explorer';
   var modeLabel = document.getElementById('modeBtnLabel');
   if (modeLabel) modeLabel.textContent = mode === 'challenger' ? 'Maceracı' : 'Kâşif';
   var modeExp = document.getElementById('modeExp');
-  var modeCh = document.getElementById('modeCh');
-  if (modeExp) modeExp.style.background = mode === 'explorer' ? 'var(--green)' : 'transparent';
-  if (modeExp) modeExp.style.color = mode === 'explorer' ? '#fff' : 'var(--ink-soft)';
-  if (modeCh) modeCh.style.background = mode === 'challenger' ? 'var(--green)' : 'transparent';
-  if (modeCh) modeCh.style.color = mode === 'challenger' ? '#fff' : 'var(--ink-soft)';
+  var modeCh  = document.getElementById('modeCh');
+  if (modeExp) { modeExp.style.background = mode==='explorer' ? 'var(--green)' : 'transparent'; modeExp.style.color = mode==='explorer' ? '#fff' : 'var(--ink-soft)'; }
+  if (modeCh)  { modeCh.style.background  = mode==='challenger' ? 'var(--green)' : 'transparent'; modeCh.style.color  = mode==='challenger' ? '#fff' : 'var(--ink-soft)'; }
 }
 
 function toggleMode() {
@@ -4731,17 +5092,18 @@ function renderBadgeShelf() {
   var el = document.getElementById('badgeShelf');
   if (!el) return;
   el.innerHTML = '';
-  GE_BADGES.forEach(function(b) {
+  getGeBadges().forEach(function(b) {
     var item = document.createElement('div');
     item.className = 'badge-item' + (b.earned ? ' earned' : '');
-    var bgColor = b.earned ? b.color : 'var(--line)';
+    item.title = b.desc;
     item.innerHTML =
-      '<div class="badge-medallion' + (b.earned ? '' : ' locked') + '" style="background:' + bgColor + '">' + b.icon + '</div>'
+      '<div class="badge-medallion' + (b.earned ? '' : ' locked') + '" style="background:' + (b.earned ? b.color : 'var(--line)') + '">' + b.icon + '</div>'
       + '<div class="badge-name">' + b.name + '</div>';
     el.appendChild(item);
   });
   var bc = document.getElementById('badgeCountChip');
-  if (bc) bc.textContent = GE_BADGES.filter(function(b){return b.earned}).length + '/' + GE_BADGES.length;
+  var earned = GE_BADGE_DEFS.filter(function(b){ return !!_userEarnedBadges[b.id]; }).length;
+  if (bc) bc.textContent = earned + '/' + GE_BADGE_DEFS.length;
 }
 
 function renderLeaderboard() {
