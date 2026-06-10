@@ -75,6 +75,8 @@ body{font-family:var(--font-body);background:var(--paper);color:var(--ink);-webk
 
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes popIn{from{transform:scale(.6);opacity:0}60%{transform:scale(1.08)}to{transform:scale(1);opacity:1}}
+@keyframes gemFloat{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-80px) scale(1.3);opacity:0}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes fadeUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
 @keyframes shimmer{0%,100%{opacity:.7}50%{opacity:1}}
 .floaty{animation:floaty 3.5s ease-in-out infinite}
@@ -758,7 +760,7 @@ firebase.auth().onAuthStateChanged(async function(user){
     </div>
     <div class="ge-stat-pill">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sky)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l3 6-9 12L3 9l3-6Z"/><path d="M3 9h18M9 3l3 18M15 3l-3 18"/></svg>
-      <b id="statGems">480</b>
+      <b id="statGems">0</b>
     </div>
     <div class="ge-stat-pill">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .7-4.4 4.1 1.2 6L12 16.8 6.6 19.4l1.2-6L3.4 9.3l6-.7L12 3Z"/></svg>
@@ -839,7 +841,7 @@ firebase.auth().onAuthStateChanged(async function(user){
       </div>
       <div class="hero-stat-block">
         <div class="hero-stat-icon" style="background:var(--sky-soft);color:var(--sky)">💎</div>
-        <div><div class="hero-stat-val" id="heroGems">480</div><div class="hero-stat-lab">mücevher</div></div>
+        <div><div class="hero-stat-val" id="heroGems">0</div><div class="hero-stat-lab">mücevher</div></div>
       </div>
       <div class="hero-stat-block">
         <div class="hero-stat-icon" style="background:var(--green-soft);color:var(--green)">🏆</div>
@@ -2498,9 +2500,15 @@ function buildLessonSteps(unit, map) {
 }
 
 // ─── DERS AÇ ──────────────────────────────────────────────────
-function openLesson(unit, map) {
+function openLesson(unit, map, startStep) {
   stopAllAudio();
-  currentLesson = { unit: unit, map: map, step: 0, steps: buildLessonSteps(unit, map), quizAnswers: {} };
+  var steps = buildLessonSteps(unit, map);
+  var stepIdx = 0;
+  if (startStep === 'games') {
+    // Son adım games adımı
+    stepIdx = steps.length - 1;
+  }
+  currentLesson = { unit: unit, map: map, step: stepIdx, steps: steps, quizAnswers: {} };
   var overlay = document.getElementById('lessonOverlay');
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -2622,26 +2630,27 @@ function renderLessonNav(body, idx, total, stepType) {
     rightBtn.className = 'btn btn-amber btn-md';
     rightBtn.innerHTML = '🏆 Üniteyi Tamamla!';
     rightBtn.onclick = function() {
-      // Üniteyi tamamlandı olarak işaretle — kişiye özel Firestore kaydı
       var map = currentLesson.map;
       var unit = currentLesson.unit;
       var mapKey = map.id || map.title;
       var unitIdx = map.units.findIndex(function(u) { return u.title === unit.title; });
-      if (unitIdx >= 0) markUnitComplete(mapKey, unitIdx);
 
-      closeLesson();
-      // XP ekle
+      // Gem + XP hesapla
+      var earnedGems = 30;
+      var earnedXP = 150;
+      var correctCount = currentLesson.quizAnswers ? Object.values(currentLesson.quizAnswers).filter(Boolean).length : 0;
+      earnedGems += correctCount * 5;
+
+      // Kaydet
+      if (unitIdx >= 0) markUnitComplete(mapKey, unitIdx);
+      awardGems(earnedGems);
       try {
-        var xp = parseInt(localStorage.getItem('ge_xp') || '0') + 150;
+        var xp = parseInt(localStorage.getItem('ge_xp') || '0') + earnedXP;
         localStorage.setItem('ge_xp', xp);
       } catch(e) {}
 
-      // Tamamlama kutlaması
-      setTimeout(function() {
-        if (confirm('Tebrikler! ' + unit.title + ' ünitesini tamamladın! 🎉\n\n+150 XP kazandın!\n\nOyunlarla pekiştirmek ister misin?')) {
-          openKelimeOyunlari();
-        }
-      }, 300);
+      // Güzel tamamlama modalı göster
+      showCompletionModal(unit, map, earnedGems, earnedXP);
     };
   }
 
@@ -2983,10 +2992,12 @@ function renderPracticeStep(body, unit) {
           if (val === correct) {
             inp.style.borderColor = 'var(--green)';
             inp.style.background = 'var(--green-soft)';
-            fb.textContent = '🎉 Doğru! Harikasın!';
+            fb.innerHTML = '🎉 Doğru! Harikasın! <span style="color:var(--amber);font-weight:800">+3 💎</span>';
             fb.style.color = 'var(--green-deep)';
             atlasSpeak('Correct! Well done!');
             inp.disabled = true;
+            awardGems(3); // practice doğru cevap
+            showGemFloater(inp, 3);
           } else {
             inp.style.borderColor = 'var(--coral)';
             inp.style.background = 'var(--coral-soft)';
@@ -3099,8 +3110,8 @@ function renderQuizStep(body, unit) {
 
       btn.addEventListener('click', function() {
         if (currentLesson.quizAnswers['q'+qi]) return;
-        currentLesson.quizAnswers['q'+qi] = true;
         var isCorrect = opt === q.answer;
+        currentLesson.quizAnswers['q'+qi] = isCorrect;
         card.querySelectorAll('button').forEach(function(b) {
           b.disabled = true;
           b.classList.add('answered');
@@ -3117,10 +3128,14 @@ function renderQuizStep(body, unit) {
         var fb = document.getElementById('qfb' + qi);
         if (fb) {
           fb.innerHTML = isCorrect
-            ? '<span style="color:var(--green-deep);font-weight:800">🎉 Harika! Doğru cevap!</span>'
+            ? '<span style="color:var(--green-deep);font-weight:800">🎉 Harika! Doğru cevap! <span style="color:var(--amber)">+5 💎</span></span>'
             : '<span style="color:var(--coral);font-weight:800">❌ Doğru cevap: <strong>' + q.answer + '</strong></span>';
         }
-        if (isCorrect) atlasSpeak('Excellent! Correct!');
+        if (isCorrect) {
+          atlasSpeak('Excellent! Correct!');
+          awardGems(5); // her doğru quiz cevabı
+          showGemFloater(btn, 5);
+        }
         checkQuizComplete(quizzes.length);
       });
       optsGrid.appendChild(btn);
@@ -3139,17 +3154,20 @@ function checkQuizComplete(total) {
   var answered = Object.keys(currentLesson.quizAnswers).length;
   if (answered >= total) {
     setTimeout(function() {
-      var correct = 0;
-      // Tüm quizlerin cevaplarını say — basit olarak answered sayısını kullan
-      correct = answered; // Simplification
+      var correct = Object.values(currentLesson.quizAnswers).filter(Boolean).length;
+      var allCorrect = correct === total;
+      var bonusGems = allCorrect ? 10 : 0;
+      if (bonusGems > 0) awardGems(bonusGems);
       var resultDiv = document.createElement('div');
       resultDiv.style.cssText = 'background:var(--green-soft);border:2px solid var(--green);border-radius:16px;padding:20px;text-align:center;margin-top:16px;animation:fadeUp .4s both';
       resultDiv.innerHTML = '<div style="font-size:48px;margin-bottom:8px">🏆</div>'
         + '<div style="font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--green-deep)">Quiz Tamamlandı!</div>'
-        + '<div style="font-size:14px;color:var(--ink-soft);font-weight:600;margin-top:6px">Harika iş çıkardın! Oyunlara geçmeye hazır mısın?</div>';
+        + '<div style="font-size:15px;font-weight:800;color:var(--ink);margin-top:8px">' + correct + '/' + total + ' doğru</div>'
+        + (allCorrect ? '<div style="font-size:14px;color:var(--amber);font-weight:800;margin-top:4px">Bonus: +10 💎 — Mükemmel!</div>' : '')
+        + '<div style="font-size:13px;color:var(--ink-soft);font-weight:600;margin-top:6px">Oyunlara geçmeye hazır mısın?</div>';
       var lb = document.getElementById('lessonBody');
       if (lb) lb.appendChild(resultDiv);
-      atlasSpeak('Amazing job! Quiz complete!');
+      atlasSpeak(allCorrect ? 'Amazing! Perfect score!' : 'Good job! Quiz complete!');
     }, 600);
   }
 }
@@ -3340,9 +3358,18 @@ window._userCompletedUnits = {};
 async function loadUserProgress(uid) {
   if (!uid) return;
   try {
+    // Ana kullanıcı dökümanından gem'i de çek
+    var userDoc = await firebase.firestore().collection('users').doc(uid).get();
+    if (userDoc.exists) {
+      var data = userDoc.data();
+      var gems = data.gems !== undefined ? data.gems : 0;
+      try { localStorage.setItem('ge_gems', gems); } catch(e) {}
+    }
+
+    // Gaming progress
     var doc = await firebase.firestore()
-      .collection('gamingEnglishProgress')
-      .doc(uid)
+      .collection('users').doc(uid)
+      .collection('gamingProgress').doc('progress')
       .get();
     if (doc.exists) {
       window._userCompletedUnits = doc.data().completed || {};
@@ -3350,13 +3377,11 @@ async function loadUserProgress(uid) {
       window._userCompletedUnits = {};
     }
   } catch(e) {
-    // Firestore erişim hatası - localStorage'a düş
     try {
       var saved = localStorage.getItem('ge_progress_' + uid);
       window._userCompletedUnits = saved ? JSON.parse(saved) : {};
     } catch(e2) { window._userCompletedUnits = {}; }
   }
-  // Dashboard ve harita kartlarını güncelle
   renderHomeDashboard();
   if (document.getElementById('view-maps') && document.getElementById('view-maps').classList.contains('active')) {
     renderMaps();
@@ -3370,11 +3395,13 @@ async function markUnitComplete(mapId, unitIdx) {
   var key = mapId + '__' + unitIdx;
   window._userCompletedUnits[key] = true;
 
-  // Firestore'a kaydet
+  // Firestore'a kaydet — users/{uid}/gamingProgress/progress
   try {
     await firebase.firestore()
-      .collection('gamingEnglishProgress')
+      .collection('users')
       .doc(uid)
+      .collection('gamingProgress')
+      .doc('progress')
       .set({ completed: window._userCompletedUnits }, { merge: true });
   } catch(e) {
     console.warn('Firestore kayıt hatası, localStorage kullanılıyor:', e);
@@ -3414,7 +3441,154 @@ function refreshMapProgress() {
   updateStatPills();
 }
 
-// Toplam tamamlanma yüzdesini hesapla (tüm 45 ünite üzerinden)
+// ── GEM SİSTEMİ ───────────────────────────────────────────────
+
+// Gem ver — Firestore + localStorage
+async function awardGems(amount) {
+  if (!amount || amount <= 0) return;
+  // localStorage güncelle
+  var cur = 0;
+  try { cur = parseInt(localStorage.getItem('ge_gems') || '0'); } catch(e) {}
+  cur += amount;
+  try { localStorage.setItem('ge_gems', cur); } catch(e) {}
+
+  // Firestore'a kaydet
+  var uid = window.geCurrentUser && window.geCurrentUser.uid;
+  if (uid) {
+    try {
+      await firebase.firestore().collection('users').doc(uid)
+        .set({ gems: firebase.firestore.FieldValue.increment(amount) }, { merge: true });
+    } catch(e) {
+      // FieldValue increment desteklenmiyorsa set ile yaz
+      try {
+        await firebase.firestore().collection('users').doc(uid)
+          .set({ gems: cur }, { merge: true });
+      } catch(e2) {}
+    }
+  }
+  // Topbar ve hero card güncelle
+  updateStatPills();
+}
+
+// Gem kazanıldığında floating animasyon göster
+function showGemFloater(anchorEl, amount) {
+  var floater = document.createElement('div');
+  floater.textContent = '+' + amount + ' 💎';
+  floater.style.cssText = 'position:fixed;font-family:var(--font-display);font-weight:800;font-size:16px;'
+    + 'color:var(--sky);pointer-events:none;z-index:99999;'
+    + 'animation:gemFloat 1.4s ease-out forwards;';
+
+  // Konumu anchor element'e göre ayarla
+  try {
+    var rect = anchorEl.getBoundingClientRect();
+    floater.style.left = (rect.left + rect.width / 2 - 30) + 'px';
+    floater.style.top = (rect.top - 10) + 'px';
+  } catch(e) {
+    floater.style.left = '50%';
+    floater.style.top = '40%';
+  }
+  document.body.appendChild(floater);
+  setTimeout(function() { if (floater.parentNode) floater.parentNode.removeChild(floater); }, 1500);
+}
+
+// Güzel tamamlama modalı — confirm() yerine
+function showCompletionModal(unit, map, earnedGems, earnedXP) {
+  // Mevcut modalı temizle
+  var existing = document.getElementById('completionModal');
+  if (existing) existing.remove();
+
+  var overlay = document.createElement('div');
+  overlay.id = 'completionModal';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:99990;display:flex;align-items:center;justify-content:center;'
+    + 'background:rgba(8,15,26,.65);backdrop-filter:blur(6px);padding:20px;animation:fadeIn .25s';
+
+  var modal = document.createElement('div');
+  modal.style.cssText = 'background:var(--surface);border-radius:24px;padding:0;overflow:hidden;'
+    + 'width:min(480px,96vw);box-shadow:0 32px 80px -12px rgba(0,0,0,.4);animation:popIn .35s cubic-bezier(.34,1.56,.64,1)';
+
+  // Header — gradient + Atlas
+  var header = document.createElement('div');
+  header.style.cssText = 'background:linear-gradient(135deg,var(--green),var(--green-deep));padding:28px 28px 20px;text-align:center;position:relative';
+  header.innerHTML = getAtlasTalkingKidSVG(90, false)
+    + '<h2 style="font-family:var(--font-display);font-weight:800;font-size:24px;color:#fff;margin:12px 0 4px">Tebrikler! 🎉</h2>'
+    + '<p style="color:rgba(255,255,255,.85);font-size:15px;font-weight:600">'
+    + unit.title + ' ünitesini tamamladın!</p>';
+
+  // Body — ödüller
+  var body = document.createElement('div');
+  body.style.cssText = 'padding:24px 28px';
+
+  // Ödül kutucukları
+  var rewards = document.createElement('div');
+  rewards.style.cssText = 'display:flex;gap:12px;margin-bottom:22px';
+  rewards.innerHTML =
+    '<div style="flex:1;background:var(--amber-soft);border-radius:16px;padding:14px;text-align:center">'
+    + '<div style="font-size:28px">⭐</div>'
+    + '<div style="font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--ink)">+' + earnedXP + '</div>'
+    + '<div style="font-size:11px;font-weight:700;color:var(--ink-faint)">XP</div></div>'
+    + '<div style="flex:1;background:var(--sky-soft);border-radius:16px;padding:14px;text-align:center">'
+    + '<div style="font-size:28px">💎</div>'
+    + '<div style="font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--ink)">+' + earnedGems + '</div>'
+    + '<div style="font-size:11px;font-weight:700;color:var(--ink-faint)">Mücevher</div></div>';
+
+  // Butonlar
+  var btns = document.createElement('div');
+  btns.style.cssText = 'display:flex;flex-direction:column;gap:10px';
+
+  var gamesBtn = document.createElement('button');
+  gamesBtn.className = 'btn btn-primary btn-lg';
+  gamesBtn.style.cssText = 'width:100%;justify-content:center;font-size:16px';
+  gamesBtn.innerHTML = '🎮 Oyunlarla Pekiştir!';
+  gamesBtn.onclick = function() {
+    overlay.remove();
+    // Ünite oyunlar adımına git — lesson'ı oyunlar adımında aç
+    openLesson(unit, map, 'games');
+  };
+
+  var laterBtn = document.createElement('button');
+  laterBtn.className = 'btn btn-ghost btn-md';
+  laterBtn.style.cssText = 'width:100%;justify-content:center';
+  laterBtn.innerHTML = 'Sonra yapayım →';
+  laterBtn.onclick = function() {
+    overlay.remove();
+    closeLesson();
+  };
+
+  btns.appendChild(gamesBtn);
+  btns.appendChild(laterBtn);
+  body.appendChild(rewards);
+  body.appendChild(btns);
+  modal.appendChild(header);
+  modal.appendChild(body);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+
+  // ESC ile kapat
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) { overlay.remove(); closeLesson(); }
+  });
+
+  // Confetti efekti
+  triggerConfetti(modal);
+}
+
+// Basit confetti
+function triggerConfetti(container) {
+  var colors = ['#1E8A53','#F4863C','#FFC53D','#3B9EF5','#E5603C'];
+  for (var i = 0; i < 24; i++) {
+    var dot = document.createElement('div');
+    dot.style.cssText = 'position:absolute;width:8px;height:8px;border-radius:50%;pointer-events:none;'
+      + 'background:' + colors[i % colors.length] + ';'
+      + 'left:' + (20 + Math.random() * 60) + '%;top:20%;'
+      + 'animation:confettiFall ' + (0.8 + Math.random() * 1) + 's ease-in ' + (Math.random() * 0.4) + 's forwards;';
+    container.style.position = 'relative';
+    container.style.overflow = 'visible';
+    container.appendChild(dot);
+    setTimeout(function(d) { if(d.parentNode) d.parentNode.removeChild(d); }, 2000, dot);
+  }
+}
+
+// ── GEM SİSTEMİ SONU ──────────────────────────────────────────
 function calcOverallProgress() {
   var total = 0;
   var done = 0;
@@ -4338,7 +4512,7 @@ function updateStatPills() {
   var streak = 7, gems = 480, xp = 2310, level = 6;
   try {
     streak = parseInt(localStorage.getItem('ge_streak') || '7');
-    gems = parseInt(localStorage.getItem('ge_gems') || '480');
+    gems = parseInt(localStorage.getItem('ge_gems') || '0');
     xp = parseInt(localStorage.getItem('ge_xp') || '2310');
     level = Math.floor(xp / 500) + 1;
   } catch(e) {}
@@ -4496,7 +4670,7 @@ function renderQuestList() {
         var curXP = parseInt(localStorage.getItem('ge_xp') || '2310');
         localStorage.setItem('ge_xp', curXP + xpAmt);
         // Gem ekle
-        var curGems = parseInt(localStorage.getItem('ge_gems') || '480');
+        var curGems = parseInt(localStorage.getItem('ge_gems') || '0');
         localStorage.setItem('ge_gems', curGems + Math.round(xpAmt / 2));
         spawnConfetti(btn);
         updateStatPills();
