@@ -7378,39 +7378,6 @@ function App() {
   const [gems, setGems] = useState(0);
   const [session, setSession] = useState({ user: 'Ayşe', synced: false });
   const cloudReady = useRef(false);
-  useEffect(() => {
-    // v15: hydrate from Firebase (or local mock) on auth. Isolated per-student doc.
-    if (!window.MyCloud) { console.warn('MyCloud henüz hazır değil'); return; }
-    window.MyCloud.onAuth(async (who) => {
-      const me = await window.MyCloud.loadMe();
-      if (!me) return;
-      if (me.wallet) setGems(me.wallet.gems != null ? me.wallet.gems : (me.gems != null ? me.gems : 0));
-      if (me.profile && me.profile.name) setPetName((n) => me.pet && me.pet.name ? me.pet.name : n);
-      if (me.pet) {
-        if (me.pet.custom) setPetCustom((c) => ({ ...c, ...me.pet.custom, speciesId: me.pet.custom.speciesId || (me.pet.species ? me.pet.species : c.speciesId) }));
-        if (Array.isArray(me.pet.worn)) { const w = {}; me.pet.worn.forEach((id) => { const it = window.ALL_ITEMS[id]; if (it && it.slot) w[it.slot] = it; }); if (Object.keys(w).length) setWorn(w); }
-      }
-      if (me.inventory && Array.isArray(me.inventory.owned)) setOwned(new Set(me.inventory.owned));
-      if (me.inventory && me.inventory.counts) setInvCounts(me.inventory.counts);
-      if (Array.isArray(me.rooms) && me.rooms.length) setRooms(me.rooms);
-      if (me.needs) { if (me.needs.hunger != null) setHunger(me.needs.hunger); if (me.needs.happy != null) setHappy(me.needs.happy); }
-      if (Array.isArray(me.progress)) setProgress(me.progress);
-      if (me.pantry) setPantry(me.pantry);
-      setSession({ user: (who && who.name) || (me.profile && me.profile.name) || 'Student', synced: true });
-      cloudReady.current = true;
-      push(window.MyCloud.isLive() ? 'Synced from your account ✓' : 'Gems synced ✓', '🔗');
-    });
-  }, []);
-  // persist key state to the cloud (debounced inside MyCloud.save)
-  useEffect(() => {
-    if (!cloudReady.current) return;
-    window.MyCloud.save({
-      wallet: { gems }, needs: { hunger, happy, lastSeen: Date.now() },
-      pet: { name: petName, species: petCustom.speciesId, custom: petCustom, worn: Object.values(worn).filter(Boolean).map((i) => i.id) },
-      inventory: { owned: [...owned], counts: invCounts },
-      rooms, progress, pantry,
-    });
-  }, [gems, hunger, happy, petName, petCustom, worn, owned, invCounts, rooms, progress, pantry]);
   const [coins, setCoins] = useState(180);
   const [hearts, setHearts] = useState(12);
   const [gemPulse, setGemPulse] = useState(false);
@@ -7469,6 +7436,38 @@ function App() {
   const [visiting, setVisiting] = useState(null); // {friend, roomIndex, sentToday}
 
   const stageRef = useRef(null);
+  // ── TAŞINDI: hydrate + save effect'leri tüm state tanımlarından sonra (TDZ fix) ──
+  useEffect(() => {
+    if (!window.MyCloud) { console.warn('MyCloud henüz hazır değil'); return; }
+    window.MyCloud.onAuth(async (who) => {
+      const me = await window.MyCloud.loadMe();
+      if (!me) return;
+      if (me.wallet) setGems(me.wallet.gems != null ? me.wallet.gems : (me.gems != null ? me.gems : 0));
+      if (me.profile && me.profile.name) setPetName((n) => me.pet && me.pet.name ? me.pet.name : n);
+      if (me.pet) {
+        if (me.pet.custom) setPetCustom((c) => ({ ...c, ...me.pet.custom, speciesId: me.pet.custom.speciesId || (me.pet.species ? me.pet.species : c.speciesId) }));
+        if (Array.isArray(me.pet.worn)) { const w = {}; me.pet.worn.forEach((id) => { const it = window.ALL_ITEMS[id]; if (it && it.slot) w[it.slot] = it; }); if (Object.keys(w).length) setWorn(w); }
+      }
+      if (me.inventory && Array.isArray(me.inventory.owned)) setOwned(new Set(me.inventory.owned));
+      if (me.inventory && me.inventory.counts) setInvCounts(me.inventory.counts);
+      if (Array.isArray(me.rooms) && me.rooms.length) setRooms(me.rooms);
+      if (me.needs) { if (me.needs.hunger != null) setHunger(me.needs.hunger); if (me.needs.happy != null) setHappy(me.needs.happy); }
+      if (Array.isArray(me.progress)) setProgress(me.progress);
+      if (me.pantry) setPantry(me.pantry);
+      setSession({ user: (who && who.name) || (me.profile && me.profile.name) || 'Student', synced: true });
+      cloudReady.current = true;
+      push(window.MyCloud.isLive() ? 'Synced from your account ✓' : 'Gems synced ✓', '🔗');
+    });
+  }, []);
+  useEffect(() => {
+    if (!cloudReady.current || !window.MyCloud) return;
+    window.MyCloud.save({
+      wallet: { gems }, needs: { hunger, happy, lastSeen: Date.now() },
+      pet: { name: petName, species: petCustom.speciesId, custom: petCustom, worn: Object.values(worn).filter(Boolean).map((i) => i.id) },
+      inventory: { owned: [...owned], counts: invCounts },
+      rooms, progress, pantry,
+    });
+  }, [gems, hunger, happy, petName, petCustom, worn, owned, invCounts, rooms, progress, pantry]);
   const { toasts, push } = useToast();
   // v12 hunger drifts gently down over active play
   // v14 real-world decay: 100 pts over 90 min of active play ≈ 1.111 pts/min.
