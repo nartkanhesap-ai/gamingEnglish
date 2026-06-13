@@ -240,7 +240,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 
 
-/* Üretim: Tweaks/demo panelini gizle (öğrenciler demo gem butonunu görmesin) */
+/* Üretim: Tweaks/demo panelini gizle */
 .twk-panel, [data-omelette-chrome] { display: none !important; }
 
 </style>
@@ -249,27 +249,31 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 <div id="root"></div>
 
 
-<!-- Firebase SDK + Gaming English ortak proje config -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  const firebaseConfig = {
-    apiKey: "AIzaSyABkM9khEK9ZXIRklOPfePdZj20tGoLGOo",
-    authDomain: "english-coaching-2eeee.firebaseapp.com",
-    projectId: "english-coaching-2eeee",
-    storageBucket: "english-coaching-2eeee.firebasestorage.app",
-    messagingSenderId: "1056594871694",
-    appId: "1:1056594871694:web:gamingenglish"
-  };
-  try {
-    const app = initializeApp(firebaseConfig);
-    window.__FB = { app, auth: getAuth(app), db: getFirestore(app) };
-    console.log("My World: Firebase bağlı (english-coaching-2eeee)");
-  } catch(e) {
-    console.warn("My World: Firebase init hatası, mock moda düşülüyor:", e);
-  }
-  window.dispatchEvent(new Event('fb-ready'));
+<!-- Firebase COMPAT SDK (senkron) + Gaming English ortak proje -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  (function() {
+    var firebaseConfig = {
+      apiKey: "AIzaSyABkM9khEK9ZXIRklOPfePdZj20tGoLGOo",
+      authDomain: "english-coaching-2eeee.firebaseapp.com",
+      projectId: "english-coaching-2eeee",
+      storageBucket: "english-coaching-2eeee.firebasestorage.app",
+      messagingSenderId: "1056594871694",
+      appId: "1:1056594871694:web:gamingenglish"
+    };
+    try {
+      if (window.firebase && !firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        window.__MW_FB_READY = true;
+        console.log("My World: Firebase compat bağlı (english-coaching-2eeee)");
+      }
+    } catch(e) {
+      console.warn("My World: Firebase init hatası, mock moda düşülüyor:", e);
+      window.__MW_FB_READY = false;
+    }
+  })();
 </script>
 
 
@@ -277,7 +281,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
 
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // @ds-adherence-ignore -- omelette starter scaffold (raw elements/hex/px by design)
 
 /* BEGIN USAGE */
@@ -823,98 +827,64 @@ Object.assign(window, {
 </script>
 
 <!-- ===== firebase.jsx ===== -->
-<script type="text/babel">
-// firebase.jsx — v15 Firebase integration layer for "My World" inside Gaming English.
-// Connects auth + per-student isolated data (Firestore). Falls back to mock/local data
-// when Firebase isn't configured, so the prototype runs anywhere.
-//
-// ── SETUP (one-time, for the Claude-coded / production build) ─────────────────
-// 1. In index.html, BEFORE this file, add the Firebase SDKs + your config:
-//
-//    <script type="module">
-//      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-//      import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-//      import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-//      const app = initializeApp({ /* YOUR existing firebaseConfig */ });
-//      window.__FB = { app, auth: getAuth(app), db: getFirestore(app) };
-//      window.dispatchEvent(new Event('fb-ready'));
-//    </script>
-//
-// 2. Firestore layout (each student fully isolated under their own doc):
-//    students/{userId} = {
-//      profile:{ name, ageBand }, wallet:{ gems, coins, hearts },
-//      pet:{ name, species, custom:{coatId,eyeId,blushId,markId}, worn:[ids] },
-//      inventory:{ owned:[ids], counts:{id:n} },
-//      rooms:[ {id,name,type,wall,floor,placed:[{uid,ref,x,y,flip,s,pal}]} ],
-//      needs:{ hunger, happy, lastSeen },
-//      progress:[ {game,level,module,perfect,at} ],
-//      pantry:{ id:n }, social:{ cardsSentToday:{}, board:[] },
-//      houseWealth: <number>   // for the friends/neighbourhood ranking
-//    }
-//
-// 3. Security rules (students read any profile to VISIT, but write only their own):
-//    match /students/{uid} {
-//      allow read: if request.auth != null;                 // visiting needs read
-//      allow write: if request.auth != null && request.auth.uid == uid;
-//    }
-//
-// ── PUBLIC API (window.MyCloud) ──────────────────────────────────────────────
-//   await MyCloud.ready()                  → resolves when auth state known
-//   MyCloud.isLive()                       → true if Firebase wired, false = mock
-//   MyCloud.uid()                          → current student's uid (or 'guest')
-//   await MyCloud.signIn(email, pw)        → email/password login
-//   await MyCloud.loadMe()                 → this student's full doc (creates default if new)
-//   MyCloud.save(patch)                    → debounced merge-write of partial state
-//   await MyCloud.loadStudent(uid)         → another student's doc (read-only, for visiting)
-//   await MyCloud.listStudents()           → [{uid,name,species,houseWealth,...}] for neighbourhood
-//   MyCloud.onAuth(cb)                     → subscribe to {uid,name}|null
+<script type="text/babel" data-presets="react">
+// firebase.jsx — My World için Firebase COMPAT entegrasyonu (Gaming English ile uyumlu).
+// Compat SDK senkron yüklenir; window.firebase global'i hazır olur.
+// Mevcut değilse mock/localStorage moduna düşer.
 
 (function () {
-  const FB = window.__FB || null;
-  const LIVE = !!FB;
-  let saveTimer = null, pendingPatch = {}, currentUid = null, authCbs = [];
-
-  // ---- default fresh-student document (used for new accounts & mock mode) ----
   function defaultDoc(name) {
     return {
       profile: { name: name || 'Explorer', ageBand: 'kids', level: 1 },
       wallet: { gems: 0, coins: 0, hearts: 0 },
       pet: { name: 'Mochi', species: 'cat', custom: { coatId: 'coat_natural', eyeId: 'eye_forest', blushId: 'bl_peach', markId: 'mk_none' }, worn: ['c_straw', 'c_overall'] },
       inventory: { owned: ['c_straw', 'c_overall', 'c_tee', 'c_bow'], counts: { f_bed: 1, f_table: 1 } },
-      rooms: null, // null → client seeds STARTER_ROOMS
+      rooms: null,
       needs: { hunger: 80, happy: 85, lastSeen: Date.now() },
       progress: [], pantry: {}, social: { cardsSentToday: {}, board: [] },
       houseWealth: 0,
     };
   }
 
-  // ====================== LIVE (Firebase) implementation ======================
-  async function liveModule() {
-    const { onAuthStateChanged, signInWithEmailAndPassword, signOut } =
-      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
-    const { doc, getDoc, setDoc, collection, getDocs, query, orderBy, limit } =
-      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-    const { auth, db } = FB;
+  function deepMerge(a, b) {
+    const out = { ...a };
+    for (const k in b) {
+      if (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]) && typeof out[k] === 'object') out[k] = deepMerge(out[k], b[k]);
+      else out[k] = b[k];
+    }
+    return out;
+  }
 
-    let readyResolve; const readyP = new Promise((r) => (readyResolve = r));
-    onAuthStateChanged(auth, (user) => {
+  // Firebase compat hazır mı? (window.firebase + initializeApp yapılmış)
+  const LIVE = !!(window.firebase && window.firebase.auth && window.firebase.firestore && window.__MW_FB_READY);
+
+  let saveTimer = null, pendingPatch = {}, currentUid = null, authCbs = [];
+
+  // ====================== LIVE (Firebase compat) ======================
+  function liveModule() {
+    const auth = window.firebase.auth();
+    const db = window.firebase.firestore();
+    const FieldValue = window.firebase.firestore.FieldValue;
+
+    auth.onAuthStateChanged((user) => {
       currentUid = user ? user.uid : null;
+      window.__mcUid = currentUid;
       const payload = user ? { uid: user.uid, name: user.displayName || user.email } : null;
       authCbs.forEach((cb) => cb(payload));
-      readyResolve();
     });
 
     return {
-      ready: () => readyP,
+      ready: () => Promise.resolve(),
       isLive: () => true,
       uid: () => currentUid || 'guest',
-      onAuth: (cb) => { authCbs.push(cb); if (currentUid !== undefined) cb(currentUid ? { uid: currentUid } : null); },
-      signIn: (email, pw) => signInWithEmailAndPassword(auth, email, pw),
-      signOut: () => signOut(auth),
+      onAuth: (cb) => { authCbs.push(cb); if (currentUid) cb({ uid: currentUid }); },
+      signIn: (email, pw) => auth.signInWithEmailAndPassword(email, pw),
+      signOut: () => auth.signOut(),
       loadMe: async () => {
-        const ref = doc(db, 'users', currentUid);
-        const snap = await getDoc(ref);
-        if (snap.exists()) {
+        if (!currentUid) return defaultDoc('Student');
+        const ref = db.collection('users').doc(currentUid);
+        const snap = await ref.get();
+        if (snap.exists) {
           const d = snap.data();
           // GAMING ENGLISH KÖPRÜSÜ: kök gems tek doğruluk kaynağı
           if (d.gems != null) { d.wallet = d.wallet || {}; d.wallet.gems = d.gems; }
@@ -930,10 +900,11 @@ Object.assign(window, {
           return d;
         }
         const fresh = defaultDoc(auth.currentUser && (auth.currentUser.displayName || auth.currentUser.email));
-        await setDoc(ref, fresh, { merge: true });
+        await ref.set(fresh, { merge: true });
         return fresh;
       },
       save: (patch) => {
+        if (!currentUid) return;
         // GAMING ENGLISH KÖPRÜSÜ: wallet.gems → kök gems (quiz sistemi okur)
         if (patch.wallet && patch.wallet.gems != null) patch = { ...patch, gems: patch.wallet.gems };
         pendingPatch = deepMerge(pendingPatch, patch);
@@ -941,45 +912,37 @@ Object.assign(window, {
         saveTimer = setTimeout(async () => {
           const p = pendingPatch; pendingPatch = {};
           try {
-            // Ana döküman: sadece sahibi okur (özel veriler burada)
-            await setDoc(doc(db, 'users', currentUid), p, { merge: true });
-            // PUBLIC OYUN VERİSİ: ziyaret için sadece gerekli alanlar
-            // users/{uid}/myWorld/public → herkes okuyabilir, gizli veri yok
+            await db.collection('users').doc(currentUid).set(p, { merge: true });
+            // PUBLIC OYUN VERİSİ: ziyaret için sadece gerekli alanlar (gizli veri yok)
             const pub = {};
-            if (p.pet)         pub.pet = p.pet;
-            if (p.rooms)       pub.rooms = p.rooms;
-            if (p.wallet)      pub.houseWealth = null; // wealth ayrıca hesaplanır
-            if (p.profile)     pub.profile = { name: p.profile.name || '' };
+            if (p.pet) pub.pet = p.pet;
+            if (p.rooms) pub.rooms = p.rooms;
+            if (p.profile) pub.profile = { name: p.profile.name || '' };
             if (Object.keys(pub).length > 0) {
-              await setDoc(
-                doc(db, 'users', currentUid, 'myWorld', 'public'),
-                pub, { merge: true }
-              );
+              await db.collection('users').doc(currentUid).collection('myWorld').doc('public').set(pub, { merge: true });
             }
           } catch (e) { console.warn('save failed', e); }
         }, 900);
       },
       loadStudent: async (uid) => {
-        // GİZLİLİK: sadece public oyun verisini oku — özel veri (email, xp, streak vb.) görünmez
-        const snap = await getDoc(doc(db, 'users', uid, 'myWorld', 'public'));
-        return snap.exists() ? snap.data() : null;
+        // GİZLİLİK: sadece public oyun verisini oku — özel veri görünmez
+        try {
+          const snap = await db.collection('users').doc(uid).collection('myWorld').doc('public').get();
+          return snap.exists ? snap.data() : null;
+        } catch (e) { return null; }
       },
       listStudents: async () => {
-        // collectionGroup ile tüm myWorld/public dökümanlarını çek
-        const { collectionGroup, collectionGroupQuery } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').catch(() => ({}));
         try {
-          const { query: q2, collectionGroup: cg, orderBy: ob, limit: lim, getDocs: gd } =
-            await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-          const snap = await gd(q2(cg(db, 'myWorld'), ob('houseWealth', 'desc'), lim(50)));
+          const snap = await db.collectionGroup('myWorld').orderBy('houseWealth', 'desc').limit(50).get();
           return snap.docs.map((d) => ({ uid: d.ref.parent.parent.id, ...d.data() }));
-        } catch(e) {
+        } catch (e) {
           return (window.FRIENDS || []).map((f) => ({ uid: f.id, name: f.name, species: (f.pet && f.pet.species) || 'cat', houseWealth: f.wealth, level: f.level }));
         }
       },
     };
   }
 
-  // ====================== MOCK (localStorage) implementation ==================
+  // ====================== MOCK (localStorage) ======================
   function mockModule() {
     const KEY = 'myworld_cloud_v1';
     const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } };
@@ -993,7 +956,6 @@ Object.assign(window, {
       signOut: () => Promise.resolve(),
       loadMe: () => Promise.resolve(read() || defaultDoc('Ayşe')),
       save: (patch) => { write(deepMerge(read() || defaultDoc('Ayşe'), patch)); },
-      // visiting in mock mode reads from the bundled FRIENDS catalog
       loadStudent: (uid) => {
         const f = (window.FRIENDS || []).find((x) => x.id === uid);
         if (!f) return Promise.resolve(null);
@@ -1003,36 +965,27 @@ Object.assign(window, {
     };
   }
 
-  function deepMerge(a, b) {
-    const out = { ...a };
-    for (const k in b) {
-      if (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]) && typeof out[k] === 'object') out[k] = deepMerge(out[k], b[k]);
-      else out[k] = b[k];
-    }
-    return out;
-  }
-
-  // expose immediately as a promise that resolves to the right module
-  const impl = LIVE ? liveModule() : Promise.resolve(mockModule());
+  const m = LIVE ? liveModule() : mockModule();
+  // SENKRON tanım — app.jsx çalışmadan önce hazır
   window.MyCloud = {
-    _impl: impl,
-    ready: () => impl.then((m) => m.ready()),
-    isLive: () => LIVE,
-    uid: () => (window.__mcUid || 'guest'),
-    onAuth: (cb) => impl.then((m) => m.onAuth((p) => { window.__mcUid = p && p.uid; cb(p); })),
-    signIn: (e, p) => impl.then((m) => m.signIn(e, p)),
-    signOut: () => impl.then((m) => m.signOut()),
-    loadMe: () => impl.then((m) => m.loadMe()),
-    save: (patch) => impl.then((m) => m.save(patch)),
-    loadStudent: (uid) => impl.then((m) => m.loadStudent(uid)),
-    listStudents: () => impl.then((m) => m.listStudents()),
+    ready: () => m.ready(),
+    isLive: () => m.isLive(),
+    uid: () => (window.__mcUid || (m.uid && m.uid()) || 'guest'),
+    onAuth: (cb) => m.onAuth((p) => { window.__mcUid = p && p.uid; cb(p); }),
+    signIn: (e, p) => m.signIn(e, p),
+    signOut: () => m.signOut(),
+    loadMe: () => m.loadMe(),
+    save: (patch) => m.save(patch),
+    loadStudent: (uid) => m.loadStudent(uid),
+    listStudents: () => m.listStudents(),
     defaultDoc,
   };
+  console.log('My World: MyCloud hazır (' + (LIVE ? 'LIVE/Firebase' : 'MOCK/local') + ')');
 })();
 
 </script>
 <!-- ===== data.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // data.jsx — My World catalog, friends, rooms, rarities. Exports to window.
 // All item "art" fields are PLACEHOLDER glyphs standing in for real sprite assets.
 
@@ -1415,7 +1368,7 @@ Object.assign(window, {
 
 </script>
 <!-- ===== audio.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // audio.jsx — procedural lo-fi study loop via Web Audio (no asset files).
 // A soft chord pad + gentle pluck arpeggio + light kick/hat at ~78bpm.
 // Exports window.MyAudio { toggle, isOn, init } and an AudioToggle React control.
@@ -1564,7 +1517,7 @@ Object.assign(window, { AudioToggle });
 
 </script>
 <!-- ===== fooddata.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // fooddata.jsx — v12 Food Market: 25 foods + 10 drinks. Consumables refill Hunger.
 // `restore` = hunger points refilled (0–100 scale). `happy` = small happiness bump.
 const FOODS = [
@@ -1612,7 +1565,7 @@ Object.assign(window, { FOODS, DRINKS });
 
 </script>
 <!-- ===== furnart.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // furnart.jsx — v4 vector-drawn furniture (CSS shapes: outlines + soft gradients).
 // FurnArt renders premium art for key items; falls back to the emoji glyph otherwise.
 // Exports: FurnArt, VECTOR_IDS
@@ -1851,7 +1804,7 @@ Object.assign(window, { FurnArt, VECTOR_IDS, VECTOR_ART });
 
 </script>
 <!-- ===== mythicart.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // mythicart.jsx — v9 Mythic interactive furniture tier: vector art + live reactions.
 // Registers into the shared VECTOR_ART registry after furnart.jsx loads.
 // Props each art receives: w, powered (bool), pulsing (bool), stateN (click counter), seated (pet on it)
@@ -2036,7 +1989,7 @@ Object.assign(window.VECTOR_ART, {
 
 </script>
 <!-- ===== furngen.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // furngen.jsx — v13: vector art for the v11 emoji furniture. Registers into window.VECTOR_ART.
 // Renderers receive { w, powered, pulsing, seated }. Rig: each piece sized in px, scaled by k.
 (function () {
@@ -2317,7 +2270,7 @@ Object.assign(window.VECTOR_ART, {
 
 </script>
 <!-- ===== clothart.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // clothart.jsx — v5 FITTED vector clothing. Every item is drawn onto the cat's
 // actual body geometry (150×230 local space) inside the animation rig, so it
 // conforms to the body and rides every animation 1:1. No floating glyphs.
@@ -2706,7 +2659,7 @@ Object.assign(window, { CLOTH_ART, PANT_CUFFS, SHOE_ART, ClothThumb });
 
 </script>
 <!-- ===== clothgen.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // clothgen.jsx — v13: fitted vector art for every previously-emoji clothing item.
 // Registers components into window.CLOTH_ART (keyed by item id). Rig is 150×230:
 //   head hats z90 · glasses z85 (eyes y46-82) · shirts z42 (torso y100-160) ·
@@ -2952,7 +2905,7 @@ Object.assign(window, { CLOTH_ART, PANT_CUFFS, SHOE_ART, ClothThumb });
 
 </script>
 <!-- ===== cat.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // cat.jsx — v4 chibi mascot. Huge head, sparkly eyes, tiny body. Socket-rigged clothing.
 // States: idle | walking | sitting | interact | dig | plant | water | juggle
 // Exports: Cat, CAT_SOCKETS, SLOT_SOCKET
@@ -3340,7 +3293,7 @@ Object.assign(window, { Cat, CAT_SOCKETS, SLOT_SOCKET });
 
 </script>
 <!-- ===== shells.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // shells.jsx — v10 architectural shell shifts: themed full-room scenery replacing the wallpaper.
 // Shells: castle | treehouse | undersea | space. Exported to window for room.jsx.
 
@@ -3536,7 +3489,7 @@ Object.assign(window, { ShellScenery });
 
 </script>
 <!-- ===== room.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // room.jsx — layered room stage (the Z-Index Matrix engine), nav arrows, cat seating.
 // Exports: RoomStage, LAYERS, computeZ
 const { useRef: useRoomRef, useState: useRoomState, useEffect: useRoomEffect, useCallback: useRoomCb } = React;
@@ -4070,7 +4023,7 @@ Object.assign(window, { RoomStage, LAYERS, computeZ });
 
 </script>
 <!-- ===== hud.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // hud.jsx — top currency HUD + bottom dock toolbar + toast/coin FX.
 // Exports: TopHUD, Dock, GemCount
 const { useState: useHudState, useEffect: useHudEffect, useRef: useHudRef } = React;
@@ -4225,7 +4178,7 @@ Object.assign(window, { TopHUD, Dock, GemCount, Gem });
 
 </script>
 <!-- ===== boutique.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // boutique.jsx — The Boutique store overlay (categories, specials, layouts, buy flow).
 // Exports: Boutique
 const { useState: useShopState, useEffect: useShopEffect, useMemo: useShopMemo } = React;
@@ -4526,7 +4479,7 @@ Object.assign(window, { Boutique, RarityChip, PriceTag, ItemArt, overlayStyle })
 
 </script>
 <!-- ===== mysterybox.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // mysterybox.jsx — gacha: select box -> shake -> burst -> rarity reveal.
 // Exports: MysteryBox
 const { useState: useMbState, useEffect: useMbEffect, useRef: useMbRef } = React;
@@ -4685,7 +4638,7 @@ Object.assign(window, { MysteryBox });
 
 </script>
 <!-- ===== wardrobe.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // wardrobe.jsx — Closet (v10): horizontal slider with nav arrows, item stacking ×N,
 // drag-to-place deducts from depot; Store-to-Depot returns items here.
 // Exports: Closet
@@ -4799,7 +4752,7 @@ Object.assign(window, { Closet });
 
 </script>
 <!-- ===== customize.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // customize.jsx — Pet Salon (v10): species selection, fur, glow-eyes studio,
 // blush + face marks (Aesthetics), with CEFR-gated trait locks.
 // Exports: CustomizePanel
@@ -4986,7 +4939,7 @@ Object.assign(window, { CustomizePanel });
 
 </script>
 <!-- ===== town.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // town.jsx — Gaming English Town Map + CEFR level selector (v7).
 // Exports: TownMap, LevelSelect
 const { useState: useTownState } = React;
@@ -5142,7 +5095,7 @@ Object.assign(window, { TownMap, LevelSelect });
 
 </script>
 <!-- ===== fishing.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // fishing.jsx — The Grammatical Fishing Pier (v7). Catch word-fish in the right order.
 // Exports: FishingGame
 const { useState: useFishState, useEffect: useFishEffect, useMemo: useFishMemo, useRef: useFishRef } = React;
@@ -5292,7 +5245,7 @@ Object.assign(window, { FishingGame });
 
 </script>
 <!-- ===== bowling.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // bowling.jsx — The Lexical Bowling Alley (v7). Aim the oscillating slider at the right pin.
 // Exports: BowlingGame
 const { useState: useBowlState, useEffect: useBowlEffect, useRef: useBowlRef, useMemo: useBowlMemo } = React;
@@ -5451,7 +5404,7 @@ Object.assign(window, { BowlingGame });
 
 </script>
 <!-- ===== park.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // park.jsx — The Central Lexical Park (v7). Keep the ball up by answering fast; combos pay gems.
 // Exports: ParkGame
 const { useState: useParkState, useEffect: useParkEffect, useRef: useParkRef } = React;
@@ -5591,7 +5544,7 @@ Object.assign(window, { ParkGame });
 
 </script>
 <!-- ===== hospital.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // hospital.jsx — The Anatomical Hospital (v10): body-parts & symptoms clinic quiz.
 // The Diagnostic Scan: an X-ray board shows the pet; click the body region the prompt asks for.
 // Exports: HospitalGame
@@ -5815,7 +5768,7 @@ Object.assign(window, { HospitalGame, HOSPITAL_POOLS });
 
 </script>
 <!-- ===== neighbourhood.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // neighbourhood.jsx — v10 Neighbourhood Portal: scrollable suburban street of classmates' houses.
 // Clicking a house starts the secure visit fetch (handled by app's visit()).
 // Exports: Neighbourhood
@@ -5898,7 +5851,7 @@ Object.assign(window, { Neighbourhood });
 
 </script>
 <!-- ===== foodmarket.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // foodmarket.jsx — v12 Food Market: superstore grid of snacks + drinks to refill Hunger.
 // Exports: FoodMarket
 const { useState: useMktState } = React;
@@ -5975,7 +5928,7 @@ Object.assign(window, { FoodMarket });
 
 </script>
 <!-- ===== pocket.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // pocket.jsx — v14 slide-out snack pocket. Opens from the top-left avatar, sits in the
 // upper-left so it never covers the centered pet. Lists owned Foods/Drinks; pick → EAT/DRINK.
 const { useState: usePocketState } = React;
@@ -6058,7 +6011,7 @@ Object.assign(window, { Pocket, EatFx });
 
 </script>
 <!-- ===== mythicfx.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // mythicfx.jsx — v14 full-screen interactive overlays for mythic furniture:
 // DJ Mixing Booth (10-track global swap), Celestial Telescope (drag starfield),
 // Retro Arcade (playable 30s mini-game). Exports window.MythicOverlay.
@@ -6204,7 +6157,7 @@ Object.assign(window, { MythicOverlay });
 
 </script>
 <!-- ===== schooldata.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // schooldata.jsx — v8 curriculum banks: School lessons+exams, Café dialogues, Runway looks.
 // Topic matrix follows the pedagogy spec: A1-A2 core vocab/simple tenses,
 // B1-B2 modals/phrasal/relative clauses, C1-C2 inversions/subjunctive/idioms.
@@ -6452,7 +6405,7 @@ Object.assign(window, { SCHOOL_BANK, CAFE_BANK, RUNWAY_BANK, SCHOOL_MODULES });
 
 </script>
 <!-- ===== expansion.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // expansion.jsx — v11 MASSIVE catalog expansion. Loads after data.jsx, mutates the
 // shared arrays in place (CLOTHES, FURNITURE, WALLS, FLOORS, REAL_ESTATE, BOXES, ALL_ITEMS).
 // New items use positioned-glyph art (the fitted-renderer registry stays the source of
@@ -6653,7 +6606,7 @@ Object.assign(window, { SCHOOL_BANK, CAFE_BANK, RUNWAY_BANK, SCHOOL_MODULES });
 
 </script>
 <!-- ===== cafescenes.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // cafescenes.jsx — v11: converts CAFE_BANK tiers into ARRAYS of rotating scenes
 // (the café was repeating one dialogue per tier — now each tier has 3 scenes).
 (function expandCafe() {
@@ -6731,7 +6684,7 @@ Object.assign(window, { SCHOOL_BANK, CAFE_BANK, RUNWAY_BANK, SCHOOL_MODULES });
 
 </script>
 <!-- ===== school.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // school.jsx — The Real Town School (v8): lesson slides → teacher exam → perfect-score bounty.
 // Exports: SchoolGame
 const { useState: useSchState, useEffect: useSchEffect } = React;
@@ -6970,7 +6923,7 @@ Object.assign(window, { SchoolGame });
 
 </script>
 <!-- ===== cafe.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // cafe.jsx — The Cozy Café Chat (v8): NPC dialogue, pick the best English response.
 // Exports: CafeGame
 const { useState: useCafState, useEffect: useCafEffect } = React;
@@ -7134,7 +7087,7 @@ Object.assign(window, { CafeGame });
 
 </script>
 <!-- ===== runway.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // runway.jsx — The Fashion Boutique Runway (v8): dress the description, hit Strut, cameras flash.
 // Exports: RunwayGame
 const { useState: useRwState, useMemo: useRwMemo } = React;
@@ -7285,7 +7238,7 @@ Object.assign(window, { RunwayGame });
 
 </script>
 <!-- ===== friends.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // friends.jsx — wealth-ranked Friends ribbon, visit launcher, greeting-card board.
 // Exports: FriendsPanel, VisitBar, GreetingBoard
 const { useState: useFrState } = React;
@@ -7392,7 +7345,7 @@ Object.assign(window, { FriendsPanel, FriendsRibbon, VisitBar, GreetingBoard });
 
 </script>
 <!-- ===== app.jsx ===== -->
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 // app.jsx — My World root. State, gem economy, drag-to-place, visiting, tweaks.
 const { useState, useEffect, useRef, useCallback } = React;
 
@@ -7427,6 +7380,7 @@ function App() {
   const cloudReady = useRef(false);
   useEffect(() => {
     // v15: hydrate from Firebase (or local mock) on auth. Isolated per-student doc.
+    if (!window.MyCloud) { console.warn('MyCloud henüz hazır değil'); return; }
     window.MyCloud.onAuth(async (who) => {
       const me = await window.MyCloud.loadMe();
       if (!me) return;
