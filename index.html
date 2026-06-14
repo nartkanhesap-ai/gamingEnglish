@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Gaming English — Macera Dünyası</title>
+
+<!-- ── PWA: Gerçek uygulama hissi ── -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1E8A53">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Gaming English">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -745,8 +756,27 @@ firebase.auth().onAuthStateChanged(async function(user){
 
 <div class="ge-login-modal hidden" id="geLoginModal">
   <div class="ge-login-box">
+
+    <!-- Ana Ekrana Ekle bilgi balonu (PWA değilse görünür) -->
+    <div id="installHint" style="display:none">
+      <div style="position:relative;background:linear-gradient(135deg,var(--green-soft),#eafaf0);border:2px solid var(--green);border-radius:18px;padding:16px 18px 16px 16px;margin-bottom:18px">
+        <button id="installHintClose" aria-label="Kapat" style="position:absolute;top:8px;right:8px;width:28px;height:28px;border:none;background:rgba(0,0,0,.06);border-radius:50%;cursor:pointer;font-size:15px;color:var(--ink-soft);display:flex;align-items:center;justify-content:center">✕</button>
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="flex-shrink:0;width:46px;height:46px;border-radius:12px;background:#fff;border:1.5px solid var(--green);display:flex;align-items:center;justify-content:center">
+            <svg width="30" height="30" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#F4863C"/><path d="M10 16 L13 5 L22 14 Z" fill="#E5603C"/><path d="M38 16 L35 5 L26 14 Z" fill="#E5603C"/><path d="M24 18 q14 3 12 17 q-12 8 -24 0 q-2 -14 12 -17 Z" fill="#FBF6EA"/><circle cx="18" cy="24" r="3" fill="#241008"/><circle cx="30" cy="24" r="3" fill="#241008"/><path d="M24 31 l-3 -3 h6 Z" fill="#241008"/><path d="M14 14 q10 -12 20 0 q-10 -4 -20 0 Z" fill="#1E8A53"/><rect x="16" y="10" width="16" height="6" rx="3" fill="#14633A"/><circle cx="24" cy="13" r="2.5" fill="#FFC53D"/></svg>
+          </div>
+          <div style="flex:1;min-width:0;padding-right:20px">
+            <div style="font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--ink);margin-bottom:3px">📱 Uygulama gibi kullan!</div>
+            <div id="installHintText" style="font-size:12.5px;color:var(--ink-soft);font-weight:600;line-height:1.5"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="ge-login-header">
-      <div style="font-size:52px;margin-bottom:10px">🦊</div>
+      <div style="margin-bottom:10px;display:flex;justify-content:center">
+        <svg width="64" height="64" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#F4863C"/><path d="M10 16 L13 5 L22 14 Z" fill="#E5603C"/><path d="M38 16 L35 5 L26 14 Z" fill="#E5603C"/><path d="M24 18 q14 3 12 17 q-12 8 -24 0 q-2 -14 12 -17 Z" fill="#FBF6EA"/><circle cx="18" cy="24" r="3" fill="#241008"/><circle cx="30" cy="24" r="3" fill="#241008"/><path d="M24 31 l-3 -3 h6 Z" fill="#241008"/><path d="M14 14 q10 -12 20 0 q-10 -4 -20 0 Z" fill="#1E8A53"/><rect x="16" y="10" width="16" height="6" rx="3" fill="#14633A"/><circle cx="24" cy="13" r="2.5" fill="#FFC53D"/></svg>
+      </div>
       <h1>Gaming English</h1>
       <p>English Coach hesabınla giriş yap</p>
     </div>
@@ -5515,6 +5545,54 @@ document.addEventListener('DOMContentLoaded', function() {
   var style = document.createElement('style');
   style.textContent = '@media(max-width:700px){.home-two-col{grid-template-columns:1fr!important}}';
   document.head.appendChild(style);
+})();
+
+/* ── "Ana Ekrana Ekle" bilgi balonu ──
+   - PWA olarak (ana ekrandan) açıldıysa HİÇ gösterilmez
+   - iOS / Android'e göre farklı talimat
+   - Kapatınca o oturumda gizlenir; ana ekrana eklenene kadar tekrar açılışta çıkar */
+(function installHint() {
+  function isStandalone() {
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
+      || window.navigator.standalone === true;
+  }
+  function isTouch() {
+    return (window.matchMedia && window.matchMedia('(pointer: coarse)').matches)
+      || (window.matchMedia && window.matchMedia('(hover: none)').matches);
+  }
+
+  function setup() {
+    var hint = document.getElementById('installHint');
+    var txt = document.getElementById('installHintText');
+    var closeBtn = document.getElementById('installHintClose');
+    if (!hint || !txt) return;
+
+    // PWA modunda veya masaüstünde gösterme
+    if (isStandalone() || !isTouch()) { hint.style.display = 'none'; return; }
+
+    // Cihaza göre talimat
+    var ua = navigator.userAgent || '';
+    var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (isIOS) {
+      txt.innerHTML = 'Alttaki <b>Paylaş</b> ✦ butonuna dokun, sonra <b>"Ana Ekrana Ekle"</b>yi seç. Böylece tam ekran uygulama gibi açılır!';
+    } else {
+      txt.innerHTML = 'Tarayıcı menüsünü (⋮) aç, <b>"Ana ekrana ekle"</b> ya da <b>"Uygulamayı yükle"</b>yi seç. Böylece tam ekran uygulama gibi açılır!';
+    }
+
+    hint.style.display = 'block';
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function() {
+        hint.style.display = 'none';
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setup);
+  } else {
+    setup();
+  }
 })();
 
 
