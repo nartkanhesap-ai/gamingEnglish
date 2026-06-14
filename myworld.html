@@ -58,27 +58,69 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .tabular { font-variant-numeric: tabular-nums; }
 
 /* ===========================================================================
-   TELEFON / TABLET — DİKEY MODDA YATAY (LANDSCAPE) ZORLAMA
-   Sadece dokunmatik cihaz + dikey tutuş. Bilgisayar HİÇ etkilenmez.
-   #root 90° döndürülüp en/boy takas edilir → oyun her zaman geniş ve yatay.
+   TELEFON / TABLET — SABİT TASARIM + ÖLÇEKLE-SIĞDIR
+   Dokunmatik cihazlarda oyun sabit 1100x680 yatay tuvalde render edilir,
+   sonra JS ile ekrana sığacak şekilde orantılı küçültülür (iç içe geçmez).
+   Bilgisayar (fare) HİÇ etkilenmez.
    =========================================================================== */
-@media (pointer: coarse) and (orientation: portrait) {
-  html, body { overflow: hidden; }
-  #root {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vh;
-    height: 100vw;
-    width: 100dvh;
-    height: 100dvw;
-    transform: rotate(90deg);
-    transform-origin: top left;
-    margin-left: 100vw;
-    margin-left: 100dvw;
-    -webkit-overflow-scrolling: touch;
-  }
+body.mw-scaled { overflow: hidden; }
+body.mw-scaled #root {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 1200px;
+  height: 680px;
+  height: var(--mw-h, 680px);
+  transform: translate(-50%, -50%) scale(var(--mw-scale, 1));
+  transform-origin: center center;
 }
+
+/* "Telefonu yan çevir" ekranı (dik tutuşta) */
+#mw-rotate-prompt {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: radial-gradient(120% 80% at 50% -10%, var(--bg, #f5f0e6) 0%, var(--bg-2, #ece4d6) 100%);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px;
+}
+#mw-rotate-prompt .mw-rp-inner { max-width: 320px; }
+#mw-rotate-prompt .mw-rp-phone {
+  width: 92px; height: 56px;
+  margin: 0 auto 28px;
+  border: 4px solid var(--ink, #5a4a3a);
+  border-radius: 12px;
+  position: relative;
+  animation: mwRotatePhone 2.2s ease-in-out infinite;
+}
+#mw-rotate-prompt .mw-rp-phone-body {
+  position: absolute; inset: 5px;
+  border-radius: 5px;
+  background: var(--primary, #7cb342);
+  opacity: .55;
+}
+@keyframes mwRotatePhone {
+  0%, 30%   { transform: rotate(90deg); }
+  60%, 100% { transform: rotate(0deg); }
+}
+#mw-rotate-prompt .mw-rp-title {
+  font-family: var(--display, sans-serif);
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--ink, #5a4a3a);
+  margin-bottom: 10px;
+}
+#mw-rotate-prompt .mw-rp-text {
+  font-family: var(--body, sans-serif);
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--ink-soft, #8a7a68);
+}
+
 
 /* ============================================================= JUICY PRIMITIVES */
 /* chunky pressable button with a solid bottom edge = depth */
@@ -7913,6 +7955,89 @@ function App() {
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+
+/* ===========================================================================
+   HER ZAMAN YATAY — telefon/tablet
+   - YATAY tutuş: oyun sabit 1200x680 tuvalde ekrana orantılı sığdırılır (kusursuz)
+   - DİK tutuş: "Telefonu yan çevir" ekranı gösterilir, oyun gizlenir
+   - Bilgisayar (ince işaretçi) HİÇ etkilenmez
+   =========================================================================== */
+(function () {
+  var DESIGN_W = 1200;
+  var DESIGN_H_LANDSCAPE = 680;
+
+  function isTouchLike() {
+    var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    var noHover = window.matchMedia && window.matchMedia('(hover: none)').matches;
+    return coarse || noHover;
+  }
+
+  // "Telefonu yan çevir" ekranını oluştur (bir kez)
+  function ensureRotatePrompt() {
+    var el = document.getElementById('mw-rotate-prompt');
+    if (el) return el;
+    el = document.createElement('div');
+    el.id = 'mw-rotate-prompt';
+    el.innerHTML =
+      '<div class="mw-rp-inner">'
+      + '<div class="mw-rp-phone"><div class="mw-rp-phone-body"></div></div>'
+      + '<div class="mw-rp-title">Telefonu yan çevir</div>'
+      + '<div class="mw-rp-text">My World en iyi yatay modda oynanır 🎮<br>Cihazını yana döndür ve maceraya başla!</div>'
+      + '</div>';
+    document.body.appendChild(el);
+    return el;
+  }
+
+  function applyScale() {
+    var body = document.body;
+    if (!isTouchLike()) {
+      body.classList.remove('mw-scaled');
+      body.style.removeProperty('--mw-scale');
+      body.style.removeProperty('--mw-h');
+      var rp0 = document.getElementById('mw-rotate-prompt');
+      if (rp0) rp0.style.display = 'none';
+      return;
+    }
+
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var portrait = vh > vw;
+    var rp = ensureRotatePrompt();
+
+    if (portrait) {
+      // DİK TUTUŞ: oyunu gizle, "yan çevir" ekranını göster.
+      body.classList.remove('mw-scaled');
+      body.style.removeProperty('--mw-scale');
+      body.style.removeProperty('--mw-h');
+      rp.style.display = 'flex';
+      return;
+    }
+
+    // YATAY TUTUŞ: uyarıyı gizle, oyunu sığdır.
+    rp.style.display = 'none';
+    body.classList.add('mw-scaled');
+    var scale = Math.min(vw / DESIGN_W, vh / DESIGN_H_LANDSCAPE);
+    scale = Math.max(0.25, Math.min(scale, 1.2));
+    body.style.setProperty('--mw-scale', scale.toFixed(4));
+    body.style.setProperty('--mw-h', DESIGN_H_LANDSCAPE + 'px');
+  }
+
+  var raf;
+  function schedule() {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(applyScale);
+  }
+
+  window.addEventListener('resize', schedule);
+  window.addEventListener('orientationchange', function () {
+    setTimeout(applyScale, 120);
+    setTimeout(applyScale, 400);
+  });
+  // İlk çalıştırma
+  applyScale();
+  setTimeout(applyScale, 200);
+})();
+
 
 </script>
 </body>
