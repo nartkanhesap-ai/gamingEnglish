@@ -57,6 +57,29 @@ h1,h2,h3,h4 { font-family: var(--display); margin: 0; font-weight: 600; }
 button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
 .tabular { font-variant-numeric: tabular-nums; }
 
+/* ===========================================================================
+   TELEFON / TABLET — DİKEY MODDA YATAY (LANDSCAPE) ZORLAMA
+   Sadece dokunmatik cihaz + dikey tutuş. Bilgisayar HİÇ etkilenmez.
+   #root 90° döndürülüp en/boy takas edilir → oyun her zaman geniş ve yatay.
+   =========================================================================== */
+@media (pointer: coarse) and (orientation: portrait) {
+  html, body { overflow: hidden; }
+  #root {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vh;
+    height: 100vw;
+    width: 100dvh;
+    height: 100dvw;
+    transform: rotate(90deg);
+    transform-origin: top left;
+    margin-left: 100vw;
+    margin-left: 100dvw;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 /* ============================================================= JUICY PRIMITIVES */
 /* chunky pressable button with a solid bottom edge = depth */
 .btn3d {
