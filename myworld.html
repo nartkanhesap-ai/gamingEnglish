@@ -2,8 +2,19 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <title>My World — Gaming English</title>
+
+<!-- ── PWA: Gerçek uygulama hissi ── -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1E8A53">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gaming English">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet" />
@@ -68,9 +79,8 @@ body.mw-scaled #root {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 1200px;
-  height: 680px;
-  height: var(--mw-h, 680px);
+  width: var(--mw-w, 1200px);
+  height: var(--mw-h, 720px);
   transform: translate(-50%, -50%) scale(var(--mw-scale, 1));
   transform-origin: center center;
 }
@@ -7958,13 +7968,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 
 /* ===========================================================================
    HER ZAMAN YATAY — telefon/tablet
-   - YATAY tutuş: oyun sabit 1200x680 tuvalde ekrana orantılı sığdırılır (kusursuz)
+   - YATAY tutuş: oyun TAM EKRAN doldurur (ekran oranına göre dinamik tuval)
    - DİK tutuş: "Telefonu yan çevir" ekranı gösterilir, oyun gizlenir
    - Bilgisayar (ince işaretçi) HİÇ etkilenmez
    =========================================================================== */
 (function () {
-  var DESIGN_W = 1200;
-  var DESIGN_H_LANDSCAPE = 680;
+  // Temel tasarım yüksekliği — genişlik ekrana göre esner (tam ekran için)
+  var BASE_H = 720;
+  var MIN_W = 1100;   // oyunun düzeninin bozulmadığı en dar genişlik
+  var MAX_W = 1700;   // çok geniş ekranlarda aşırı uzamayı sınırla
 
   function isTouchLike() {
     var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
@@ -7994,6 +8006,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App />);
       body.classList.remove('mw-scaled');
       body.style.removeProperty('--mw-scale');
       body.style.removeProperty('--mw-h');
+      body.style.removeProperty('--mw-w');
       var rp0 = document.getElementById('mw-rotate-prompt');
       if (rp0) rp0.style.display = 'none';
       return;
@@ -8009,17 +8022,27 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App />);
       body.classList.remove('mw-scaled');
       body.style.removeProperty('--mw-scale');
       body.style.removeProperty('--mw-h');
+      body.style.removeProperty('--mw-w');
       rp.style.display = 'flex';
       return;
     }
 
-    // YATAY TUTUŞ: uyarıyı gizle, oyunu sığdır.
+    // YATAY TUTUŞ: TAM EKRAN doldur.
+    // Tuvali ekranın en-boy oranına göre boyutla: yükseklik sabit BASE_H,
+    // genişlik = BASE_H * (ekran oranı) → ölçeklenince ekranı tam kaplar.
     rp.style.display = 'none';
     body.classList.add('mw-scaled');
-    var scale = Math.min(vw / DESIGN_W, vh / DESIGN_H_LANDSCAPE);
-    scale = Math.max(0.25, Math.min(scale, 1.2));
+
+    var aspect = vw / vh;
+    var designW = Math.round(BASE_H * aspect);
+    designW = Math.max(MIN_W, Math.min(MAX_W, designW));
+
+    // Yüksekliğe göre ölçekle (tam ekran kaplasın)
+    var scale = vh / BASE_H;
+
     body.style.setProperty('--mw-scale', scale.toFixed(4));
-    body.style.setProperty('--mw-h', DESIGN_H_LANDSCAPE + 'px');
+    body.style.setProperty('--mw-h', BASE_H + 'px');
+    body.style.setProperty('--mw-w', designW + 'px');
   }
 
   var raf;
