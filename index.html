@@ -856,14 +856,10 @@ firebase.auth().onAuthStateChanged(async function(user){
 <!-- topbar -->
 <div class="ge-topbar-new">
   <div style="display:flex;align-items:center;gap:10px">
-    <!-- Mode toggle -->
-    <div class="mode-toggle" style="display:flex;background:var(--surface);border-radius:99px;padding:4px;gap:3px;box-shadow:var(--shadow-sm);border:1.5px solid var(--line)">
-      <button class="mode-btn active" id="modeExp" onclick="setMode('explorer')" style="border:none;cursor:pointer;border-radius:99px;padding:6px 13px;font-family:var(--font-display);font-weight:700;font-size:12px;display:flex;align-items:center;gap:5px;transition:all .18s">
-        🧭 Kâşif <span style="font-size:10px;font-weight:800;padding:2px 6px;border-radius:99px;background:rgba(255,255,255,.2)">7–10</span>
-      </button>
-      <button class="mode-btn" id="modeCh" onclick="setMode('challenger')" style="border:none;cursor:pointer;border-radius:99px;padding:6px 13px;font-family:var(--font-display);font-weight:700;font-size:12px;display:flex;align-items:center;gap:5px;transition:all .18s;background:transparent;color:var(--ink-soft)">
-        ⚡ Maceracı <span style="font-size:10px;font-weight:800;padding:2px 6px;border-radius:99px;background:var(--surface-2)">11–15</span>
-      </button>
+    <!-- Sabit Kâşif modu (7-13 yaş) -->
+    <div style="display:flex;align-items:center;gap:6px;background:var(--surface);border-radius:99px;padding:7px 14px;box-shadow:var(--shadow-sm);border:1.5px solid var(--line)">
+      <span style="font-family:var(--font-display);font-weight:700;font-size:13px;color:var(--green);display:flex;align-items:center;gap:5px">🧭 Kâşif</span>
+      <span style="font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px;background:var(--green-soft);color:var(--green-deep)">7–13 yaş</span>
     </div>
   </div>
   <div class="ge-topbar-stats">
@@ -3422,13 +3418,10 @@ function showView(name) {
 
 // ── Mode Toggle ──────────────────────
 function setMode(m) {
+  // Site yalnızca Kâşif (kids 7-13) modunda — teen/maceracı modu kaldırıldı
+  m = 'explorer';
   document.documentElement.setAttribute('data-mode', m);
   try{ localStorage.setItem('ge_mode', m); }catch(e){}
-  var eBtn = document.getElementById('modeExp');
-  var cBtn = document.getElementById('modeCh');
-  if (eBtn) eBtn.classList.toggle('active', m === 'explorer');
-  if (cBtn) cBtn.classList.toggle('active', m === 'challenger');
-  // HeroCard header rengi CSS [data-mode] ile otomatik değişiyor
   renderHomeAtlas();
   updateStatPills();
 }
@@ -3535,6 +3528,9 @@ async function loadUserProgress(uid) {
 
   // Günlük giriş streak ve XP kontrolü
   await handleDailyLogin();
+
+  // Rozet kontrolü — güvenlik için burada da çağır (handleDailyLogin başarısız olursa)
+  try { await checkAndAwardBadges(); } catch(e) { console.warn('Badge check error:', e); }
 
   renderHomeDashboard();
   if (document.getElementById('view-maps') && document.getElementById('view-maps').classList.contains('active')) {
@@ -4793,10 +4789,26 @@ var GE_BADGE_DEFS = [
   { id:'gems500',        icon:'💠', name:'Hazine Bekçisi',  desc:'500 mücevher topladın',                 color:'#2E9BD6', check: function(s){ return s.totalGemsEarned >= 500; } },
   { id:'games5',         icon:'🎮', name:'Oyun Tutkunu',    desc:'5 farklı oyunu oynadın',                color:'#7C6BF0', check: function(s){ return s.uniqueGamesPlayed >= 5; } },
   { id:'all_games',      icon:'🏅', name:'Her Şeyi Dene',   desc:'Tüm 6 oyunu en az bir kez oynadın',    color:'#F2A23C', check: function(s){ return s.uniqueGamesPlayed >= 6; } },
+  // İzcilik & Keşif rozetleri (izci ruhu + İngilizce öğrenme harmonisi)
+  { id:'scout_recruit',  icon:'🧭', name:'Acemi İzci',       desc:'Maceraya ilk adımını attın — pusulan hazır!', color:'#1E8A53', check: function(s){ return s.totalLogins >= 1; } },
+  { id:'trail_blazer',   icon:'🥾', name:'İz Sürücü',        desc:'3 ünite tamamlayıp patikada ilerledin',  color:'#2E9BD6', check: function(s){ return s.completedUnits >= 3; } },
+  { id:'campfire',       icon:'🏕️', name:'Kamp Ateşi',       desc:'5 gün üst üste gelip ateşi söndürmedin', color:'#E5603C', check: function(s){ return s.streak >= 5; } },
+  { id:'word_forager',   icon:'🍃', name:'Kelime Toplayıcı', desc:'25 soruyu doğru cevaplayıp kelime topladın', color:'#1E8A53', check: function(s){ return s.correctAnswers >= 25; } },
+  { id:'merit_scout',    icon:'🎖️', name:'Liyakatli İzci',   desc:'10 rozet biriktirdin — gerçek bir kâşifsin!', color:'#F2A23C', check: function(s){ return countEarnedBadges() >= 10; } },
+  { id:'summit_climber', icon:'🏔️', name:'Zirve Tırmanışçısı', desc:'2 haritayı tamamen fethettin',          color:'#7C6BF0', check: function(s){ return s.completedMaps >= 2; } },
+  { id:'treasure_scout', icon:'🗝️', name:'Hazine Kâşifi',    desc:'250 mücevher toplayıp sandığı doldurdun', color:'#2E9BD6', check: function(s){ return s.totalGemsEarned >= 250; } },
+  { id:'eagle_scout',    icon:'🦅', name:'Kartal İzci',      desc:'Seviye 8 — gökyüzü kadar yükseldin',     color:'#7C6BF0', check: function(s){ return s.level >= 8; } },
 ];
 
 // Kullanıcının kazandığı rozet id'leri (Firestore'dan gelir)
 var _userEarnedBadges = {};
+
+// Kazanılan rozet sayısı (merit_scout rozeti için)
+function countEarnedBadges() {
+  var n = 0;
+  for (var k in _userEarnedBadges) { if (_userEarnedBadges[k]) n++; }
+  return n;
+}
 
 // Leaderboard statik (ileride Firestore'dan çekilebilir)
 var GE_LEADERBOARD = [
@@ -4970,7 +4982,7 @@ function showToast(title, message, color) {
 // ══════════════════════════════════════════════════════════════════
 async function checkAndAwardBadges() {
   var uid = window.geCurrentUser && window.geCurrentUser.uid;
-  if (!uid) return;
+  if (!uid) { console.warn('Rozet: uid yok'); return; }
 
   // Mevcut istatistikleri topla
   var xp = 0, streak = 0, totalLogins = 0, correctAnswers = 0, perfectQuizzes = 0;
@@ -4985,18 +4997,22 @@ async function checkAndAwardBadges() {
     var doc = await firebase.firestore().collection('users').doc(uid).get();
     if (doc.exists) {
       var d = doc.data();
-      xp = d.xp || xp;
-      streak = d.streak || streak;
+      xp = (d.xp != null ? d.xp : xp);
+      streak = (d.streak != null ? d.streak : streak);
       totalLogins = d.totalLogins || 0;
       correctAnswers = d.correctAnswers || 0;
       perfectQuizzes = d.perfectQuizzes || 0;
       totalGemsEarned = d.totalGemsEarned || 0;
       uniqueGamesPlayed = (d.gamesPlayed ? Object.keys(d.gamesPlayed).length : 0);
+      // Firestore'daki mevcut rozetleri de senkronla (başka cihazdan kazanılmış olabilir)
+      if (d.badges && typeof d.badges === 'object') {
+        Object.keys(d.badges).forEach(function(k){ if (d.badges[k]) _userEarnedBadges[k] = true; });
+      }
     }
-  } catch(e) {}
+  } catch(e) { console.warn('Rozet: Firestore okuma hatası', e); }
 
   // Giriş yapmış kullanıcı en az 1 kez giriş yapmıştır (race condition koruması)
-  if (uid && totalLogins < 1) totalLogins = 1;
+  if (totalLogins < 1) totalLogins = 1;
 
   // Tamamlanan ünite ve harita sayısı
   var completedUnits = Object.keys(window._userCompletedUnits || {}).length;
@@ -5007,7 +5023,7 @@ async function checkAndAwardBadges() {
       var done = map.units.filter(function(u, i) {
         return !!(window._userCompletedUnits && window._userCompletedUnits[mapKey + '__' + i]);
       }).length;
-      if (done === map.units.length) completedMaps++;
+      if (done === map.units.length && map.units.length > 0) completedMaps++;
     });
   }
 
@@ -5024,14 +5040,24 @@ async function checkAndAwardBadges() {
     uniqueGamesPlayed: uniqueGamesPlayed,
   };
 
-  // Yeni kazanılan rozetleri bul
+  // Yeni kazanılan rozetleri bul (meta-rozetler için 2 tur: 10-rozet gibi)
   var newlyEarned = [];
-  GE_BADGE_DEFS.forEach(function(badge) {
-    if (!_userEarnedBadges[badge.id] && badge.check(stats)) {
-      _userEarnedBadges[badge.id] = true;
-      newlyEarned.push(badge);
-    }
-  });
+  for (var pass = 0; pass < 2; pass++) {
+    GE_BADGE_DEFS.forEach(function(badge) {
+      if (!_userEarnedBadges[badge.id]) {
+        var passed = false;
+        try { passed = !!badge.check(stats); } catch(e) {}
+        if (passed) {
+          _userEarnedBadges[badge.id] = true;
+          newlyEarned.push(badge);
+        }
+      }
+    });
+  }
+
+  // Rozet rafını HER durumda güncelle (kazanım olsun olmasın)
+  renderBadgeShelf();
+  updateStatPills();
 
   if (newlyEarned.length > 0) {
     // Firestore'a kaydet
@@ -5039,17 +5065,15 @@ async function checkAndAwardBadges() {
     newlyEarned.forEach(function(b) { badgeUpdate['badges.' + b.id] = true; });
     try {
       await firebase.firestore().collection('users').doc(uid).set(badgeUpdate, { merge: true });
-    } catch(e) {}
+    } catch(e) { console.warn('Rozet: Firestore yazma hatası', e); }
 
-    // Bildirim SADECE rozet verisi yüklendikten sonra (gerçek yeni kazanım) gösterilir.
-    // İlk yüklemede / veri henüz gelmemişse bildirim gösterme — sessizce işaretle.
+    // Bildirim: sadece veri yüklendikten sonra (gerçek yeni kazanım)
     if (window._badgesLoaded) {
       newlyEarned.forEach(function(badge, i) {
-        setTimeout(function() { showBadgeEarnedModal(badge); }, i * 4000);
+        setTimeout(function() { showBadgeEarnedModal(badge); }, i * 3500);
       });
     }
-
-    // Rozet rafını her durumda güncelle
+    // Raf tekrar güncelle (yeni kazanılanlarla)
     renderBadgeShelf();
     updateStatPills();
   }
@@ -5175,15 +5199,6 @@ function updateStatPills() {
   // Rozet chip
   var bc = document.getElementById('badgeCountChip');
   if (bc) bc.textContent = earnedCount + '/' + GE_BADGE_DEFS.length;
-
-  // Mode buton renkleri
-  var mode = document.documentElement.getAttribute('data-mode') || 'explorer';
-  var modeLabel = document.getElementById('modeBtnLabel');
-  if (modeLabel) modeLabel.textContent = mode === 'challenger' ? 'Maceracı' : 'Kâşif';
-  var modeExp = document.getElementById('modeExp');
-  var modeCh  = document.getElementById('modeCh');
-  if (modeExp) { modeExp.style.background = mode==='explorer' ? 'var(--green)' : 'transparent'; modeExp.style.color = mode==='explorer' ? '#fff' : 'var(--ink-soft)'; }
-  if (modeCh)  { modeCh.style.background  = mode==='challenger' ? 'var(--green)' : 'transparent'; modeCh.style.color  = mode==='challenger' ? '#fff' : 'var(--ink-soft)'; }
 }
 
 function toggleMode() {
