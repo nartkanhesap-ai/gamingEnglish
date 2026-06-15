@@ -685,6 +685,11 @@ firebase.auth().onAuthStateChanged(async function(user){
       geAuthResolved=true;
       hideLoginModal();
       updateNavbar();
+      try{
+        if(user.email){
+          firebase.firestore().collection("users").doc(user.uid).set({email:user.email},{merge:true});
+        }
+      }catch(e){}
       loadUserProgress(user.uid);
     }catch(err){
       geStudentInfo={firstName:user.email.split("@")[0],lastName:""};
@@ -999,6 +1004,7 @@ firebase.auth().onAuthStateChanged(async function(user){
         <div class="mini-roadmap-track" id="miniRoadmap">
           <!-- JS ile doldurulur -->
         </div>
+        <div id="continueCard"><!-- JS: Devam Et kartı --></div>
       </div>
 
     </div><!-- /sol kolon -->
@@ -3499,11 +3505,15 @@ async function loadUserProgress(uid) {
       if (data.streak !== undefined) {
         try { localStorage.setItem('ge_streak', data.streak); } catch(e) {}
       }
-      // Rozetler
-      if (data.badges) {
-        _userEarnedBadges = data.badges;
+      // Rozetler — Firestore'dan yüklenenler "kazanılmış" sayılır, bildirim YOK
+      if (data.badges && typeof data.badges === 'object') {
+        _userEarnedBadges = {};
+        Object.keys(data.badges).forEach(function(k) {
+          if (data.badges[k]) _userEarnedBadges[k] = true;
+        });
       }
     }
+    window._badgesLoaded = true;
 
     // Gaming progress (tamamlanan üniteler)
     var progressDoc = await firebase.firestore()
@@ -5027,12 +5037,15 @@ async function checkAndAwardBadges() {
       await firebase.firestore().collection('users').doc(uid).set(badgeUpdate, { merge: true });
     } catch(e) {}
 
-    // Her rozet için kutlama göster (art arda)
-    newlyEarned.forEach(function(badge, i) {
-      setTimeout(function() { showBadgeEarnedModal(badge); }, i * 4000);
-    });
+    // Bildirim SADECE rozet verisi yüklendikten sonra (gerçek yeni kazanım) gösterilir.
+    // İlk yüklemede / veri henüz gelmemişse bildirim gösterme — sessizce işaretle.
+    if (window._badgesLoaded) {
+      newlyEarned.forEach(function(badge, i) {
+        setTimeout(function() { showBadgeEarnedModal(badge); }, i * 4000);
+      });
+    }
 
-    // Rozet rafını güncelle
+    // Rozet rafını her durumda güncelle
     renderBadgeShelf();
     updateStatPills();
   }
@@ -5327,6 +5340,67 @@ function renderMiniRoadmap() {
     }
     el.appendChild(stop);
   });
+
+  renderContinueCard();
+}
+
+// Bir sonraki yapılması gereken üniteyi bul ve "Devam Et" kartını çiz
+function findNextUnit() {
+  if (!window.GE_MAPS) return null;
+  var completed = window._userCompletedUnits || {};
+  for (var m = 0; m < GE_MAPS.length; m++) {
+    var map = GE_MAPS[m];
+    var mapKey = map.id || map.title;
+    for (var u = 0; u < map.units.length; u++) {
+      if (!completed[mapKey + '__' + u]) {
+        return { map: map, mapIndex: m, unit: map.units[u], unitIndex: u };
+      }
+    }
+  }
+  return null; // hepsi tamamlandı
+}
+
+function renderContinueCard() {
+  var el = document.getElementById('continueCard');
+  if (!el) return;
+  var next = findNextUnit();
+
+  if (!next) {
+    // Tüm üniteler tamamlandı
+    el.innerHTML = '<div style="margin-top:16px;padding:18px;border-radius:16px;background:var(--green-soft);border:1.5px solid var(--green);text-align:center">'
+      + '<div style="font-size:28px;margin-bottom:4px">🎉</div>'
+      + '<div style="font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--green-deep)">Tüm üniteleri tamamladın!</div>'
+      + '<div style="font-size:12.5px;color:var(--ink-soft);font-weight:600;margin-top:2px">Harika iş çıkardın, gerçek bir şampiyonsun! 🏆</div>'
+      + '</div>';
+    return;
+  }
+
+  var map = next.map;
+  var unit = next.unit;
+  var totalDone = 0;
+  var mapKey = map.id || map.title;
+  for (var i = 0; i < map.units.length; i++) {
+    if (window._userCompletedUnits && window._userCompletedUnits[mapKey + '__' + i]) totalDone++;
+  }
+
+  el.innerHTML = '<div style="margin-top:16px;padding:16px;border-radius:16px;background:linear-gradient(135deg,' + map.color1 + ',' + map.color2 + ');position:relative;overflow:hidden">'
+    + '<div class="topo" style="opacity:.25"></div>'
+    + '<div style="position:relative;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
+    + '<div style="flex:1;min-width:160px">'
+    + '<div style="font-size:11px;font-weight:800;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">📍 Kaldığın yer · ' + map.title + '</div>'
+    + '<div style="font-family:var(--font-display);font-weight:800;font-size:17px;color:#fff;margin-bottom:2px">' + unit.title + '</div>'
+    + '<div style="font-size:12px;color:rgba(255,255,255,.85);font-weight:600">' + (unit.sub || ('Ünite ' + (next.unitIndex + 1))) + '</div>'
+    + '</div>'
+    + '<button id="continueBtn" style="flex-shrink:0;background:#fff;color:' + map.color1 + ';border:none;border-radius:14px;padding:12px 22px;font-family:var(--font-display);font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.15);display:flex;align-items:center;gap:7px">'
+    + '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Devam Et</button>'
+    + '</div></div>';
+
+  var btn = document.getElementById('continueBtn');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      openZonePopup(map);
+    });
+  }
 }
 
 function renderBadgeShelf() {
@@ -5347,17 +5421,92 @@ function renderBadgeShelf() {
   if (bc) bc.textContent = earned + '/' + GE_BADGE_DEFS.length;
 }
 
-function renderLeaderboard() {
+var _leaderboardCache = null;
+
+async function renderLeaderboard() {
   var el = document.getElementById('leaderboard');
   if (!el) return;
+
+  // Önbellek varsa hemen çiz, sonra arkada güncelle
+  if (_leaderboardCache) {
+    drawLeaderboard(el, _leaderboardCache);
+  } else {
+    el.innerHTML = '<div style="padding:18px;text-align:center;color:var(--ink-faint);font-size:13px;font-weight:600">Tablo yükleniyor…</div>';
+  }
+
+  try {
+    var snap = await firebase.firestore().collection('users').get();
+    var myUid = window.geCurrentUser && window.geCurrentUser.uid;
+    var entries = [];
+
+    snap.forEach(function(doc) {
+      var d = doc.data();
+      var xp = d.xp || 0;
+      var email = (d.email || '').toLowerCase();
+
+      // Filtre: en az 1 XP + öğretmen/kendi hesabı hariç
+      if (xp < 1) return;
+      if (email === 'selimdurmaz@hotmail.com') return;
+
+      // İsim: firstName + lastName, yoksa e-postadan
+      var name = '';
+      if (d.firstName || d.lastName) {
+        name = ((d.firstName || '') + ' ' + (d.lastName || '')).trim();
+      } else if (d.displayName) {
+        name = d.displayName;
+      } else if (email) {
+        name = email.split('@')[0];
+      } else {
+        name = 'Öğrenci';
+      }
+
+      entries.push({
+        uid: doc.id,
+        name: name,
+        xp: xp,
+        you: (doc.id === myUid)
+      });
+    });
+
+    // XP'ye göre sırala
+    entries.sort(function(a, b) { return b.xp - a.xp; });
+    // İlk 10
+    entries = entries.slice(0, 10);
+    entries.forEach(function(e, i) { e.rank = i + 1; });
+
+    _leaderboardCache = entries;
+    drawLeaderboard(el, entries);
+  } catch(e) {
+    if (!_leaderboardCache) {
+      el.innerHTML = '<div style="padding:18px;text-align:center;color:var(--ink-faint);font-size:13px;font-weight:600">Tablo şu an yüklenemedi</div>';
+    }
+  }
+}
+
+// İsimden tutarlı renkli avatar üret
+function nameToAvatar(name) {
+  var colors = ['#1E8A53','#F2A23C','#E5603C','#7C6BF0','#2E9BD6','#ff6b9d','#14633A'];
+  var sum = 0;
+  for (var i = 0; i < name.length; i++) sum += name.charCodeAt(i);
+  var color = colors[sum % colors.length];
+  var initial = (name.trim()[0] || '?').toUpperCase();
+  return { color: color, initial: initial };
+}
+
+function drawLeaderboard(el, entries) {
   el.innerHTML = '';
-  GE_LEADERBOARD.forEach(function(entry, i) {
+  if (!entries || entries.length === 0) {
+    el.innerHTML = '<div style="padding:18px;text-align:center;color:var(--ink-faint);font-size:13px;font-weight:600">Henüz sıralamada kimse yok.<br>İlk XP\'yi sen kazan! 🚀</div>';
+    return;
+  }
+  entries.forEach(function(entry, i) {
     var row = document.createElement('div');
     row.className = 'lb-row' + (entry.you ? ' you' : '');
     var rankColor = i < 3 ? 'var(--amber)' : 'var(--ink-faint)';
+    var av = nameToAvatar(entry.name);
     row.innerHTML =
-      '<span style="font-family:var(--font-display);font-weight:800;font-size:15px;color:' + rankColor + ';width:22px">' + (entry.rank <= 3 ? ['🥇','🥈','🥉'][i] : entry.rank) + '</span>'
-      + '<div class="lb-avatar">' + entry.av + '</div>'
+      '<span style="font-family:var(--font-display);font-weight:800;font-size:15px;color:' + rankColor + ';width:22px;flex-shrink:0">' + (entry.rank <= 3 ? ['🥇','🥈','🥉'][i] : entry.rank) + '</span>'
+      + '<div class="lb-avatar" style="background:' + av.color + ';color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:15px">' + av.initial + '</div>'
       + '<span class="lb-name">' + entry.name + (entry.you ? ' <span style="font-size:11px;color:var(--green-deep)">(sen)</span>' : '') + '</span>'
       + '<span style="font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--ink)">' + entry.xp.toLocaleString('tr-TR') + ' XP</span>';
     el.appendChild(row);
