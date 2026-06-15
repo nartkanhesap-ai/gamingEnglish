@@ -1495,6 +1495,57 @@ console.log('Word SVGs loaded:', Object.keys(WORD_SVGS).length, 'words');
 function getIntroContent(unitTitle) {
   var contents = {
 
+"Feelings & Emotions 😊": {
+  atlasText: "Hi explorer! Everybody has feelings — happy, sad, excited or scared. Today we will learn to talk about how we feel AND why we feel that way. When we know our feelings, we become great friends!",
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '😊',
+      title: 'Duyguları Söyleme',
+      content: 'Bir duyguyu söylemek için <strong>I feel...</strong> ya da <strong>I am...</strong> kalıbını kullanırız. İkisi de doğru!',
+      examples: [
+        { en: 'I feel happy.', tr: 'Mutlu hissediyorum.', icon: '😊' },
+        { en: 'I am excited!', tr: 'Heyecanlıyım!', icon: '🤩' },
+        { en: 'She feels sad.', tr: 'O üzgün hissediyor.', icon: '😢' },
+        { en: 'He is nervous.', tr: 'O gergin.', icon: '😰' },
+        { en: 'We are proud!', tr: 'Gururluyuz!', icon: '😤' },
+      ]
+    },
+    {
+      icon: '🔗',
+      title: 'Sebep Söyleme: because',
+      content: 'Bir duygunun <strong>sebebini</strong> söylemek için <strong>because</strong> (çünkü) kullanırız. Önce duygu, sonra sebep gelir.',
+      examples: [
+        { en: 'I am happy because it is my birthday.', tr: 'Mutluyum çünkü bugün doğum günüm.', icon: '🎂' },
+        { en: 'She is sad because she lost her toy.', tr: 'Üzgün çünkü oyuncağını kaybetti.', icon: '🧸' },
+        { en: 'I feel scared because it is dark.', tr: 'Korkuyorum çünkü karanlık.', icon: '🌑' },
+        { en: 'He is excited because we will play.', tr: 'Heyecanlı çünkü oynayacağız.', icon: '⚽' },
+      ]
+    },
+    {
+      icon: '➡️',
+      title: 'Sonuç Söyleme: so',
+      content: '<strong>so</strong> (bu yüzden) ile bir sonucu söyleriz. Önce sebep, sonra sonuç gelir. "because" tam tersidir!',
+      examples: [
+        { en: 'It is my birthday, so I am happy.', tr: 'Doğum günüm, bu yüzden mutluyum.', icon: '🎉' },
+        { en: 'I lost my toy, so I feel sad.', tr: 'Oyuncağımı kaybettim, bu yüzden üzgünüm.', icon: '😢' },
+        { en: 'It is dark, so I am scared.', tr: 'Karanlık, bu yüzden korkuyorum.', icon: '🌙' },
+      ]
+    },
+    {
+      icon: '🤝',
+      title: 'Arkadaşına Yardım',
+      content: 'Bir arkadaşın üzgünse, nazik sorular sorabilirsin:',
+      examples: [
+        { en: 'Are you okay?', tr: 'İyi misin?', icon: '💚' },
+        { en: 'Why are you sad?', tr: 'Neden üzgünsün?', icon: '❓' },
+        { en: 'Do not worry!', tr: 'Endişelenme!', icon: '🤗' },
+        { en: 'I am here for you.', tr: 'Senin için buradayım.', icon: '🫂' },
+      ]
+    },
+  ]
+},
+
 "Welcome! 👋": {
   atlasText: "Hello! I am Atlas, your English teacher! Today we are going to learn how to say hello, introduce ourselves and say goodbye in English! Let us start!",
   atlasSpeak: ['hello', 'today_learn', 'lets_start'],
@@ -1917,6 +1968,20 @@ function getIntroContent(unitTitle) {
 // Grammar - genişletilmiş versiyon (fillEx eklendi)
 function generateGrammar(unitTitle) {
   var grammars = {
+"Feelings & Emotions 😊": {
+  rule: 'because & so — Sebep ve Sonuç',
+  pattern: 'duygu + because + sebep  |  sebep + so + sonuç',
+  atlasTip: '"because" = çünkü (sebep gelir). "so" = bu yüzden (sonuç gelir). İkisi cümleyi birbirine bağlar!',
+  examples: [
+    'I am happy because the sun is shining. (Mutluyum çünkü güneş parlıyor.)',
+    'She is tired, so she goes to bed. (Yorgun, bu yüzden yatağa gidiyor.)',
+    'He feels proud because he won. (Gururlu çünkü kazandı.)',
+    'It is raining, so we stay inside. (Yağmur yağıyor, bu yüzden içeride kalıyoruz.)',
+    'I feel excited because it is my birthday! (Heyecanlıyım çünkü doğum günüm!)',
+  ],
+  table: '<table style="width:100%;border-collapse:collapse;font-size:13px;font-weight:600"><thead><tr style="background:var(--violet-soft)"><th style="padding:8px;border:1px solid var(--line);color:var(--violet)">Bağlaç</th><th style="padding:8px;border:1px solid var(--line);color:var(--violet)">Anlamı</th><th style="padding:8px;border:1px solid var(--line);color:var(--violet)">Ne gelir?</th></tr></thead><tbody><tr><td style="padding:8px;border:1px solid var(--line)">because</td><td style="padding:8px;border:1px solid var(--line)">çünkü</td><td style="padding:8px;border:1px solid var(--line)">SEBEP gelir</td></tr><tr style="background:var(--surface-2)"><td style="padding:8px;border:1px solid var(--line)">so</td><td style="padding:8px;border:1px solid var(--line)">bu yüzden</td><td style="padding:8px;border:1px solid var(--line)">SONUÇ gelir</td></tr></tbody></table>',
+  fillEx: { sentence: 'I am happy ___ it is my birthday.', answer: 'because' }
+},
 "Welcome! 👋": {
   rule: 'Tanıtma Cümlesi',
   pattern: 'My name is ___.  |  I am ___.',
@@ -3483,23 +3548,17 @@ window._userCompletedUnits = {};
 // Firestore'dan bu kullanıcının tüm ilerlemesini yükle
 async function loadUserProgress(uid) {
   if (!uid) return;
+
+  // 1) Ana kullanıcı dökümanı (gems, xp, streak, rozetler)
   try {
-    // Ana kullanıcı dökümanından tüm verileri çek
     var userDoc = await firebase.firestore().collection('users').doc(uid).get();
     if (userDoc.exists) {
       var data = userDoc.data();
-      // Gems
       var gems = data.gems !== undefined ? data.gems : 0;
       try { localStorage.setItem('ge_gems', gems); } catch(e) {}
-      // XP
-      if (data.xp !== undefined) {
-        try { localStorage.setItem('ge_xp', data.xp); } catch(e) {}
-      }
-      // Streak
-      if (data.streak !== undefined) {
-        try { localStorage.setItem('ge_streak', data.streak); } catch(e) {}
-      }
-      // Rozetler — Firestore'dan yüklenenler "kazanılmış" sayılır, bildirim YOK
+      if (data.xp !== undefined) { try { localStorage.setItem('ge_xp', data.xp); } catch(e) {} }
+      if (data.streak !== undefined) { try { localStorage.setItem('ge_streak', data.streak); } catch(e) {} }
+      // Rozetler — Firestore'dan yüklenenler "kazanılmış" sayılır
       if (data.badges && typeof data.badges === 'object') {
         _userEarnedBadges = {};
         Object.keys(data.badges).forEach(function(k) {
@@ -3507,32 +3566,34 @@ async function loadUserProgress(uid) {
         });
       }
     }
-    window._badgesLoaded = true;
+  } catch(e) { console.warn('Kullanıcı dökümanı okunamadı:', e); }
 
-    // Gaming progress (tamamlanan üniteler)
+  // _badgesLoaded her durumda true (okuma başarısız olsa bile rozet sistemi çalışsın)
+  window._badgesLoaded = true;
+
+  // 2) Gaming progress (tamamlanan üniteler) — AYRI try, biri diğerini bozmasın
+  try {
     var progressDoc = await firebase.firestore()
       .collection('users').doc(uid)
       .collection('gamingProgress').doc('progress')
       .get();
-    if (progressDoc.exists) {
-      window._userCompletedUnits = progressDoc.data().completed || {};
-    } else {
-      window._userCompletedUnits = {};
-    }
+    window._userCompletedUnits = (progressDoc.exists ? (progressDoc.data().completed || {}) : {});
   } catch(e) {
+    console.warn('Gaming progress okunamadı:', e);
     try {
       var saved = localStorage.getItem('ge_progress_' + uid);
       window._userCompletedUnits = saved ? JSON.parse(saved) : {};
     } catch(e2) { window._userCompletedUnits = {}; }
   }
 
-  // Günlük giriş streak ve XP kontrolü
-  await handleDailyLogin();
+  // 3) Günlük giriş — AYRI try
+  try { await handleDailyLogin(); } catch(e) { console.warn('Günlük giriş hatası:', e); }
 
-  // Rozet kontrolü — güvenlik için burada da çağır (handleDailyLogin başarısız olursa)
-  try { await checkAndAwardBadges(); } catch(e) { console.warn('Badge check error:', e); }
+  // 4) Rozet kontrolü — AYRI try (her zaman çalışsın)
+  try { await checkAndAwardBadges(); } catch(e) { console.warn('Rozet kontrolü hatası:', e); }
 
-  renderHomeDashboard();
+  // 5) Dashboard çiz
+  try { renderHomeDashboard(); } catch(e) { console.warn('Dashboard render hatası:', e); }
   if (document.getElementById('view-maps') && document.getElementById('view-maps').classList.contains('active')) {
     renderMaps();
   }
@@ -3861,6 +3922,17 @@ var currentQuizAnswers = {};
 // ── DIALOGUE GENERATOR ──────────────
 function generateDialogue(unitTitle) {
   var dialogues = {
+"Feelings & Emotions 😊": [
+  {speaker:'A', text:'Hi Lily! You look <strong>sad</strong> today. Are you okay?'},
+  {speaker:'B', text:'Hi Sam... I feel sad <strong>because</strong> I lost my favourite pencil.'},
+  {speaker:'A', text:'Oh no! Do not worry. I have an extra pencil, <strong>so</strong> you can have it!'},
+  {speaker:'B', text:'Really? Thank you so much! Now I feel <strong>happy</strong> because you helped me!'},
+  {speaker:'A', text:'That is what friends are for! Are you excited <strong>because</strong> of the school trip tomorrow?'},
+  {speaker:'B', text:'Yes! I am very <strong>excited</strong>! But I am also a little <strong>nervous</strong>.'},
+  {speaker:'A', text:'Why are you nervous?'},
+  {speaker:'B', text:'I am nervous <strong>because</strong> we will climb a big hill. But you are my friend, <strong>so</strong> I feel brave!'},
+  {speaker:'A', text:'We will help each other! Let us be brave <strong>together</strong>! 🤝'},
+],
 "Welcome! 👋": [
   {speaker:'A', text:'<strong>Hello!</strong> My name is Emma. What is your name?'},
   {speaker:'B', text:'<strong>Hi!</strong> I am Kerem. It is nice to meet you, Emma!'},
@@ -5060,19 +5132,29 @@ async function checkAndAwardBadges() {
   updateStatPills();
 
   if (newlyEarned.length > 0) {
-    // Firestore'a kaydet
-    var badgeUpdate = {};
-    newlyEarned.forEach(function(b) { badgeUpdate['badges.' + b.id] = true; });
+    // Firestore'a kaydet (kalıcı) — nested obje olarak (dot-notation yerine, daha güvenli merge)
+    var badgesObj = {};
+    newlyEarned.forEach(function(b) { badgesObj[b.id] = true; });
     try {
-      await firebase.firestore().collection('users').doc(uid).set(badgeUpdate, { merge: true });
+      await firebase.firestore().collection('users').doc(uid).set({ badges: badgesObj }, { merge: true });
     } catch(e) { console.warn('Rozet: Firestore yazma hatası', e); }
 
-    // Bildirim: sadece veri yüklendikten sonra (gerçek yeni kazanım)
-    if (window._badgesLoaded) {
-      newlyEarned.forEach(function(badge, i) {
-        setTimeout(function() { showBadgeEarnedModal(badge); }, i * 3500);
-      });
-    }
+    // Daha önce BİLDİRİMİ gösterilmiş rozetleri localStorage'dan oku (cihaz bazlı güvenlik)
+    var notifiedKey = 'ge_notified_badges_' + uid;
+    var notified = {};
+    try { notified = JSON.parse(localStorage.getItem(notifiedKey) || '{}'); } catch(e) {}
+
+    // Sadece HİÇ bildirim gösterilmemiş rozetler için pencere çıkar
+    var toNotify = newlyEarned.filter(function(b) { return !notified[b.id]; });
+
+    toNotify.forEach(function(badge, i) {
+      notified[badge.id] = true; // bildirim gösterildi olarak işaretle
+      setTimeout(function() { showBadgeEarnedModal(badge); }, i * 3500);
+    });
+
+    // İşaretlemeyi kaydet (bir daha bildirim çıkmasın)
+    try { localStorage.setItem(notifiedKey, JSON.stringify(notified)); } catch(e) {}
+
     // Raf tekrar güncelle (yeni kazanılanlarla)
     renderBadgeShelf();
     updateStatPills();
