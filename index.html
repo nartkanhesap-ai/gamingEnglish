@@ -1494,6 +1494,609 @@ console.log('Word SVGs loaded:', Object.keys(WORD_SVGS).length, 'words');
 
 function getIntroContent(unitTitle) {
   var contents = {
+"Science Lab 🔬": {
+  atlasText: 'Welcome to the Science Lab, explorer! Today we discover how cool experiments work. In science, we often say what HAPPENS to things — \'water is heated\', \'the balloon is filled\'. Let us explore!',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '🔬',
+      title: 'Edilgen Cümle Nedir?',
+      content: 'Bilimde bazen <strong>kimin yaptığı</strong> değil, <strong>ne olduğu</strong> önemlidir. Bunun için <strong>is/are + fiilin 3. hali</strong> kullanırız.',
+      examples: [
+        { en: 'Water is heated.', tr: 'Su ısıtılır.', icon: '💧' },
+        { en: 'The seeds are planted.', tr: 'Tohumlar ekilir.', icon: '🌱' },
+        { en: 'The mixture is stirred.', tr: 'Karışım karıştırılır.', icon: '🥄' },
+        { en: 'Bubbles are made.', tr: 'Kabarcıklar oluşturulur.', icon: '🫧' }
+      ]
+    },
+    {
+      icon: '🧪',
+      title: 'Deney Adımları',
+      content: 'Bir deneyi anlatırken edilgen cümleler çok işe yarar:',
+      examples: [
+        { en: 'First, the water is poured.', tr: 'Önce su dökülür.', icon: '🚰' },
+        { en: 'Then it is mixed with salt.', tr: 'Sonra tuzla karıştırılır.', icon: '🧂' },
+        { en: 'The result is written down.', tr: 'Sonuç yazılır.', icon: '📝' }
+      ]
+    },
+    {
+      icon: '🧲',
+      title: 'Bilim Kelimeleri',
+      content: 'Deneyde sık kullandığımız kelimeler:',
+      examples: [
+        { en: 'experiment', tr: 'deney', icon: '🧪' },
+        { en: 'magnet', tr: 'mıknatıs', icon: '🧲' },
+        { en: 'result', tr: 'sonuç', icon: '📊' },
+        { en: 'energy', tr: 'enerji', icon: '⚡' }
+      ]
+    }
+  ]
+},
+"World Cultures 🎎": {
+  atlasText: 'Hello explorer! The world is full of amazing cultures — different food, games and festivals! Today we learn to COMPARE them. Which festival is bigger? Which game is more fun? Let us travel the world!',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '🎎',
+      title: 'Karşılaştırma: Kısa Sıfatlar',
+      content: 'Kısa sıfatlara <strong>-er</strong> ekleriz ve <strong>than</strong> (–den) kullanırız.',
+      examples: [
+        { en: 'India is bigger than Japan.', tr: 'Hindistan Japonya\'dan büyüktür.', icon: '🗺️' },
+        { en: 'This festival is older than that one.', tr: 'Bu festival diğerinden eskidir.', icon: '🎊' },
+        { en: 'Summer is hotter than winter.', tr: 'Yaz kıştan sıcaktır.', icon: '☀️' }
+      ]
+    },
+    {
+      icon: '🌍',
+      title: 'Karşılaştırma: Uzun Sıfatlar',
+      content: 'Uzun sıfatların önüne <strong>more</strong> (daha) koyarız.',
+      examples: [
+        { en: 'This dance is more beautiful than that one.', tr: 'Bu dans diğerinden daha güzeldir.', icon: '💃' },
+        { en: 'Their festival is more colourful.', tr: 'Onların festivali daha renklidir.', icon: '🎨' },
+        { en: 'This game is more exciting!', tr: 'Bu oyun daha heyecanlı!', icon: '🎯' }
+      ]
+    },
+    {
+      icon: '🍜',
+      title: 'Dünya Kültürleri',
+      content: 'Farklı ülkelerden güzel şeyler:',
+      examples: [
+        { en: 'tradition', tr: 'gelenek', icon: '🏛️' },
+        { en: 'festival', tr: 'festival', icon: '🎪' },
+        { en: 'culture', tr: 'kültür', icon: '🎎' }
+      ]
+    }
+  ]
+},
+"Music & Art 🎵": {
+  atlasText: 'Hi explorer! Music and art make life beautiful! Today we learn \'used to\' — to talk about things we did in the PAST but not anymore. \'I used to draw cats\' — but now I draw dragons! Let us create!',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '🎵',
+      title: '\'used to\' Nedir?',
+      content: '<strong>used to</strong> = eskiden (yapardım ama artık yapmıyorum). Geçmişteki alışkanlıkları anlatır.',
+      examples: [
+        { en: 'I used to play the piano.', tr: 'Eskiden piyano çalardım.', icon: '🎹' },
+        { en: 'She used to draw every day.', tr: 'O eskiden her gün resim çizerdi.', icon: '🎨' },
+        { en: 'We used to sing together.', tr: 'Eskiden birlikte şarkı söylerdik.', icon: '🎤' }
+      ]
+    },
+    {
+      icon: '🎨',
+      title: 'Olumsuz ve Soru',
+      content: 'Olumsuz: <strong>didn\'t use to</strong>. Soru: <strong>Did you use to...?</strong>',
+      examples: [
+        { en: 'I didn\'t use to like jazz.', tr: 'Eskiden caz sevmezdim.', icon: '🎷' },
+        { en: 'Did you use to paint?', tr: 'Eskiden resim yapar mıydın?', icon: '🖌️' }
+      ]
+    },
+    {
+      icon: '🎸',
+      title: 'Sanat Kelimeleri',
+      content: 'Müzik ve sanat dünyası:',
+      examples: [
+        { en: 'guitar', tr: 'gitar', icon: '🎸' },
+        { en: 'painting', tr: 'resim', icon: '🖼️' },
+        { en: 'melody', tr: 'melodi', icon: '🎵' }
+      ]
+    }
+  ]
+},
+"Movies & Books 🎬": {
+  atlasText: 'Hello story-lover! Movies and books take us on adventures! Today we learn the Past Continuous — to describe what was HAPPENING at a moment. \'I was watching a film when...\' Let us tell stories!',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '🎬',
+      title: 'Past Continuous Nedir?',
+      content: '<strong>was/were + fiil-ing</strong> = geçmişte o anda devam eden eylem.',
+      examples: [
+        { en: 'I was watching a film.', tr: 'Bir film izliyordum.', icon: '📺' },
+        { en: 'She was reading a book.', tr: 'O bir kitap okuyordu.', icon: '📖' },
+        { en: 'They were playing heroes.', tr: 'Onlar kahramancılık oynuyordu.', icon: '🦸' }
+      ]
+    },
+    {
+      icon: '📖',
+      title: 'İki Eylem Birlikte',
+      content: 'Bir eylem devam ederken başka bir şey olur. <strong>when</strong> ve <strong>while</strong> kullanırız.',
+      examples: [
+        { en: 'I was reading when the phone rang.', tr: 'Telefon çaldığında okuyordum.', icon: '📱' },
+        { en: 'While she was watching, he arrived.', tr: 'O izlerken, o geldi.', icon: '🚪' }
+      ]
+    },
+    {
+      icon: '🎭',
+      title: 'Film ve Kitap Kelimeleri',
+      content: 'Hikaye dünyası:',
+      examples: [
+        { en: 'hero', tr: 'kahraman', icon: '🦸' },
+        { en: 'adventure', tr: 'macera', icon: '🗺️' },
+        { en: 'character', tr: 'karakter', icon: '🧑' }
+      ]
+    }
+  ]
+},
+"Social Media 📱": {
+  atlasText: 'Hi explorer! The internet is fun, but we must stay safe! Today we learn \'should\' and \'shouldn\'t\' — to give advice. \'You should ask a parent\', \'You shouldn\'t share your password!\' Let us be smart online!',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '📱',
+      title: '\'should\' = Tavsiye',
+      content: '<strong>should</strong> = –meli/–malı (iyi bir fikir). Nazik tavsiye için kullanılır.',
+      examples: [
+        { en: 'You should ask a parent first.', tr: 'Önce bir yetişkine sormalısın.', icon: '👨‍👩‍👧' },
+        { en: 'You should be kind online.', tr: 'İnternette nazik olmalısın.', icon: '💚' },
+        { en: 'We should protect our passwords.', tr: 'Şifrelerimizi korumalıyız.', icon: '🔒' }
+      ]
+    },
+    {
+      icon: '⚠️',
+      title: '\'shouldn\'t\' = Yapma',
+      content: '<strong>shouldn\'t</strong> = –memeli (iyi bir fikir değil).',
+      examples: [
+        { en: 'You shouldn\'t share your password.', tr: 'Şifreni paylaşmamalısın.', icon: '🔑' },
+        { en: 'You shouldn\'t talk to strangers.', tr: 'Yabancılarla konuşmamalısın.', icon: '🚫' }
+      ]
+    },
+    {
+      icon: '🛡️',
+      title: 'Güvenlik Kelimeleri',
+      content: 'Online güvenlik:',
+      examples: [
+        { en: 'password', tr: 'şifre', icon: '🔑' },
+        { en: 'safe', tr: 'güvenli', icon: '🛡️' },
+        { en: 'share', tr: 'paylaşmak', icon: '🔄' }
+      ]
+    }
+  ]
+},
+"Problem Solving 🧩": {
+  atlasText: 'Hello clever explorer! Every problem has a solution if we think hard! Today we learn the First Conditional — \'If you try, you will succeed!\' It connects an action with its result. Let us solve mysteries!',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '🧩',
+      title: 'First Conditional Nedir?',
+      content: '<strong>If + şimdiki zaman, will + fiil</strong>. Gerçek olması mümkün durumlar için.',
+      examples: [
+        { en: 'If you try, you will succeed.', tr: 'Denersen, başarırsın.', icon: '🌟' },
+        { en: 'If we work together, we will win.', tr: 'Birlikte çalışırsak, kazanırız.', icon: '🤝' },
+        { en: 'If you look, you will find clues.', tr: 'Bakarsan, ipucu bulursun.', icon: '🔍' }
+      ]
+    },
+    {
+      icon: '💡',
+      title: 'Sıralama Değişebilir',
+      content: '\'will\' kısmı başa da gelebilir, o zaman virgül koymayız.',
+      examples: [
+        { en: 'You will pass if you study.', tr: 'Çalışırsan geçersin.', icon: '📚' },
+        { en: 'We will be happy if we help.', tr: 'Yardım edersek mutlu oluruz.', icon: '😊' }
+      ]
+    },
+    {
+      icon: '🔍',
+      title: 'Problem Kelimeleri',
+      content: 'Çözüm dünyası:',
+      examples: [
+        { en: 'solution', tr: 'çözüm', icon: '💡' },
+        { en: 'clue', tr: 'ipucu', icon: '🔍' },
+        { en: 'teamwork', tr: 'takım çalışması', icon: '🤝' }
+      ]
+    }
+  ]
+},
+"Space & Universe 🌌": {
+  atlasText: 'Greetings, space explorer! The universe is full of wonders! Today we learn \'will\' and \'won\'t\' to talk about the future. \'We will travel to Mars!\' \'Robots won\'t get tired!\' Let us blast off! 🚀',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '🚀',
+      title: '\'will\' = Gelecek',
+      content: '<strong>will + fiil</strong> = gelecekte olacak şeyler ve tahminler.',
+      examples: [
+        { en: 'We will travel to Mars.', tr: 'Mars\'a seyahat edeceğiz.', icon: '🔴' },
+        { en: 'Humans will live in space.', tr: 'İnsanlar uzayda yaşayacak.', icon: '🛸' },
+        { en: 'Rockets will be faster.', tr: 'Roketler daha hızlı olacak.', icon: '🚀' }
+      ]
+    },
+    {
+      icon: '🌙',
+      title: '\'won\'t\' = Olmayacak',
+      content: '<strong>won\'t</strong> (will not) = gelecekte olmayacak.',
+      examples: [
+        { en: 'The sun won\'t disappear.', tr: 'Güneş kaybolmayacak.', icon: '☀️' },
+        { en: 'Robots won\'t get tired.', tr: 'Robotlar yorulmayacak.', icon: '🤖' }
+      ]
+    },
+    {
+      icon: '⭐',
+      title: 'Uzay Kelimeleri',
+      content: 'Uzay dünyası:',
+      examples: [
+        { en: 'planet', tr: 'gezegen', icon: '🪐' },
+        { en: 'astronaut', tr: 'astronot', icon: '👨‍🚀' },
+        { en: 'galaxy', tr: 'galaksi', icon: '🌌' }
+      ]
+    }
+  ]
+},
+"Sports & Champions 🏆": {
+  atlasText: 'Hello champion! Sports teach us to be strong and never give up! Today we learn the Present Perfect — for things that have happened. \'She has won a medal!\' \'We have played together!\' Let us be winners! 🏆',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '🏆',
+      title: 'Present Perfect Nedir?',
+      content: '<strong>have/has + fiilin 3. hali</strong> = yapılmış, tamamlanmış (zamanı belli değil).',
+      examples: [
+        { en: 'She has won a gold medal.', tr: 'O altın madalya kazandı.', icon: '🥇' },
+        { en: 'We have played many games.', tr: 'Birçok maç oynadık.', icon: '⚽' },
+        { en: 'He has scored ten goals.', tr: 'On gol attı.', icon: '🥅' }
+      ]
+    },
+    {
+      icon: '🏅',
+      title: 'have mı has mı?',
+      content: '<strong>I/you/we/they → have</strong>, <strong>he/she/it → has</strong>.',
+      examples: [
+        { en: 'I have finished the race.', tr: 'Yarışı bitirdim.', icon: '🏁' },
+        { en: 'She has trained hard.', tr: 'Sıkı antrenman yaptı.', icon: '💪' }
+      ]
+    },
+    {
+      icon: '⚽',
+      title: 'Spor Kelimeleri',
+      content: 'Şampiyon dünyası:',
+      examples: [
+        { en: 'champion', tr: 'şampiyon', icon: '🏆' },
+        { en: 'medal', tr: 'madalya', icon: '🥇' },
+        { en: 'victory', tr: 'zafer', icon: '🎉' }
+      ]
+    }
+  ]
+},
+"News & Society 📰": {
+  atlasText: 'Hello explorer! Every day there is news about our world. Today we learn linking words like \'however\' and \'although\' — they connect ideas like bridges! \'I love summer, however, I also like rain.\' Let us connect ideas!',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '📰',
+      title: 'Fikirleri Bağlama',
+      content: '<strong>however</strong> (ancak) ve <strong>although</strong> (–mesine rağmen) iki fikri bağlar.',
+      examples: [
+        { en: 'I like the city. However, it is noisy.', tr: 'Şehri severim. Ancak gürültülü.', icon: '🏙️' },
+        { en: 'Although it rained, we had fun.', tr: 'Yağmur yağmasına rağmen eğlendik.', icon: '🌧️' },
+        { en: 'The news was sad. However, people helped.', tr: 'Haber üzücüydü. Ancak insanlar yardım etti.', icon: '💚' }
+      ]
+    },
+    {
+      icon: '🌍',
+      title: 'Toplum Kelimeleri',
+      content: 'İyi bir vatandaş olmak:',
+      examples: [
+        { en: 'We should help others.', tr: 'Başkalarına yardım etmeliyiz.', icon: '🤝' },
+        { en: 'Everyone has rights.', tr: 'Herkesin hakları vardır.', icon: '✊' },
+        { en: 'Kindness changes the world.', tr: 'İyilik dünyayı değiştirir.', icon: '🌟' }
+      ]
+    },
+    {
+      icon: '📺',
+      title: 'Haber Kelimeleri',
+      content: 'Haber dünyası:',
+      examples: [
+        { en: 'news', tr: 'haber', icon: '📰' },
+        { en: 'opinion', tr: 'görüş', icon: '💭' },
+        { en: 'community', tr: 'topluluk', icon: '🏘️' }
+      ]
+    }
+  ]
+},
+"Debate & Opinion 💬": {
+  atlasText: 'Hi explorer! Everyone has opinions, and it is fun to share them! Today we learn how to give our opinion politely. \'I think dogs are best because they are loyal, but cats are nice too!\' Let us debate kindly!',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '💬',
+      title: 'Görüş Bildirme',
+      content: '<strong>I think...</strong> (Bence) ile başlarız, <strong>because</strong> ile sebep veririz.',
+      examples: [
+        { en: 'I think summer is the best season.', tr: 'Bence yaz en iyi mevsim.', icon: '☀️' },
+        { en: 'I believe reading is important.', tr: 'Okumanın önemli olduğuna inanıyorum.', icon: '📚' },
+        { en: 'In my opinion, dogs are friendly.', tr: 'Bence köpekler arkadaş canlısı.', icon: '🐶' }
+      ]
+    },
+    {
+      icon: '🤝',
+      title: 'Katılma ve Katılmama',
+      content: 'Nazikçe katılır ya da katılmayız.',
+      examples: [
+        { en: 'I agree with you.', tr: 'Sana katılıyorum.', icon: '✅' },
+        { en: 'I disagree, but I understand.', tr: 'Katılmıyorum ama anlıyorum.', icon: '🤔' },
+        { en: 'That is a good point!', tr: 'Bu iyi bir nokta!', icon: '💡' }
+      ]
+    },
+    {
+      icon: '⚖️',
+      title: 'Münazara Kelimeleri',
+      content: 'Tartışma dünyası:',
+      examples: [
+        { en: 'agree', tr: 'katılmak', icon: '✅' },
+        { en: 'reason', tr: 'sebep', icon: '❓' },
+        { en: 'opinion', tr: 'görüş', icon: '💭' }
+      ]
+    }
+  ]
+},
+"Academic Words 📖": {
+  atlasText: 'Hello clever explorer! Today we learn relative clauses — words like \'who\', \'which\' and \'where\' that add information. \'The book WHICH I read was great!\' They help us describe things in detail. Let us learn!',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '📖',
+      title: 'who / which / where',
+      content: '<strong>who</strong> (kişi), <strong>which</strong> (nesne), <strong>where</strong> (yer) için.',
+      examples: [
+        { en: 'The girl who helped me is kind.', tr: 'Bana yardım eden kız naziktir.', icon: '👧' },
+        { en: 'The book which I read was fun.', tr: 'Okuduğum kitap eğlenceliydi.', icon: '📚' },
+        { en: 'The school where I study is big.', tr: 'Okuduğum okul büyüktür.', icon: '🏫' }
+      ]
+    },
+    {
+      icon: '🔗',
+      title: 'Bilgi Ekleme',
+      content: 'İki cümleyi birleştirip detay ekleriz:',
+      examples: [
+        { en: 'This is the teacher who teaches us.', tr: 'Bu, bize öğreten öğretmen.', icon: '👩‍🏫' },
+        { en: 'I like stories which make me think.', tr: 'Düşündüren hikayeleri severim.', icon: '💭' }
+      ]
+    },
+    {
+      icon: '🎓',
+      title: 'Akademik Kelimeler',
+      content: 'Öğrenme dünyası:',
+      examples: [
+        { en: 'research', tr: 'araştırma', icon: '🔬' },
+        { en: 'compare', tr: 'karşılaştırmak', icon: '⚖️' },
+        { en: 'explain', tr: 'açıklamak', icon: '💡' }
+      ]
+    }
+  ]
+},
+"Business English 💼": {
+  atlasText: 'Hello young inventor! Today we learn Reported Speech — how to tell what someone said. \'She said that the robot works!\' It is like being a reporter! Imagine inventing cool machines. Let us report!',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '💼',
+      title: 'Reported Speech Nedir?',
+      content: 'Birinin söylediğini aktarırız. <strong>said that</strong> kullanırız.',
+      examples: [
+        { en: 'He said that he liked the idea.', tr: 'Fikri sevdiğini söyledi.', icon: '💡' },
+        { en: 'She said that the plan worked.', tr: 'Planın işe yaradığını söyledi.', icon: '✅' },
+        { en: 'They said that they would help.', tr: 'Yardım edeceklerini söylediler.', icon: '🤝' }
+      ]
+    },
+    {
+      icon: '🔧',
+      title: 'Genç Mucit',
+      content: 'İcatlar hakkında konuşma:',
+      examples: [
+        { en: 'The inventor said it was easy.', tr: 'Mucit kolay olduğunu söyledi.', icon: '🔧' },
+        { en: 'She told us about her robot.', tr: 'Bize robotundan bahsetti.', icon: '🤖' }
+      ]
+    },
+    {
+      icon: '📋',
+      title: 'Plan Kelimeleri',
+      content: 'Proje dünyası:',
+      examples: [
+        { en: 'plan', tr: 'plan', icon: '📋' },
+        { en: 'idea', tr: 'fikir', icon: '💡' },
+        { en: 'team', tr: 'takım', icon: '👥' }
+      ]
+    }
+  ]
+},
+"Literature 📚": {
+  atlasText: 'Hello storyteller! Stories are magic — they take us anywhere! Today we learn how to write our own stories with describing words and connectors. \'Once there was a hero who was brave...\' Let us create tales!',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '📚',
+      title: 'Hikaye Başlatma',
+      content: 'Hikayeler özel kalıplarla başlar:',
+      examples: [
+        { en: 'Once upon a time...', tr: 'Bir zamanlar...', icon: '📖' },
+        { en: 'There was a hero who was brave.', tr: 'Cesur bir kahraman vardı.', icon: '🦸' },
+        { en: 'In a land far away...', tr: 'Uzak bir diyarda...', icon: '🏰' }
+      ]
+    },
+    {
+      icon: '✍️',
+      title: 'Karakter Tanımlama',
+      content: '<strong>who</strong> ve <strong>which</strong> ile karakterleri anlatırız:',
+      examples: [
+        { en: 'a girl who could fly', tr: 'uçabilen bir kız', icon: '🧚' },
+        { en: 'a sword which glowed', tr: 'parlayan bir kılıç', icon: '⚔️' },
+        { en: 'a forest where magic lived', tr: 'sihrin yaşadığı bir orman', icon: '🌲' }
+      ]
+    },
+    {
+      icon: '📝',
+      title: 'Edebiyat Kelimeleri',
+      content: 'Hikaye dünyası:',
+      examples: [
+        { en: 'character', tr: 'karakter', icon: '🧑' },
+        { en: 'adventure', tr: 'macera', icon: '🗺️' },
+        { en: 'ending', tr: 'son', icon: '🎬' }
+      ]
+    }
+  ]
+},
+"Philosophy & Ethics 🤔": {
+  atlasText: 'Hello thinker! Today we explore big questions about right and wrong. We learn the Second Conditional — \'If I found money, I would return it!\' It helps us imagine and make good choices. Let us think deeply!',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '🤔',
+      title: 'Second Conditional Nedir?',
+      content: '<strong>If + past, would + fiil</strong>. Hayali durumlar ve seçimler için.',
+      examples: [
+        { en: 'If I found money, I would return it.', tr: 'Para bulsam, geri verirdim.', icon: '💰' },
+        { en: 'If I were rich, I would help others.', tr: 'Zengin olsam, başkalarına yardım ederdim.', icon: '💝' },
+        { en: 'If I saw a friend cry, I would help.', tr: 'Bir arkadaşımı ağlarken görsem, yardım ederdim.', icon: '🤗' }
+      ]
+    },
+    {
+      icon: '⚖️',
+      title: 'Doğru Seçimler',
+      content: 'İyi kararlar hakkında düşünürüz:',
+      examples: [
+        { en: 'What would you do if...?', tr: '...olsa ne yapardın?', icon: '❓' },
+        { en: 'I would always tell the truth.', tr: 'Her zaman doğruyu söylerdim.', icon: '✨' }
+      ]
+    },
+    {
+      icon: '💭',
+      title: 'Etik Kelimeleri',
+      content: 'Doğru-yanlış dünyası:',
+      examples: [
+        { en: 'honest', tr: 'dürüst', icon: '✨' },
+        { en: 'fair', tr: 'adil', icon: '⚖️' },
+        { en: 'kind', tr: 'nazik', icon: '💚' }
+      ]
+    }
+  ]
+},
+"Research Skills 🔍": {
+  atlasText: 'Hello super researcher! Today we become detectives of knowledge! We learn \'must be\', \'can\'t be\' and \'might be\' to make smart guesses. \'It must be true because there is proof!\' Let us investigate!',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '🔍',
+      title: 'Tahmin Etme',
+      content: '<strong>must be</strong> (kesin), <strong>can\'t be</strong> (imkansız), <strong>might be</strong> (belki).',
+      examples: [
+        { en: 'It must be true. There is proof!', tr: 'Doğru olmalı. Kanıt var!', icon: '✅' },
+        { en: 'That can\'t be right.', tr: 'Bu doğru olamaz.', icon: '❌' },
+        { en: 'It might be a good answer.', tr: 'İyi bir cevap olabilir.', icon: '🤔' }
+      ]
+    },
+    {
+      icon: '📊',
+      title: 'Kanıt Toplama',
+      content: 'Araştırmada kanıt önemlidir:',
+      examples: [
+        { en: 'The data must be correct.', tr: 'Veriler doğru olmalı.', icon: '📊' },
+        { en: 'This source might be useful.', tr: 'Bu kaynak faydalı olabilir.', icon: '📚' }
+      ]
+    },
+    {
+      icon: '🔬',
+      title: 'Araştırma Kelimeleri',
+      content: 'Keşif dünyası:',
+      examples: [
+        { en: 'evidence', tr: 'kanıt', icon: '🔍' },
+        { en: 'source', tr: 'kaynak', icon: '📚' },
+        { en: 'data', tr: 'veri', icon: '📊' }
+      ]
+    }
+  ]
+},
+"Global Issues 🌐": {
+  atlasText: 'Hello world hero! Today we learn about helping our planet and people. We use the Third Conditional to talk about the past — \'If they had recycled, they would have saved trees!\' Let us be heroes of the world!',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '🌐',
+      title: 'Third Conditional Nedir?',
+      content: '<strong>If + had + 3.hal, would have + 3.hal</strong>. Geçmişte olmayan şeyler için.',
+      examples: [
+        { en: 'If we had recycled, we would have saved trees.', tr: 'Geri dönüşüm yapsaydık, ağaçları kurtarırdık.', icon: '🌳' },
+        { en: 'If they had helped, it would have been better.', tr: 'Yardım etselerdi daha iyi olurdu.', icon: '🤝' }
+      ]
+    },
+    {
+      icon: '🌍',
+      title: 'Dünya Kahramanları',
+      content: 'İyilik yapan insanlar:',
+      examples: [
+        { en: 'She helped many people.', tr: 'Birçok insana yardım etti.', icon: '💝' },
+        { en: 'They cleaned the beach.', tr: 'Plajı temizlediler.', icon: '🏖️' },
+        { en: 'Kindness saves the world.', tr: 'İyilik dünyayı kurtarır.', icon: '🌟' }
+      ]
+    },
+    {
+      icon: '♻️',
+      title: 'Çevre Kelimeleri',
+      content: 'Gezegen dünyası:',
+      examples: [
+        { en: 'recycle', tr: 'geri dönüşüm', icon: '♻️' },
+        { en: 'planet', tr: 'gezegen', icon: '🌍' },
+        { en: 'help', tr: 'yardım', icon: '🤝' }
+      ]
+    }
+  ]
+},
+"Mastery Test 🎓": {
+  atlasText: 'Congratulations, champion! You have reached the final test! Today we review EVERYTHING you learned — all the grammar, all the words. You are amazing! Show what you know and become a true English Champion! 🏆',
+  atlasSpeak: ['hello', 'today_learn', 'lets_start'],
+  slides: [
+    {
+      icon: '🎓',
+      title: 'Her Şeyi Tekrar Et',
+      content: 'Öğrendiğin tüm gramerleri hatırla! İşte örnekler:',
+      examples: [
+        { en: 'I am happy because I learned a lot.', tr: 'Mutluyum çünkü çok şey öğrendim.', icon: '😊' },
+        { en: 'If I study, I will pass.', tr: 'Çalışırsam geçerim.', icon: '📚' },
+        { en: 'She has won many badges.', tr: 'Birçok rozet kazandı.', icon: '🏅' }
+      ]
+    },
+    {
+      icon: '🏆',
+      title: 'Şampiyon Ol',
+      content: 'Tüm becerilerini göster:',
+      examples: [
+        { en: 'reading', tr: 'okuma', icon: '📖' },
+        { en: 'writing', tr: 'yazma', icon: '✍️' },
+        { en: 'speaking', tr: 'konuşma', icon: '🗣️' },
+        { en: 'listening', tr: 'dinleme', icon: '👂' }
+      ]
+    },
+    {
+      icon: '⭐',
+      title: 'Sen Başardın!',
+      content: 'Bu yolculuğu tamamladın! Artık bir İngilizce kâşifisin:',
+      examples: [
+        { en: 'I can do it!', tr: 'Yapabilirim!', icon: '💪' },
+        { en: 'I am a champion!', tr: 'Ben bir şampiyonum!', icon: '🏆' }
+      ]
+    }
+  ]
+},
 
 "Feelings & Emotions 😊": {
   atlasText: "Hi explorer! Everybody has feelings — happy, sad, excited or scared. Today we will learn to talk about how we feel AND why we feel that way. When we know our feelings, we become great friends!",
@@ -1968,6 +2571,227 @@ function getIntroContent(unitTitle) {
 // Grammar - genişletilmiş versiyon (fillEx eklendi)
 function generateGrammar(unitTitle) {
   var grammars = {
+"Science Lab 🔬": {
+  rule: 'Present Passive — Edilgen Çatı',
+  pattern: 'nesne + is/are + fiil(3. hal)',
+  atlasTip: 'Bir işi KİMİN yaptığı önemli değilse edilgen kullanırız. \'Water is heated\' = Su ısıtılır (kim ısıttığı önemli değil).',
+  examples: [
+    'Water is heated in the lab. (Su laboratuvarda ısıtılır.)',
+    'The plants are watered every day. (Bitkiler her gün sulanır.)',
+    'The magnet is tested. (Mıknatıs test edilir.)',
+    'Bubbles are made with soap. (Kabarcıklar sabunla oluşturulur.)',
+    'The results are written down. (Sonuçlar yazılır.)'
+  ],
+  fillEx: { sentence: 'Water ___ heated in the experiment.', answer: 'is' }
+},
+"World Cultures 🎎": {
+  rule: 'Comparatives — Karşılaştırma',
+  pattern: 'kısa: sıfat+er + than  |  uzun: more + sıfat + than',
+  atlasTip: 'Kısa sıfat → -er ekle (big→bigger). Uzun sıfat → önüne \'more\' koy (beautiful→more beautiful). İkisinde de \'than\' = –den/–dan.',
+  examples: [
+    'China is bigger than Italy. (Çin İtalya\'dan büyüktür.)',
+    'This festival is more colourful than that one. (Bu festival diğerinden daha renkli.)',
+    'Tea is more popular than coffee here. (Burada çay kahveden daha popüler.)',
+    'The red dress is prettier than the blue one. (Kırmızı elbise maviden daha güzel.)',
+    'Their food is spicier than ours! (Onların yemeği bizimkinden daha acı!)'
+  ],
+  fillEx: { sentence: 'India is ___ than Japan. (big)', answer: 'bigger' }
+},
+"Music & Art 🎵": {
+  rule: 'used to — Eskiden Yapılan',
+  pattern: 'used to + fiil(yalın)  |  didn\'t use to + fiil',
+  atlasTip: '\'used to\' geçmişte yaptığın ama artık yapmadığın şeyler içindir. \'I used to draw\' = Eskiden çizerdim (artık çizmiyorum).',
+  examples: [
+    'I used to play the drums. (Eskiden davul çalardım.)',
+    'She used to sing in a choir. (O eskiden koroda şarkı söylerdi.)',
+    'We used to paint on weekends. (Eskiden hafta sonları resim yapardık.)',
+    'He didn\'t use to like classical music. (O eskiden klasik müzik sevmezdi.)',
+    'Did you use to play an instrument? (Eskiden enstrüman çalar mıydın?)'
+  ],
+  fillEx: { sentence: 'I ___ to play the piano when I was five.', answer: 'used' }
+},
+"Movies & Books 🎬": {
+  rule: 'Past Continuous — Geçmişte Süren Eylem',
+  pattern: 'was/were + fiil-ing',
+  atlasTip: 'Geçmişte bir anda devam eden eylem için kullanılır. \'I was watching\' = İzliyordum. Tek kişi: was, çoğul: were.',
+  examples: [
+    'I was watching a cartoon. (Bir çizgi film izliyordum.)',
+    'They were reading comics. (Onlar çizgi roman okuyordu.)',
+    'She was writing a story when I called. (Aradığımda hikaye yazıyordu.)',
+    'We were watching the hero fight. (Kahramanın dövüşünü izliyorduk.)',
+    'What were you doing last night? (Dün gece ne yapıyordun?)'
+  ],
+  fillEx: { sentence: 'I ___ watching a film when you arrived.', answer: 'was' }
+},
+"Social Media 📱": {
+  rule: 'should / shouldn\'t — Tavsiye',
+  pattern: 'should + fiil  |  shouldn\'t + fiil',
+  atlasTip: '\'should\' iyi bir fikri, \'shouldn\'t\' kötü bir fikri söyler. İkisinden sonra fiilin yalın hali gelir.',
+  examples: [
+    'You should ask a parent before downloading. (İndirmeden önce yetişkine sormalısın.)',
+    'You shouldn\'t share personal photos. (Kişisel fotoğraf paylaşmamalısın.)',
+    'We should be polite in comments. (Yorumlarda kibar olmalıyız.)',
+    'You shouldn\'t believe everything online. (İnternetteki her şeye inanmamalısın.)',
+    'You should take breaks from screens. (Ekrandan ara vermelisin.)'
+  ],
+  fillEx: { sentence: 'You ___ share your password with anyone.', answer: 'shouldn\'t' }
+},
+"Problem Solving 🧩": {
+  rule: 'First Conditional — Olası Durum',
+  pattern: 'If + present simple, ... will + fiil',
+  atlasTip: 'Gerçekleşmesi mümkün durumlar için. \'If you look, you will find\' = Bakarsan bulursun. \'If\' kısmında present, sonuçta \'will\'.',
+  examples: [
+    'If you think carefully, you will find the answer. (Dikkatli düşünürsen cevabı bulursun.)',
+    'If we share ideas, we will solve it. (Fikir paylaşırsak çözeriz.)',
+    'If you ask for help, you will learn faster. (Yardım istersen daha hızlı öğrenirsin.)',
+    'You will win if you never give up. (Asla pes etmezsen kazanırsın.)',
+    'If the team works hard, they will succeed. (Takım sıkı çalışırsa başarır.)'
+  ],
+  fillEx: { sentence: 'If you look carefully, you ___ find the clue.', answer: 'will' }
+},
+"Space & Universe 🌌": {
+  rule: 'will / won\'t — Gelecek Tahmini',
+  pattern: 'will + fiil  |  won\'t + fiil',
+  atlasTip: 'Gelecekteki tahminler ve kararlar için \'will\'. Olumsuzu \'won\'t\' (will not). Sonrasında fiilin yalın hali gelir.',
+  examples: [
+    'One day we will live on the Moon. (Bir gün Ay\'da yaşayacağız.)',
+    'Astronauts will explore new planets. (Astronotlar yeni gezegenler keşfedecek.)',
+    'Space travel won\'t be scary in the future. (Gelecekte uzay yolculuğu korkutucu olmayacak.)',
+    'Rockets will fly faster than ever. (Roketler her zamankinden hızlı uçacak.)',
+    'We won\'t forget the first Moon landing. (İlk Ay inişini unutmayacağız.)'
+  ],
+  fillEx: { sentence: 'One day humans ___ travel to Mars.', answer: 'will' }
+},
+"Sports & Champions 🏆": {
+  rule: 'Present Perfect — Yapılmış Eylem',
+  pattern: 'have/has + fiil(3. hal)',
+  atlasTip: 'Geçmişte yapılmış ama zamanı önemli olmayan işler için. \'She has won\' = Kazandı. I/we/they→have, he/she/it→has.',
+  examples: [
+    'Our team has won the cup! (Takımımız kupayı kazandı!)',
+    'I have played football for five years. (Beş yıldır futbol oynuyorum.)',
+    'She has scored three goals. (Üç gol attı.)',
+    'We have trained very hard. (Çok sıkı antrenman yaptık.)',
+    'Have you ever won a medal? (Hiç madalya kazandın mı?)'
+  ],
+  fillEx: { sentence: 'She ___ won three gold medals!', answer: 'has' }
+},
+"News & Society 📰": {
+  rule: 'Linking Words — Bağlaçlar',
+  pattern: '..., however, ...  |  Although + cümle, cümle',
+  atlasTip: '\'however\' (ancak) iki cümleyi bağlar, virgülle. \'although\' (–rağmen) bir cümlenin başında olur. İkisi de zıt fikirleri birleştirir.',
+  examples: [
+    'The story was sad. However, it had a happy ending. (Hikaye üzücüydü. Ancak mutlu sonu vardı.)',
+    'Although he was tired, he helped his friend. (Yorgun olmasına rağmen arkadaşına yardım etti.)',
+    'I like reading news. However, some news is scary. (Haber okumayı severim. Ancak bazı haberler korkutucu.)',
+    'Although it was cold, the children played outside. (Soğuk olmasına rağmen çocuklar dışarıda oynadı.)',
+    'The city is busy. However, the people are kind. (Şehir yoğun. Ancak insanlar nazik.)'
+  ],
+  fillEx: { sentence: 'It was raining. ___, we still went to the park.', answer: 'However' }
+},
+"Debate & Opinion 💬": {
+  rule: 'Opinion — Görüş Bildirme',
+  pattern: 'I think + cümle + because + sebep, but + zıt fikir',
+  atlasTip: 'Görüşünü \'I think\' ile söyle, \'because\' ile sebebini ver, \'but\' ile diğer tarafı da kabul et. Nazik münazaranın anahtarı!',
+  examples: [
+    'I think cats are best because they are calm. (Bence kediler en iyisi çünkü sakinler.)',
+    'I think football is fun, but tennis is good too. (Bence futbol eğlenceli ama tenis de iyi.)',
+    'In my opinion, summer is great because we can swim. (Bence yaz harika çünkü yüzebiliriz.)',
+    'I agree that books are useful, but films are fun too. (Kitapların faydalı olduğuna katılıyorum ama filmler de eğlenceli.)',
+    'I believe we should recycle because it helps Earth. (Geri dönüşüm yapmalıyız çünkü Dünya\'ya yardım eder.)'
+  ],
+  fillEx: { sentence: 'I ___ that dogs are the best pets because they are loyal.', answer: 'think' }
+},
+"Academic Words 📖": {
+  rule: 'Relative Clauses — İlgi Cümlecikleri',
+  pattern: 'who (kişi) | which (nesne) | where (yer)',
+  atlasTip: 'İki cümleyi birleştirip detay ekler. who=kişi, which=nesne/hayvan, where=yer. \'The book which I read\' = Okuduğum kitap.',
+  examples: [
+    'The scientist who discovered it was clever. (Onu keşfeden bilim insanı zekiydi.)',
+    'I read a book which explains space. (Uzayı açıklayan bir kitap okudum.)',
+    'This is the library where I study. (Burası çalıştığım kütüphane.)',
+    'The student who studies hard succeeds. (Sıkı çalışan öğrenci başarır.)',
+    'I like questions which make me think. (Beni düşündüren soruları severim.)'
+  ],
+  fillEx: { sentence: 'The book ___ I read yesterday was amazing.', answer: 'which' }
+},
+"Business English 💼": {
+  rule: 'Reported Speech — Aktarılan Konuşma',
+  pattern: 'said (that) + cümle',
+  atlasTip: 'Birinin söylediğini aktarırken \'said that\' kullanırız. \'I like it\' → He said that he liked it. Fiil bir adım geçmişe gider.',
+  examples: [
+    'She said that the robot worked perfectly. (Robotun mükemmel çalıştığını söyledi.)',
+    'He said that he had a great idea. (Harika bir fikri olduğunu söyledi.)',
+    'They said that they would build it. (Onu inşa edeceklerini söylediler.)',
+    'The teacher said that we did a good job. (Öğretmen iyi iş çıkardığımızı söyledi.)',
+    'My friend said that the plan was clever. (Arkadaşım planın akıllıca olduğunu söyledi.)'
+  ],
+  fillEx: { sentence: 'She ___ that her invention worked.', answer: 'said' }
+},
+"Literature 📚": {
+  rule: 'Storytelling — Hikaye Anlatma',
+  pattern: 'who/which/where + tanım  |  Once upon a time...',
+  atlasTip: 'Hikayede karakterleri \'who\' (kişi) ve \'which\' (nesne) ile tanımlarız. \'A hero who was brave\' = Cesur olan bir kahraman.',
+  examples: [
+    'There was a knight who feared nothing. (Hiçbir şeyden korkmayan bir şövalye vardı.)',
+    'She found a key which opened any door. (Her kapıyı açan bir anahtar buldu.)',
+    'They lived in a castle which touched the clouds. (Bulutlara değen bir kalede yaşadılar.)',
+    'The dragon who guarded the gold was kind. (Altını koruyan ejderha nazikti.)',
+    'It was a place where dreams came true. (Hayallerin gerçek olduğu bir yerdi.)'
+  ],
+  fillEx: { sentence: 'There was a hero ___ saved the village.', answer: 'who' }
+},
+"Philosophy & Ethics 🤔": {
+  rule: 'Second Conditional — Hayali Durum',
+  pattern: 'If + past simple, would + fiil',
+  atlasTip: 'Hayali veya olası olmayan durumlar için. \'If I were you, I would help\' = Senin yerinde olsam yardım ederdim. \'were\' her özne için kullanılabilir.',
+  examples: [
+    'If I found a wallet, I would give it back. (Bir cüzdan bulsam geri verirdim.)',
+    'If I were a teacher, I would be kind. (Öğretmen olsam nazik olurdum.)',
+    'If everyone helped, the world would be better. (Herkes yardım etse dünya daha iyi olurdu.)',
+    'What would you do if you saw bullying? (Zorbalık görsen ne yapardın?)',
+    'If I made a mistake, I would say sorry. (Bir hata yapsam özür dilerdim.)'
+  ],
+  fillEx: { sentence: 'If I found money, I ___ return it to the owner.', answer: 'would' }
+},
+"Research Skills 🔍": {
+  rule: 'Modals of Deduction — Çıkarım',
+  pattern: 'must be (kesin) | can\'t be (imkansız) | might be (belki)',
+  atlasTip: 'Kanıta göre tahmin: \'must be\' (kesin öyle), \'can\'t be\' (imkansız), \'might be\' (belki). \'It must be true\' = Doğru olmalı.',
+  examples: [
+    'The answer must be correct — there is proof. (Cevap doğru olmalı — kanıt var.)',
+    'That can\'t be true — it makes no sense. (Bu doğru olamaz — mantıksız.)',
+    'This might be a good source for research. (Bu, araştırma için iyi bir kaynak olabilir.)',
+    'The fossil must be very old. (Fosil çok eski olmalı.)',
+    'It might be the answer, but we need more data. (Cevap olabilir ama daha çok veri lazım.)'
+  ],
+  fillEx: { sentence: 'There is lots of proof, so it ___ be true.', answer: 'must' }
+},
+"Global Issues 🌐": {
+  rule: 'Third Conditional — Geçmiş Hayali',
+  pattern: 'If + had + V3, would have + V3',
+  atlasTip: 'Geçmişte olmamış şeyler için. \'If we had helped, it would have been better\' = Yardım etseydik daha iyi olurdu. (Ama etmedik.)',
+  examples: [
+    'If we had recycled, we would have saved energy. (Geri dönüşüm yapsaydık enerji tasarruf ederdik.)',
+    'If they had planted trees, the air would have been cleaner. (Ağaç dikselerdi hava daha temiz olurdu.)',
+    'If she had spoken up, she would have helped. (Konuşsaydı yardım etmiş olurdu.)',
+    'If everyone had cared, the river would have stayed clean. (Herkes umursasaydı nehir temiz kalırdı.)',
+    'If I had known, I would have joined the clean-up. (Bilseydim temizliğe katılırdım.)'
+  ],
+  fillEx: { sentence: 'If we had recycled, we ___ have saved many trees.', answer: 'would' }
+},
+"Mastery Test 🎓": {
+  rule: 'Final Review — Tüm Gramer',
+  pattern: 'because/so · comparatives · will · should · conditionals · perfect',
+  atlasTip: 'Bu ünite tüm öğrendiklerini birleştirir! because/so, karşılaştırma, will, should, koşul cümleleri, present perfect — hepsi burada!',
+  examples: [
+    'I am proud because I have learned so much. (Gururluyum çünkü çok şey öğrendim.)',
+    'If I keep practising, I will improve. (Pratik yapmaya devam edersem gelişirim.)',
+    'English is more fun than I thought! (İngilizce sandığımdan daha eğlenceli!)',
+    'You should believe in yourself. (Kendine inanmalısın.)',
+    'We have finished the whole adventure! (Tüm macerayı tamamladık!)'
+  ],
+  fillEx: { sentence: 'I am proud ___ I have finished all the units!', answer: 'because' }
+},
 "Feelings & Emotions 😊": {
   rule: 'because & so — Sebep ve Sonuç',
   pattern: 'duygu + because + sebep  |  sebep + so + sonuç',
@@ -3457,7 +4281,7 @@ function generatePracticeExercises(unitTitle, vocab) {
 // GAMING ENGLISH — CORE DATA & LOGIC
 // ═══════════════════════════════════════
 
-const GE_MAPS = [{"id": "island", "emoji": "🏝️", "title": "Başlangıç Adası", "level": "A1 — Başlangıç", "desc": "İngilizceye ilk adımını at! Selamlaşma, renkler, hayvanlar ve temel kelimeler ile başla.", "color1": "#1E8A53", "color2": "#14633A", "unlocked": true, "units": [{"title": "Welcome! 👋", "sub": "Selamlaşma ve tanışma", "topics": ["Hello / Goodbye", "My name is...", "How are you?", "Nice to meet you", "Classroom words"]}, {"title": "My Body 🧍", "sub": "Vücut parçaları", "topics": ["Head, shoulders, knees", "Eyes, ears, mouth", "Left & right", "Body verbs: run, jump", "Simon says game"]}, {"title": "Colors & Shapes 🌈", "sub": "Renkler ve şekiller", "topics": ["Red, blue, green...", "Circle, square, triangle", "What color is it?", "I can see... sentences", "Draw & color activity"]}, {"title": "Numbers & Math 🔢", "sub": "Sayılar 1-100", "topics": ["1 to 20 counting", "21 to 100 patterns", "How many...?", "More / less / equal", "Simple addition"]}, {"title": "Animals 🐾", "sub": "Hayvanlar dünyası", "topics": ["Farm animals", "Wild animals", "Sea creatures", "It has... / It can...", "Animal sounds"]}, {"title": "Food & Drinks 🍎", "sub": "Yiyecek ve içecekler", "topics": ["Fruits & vegetables", "I like / I do not like", "Breakfast foods", "At the restaurant", "Healthy vs unhealthy"]}, {"title": "My House 🏠", "sub": "Ev ve odalar", "topics": ["Rooms: kitchen, bedroom", "Furniture words", "Where is it? (prepositions)", "In / on / under / next to", "My dream house"]}, {"title": "My Family 👨‍👩‍👧", "sub": "Aile üyeleri", "topics": ["Mother, father, sister...", "This is my...", "How old are you?", "Adjectives: tall, short", "Family tree activity"]}, {"title": "Days & Weather ⛅", "sub": "Günler ve hava durumu", "topics": ["Monday to Sunday", "Months of the year", "Today is... / It is...", "Sunny, rainy, cloudy", "What is the weather like?"]}]}, {"id": "forest", "emoji": "🌳", "title": "Keşif Ormanı", "level": "A1+ — Orta Başlangıç", "desc": "Ormanı keşfet! Okul hayatı, giysiler, spor ve şehir hayatını öğren.", "color1": "#2E9BD6", "color2": "#0277BD", "unlocked": true, "units": [{"title": "School Life 🏫", "sub": "Okul günleri", "topics": ["School subjects", "What do you study?", "I love / hate...", "School objects", "My timetable"]}, {"title": "Clothes & Fashion 👕", "sub": "Giysiler ve moda", "topics": ["Shirt, trousers, dress...", "What are you wearing?", "Colors in clothes", "Seasons & clothes", "I am wearing... / She wears..."]}, {"title": "Transport 🚌", "sub": "Ulaşım araçları", "topics": ["Bus, car, train, plane", "How do you go to school?", "I go by...", "Left / right / straight", "Asking directions"]}, {"title": "Sports & Hobbies ⚽", "sub": "Spor ve hobiler", "topics": ["Football, swimming, tennis", "I play / I do / I go", "Do you like...?", "Every day / sometimes", "My favourite sport"]}, {"title": "Nature & Seasons 🌸", "sub": "Doğa ve mevsimler", "topics": ["Spring, summer, autumn, winter", "Tree, flower, river, mountain", "In spring, I...", "Hot / cold / warm", "Nature sounds"]}, {"title": "Shopping 🛍️", "sub": "Alışveriş", "topics": ["How much is it?", "Can I have...?", "Numbers & prices", "Too expensive / cheap", "Shop types"]}, {"title": "In the City 🏙️", "sub": "Şehirde", "topics": ["Park, hospital, school...", "Where is the...?", "Turn left / right", "Near / far", "My city"]}, {"title": "Daily Routine ⏰", "sub": "Günlük rutin", "topics": ["Wake up, brush teeth...", "I always / usually / sometimes", "What time is it?", "Morning routine", "Weekend vs weekday"]}, {"title": "My Friends 👫", "sub": "Arkadaşlık", "topics": ["Describe a friend", "Personality adjectives", "He is / She is...", "Best friend writing", "Making new friends"]}]}, {"id": "mountains", "emoji": "⛰️", "title": "Bilgi Dağları", "level": "A2 — Temel", "desc": "Dağlara tırman! Sağlık, meslekler, seyahat ve kutlamalar seni bekliyor.", "color1": "#7C6BF0", "color2": "#5a48d6", "unlocked": true, "units": [{"title": "Health & Body 🏥", "sub": "Sağlık ve hastalıklar", "topics": ["I have a headache...", "Going to the doctor", "Medicine & treatment", "Healthy habits", "Emergency words"]}, {"title": "Jobs & Careers 👨‍⚕️", "sub": "Meslekler", "topics": ["Doctor, teacher, engineer...", "What do you want to be?", "Job descriptions", "Workplaces", "Skills: I can / I am good at"]}, {"title": "Travel & Tourism ✈️", "sub": "Seyahat", "topics": ["At the airport", "Hotel vocabulary", "Booking a room", "Countries & capitals", "Tourist phrases"]}, {"title": "Technology 💻", "sub": "Teknoloji", "topics": ["Computer, phone, internet", "I use... to...", "Social media", "Online safety", "Future technology"]}, {"title": "Environment 🌍", "sub": "Çevre ve doğa", "topics": ["Pollution & climate", "Recycle / reuse", "Save the planet", "Animals in danger", "Green habits"]}, {"title": "Celebrations 🎉", "sub": "Kutlamalar ve tatiller", "topics": ["Birthday, New Year, Eid...", "Happy Birthday!", "Gift giving language", "Traditional festivals", "Party planning"]}, {"title": "Food Culture 🍜", "sub": "Dünya mutfağı", "topics": ["International foods", "Ordering at a restaurant", "Recipe language", "Cooking verbs", "Food preferences"]}, {"title": "Past & History ⏳", "sub": "Geçmiş zaman", "topics": ["Simple past tense", "Yesterday I...", "Famous historical events", "Biographies", "Past vs present"]}, {"title": "Future Plans 🚀", "sub": "Gelecek planları", "topics": ["Will / Going to", "I will be a...", "My future dreams", "Making predictions", "Plans for tomorrow"]}]}, {"id": "ocean", "emoji": "🌊", "title": "Macera Okyanusu", "level": "A2+/B1 — Orta", "desc": "Okyanusu yüz! Duygular, bilim, kültür ve medya dünyasına dal.", "color1": "#E5603C", "color2": "#c04a28", "unlocked": false, "units": [{"title": "Feelings & Emotions 😊", "sub": "Duygular ve hisler", "topics": ["Happy, sad, angry, excited", "Why do you feel...?", "Expressing opinions", "Empathy language", "Mood journal"]}, {"title": "Science Lab 🔬", "sub": "Bilim ve keşif", "topics": ["Hypothesis & experiment", "Science vocabulary", "Famous scientists", "Lab safety rules", "Science projects"]}, {"title": "World Cultures 🎎", "sub": "Dünya kültürleri", "topics": ["Traditional foods", "Festivals worldwide", "Clothing traditions", "Cultural respect", "My culture vs others"]}, {"title": "Music & Art 🎵", "sub": "Müzik ve sanat", "topics": ["Music genres", "Describing art", "Art history basics", "Famous artists", "Creating & performing"]}, {"title": "Movies & Books 🎬", "sub": "Medya ve edebiyat", "topics": ["Film genres", "Book reviews", "Characters & plot", "Recommendations", "Giving opinions"]}, {"title": "Social Media 📱", "sub": "Sosyal medya", "topics": ["Online communication", "Posting & sharing", "Digital citizenship", "Cyberbullying", "Screen time habits"]}, {"title": "Problem Solving 🧩", "sub": "Problem çözme", "topics": ["Identifying problems", "Brainstorming solutions", "If... then...", "Compromise language", "Team work"]}, {"title": "Space & Universe 🌌", "sub": "Uzay", "topics": ["Planets & solar system", "Astronaut life", "Space exploration", "Stars & constellations", "Future of space travel"]}, {"title": "Sports & Champions 🏆", "sub": "Spor ve şampiyonlar", "topics": ["Olympic sports", "Sportsmanship", "Famous athletes", "Competition language", "My sports hero"]}]}, {"id": "summit", "emoji": "🏔️", "title": "Zirve", "level": "B1/B2 — Üst Orta", "desc": "Zirveye ulaş! Tartışma, akademik dil, iş İngilizcesi ve ötesi.", "color1": "#F2A23C", "color2": "#c87f22", "unlocked": false, "units": [{"title": "News & Society 📰", "sub": "Haberler ve toplum", "topics": ["Reading news articles", "Bias in media", "Passive voice", "Current events", "Fact vs opinion"]}, {"title": "Debate & Opinion 💬", "sub": "Tartışma ve görüş", "topics": ["Agreeing & disagreeing", "I believe that...", "Counter-arguments", "Formal vs informal", "Debate structures"]}, {"title": "Academic Words 📖", "sub": "Akademik dil", "topics": ["Essay writing", "Linking words", "Paraphrasing", "Citation basics", "Academic register"]}, {"title": "Business English 💼", "sub": "İş İngilizcesi", "topics": ["Email writing", "Meetings & presentations", "Job interviews", "CV writing", "Professional phrases"]}, {"title": "Literature 📚", "sub": "Edebiyat", "topics": ["Short stories", "Poetry analysis", "Literary devices", "Reading comprehension", "Creative writing"]}, {"title": "Philosophy & Ethics 🤔", "sub": "Felsefe ve etik", "topics": ["What is right/wrong?", "Famous philosophers", "Critical thinking", "Ethical dilemmas", "My worldview"]}, {"title": "Research Skills 🔍", "sub": "Araştırma becerileri", "topics": ["Finding reliable sources", "Note-taking strategies", "Summarizing", "Presenting research", "Project work"]}, {"title": "Global Issues 🌐", "sub": "Küresel sorunlar", "topics": ["Climate change debates", "Poverty & inequality", "Human rights", "Global solutions", "Taking action"]}, {"title": "Mastery Test 🎓", "sub": "B2 Hazırlık sınavı", "topics": ["Reading passages", "Listening practice", "Writing tasks", "Speaking topics", "Full mock test"]}]}];
+const GE_MAPS = [{"id": "island", "emoji": "🏝️", "title": "Başlangıç Adası", "level": "A1 — Başlangıç", "desc": "İngilizceye ilk adımını at! Selamlaşma, renkler, hayvanlar ve temel kelimeler ile başla.", "color1": "#1E8A53", "color2": "#14633A", "unlocked": true, "units": [{"title": "Welcome! 👋", "sub": "Selamlaşma ve tanışma", "topics": ["Hello / Goodbye", "My name is...", "How are you?", "Nice to meet you", "Classroom words"]}, {"title": "My Body 🧍", "sub": "Vücut parçaları", "topics": ["Head, shoulders, knees", "Eyes, ears, mouth", "Left & right", "Body verbs: run, jump", "Simon says game"]}, {"title": "Colors & Shapes 🌈", "sub": "Renkler ve şekiller", "topics": ["Red, blue, green...", "Circle, square, triangle", "What color is it?", "I can see... sentences", "Draw & color activity"]}, {"title": "Numbers & Math 🔢", "sub": "Sayılar 1-100", "topics": ["1 to 20 counting", "21 to 100 patterns", "How many...?", "More / less / equal", "Simple addition"]}, {"title": "Animals 🐾", "sub": "Hayvanlar dünyası", "topics": ["Farm animals", "Wild animals", "Sea creatures", "It has... / It can...", "Animal sounds"]}, {"title": "Food & Drinks 🍎", "sub": "Yiyecek ve içecekler", "topics": ["Fruits & vegetables", "I like / I do not like", "Breakfast foods", "At the restaurant", "Healthy vs unhealthy"]}, {"title": "My House 🏠", "sub": "Ev ve odalar", "topics": ["Rooms: kitchen, bedroom", "Furniture words", "Where is it? (prepositions)", "In / on / under / next to", "My dream house"]}, {"title": "My Family 👨‍👩‍👧", "sub": "Aile üyeleri", "topics": ["Mother, father, sister...", "This is my...", "How old are you?", "Adjectives: tall, short", "Family tree activity"]}, {"title": "Days & Weather ⛅", "sub": "Günler ve hava durumu", "topics": ["Monday to Sunday", "Months of the year", "Today is... / It is...", "Sunny, rainy, cloudy", "What is the weather like?"]}]}, {"id": "forest", "emoji": "🌳", "title": "Keşif Ormanı", "level": "A1+ — Orta Başlangıç", "desc": "Ormanı keşfet! Okul hayatı, giysiler, spor ve şehir hayatını öğren.", "color1": "#2E9BD6", "color2": "#0277BD", "unlocked": true, "units": [{"title": "School Life 🏫", "sub": "Okul günleri", "topics": ["School subjects", "What do you study?", "I love / hate...", "School objects", "My timetable"]}, {"title": "Clothes & Fashion 👕", "sub": "Giysiler ve moda", "topics": ["Shirt, trousers, dress...", "What are you wearing?", "Colors in clothes", "Seasons & clothes", "I am wearing... / She wears..."]}, {"title": "Transport 🚌", "sub": "Ulaşım araçları", "topics": ["Bus, car, train, plane", "How do you go to school?", "I go by...", "Left / right / straight", "Asking directions"]}, {"title": "Sports & Hobbies ⚽", "sub": "Spor ve hobiler", "topics": ["Football, swimming, tennis", "I play / I do / I go", "Do you like...?", "Every day / sometimes", "My favourite sport"]}, {"title": "Nature & Seasons 🌸", "sub": "Doğa ve mevsimler", "topics": ["Spring, summer, autumn, winter", "Tree, flower, river, mountain", "In spring, I...", "Hot / cold / warm", "Nature sounds"]}, {"title": "Shopping 🛍️", "sub": "Alışveriş", "topics": ["How much is it?", "Can I have...?", "Numbers & prices", "Too expensive / cheap", "Shop types"]}, {"title": "In the City 🏙️", "sub": "Şehirde", "topics": ["Park, hospital, school...", "Where is the...?", "Turn left / right", "Near / far", "My city"]}, {"title": "Daily Routine ⏰", "sub": "Günlük rutin", "topics": ["Wake up, brush teeth...", "I always / usually / sometimes", "What time is it?", "Morning routine", "Weekend vs weekday"]}, {"title": "My Friends 👫", "sub": "Arkadaşlık", "topics": ["Describe a friend", "Personality adjectives", "He is / She is...", "Best friend writing", "Making new friends"]}]}, {"id": "mountains", "emoji": "⛰️", "title": "Bilgi Dağları", "level": "A2 — Temel", "desc": "Dağlara tırman! Sağlık, meslekler, seyahat ve kutlamalar seni bekliyor.", "color1": "#7C6BF0", "color2": "#5a48d6", "unlocked": true, "units": [{"title": "Health & Body 🏥", "sub": "Sağlık ve hastalıklar", "topics": ["I have a headache...", "Going to the doctor", "Medicine & treatment", "Healthy habits", "Emergency words"]}, {"title": "Jobs & Careers 👨‍⚕️", "sub": "Meslekler", "topics": ["Doctor, teacher, engineer...", "What do you want to be?", "Job descriptions", "Workplaces", "Skills: I can / I am good at"]}, {"title": "Travel & Tourism ✈️", "sub": "Seyahat", "topics": ["At the airport", "Hotel vocabulary", "Booking a room", "Countries & capitals", "Tourist phrases"]}, {"title": "Technology 💻", "sub": "Teknoloji", "topics": ["Computer, phone, internet", "I use... to...", "Social media", "Online safety", "Future technology"]}, {"title": "Environment 🌍", "sub": "Çevre ve doğa", "topics": ["Pollution & climate", "Recycle / reuse", "Save the planet", "Animals in danger", "Green habits"]}, {"title": "Celebrations 🎉", "sub": "Kutlamalar ve tatiller", "topics": ["Birthday, New Year, Eid...", "Happy Birthday!", "Gift giving language", "Traditional festivals", "Party planning"]}, {"title": "Food Culture 🍜", "sub": "Dünya mutfağı", "topics": ["International foods", "Ordering at a restaurant", "Recipe language", "Cooking verbs", "Food preferences"]}, {"title": "Past & History ⏳", "sub": "Geçmiş zaman", "topics": ["Simple past tense", "Yesterday I...", "Famous historical events", "Biographies", "Past vs present"]}, {"title": "Future Plans 🚀", "sub": "Gelecek planları", "topics": ["Will / Going to", "I will be a...", "My future dreams", "Making predictions", "Plans for tomorrow"]}]}, {"id": "ocean", "emoji": "🌊", "title": "Macera Okyanusu", "level": "A2+/B1 — Orta", "desc": "Okyanusu yüz! Duygular, bilim, kültür ve medya dünyasına dal.", "color1": "#E5603C", "color2": "#c04a28", "unlocked": true, "units": [{"title": "Feelings & Emotions 😊", "sub": "Duygular ve hisler", "topics": ["Happy, sad, angry, excited", "Why do you feel...?", "Expressing opinions", "Empathy language", "Mood journal"]}, {"title": "Science Lab 🔬", "sub": "Bilim ve keşif", "topics": ["Hypothesis & experiment", "Science vocabulary", "Famous scientists", "Lab safety rules", "Science projects"]}, {"title": "World Cultures 🎎", "sub": "Dünya kültürleri", "topics": ["Traditional foods", "Festivals worldwide", "Clothing traditions", "Cultural respect", "My culture vs others"]}, {"title": "Music & Art 🎵", "sub": "Müzik ve sanat", "topics": ["Music genres", "Describing art", "Art history basics", "Famous artists", "Creating & performing"]}, {"title": "Movies & Books 🎬", "sub": "Medya ve edebiyat", "topics": ["Film genres", "Book reviews", "Characters & plot", "Recommendations", "Giving opinions"]}, {"title": "Social Media 📱", "sub": "Sosyal medya", "topics": ["Online communication", "Posting & sharing", "Digital citizenship", "Cyberbullying", "Screen time habits"]}, {"title": "Problem Solving 🧩", "sub": "Problem çözme", "topics": ["Identifying problems", "Brainstorming solutions", "If... then...", "Compromise language", "Team work"]}, {"title": "Space & Universe 🌌", "sub": "Uzay", "topics": ["Planets & solar system", "Astronaut life", "Space exploration", "Stars & constellations", "Future of space travel"]}, {"title": "Sports & Champions 🏆", "sub": "Spor ve şampiyonlar", "topics": ["Olympic sports", "Sportsmanship", "Famous athletes", "Competition language", "My sports hero"]}]}, {"id": "summit", "emoji": "🏔️", "title": "Zirve", "level": "B1/B2 — Üst Orta", "desc": "Zirveye ulaş! Tartışma, akademik dil, iş İngilizcesi ve ötesi.", "color1": "#F2A23C", "color2": "#c87f22", "unlocked": true, "units": [{"title": "News & Society 📰", "sub": "Haberler ve toplum", "topics": ["Reading news articles", "Bias in media", "Passive voice", "Current events", "Fact vs opinion"]}, {"title": "Debate & Opinion 💬", "sub": "Tartışma ve görüş", "topics": ["Agreeing & disagreeing", "I believe that...", "Counter-arguments", "Formal vs informal", "Debate structures"]}, {"title": "Academic Words 📖", "sub": "Akademik dil", "topics": ["Essay writing", "Linking words", "Paraphrasing", "Citation basics", "Academic register"]}, {"title": "Business English 💼", "sub": "İş İngilizcesi", "topics": ["Email writing", "Meetings & presentations", "Job interviews", "CV writing", "Professional phrases"]}, {"title": "Literature 📚", "sub": "Edebiyat", "topics": ["Short stories", "Poetry analysis", "Literary devices", "Reading comprehension", "Creative writing"]}, {"title": "Philosophy & Ethics 🤔", "sub": "Felsefe ve etik", "topics": ["What is right/wrong?", "Famous philosophers", "Critical thinking", "Ethical dilemmas", "My worldview"]}, {"title": "Research Skills 🔍", "sub": "Araştırma becerileri", "topics": ["Finding reliable sources", "Note-taking strategies", "Summarizing", "Presenting research", "Project work"]}, {"title": "Global Issues 🌐", "sub": "Küresel sorunlar", "topics": ["Climate change debates", "Poverty & inequality", "Human rights", "Global solutions", "Taking action"]}, {"title": "Mastery Test 🎓", "sub": "B2 Hazırlık sınavı", "topics": ["Reading passages", "Listening practice", "Writing tasks", "Speaking topics", "Full mock test"]}]}];
 window.GE_MAPS = GE_MAPS;
 const GE_SCHOOL = [{"title":"Matematik","en_title":"Mathematics","emoji":"🔢","grade":"İlkokul & Ortaokul","desc":"Sayılar, geometri ve problem çözmeyi İngilizce keşfet. Her konuyu küçük hikayelerle öğren!","color1":"#2E9BD6","color2":"#0277BD","topics":[{"title":"Numbers & Operations","tr_title":"Sayılar ve İşlemler","sentences":[{"en":"Imagine you have 8 sweets and you give 3 to your friend.","tr":"8 şekerin olduğunu ve 3 tanesini arkadaşına verdiğini hayal et.","words":[{"w":"imagine","t":"hayal etmek"},{"w":"sweets","t":"şekerler"},{"w":"give","t":"vermek"},{"w":"friend","t":"arkadaş"}]},{"en":"This is **subtraction**!","tr":"Bu çıkarma işlemidir!","words":[{"w":"subtraction","t":"çıkarma"}]},{"en":"Now you have 5 left.","tr":"Şimdi 5 tane kaldı.","words":[{"w":"now","t":"şimdi"},{"w":"left","t":"kalan"}]},{"en":"If your friend gives them back, that is **addition** — you put numbers together.","tr":"Arkadaşın geri verirse, bu toplama işlemidir — sayıları bir araya getirirsin.","words":[{"w":"gives back","t":"geri vermek"},{"w":"addition","t":"toplama"},{"w":"put together","t":"bir araya getirmek"},{"w":"numbers","t":"sayılar"}]},{"en":"When we share things equally, like 12 cookies for 4 children, we use **division**.","tr":"Bir şeyleri eşit paylaştığımızda, mesela 4 çocuğa 12 kurabiye, bölme işlemini kullanırız.","words":[{"w":"share","t":"paylaşmak"},{"w":"equally","t":"eşit olarak"},{"w":"cookies","t":"kurabiyeler"},{"w":"children","t":"çocuklar"},{"w":"division","t":"bölme"}]},{"en":"And when we add the same number many times, like 3 + 3 + 3, we can use **multiplication** to do it faster!","tr":"Aynı sayıyı defalarca topladığımızda, mesela 3 + 3 + 3, bunu daha hızlı yapmak için çarpma işlemini kullanabiliriz!","words":[{"w":"add","t":"toplamak"},{"w":"same","t":"aynı"},{"w":"many times","t":"defalarca"},{"w":"multiplication","t":"çarpma"},{"w":"faster","t":"daha hızlı"}]},{"en":"Sometimes numbers do not share equally and a little bit is left over — we call this the **remainder**.","tr":"Bazen sayılar eşit paylaşılmaz ve biraz artar — buna kalan deriz.","words":[{"w":"sometimes","t":"bazen"},{"w":"left over","t":"artan"},{"w":"remainder","t":"kalan"}]},{"en":"Half of a pizza is a **fraction**, and money like 2.50 uses a **decimal** point.","tr":"Bir pizzanın yarısı bir kesirdir ve 2.50 gibi para ondalık nokta kullanır.","words":[{"w":"half","t":"yarım"},{"w":"fraction","t":"kesir"},{"w":"money","t":"para"},{"w":"decimal","t":"ondalık"}]},{"en":"When two sides of a sum are the same, we write the **equals** sign: 4 + 1 = 5.","tr":"Bir toplamanın iki tarafı aynı olduğunda, eşittir işaretini yazarız: 4 + 1 = 5.","words":[{"w":"sides","t":"taraflar"},{"w":"sum","t":"toplam"},{"w":"equals","t":"eşittir"},{"w":"sign","t":"işaret"}]}],"terms":[{"en":"addition","tr":"toplama"},{"en":"subtraction","tr":"çıkarma"},{"en":"multiplication","tr":"çarpma"},{"en":"division","tr":"bölme"},{"en":"equals","tr":"eşittir"},{"en":"remainder","tr":"kalan"},{"en":"fraction","tr":"kesir"},{"en":"decimal","tr":"ondalık"}],"fact":"The word 'zero' comes from an old Arabic word, 'sifr', which means 'empty'!"},{"title":"Geometry Basics","tr_title":"Geometriye Giriş","sentences":[{"en":"Look around your room — shapes are everywhere!","tr":"Odana bir bak — şekiller her yerde!","words":[{"w":"look around","t":"etrafına bakmak"},{"w":"room","t":"oda"},{"w":"shapes","t":"şekiller"},{"w":"everywhere","t":"her yerde"}]},{"en":"A clock is a **circle**, perfectly round with no corners.","tr":"Bir saat dairedir, hiç köşesi olmayan tam yuvarlak.","words":[{"w":"clock","t":"saat"},{"w":"circle","t":"daire"},{"w":"round","t":"yuvarlak"},{"w":"corners","t":"köşeler"}]},{"en":"Your book is a **rectangle** with four sides.","tr":"Kitabın dört kenarı olan bir dikdörtgendir.","words":[{"w":"book","t":"kitap"},{"w":"rectangle","t":"dikdörtgen"},{"w":"four","t":"dört"},{"w":"sides","t":"kenarlar"}]},{"en":"A slice of cheese can be a **triangle** with three corners.","tr":"Bir dilim peynir, üç köşeli bir üçgen olabilir.","words":[{"w":"slice","t":"dilim"},{"w":"cheese","t":"peynir"},{"w":"triangle","t":"üçgen"},{"w":"three","t":"üç"}]},{"en":"When two lines lean towards each other, they make an **angle**, like the hands of a clock.","tr":"İki çizgi birbirine doğru eğildiğinde, saatin kolları gibi bir açı oluştururlar.","words":[{"w":"lines","t":"çizgiler"},{"w":"lean","t":"eğilmek"},{"w":"angle","t":"açı"},{"w":"hands","t":"kollar/akrep-yelkovan"}]},{"en":"Train tracks are **parallel** — they run side by side and never touch.","tr":"Tren rayları paraleldir — yan yana giderler ve asla birbirine değmezler.","words":[{"w":"train tracks","t":"tren rayları"},{"w":"parallel","t":"paralel"},{"w":"side by side","t":"yan yana"},{"w":"touch","t":"dokunmak/değmek"}]},{"en":"When one line stands straight up on another, like a wall on the floor, they are **perpendicular**.","tr":"Bir çizgi diğerinin üzerine dik durduğunda, zemindeki bir duvar gibi, bunlar diktir.","words":[{"w":"stands straight","t":"dik durmak"},{"w":"wall","t":"duvar"},{"w":"floor","t":"zemin"},{"w":"perpendicular","t":"dik"}]},{"en":"If you draw a line straight across the middle of a circle, that is the **diameter**.","tr":"Bir dairenin tam ortasından düz bir çizgi çizersen, bu çaptır.","words":[{"w":"draw","t":"çizmek"},{"w":"across","t":"boyunca"},{"w":"middle","t":"orta"},{"w":"diameter","t":"çap"}]},{"en":"From the centre to the edge is the **radius** — exactly half of the diameter!","tr":"Merkezden kenara olan mesafe yarıçaptır — çapın tam yarısı!","words":[{"w":"centre","t":"merkez"},{"w":"edge","t":"kenar"},{"w":"radius","t":"yarıçap"},{"w":"exactly","t":"tam olarak"},{"w":"half","t":"yarım"}]}],"terms":[{"en":"circle","tr":"daire"},{"en":"rectangle","tr":"dikdörtgen"},{"en":"triangle","tr":"üçgen"},{"en":"angle","tr":"açı"},{"en":"parallel","tr":"paralel"},{"en":"perpendicular","tr":"dik"},{"en":"diameter","tr":"çap"},{"en":"radius","tr":"yarıçap"}],"fact":"A circle has infinite lines of symmetry — you can fold it in half any way you like!"},{"title":"Measurement","tr_title":"Ölçme","sentences":[{"en":"How tall are you?","tr":"Boyun ne kadar?","words":[{"w":"how tall","t":"ne kadar uzun/boy"}]},{"en":"We measure short lengths in **centimetres** and longer ones in **metres**.","tr":"Kısa uzunlukları santimetreyle, daha uzunları metreyle ölçeriz.","words":[{"w":"measure","t":"ölçmek"},{"w":"short","t":"kısa"},{"w":"lengths","t":"uzunluklar"},{"w":"centimetres","t":"santimetreler"},{"w":"longer","t":"daha uzun"},{"w":"metres","t":"metreler"}]},{"en":"A long walk to another town might be many **kilometres**!","tr":"Başka bir kasabaya uzun bir yürüyüş birçok kilometre olabilir!","words":[{"w":"long walk","t":"uzun yürüyüş"},{"w":"another","t":"başka"},{"w":"town","t":"kasaba"},{"w":"kilometres","t":"kilometreler"}]},{"en":"When we cook, we weigh light things like sugar in **grams** and heavier things like potatoes in **kilograms**.","tr":"Yemek yaparken, şeker gibi hafif şeyleri gramla, patates gibi daha ağır şeyleri kilogramla tartarız.","words":[{"w":"cook","t":"yemek yapmak"},{"w":"weigh","t":"tartmak"},{"w":"light","t":"hafif"},{"w":"sugar","t":"şeker"},{"w":"grams","t":"gramlar"},{"w":"heavier","t":"daha ağır"},{"w":"potatoes","t":"patatesler"},{"w":"kilograms","t":"kilogramlar"}]},{"en":"To measure milk or water, we use a **litre**.","tr":"Süt veya suyu ölçmek için litre kullanırız.","words":[{"w":"milk","t":"süt"},{"w":"water","t":"su"},{"w":"litre","t":"litre"}]},{"en":"And when it is hot or cold outside, we check the **temperature**.","tr":"Dışarısı sıcak veya soğuk olduğunda, sıcaklığı kontrol ederiz.","words":[{"w":"hot","t":"sıcak"},{"w":"cold","t":"soğuk"},{"w":"outside","t":"dışarısı"},{"w":"check","t":"kontrol etmek"},{"w":"temperature","t":"sıcaklık"}]},{"en":"In most of the world, temperature is measured in degrees **celsius** — water freezes at 0 and boils at 100!","tr":"Dünyanın çoğunda sıcaklık santigrat derece ile ölçülür — su 0'da donar ve 100'de kaynar!","words":[{"w":"most","t":"çoğu"},{"w":"world","t":"dünya"},{"w":"degrees","t":"dereceler"},{"w":"celsius","t":"santigrat"},{"w":"freezes","t":"donar"},{"w":"boils","t":"kaynar"}]}],"terms":[{"en":"centimetre","tr":"santimetre"},{"en":"metre","tr":"metre"},{"en":"kilometre","tr":"kilometre"},{"en":"gram","tr":"gram"},{"en":"kilogram","tr":"kilogram"},{"en":"litre","tr":"litre"},{"en":"temperature","tr":"sıcaklık"},{"en":"celsius","tr":"santigrat"}],"fact":"An adult's heart weighs about 300 grams — almost the same as a big apple!"},{"title":"Statistics & Data","tr_title":"İstatistik ve Veri","sentences":[{"en":"Imagine your class does a **survey** about favourite fruits.","tr":"Sınıfının en sevdiği meyveler hakkında bir anket yaptığını hayal et.","words":[{"w":"class","t":"sınıf"},{"w":"survey","t":"anket"},{"w":"favourite","t":"en sevilen"},{"w":"fruits","t":"meyveler"}]},{"en":"Everyone's answer is a piece of **data**.","tr":"Herkesin cevabı bir parça veridir.","words":[{"w":"everyone","t":"herkes"},{"w":"answer","t":"cevap"},{"w":"piece","t":"parça"},{"w":"data","t":"veri"}]},{"en":"To show it clearly, we can draw a **graph** or a colourful **chart**.","tr":"Bunu açıkça göstermek için bir grafik veya renkli bir çizelge çizebiliriz.","words":[{"w":"show","t":"göstermek"},{"w":"clearly","t":"açıkça"},{"w":"graph","t":"grafik"},{"w":"colourful","t":"renkli"},{"w":"chart","t":"çizelge"}]},{"en":"If you add everyone's height and share it equally, you get the **average**.","tr":"Herkesin boyunu toplayıp eşit paylaştırırsan, ortalamayı elde edersin.","words":[{"w":"height","t":"boy/yükseklik"},{"w":"share","t":"paylaşmak"},{"w":"average","t":"ortalama"}]},{"en":"The number that appears most often is the **mode**, and the one right in the middle is the **median**.","tr":"En sık görünen sayı tepe değerdir, tam ortadaki ise ortancadır.","words":[{"w":"appears","t":"görünmek"},{"w":"most often","t":"en sık"},{"w":"mode","t":"tepe değer"},{"w":"middle","t":"orta"},{"w":"median","t":"ortanca"}]},{"en":"When we guess how likely something is — like rain tomorrow — we talk about **probability**.","tr":"Bir şeyin ne kadar olası olduğunu tahmin ettiğimizde — mesela yarın yağmur — olasılıktan bahsederiz.","words":[{"w":"guess","t":"tahmin etmek"},{"w":"likely","t":"olası"},{"w":"rain","t":"yağmur"},{"w":"tomorrow","t":"yarın"},{"w":"probability","t":"olasılık"}]},{"en":"Maths helps us understand the world around us!","tr":"Matematik etrafımızdaki dünyayı anlamamıza yardım eder!","words":[{"w":"helps","t":"yardım eder"},{"w":"understand","t":"anlamak"},{"w":"world","t":"dünya"},{"w":"around","t":"etrafında"}]}],"terms":[{"en":"average","tr":"ortalama"},{"en":"data","tr":"veri"},{"en":"graph","tr":"grafik"},{"en":"chart","tr":"çizelge"},{"en":"probability","tr":"olasılık"},{"en":"median","tr":"ortanca"},{"en":"mode","tr":"tepe değer"},{"en":"survey","tr":"anket"}],"fact":"Weather forecasts use probability — '70% chance of rain' means it is quite likely!"}]},{"title":"Fen Bilimleri","en_title":"Science","emoji":"🔬","grade":"İlkokul & Ortaokul","desc":"Canlılar, madde, enerji ve uzayı İngilizce keşfet. Bilim her yerde!","color1":"#1E8A53","color2":"#14633A","topics":[{"title":"Living Things","tr_title":"Canlılar","sentences":[{"en":"Every animal and plant is a living thing — we call it an **organism**.","tr":"Her hayvan ve bitki bir canlıdır — buna organizma deriz.","words":[{"w":"animal","t":"hayvan"},{"w":"plant","t":"bitki"},{"w":"living thing","t":"canlı"},{"w":"organism","t":"organizma"}]},{"en":"Plants are amazing!","tr":"Bitkiler harikadır!","words":[{"w":"plants","t":"bitkiler"},{"w":"amazing","t":"harika"}]},{"en":"They make their own food from sunlight in a process called **photosynthesis**, and while they do this, they give us **oxygen** to breathe.","tr":"Kendi yiyeceklerini güneş ışığından fotosentez denen bir süreçle yaparlar ve bunu yaparken bize nefes almak için oksijen verirler.","words":[{"w":"food","t":"yiyecek"},{"w":"sunlight","t":"güneş ışığı"},{"w":"process","t":"süreç"},{"w":"photosynthesis","t":"fotosentez"},{"w":"oxygen","t":"oksijen"},{"w":"breathe","t":"nefes almak"}]},{"en":"All living things need food, which gives them **nutrition** to grow strong.","tr":"Tüm canlıların yiyeceğe ihtiyacı vardır, bu onlara güçlü büyümek için besin verir.","words":[{"w":"need","t":"ihtiyaç duymak"},{"w":"nutrition","t":"beslenme"},{"w":"grow","t":"büyümek"},{"w":"strong","t":"güçlü"}]},{"en":"To make new baby plants and animals, living things use **reproduction**.","tr":"Yeni yavru bitki ve hayvanlar yapmak için canlılar üremeyi kullanır.","words":[{"w":"new","t":"yeni"},{"w":"baby","t":"yavru"},{"w":"reproduction","t":"üreme"}]},{"en":"Every animal has a special home called a **habitat** — a fish lives in water, a camel lives in the desert.","tr":"Her hayvanın yaşam alanı denen özel bir evi vardır — balık suda yaşar, deve çölde yaşar.","words":[{"w":"special","t":"özel"},{"w":"home","t":"ev"},{"w":"habitat","t":"yaşam alanı"},{"w":"fish","t":"balık"},{"w":"camel","t":"deve"},{"w":"desert","t":"çöl"}]},{"en":"All the living things in one place, together with their surroundings, make an **ecosystem**.","tr":"Bir yerdeki tüm canlılar, çevreleriyle birlikte, bir ekosistem oluşturur.","words":[{"w":"place","t":"yer"},{"w":"surroundings","t":"çevre"},{"w":"ecosystem","t":"ekosistem"}]},{"en":"Animals and plants that are alike belong to the same **species**.","tr":"Birbirine benzeyen hayvan ve bitkiler aynı türe aittir.","words":[{"w":"alike","t":"benzer"},{"w":"belong","t":"ait olmak"},{"w":"same","t":"aynı"},{"w":"species","t":"tür"}]}],"terms":[{"en":"organism","tr":"canlı/organizma"},{"en":"photosynthesis","tr":"fotosentez"},{"en":"oxygen","tr":"oksijen"},{"en":"nutrition","tr":"beslenme"},{"en":"reproduction","tr":"üreme"},{"en":"habitat","tr":"yaşam alanı"},{"en":"ecosystem","tr":"ekosistem"},{"en":"species","tr":"tür"}],"fact":"One big tree can make enough oxygen for two people for a whole year!"},{"title":"Matter & Materials","tr_title":"Madde ve Malzemeler","sentences":[{"en":"Everything around you is made of matter, and matter comes in three main forms.","tr":"Etrafındaki her şey maddeden yapılmıştır ve madde üç ana biçimde gelir.","words":[{"w":"everything","t":"her şey"},{"w":"made of","t":"-den yapılmış"},{"w":"matter","t":"madde"},{"w":"three","t":"üç"},{"w":"forms","t":"biçimler"}]},{"en":"A rock is a **solid** — it keeps its shape.","tr":"Bir kaya katıdır — şeklini korur.","words":[{"w":"rock","t":"kaya"},{"w":"solid","t":"katı"},{"w":"keeps","t":"korur"},{"w":"shape","t":"şekil"}]},{"en":"Water is a **liquid** — it flows and takes the shape of its cup.","tr":"Su sıvıdır — akar ve bardağının şeklini alır.","words":[{"w":"water","t":"su"},{"w":"liquid","t":"sıvı"},{"w":"flows","t":"akar"},{"w":"cup","t":"bardak"}]},{"en":"The air you breathe is a **gas** — it spreads everywhere.","tr":"Soluduğun hava bir gazdır — her yere yayılır.","words":[{"w":"air","t":"hava"},{"w":"breathe","t":"nefes almak"},{"w":"gas","t":"gaz"},{"w":"spreads","t":"yayılır"}]},{"en":"Some things are heavy for their size; we say they have high **density**.","tr":"Bazı şeyler boyutuna göre ağırdır; yüksek yoğunluğa sahip olduklarını söyleriz.","words":[{"w":"heavy","t":"ağır"},{"w":"size","t":"boyut"},{"w":"high","t":"yüksek"},{"w":"density","t":"yoğunluk"}]},{"en":"When you heat ice, the **temperature** rises and it melts into water.","tr":"Buzu ısıttığında, sıcaklık yükselir ve eriyip suya dönüşür.","words":[{"w":"heat","t":"ısıtmak"},{"w":"ice","t":"buz"},{"w":"temperature","t":"sıcaklık"},{"w":"rises","t":"yükselir"},{"w":"melts","t":"erir"}]},{"en":"When you stir sugar into tea, you make a **mixture**.","tr":"Çaya şeker karıştırdığında, bir karışım yaparsın.","words":[{"w":"stir","t":"karıştırmak"},{"w":"sugar","t":"şeker"},{"w":"tea","t":"çay"},{"w":"mixture","t":"karışım"}]},{"en":"The simplest building block of matter is an **element**, like gold or oxygen.","tr":"Maddenin en basit yapı taşı bir elementtir, altın veya oksijen gibi.","words":[{"w":"simplest","t":"en basit"},{"w":"building block","t":"yapı taşı"},{"w":"element","t":"element"},{"w":"gold","t":"altın"}]},{"en":"When two elements join together, they make a **compound**, like water (hydrogen + oxygen)!","tr":"İki element bir araya geldiğinde, bir bileşik oluştururlar, su gibi (hidrojen + oksijen)!","words":[{"w":"join together","t":"birleşmek"},{"w":"compound","t":"bileşik"},{"w":"hydrogen","t":"hidrojen"}]}],"terms":[{"en":"solid","tr":"katı"},{"en":"liquid","tr":"sıvı"},{"en":"gas","tr":"gaz"},{"en":"density","tr":"yoğunluk"},{"en":"temperature","tr":"sıcaklık"},{"en":"mixture","tr":"karışım"},{"en":"element","tr":"element"},{"en":"compound","tr":"bileşik"}],"fact":"Honey never goes bad! Jars of honey thousands of years old are still safe to eat."},{"title":"Forces & Energy","tr_title":"Kuvvetler ve Enerji","sentences":[{"en":"Drop a ball and it falls down — that is **gravity** pulling everything towards the Earth.","tr":"Bir topu bırak ve aşağı düşsün — bu, her şeyi Dünya'ya doğru çeken yerçekimidir.","words":[{"w":"drop","t":"bırakmak"},{"w":"ball","t":"top"},{"w":"falls down","t":"düşer"},{"w":"gravity","t":"yerçekimi"},{"w":"pulling","t":"çekmek"},{"w":"Earth","t":"Dünya"}]},{"en":"When you slide down a slide, a force called **friction** slows you down.","tr":"Bir kaydıraktan kaydığında, sürtünme denen bir kuvvet seni yavaşlatır.","words":[{"w":"slide down","t":"aşağı kaymak"},{"w":"slide","t":"kaydırak"},{"w":"force","t":"kuvvet"},{"w":"friction","t":"sürtünme"},{"w":"slows down","t":"yavaşlatır"}]},{"en":"Flick a light switch and **electricity** lights up your room.","tr":"Bir ışık düğmesine bas ve elektrik odanı aydınlatsın.","words":[{"w":"flick","t":"hızlıca basmak"},{"w":"light switch","t":"ışık düğmesi"},{"w":"electricity","t":"elektrik"},{"w":"lights up","t":"aydınlatır"},{"w":"room","t":"oda"}]},{"en":"A **magnet** can pull metal towards it; this power is called **magnetism**.","tr":"Bir mıknatıs metali kendine doğru çekebilir; bu güce manyetizma denir.","words":[{"w":"magnet","t":"mıknatıs"},{"w":"pull","t":"çekmek"},{"w":"metal","t":"metal"},{"w":"power","t":"güç"},{"w":"magnetism","t":"manyetizma"}]},{"en":"When something moves, we call it **motion**, and how fast it moves in one direction is its **velocity**.","tr":"Bir şey hareket ettiğinde, buna hareket deriz ve bir yönde ne kadar hızlı gittiği onun hızıdır.","words":[{"w":"moves","t":"hareket eder"},{"w":"motion","t":"hareket"},{"w":"fast","t":"hızlı"},{"w":"direction","t":"yön"},{"w":"velocity","t":"hız"}]},{"en":"To make anything move or work, we need **energy** — and when we rub our hands together quickly, friction makes **heat**!","tr":"Herhangi bir şeyi hareket ettirmek veya çalıştırmak için enerjiye ihtiyacımız var — ve ellerimizi hızlıca birbirine sürttüğümüzde, sürtünme ısı üretir!","words":[{"w":"move","t":"hareket etmek"},{"w":"work","t":"çalışmak"},{"w":"energy","t":"enerji"},{"w":"rub","t":"sürtmek"},{"w":"hands","t":"eller"},{"w":"quickly","t":"hızlıca"},{"w":"heat","t":"ısı"}]}],"terms":[{"en":"gravity","tr":"yerçekimi"},{"en":"friction","tr":"sürtünme"},{"en":"electricity","tr":"elektrik"},{"en":"magnetism","tr":"manyetizma"},{"en":"motion","tr":"hareket"},{"en":"velocity","tr":"hız"},{"en":"energy","tr":"enerji"},{"en":"heat","tr":"ısı"}],"fact":"Without friction, you could never walk — your feet would just slide everywhere!"},{"title":"Earth & Space","tr_title":"Dünya ve Uzay","sentences":[{"en":"Our planet is wrapped in a blanket of air called the **atmosphere**, which keeps us warm and safe.","tr":"Gezegenimiz, bizi sıcak ve güvende tutan atmosfer denen bir hava battaniyesiyle sarılıdır.","words":[{"w":"planet","t":"gezegen"},{"w":"wrapped","t":"sarılı"},{"w":"blanket","t":"battaniye"},{"w":"air","t":"hava"},{"w":"atmosphere","t":"atmosfer"},{"w":"warm","t":"sıcak"},{"w":"safe","t":"güvenli"}]},{"en":"The Earth travels around the Sun in a giant path called an **orbit**, and it spins like a top — this spinning is called **rotation**, and it gives us day and night!","tr":"Dünya, Güneş'in etrafında yörünge denen dev bir yolda döner ve bir topaç gibi döner — bu dönmeye dönme denir ve bize gece gündüzü verir!","words":[{"w":"travels","t":"seyahat eder"},{"w":"Sun","t":"Güneş"},{"w":"giant","t":"dev"},{"w":"path","t":"yol"},{"w":"orbit","t":"yörünge"},{"w":"spins","t":"döner"},{"w":"rotation","t":"dönme"},{"w":"day","t":"gündüz"},{"w":"night","t":"gece"}]},{"en":"Sometimes the ground shakes in an **earthquake**, and a mountain that shoots out hot lava is a **volcano**.","tr":"Bazen yer bir depremde sallanır ve sıcak lav püskürten bir dağ yanardağdır.","words":[{"w":"ground","t":"yer/zemin"},{"w":"shakes","t":"sallanır"},{"w":"earthquake","t":"deprem"},{"w":"mountain","t":"dağ"},{"w":"shoots out","t":"püskürtür"},{"w":"lava","t":"lav"},{"w":"volcano","t":"yanardağ"}]},{"en":"Over many years, wind and water slowly wear away rocks; this is called **erosion**.","tr":"Uzun yıllar boyunca, rüzgar ve su kayaları yavaşça aşındırır; buna erozyon denir.","words":[{"w":"years","t":"yıllar"},{"w":"wind","t":"rüzgar"},{"w":"slowly","t":"yavaşça"},{"w":"wear away","t":"aşındırmak"},{"w":"rocks","t":"kayalar"},{"w":"erosion","t":"erozyon"}]},{"en":"The Earth has huge pieces of land called a **continent** — there are seven of them.","tr":"Dünya'nın kıta denen kocaman kara parçaları vardır — yedi tane var.","words":[{"w":"huge","t":"kocaman"},{"w":"pieces","t":"parçalar"},{"w":"land","t":"kara"},{"w":"continent","t":"kıta"},{"w":"seven","t":"yedi"}]},{"en":"And far beyond our planet, billions of stars gather together to form a **galaxy**!","tr":"Ve gezegenimizin çok ötesinde, milyarlarca yıldız bir araya gelip bir galaksi oluşturur!","words":[{"w":"far beyond","t":"çok ötesinde"},{"w":"billions","t":"milyarlar"},{"w":"stars","t":"yıldızlar"},{"w":"gather","t":"toplanmak"},{"w":"form","t":"oluşturmak"},{"w":"galaxy","t":"galaksi"}]}],"terms":[{"en":"atmosphere","tr":"atmosfer"},{"en":"orbit","tr":"yörünge"},{"en":"rotation","tr":"dönme"},{"en":"earthquake","tr":"deprem"},{"en":"volcano","tr":"yanardağ"},{"en":"erosion","tr":"erozyon"},{"en":"continent","tr":"kıta"},{"en":"galaxy","tr":"galaksi"}],"fact":"A day on Venus is longer than its year — it spins very, very slowly!"}]},{"title":"Sosyal Bilgiler","en_title":"Social Studies","emoji":"🌍","grade":"İlkokul","desc":"Tarih, coğrafya, toplum ve vatandaşlığı İngilizce keşfet. Dünyamızı tanı!","color1":"#7C6BF0","color2":"#5a48d6","topics":[{"title":"Maps & Geography","tr_title":"Haritalar ve Coğrafya","sentences":[{"en":"A map is like a tiny picture of our big world!","tr":"Bir harita, koca dünyamızın minik bir resmi gibidir!","words":[{"w":"map","t":"harita"},{"w":"tiny","t":"minik"},{"w":"picture","t":"resim"},{"w":"world","t":"dünya"}]},{"en":"The Earth has seven huge pieces of land, and each one is a **continent**.","tr":"Dünya'nın yedi kocaman kara parçası vardır ve her biri bir kıtadır.","words":[{"w":"seven","t":"yedi"},{"w":"huge","t":"kocaman"},{"w":"land","t":"kara"},{"w":"continent","t":"kıta"}]},{"en":"Inside a continent there are many a **country**, like Turkey or France.","tr":"Bir kıtanın içinde birçok ülke vardır, Türkiye veya Fransa gibi.","words":[{"w":"inside","t":"içinde"},{"w":"country","t":"ülke"}]},{"en":"Every country has one special city that leads it — the **capital**.","tr":"Her ülkenin onu yöneten özel bir şehri vardır — başkent.","words":[{"w":"special","t":"özel"},{"w":"city","t":"şehir"},{"w":"leads","t":"yönetir"},{"w":"capital","t":"başkent"}]},{"en":"The line that separates one country from another is called a **border**.","tr":"Bir ülkeyi diğerinden ayıran çizgiye sınır denir.","words":[{"w":"line","t":"çizgi"},{"w":"separates","t":"ayırır"},{"w":"another","t":"başka"},{"w":"border","t":"sınır"}]},{"en":"To find any place exactly, mapmakers use special lines: **latitude** lines go across, and **longitude** lines go up and down.","tr":"Herhangi bir yeri tam olarak bulmak için harita yapımcıları özel çizgiler kullanır: enlem çizgileri yatay gider, boylam çizgileri dikey gider.","words":[{"w":"find","t":"bulmak"},{"w":"place","t":"yer"},{"w":"exactly","t":"tam olarak"},{"w":"latitude","t":"enlem"},{"w":"go across","t":"yatay gitmek"},{"w":"longitude","t":"boylam"}]},{"en":"To know which way is north, explorers use a **compass**.","tr":"Kuzeyin hangi yön olduğunu bilmek için kaşifler pusula kullanır.","words":[{"w":"north","t":"kuzey"},{"w":"explorers","t":"kaşifler"},{"w":"compass","t":"pusula"}]},{"en":"And because the real world is so big, every map has a **scale** that shows how much smaller the picture is.","tr":"Ve gerçek dünya çok büyük olduğu için, her haritada resmin ne kadar küçültüldüğünü gösteren bir ölçek vardır.","words":[{"w":"real","t":"gerçek"},{"w":"big","t":"büyük"},{"w":"scale","t":"ölçek"},{"w":"smaller","t":"daha küçük"}]}],"terms":[{"en":"continent","tr":"kıta"},{"en":"country","tr":"ülke"},{"en":"capital","tr":"başkent"},{"en":"border","tr":"sınır"},{"en":"latitude","tr":"enlem"},{"en":"longitude","tr":"boylam"},{"en":"compass","tr":"pusula"},{"en":"scale","tr":"ölçek"}],"fact":"Russia is so wide that it touches 11 different time zones!"},{"title":"History","tr_title":"Tarih","sentences":[{"en":"Long, long ago, people built the first great cities and learned to write — we call this a **civilization**.","tr":"Çok çok uzun zaman önce, insanlar ilk büyük şehirleri kurdu ve yazmayı öğrendi — buna medeniyet deriz.","words":[{"w":"long ago","t":"uzun zaman önce"},{"w":"built","t":"inşa etti"},{"w":"cities","t":"şehirler"},{"w":"learned","t":"öğrendi"},{"w":"write","t":"yazmak"},{"w":"civilization","t":"medeniyet"}]},{"en":"Things that are very, very old are called **ancient**, like the pyramids of Egypt.","tr":"Çok çok eski olan şeylere antik denir, Mısır'ın piramitleri gibi.","words":[{"w":"old","t":"eski"},{"w":"ancient","t":"antik"},{"w":"pyramids","t":"piramitler"},{"w":"Egypt","t":"Mısır"}]},{"en":"Sometimes one powerful country ruled over many lands; this was an **empire**.","tr":"Bazen güçlü bir ülke birçok toprağı yönetirdi; bu bir imparatorluktu.","words":[{"w":"powerful","t":"güçlü"},{"w":"ruled","t":"yönetti"},{"w":"lands","t":"topraklar"},{"w":"empire","t":"imparatorluk"}]},{"en":"When people are unhappy and want big change, they start a **revolution**.","tr":"İnsanlar mutsuz olup büyük değişim istediğinde, bir devrim başlatırlar.","words":[{"w":"unhappy","t":"mutsuz"},{"w":"change","t":"değişim"},{"w":"start","t":"başlatmak"},{"w":"revolution","t":"devrim"}]},{"en":"Today, many countries have a **democracy**, where the people choose their leaders by voting.","tr":"Bugün, birçok ülkede demokrasi vardır, burada insanlar liderlerini oy vererek seçer.","words":[{"w":"today","t":"bugün"},{"w":"democracy","t":"demokrasi"},{"w":"choose","t":"seçmek"},{"w":"leaders","t":"liderler"},{"w":"voting","t":"oy verme"}]},{"en":"When a country becomes free to rule itself, it celebrates its **independence**.","tr":"Bir ülke kendi kendini yönetecek kadar özgür olduğunda, bağımsızlığını kutlar.","words":[{"w":"free","t":"özgür"},{"w":"rule","t":"yönetmek"},{"w":"celebrates","t":"kutlar"},{"w":"independence","t":"bağımsızlık"}]},{"en":"Every group of people has its own **culture** — its food, music and clothes — and special habits passed down for years, called a **tradition**.","tr":"Her insan grubunun kendi kültürü vardır — yiyeceği, müziği ve kıyafetleri — ve yıllarca aktarılan, gelenek denen özel alışkanlıkları.","words":[{"w":"group","t":"grup"},{"w":"culture","t":"kültür"},{"w":"food","t":"yiyecek"},{"w":"music","t":"müzik"},{"w":"clothes","t":"kıyafetler"},{"w":"habits","t":"alışkanlıklar"},{"w":"passed down","t":"aktarılan"},{"w":"tradition","t":"gelenek"}]}],"terms":[{"en":"civilization","tr":"medeniyet"},{"en":"ancient","tr":"antik"},{"en":"empire","tr":"imparatorluk"},{"en":"revolution","tr":"devrim"},{"en":"democracy","tr":"demokrasi"},{"en":"independence","tr":"bağımsızlık"},{"en":"culture","tr":"kültür"},{"en":"tradition","tr":"gelenek"}],"fact":"The oldest known story ever written is over 4,000 years old!"},{"title":"Society & Government","tr_title":"Toplum ve Yönetim","sentences":[{"en":"Every person who lives in a country is a **citizen**.","tr":"Bir ülkede yaşayan her kişi bir vatandaştır.","words":[{"w":"person","t":"kişi"},{"w":"lives","t":"yaşar"},{"w":"citizen","t":"vatandaş"}]},{"en":"Citizens have **rights** — important things they are free to do, like going to school and speaking their mind.","tr":"Vatandaşların hakları vardır — okula gitmek ve fikrini söylemek gibi yapmakta özgür oldukları önemli şeyler.","words":[{"w":"rights","t":"haklar"},{"w":"important","t":"önemli"},{"w":"free","t":"özgür"},{"w":"school","t":"okul"},{"w":"speaking their mind","t":"fikrini söylemek"}]},{"en":"But with rights also comes **responsibility** — the duty to be kind and follow good rules.","tr":"Ama haklarla birlikte sorumluluk da gelir — nazik olma ve iyi kurallara uyma görevi.","words":[{"w":"responsibility","t":"sorumluluk"},{"w":"duty","t":"görev"},{"w":"kind","t":"nazik"},{"w":"follow","t":"uymak"},{"w":"rules","t":"kurallar"}]},{"en":"Many countries are led by a group of chosen people who meet in a **parliament**, where they make a **law** that everyone must follow.","tr":"Birçok ülke, mecliste toplanan seçilmiş bir grup insan tarafından yönetilir, burada herkesin uyması gereken bir kanun yaparlar.","words":[{"w":"led","t":"yönetilir"},{"w":"chosen","t":"seçilmiş"},{"w":"meet","t":"toplanmak"},{"w":"parliament","t":"meclis"},{"w":"law","t":"kanun"},{"w":"everyone","t":"herkes"}]},{"en":"When everyone is treated fairly, we have **justice**.","tr":"Herkese adil davranıldığında, adalet vardır.","words":[{"w":"treated","t":"davranılmak"},{"w":"fairly","t":"adil"},{"w":"justice","t":"adalet"}]},{"en":"Grown-up citizens get to **vote** to choose their leaders.","tr":"Yetişkin vatandaşlar liderlerini seçmek için oy verir.","words":[{"w":"grown-up","t":"yetişkin"},{"w":"vote","t":"oy vermek"},{"w":"choose","t":"seçmek"},{"w":"leaders","t":"liderler"}]},{"en":"And all the people who live together and help each other make a **community**!","tr":"Ve birlikte yaşayıp birbirine yardım eden tüm insanlar bir topluluk oluşturur!","words":[{"w":"live together","t":"birlikte yaşamak"},{"w":"help","t":"yardım etmek"},{"w":"each other","t":"birbiri"},{"w":"community","t":"topluluk"}]}],"terms":[{"en":"citizen","tr":"vatandaş"},{"en":"rights","tr":"haklar"},{"en":"responsibility","tr":"sorumluluk"},{"en":"parliament","tr":"meclis"},{"en":"law","tr":"kanun"},{"en":"justice","tr":"adalet"},{"en":"vote","tr":"oy vermek"},{"en":"community","tr":"topluluk"}],"fact":"In some countries, voting is not just a right — it is the law for every adult!"},{"title":"Economy","tr_title":"Ekonomi","sentences":[{"en":"When people buy and sell things, they are doing **trade**.","tr":"İnsanlar bir şeyleri alıp sattığında, ticaret yapıyorlardır.","words":[{"w":"buy","t":"satın almak"},{"w":"sell","t":"satmak"},{"w":"trade","t":"ticaret"}]},{"en":"When a country sells its goods to other countries, that is **export** — and when it buys from them, that is **import**.","tr":"Bir ülke mallarını başka ülkelere sattığında, bu ihracattır — onlardan satın aldığında ise bu ithalattır.","words":[{"w":"goods","t":"mallar"},{"w":"other","t":"diğer"},{"w":"export","t":"ihracat"},{"w":"import","t":"ithalat"}]},{"en":"Big factories that make lots of products belong to **industry**.","tr":"Çok sayıda ürün yapan büyük fabrikalar sanayiye aittir.","words":[{"w":"factories","t":"fabrikalar"},{"w":"products","t":"ürünler"},{"w":"belong","t":"ait olmak"},{"w":"industry","t":"sanayi"}]},{"en":"Growing food on farms — wheat, fruit and vegetables — is called **agriculture**.","tr":"Çiftliklerde yiyecek yetiştirmeye — buğday, meyve ve sebze — tarım denir.","words":[{"w":"growing","t":"yetiştirme"},{"w":"farms","t":"çiftlikler"},{"w":"wheat","t":"buğday"},{"w":"fruit","t":"meyve"},{"w":"vegetables","t":"sebzeler"},{"w":"agriculture","t":"tarım"}]},{"en":"Things we get from the Earth, like water, wood and oil, are **natural resources**.","tr":"Dünya'dan elde ettiğimiz şeyler, su, odun ve petrol gibi, doğal kaynaklardır.","words":[{"w":"get","t":"elde etmek"},{"w":"wood","t":"odun"},{"w":"oil","t":"petrol"},{"w":"natural resources","t":"doğal kaynaklar"}]},{"en":"When workers make goods, this is **production**.","tr":"İşçiler mal ürettiğinde, bu üretimdir.","words":[{"w":"workers","t":"işçiler"},{"w":"goods","t":"mallar"},{"w":"production","t":"üretim"}]},{"en":"And the busy place where everyone buys and sells is the **market**!","tr":"Ve herkesin alıp sattığı hareketli yer pazardır!","words":[{"w":"busy","t":"hareketli/yoğun"},{"w":"place","t":"yer"},{"w":"market","t":"pazar"}]}],"terms":[{"en":"trade","tr":"ticaret"},{"en":"export","tr":"ihracat"},{"en":"import","tr":"ithalat"},{"en":"industry","tr":"sanayi"},{"en":"agriculture","tr":"tarım"},{"en":"natural resources","tr":"doğal kaynaklar"},{"en":"production","tr":"üretim"},{"en":"market","tr":"pazar"}],"fact":"Turkey is one of the world's biggest producers of hazelnuts — about 70% of them all!"}]},{"title":"Müzik","en_title":"Music","emoji":"🎵","grade":"Tüm Sınıflar","desc":"Enstrümanlar, notalar, ritim ve müzik türlerini İngilizce keşfet. Müziğin tadını çıkar!","color1":"#E5603C","color2":"#c04a28","topics":[{"title":"Instruments","tr_title":"Enstrümanlar","sentences":[{"en":"Music is made with wonderful instruments!","tr":"Müzik harika enstrümanlarla yapılır!","words":[{"w":"music","t":"müzik"},{"w":"made","t":"yapılır"},{"w":"wonderful","t":"harika"},{"w":"instruments","t":"enstrümanlar"}]},{"en":"Strum the strings of a **guitar** or press the black and white keys of a **piano**.","tr":"Bir gitarın tellerini çal ya da bir piyanonun siyah beyaz tuşlarına bas.","words":[{"w":"strum","t":"telleri çalmak"},{"w":"strings","t":"teller"},{"w":"guitar","t":"gitar"},{"w":"press","t":"basmak"},{"w":"keys","t":"tuşlar"},{"w":"piano","t":"piyano"}]},{"en":"Slide the bow across a **violin** to make a soft, singing sound, or its bigger cousin, the **cello**, for a deep tone.","tr":"Yumuşak, şarkı söyleyen bir ses için bir kemanın üzerinde yayı kaydır, ya da derin bir ton için onun büyük kuzeni çelloyu.","words":[{"w":"slide","t":"kaydırmak"},{"w":"bow","t":"yay"},{"w":"violin","t":"keman"},{"w":"soft","t":"yumuşak"},{"w":"sound","t":"ses"},{"w":"cello","t":"çello"},{"w":"deep","t":"derin"},{"w":"tone","t":"ton"}]},{"en":"Tap the **drums** to keep the beat.","tr":"Ritmi tutmak için davullara vur.","words":[{"w":"tap","t":"hafifçe vurmak"},{"w":"drums","t":"davullar"},{"w":"beat","t":"ritim/vuruş"}]},{"en":"Blow gently into a **flute** for a light, airy melody, or into a shiny **trumpet** for a loud, bright sound.","tr":"Hafif, havadar bir melodi için bir flüte nazikçe üfle, ya da yüksek, parlak bir ses için parlak bir trompete.","words":[{"w":"blow","t":"üflemek"},{"w":"gently","t":"nazikçe"},{"w":"flute","t":"flüt"},{"w":"light","t":"hafif"},{"w":"melody","t":"melodi"},{"w":"shiny","t":"parlak"},{"w":"trumpet","t":"trompet"},{"w":"loud","t":"yüksek sesli"},{"w":"bright","t":"parlak"}]},{"en":"And the **saxophone** gives jazz music its smooth, cool voice.","tr":"Ve saksofon, caz müziğine yumuşak, havalı sesini verir.","words":[{"w":"saxophone","t":"saksofon"},{"w":"jazz","t":"caz"},{"w":"smooth","t":"yumuşak"},{"w":"cool","t":"havalı"},{"w":"voice","t":"ses"}]},{"en":"Every instrument has its own special song!","tr":"Her enstrümanın kendine özel bir şarkısı vardır!","words":[{"w":"every","t":"her"},{"w":"own","t":"kendi"},{"w":"special","t":"özel"},{"w":"song","t":"şarkı"}]}],"terms":[{"en":"guitar","tr":"gitar"},{"en":"piano","tr":"piyano"},{"en":"violin","tr":"keman"},{"en":"drums","tr":"davul/bateri"},{"en":"flute","tr":"flüt"},{"en":"trumpet","tr":"trompet"},{"en":"cello","tr":"çello"},{"en":"saxophone","tr":"saksofon"}],"fact":"A grand piano has over 200 strings hidden inside it!"},{"title":"Music Theory","tr_title":"Müzik Teorisi","sentences":[{"en":"Music has its own special language!","tr":"Müziğin kendine özel bir dili vardır!","words":[{"w":"music","t":"müzik"},{"w":"own","t":"kendi"},{"w":"special","t":"özel"},{"w":"language","t":"dil"}]},{"en":"The steady beat that makes you tap your foot is the **rhythm**.","tr":"Ayağını yere vurmana sebep olan düzenli vuruş ritimdir.","words":[{"w":"steady","t":"düzenli"},{"w":"beat","t":"vuruş"},{"w":"tap","t":"vurmak"},{"w":"foot","t":"ayak"},{"w":"rhythm","t":"ritim"}]},{"en":"The tune you hum is the **melody**, and when many notes sound beautiful together, that is **harmony**.","tr":"Mırıldandığın ezgi melodidir ve birçok nota birlikte güzel duyulduğunda, bu armonidir.","words":[{"w":"tune","t":"ezgi"},{"w":"hum","t":"mırıldanmak"},{"w":"melody","t":"melodi"},{"w":"notes","t":"notalar"},{"w":"beautiful","t":"güzel"},{"w":"harmony","t":"armoni"}]},{"en":"How fast or slow a song goes is its **tempo** — a lullaby is slow, a dance is fast!","tr":"Bir şarkının ne kadar hızlı veya yavaş gittiği onun temposudur — bir ninni yavaştır, bir dans hızlıdır!","words":[{"w":"fast","t":"hızlı"},{"w":"slow","t":"yavaş"},{"w":"song","t":"şarkı"},{"w":"tempo","t":"tempo"},{"w":"lullaby","t":"ninni"},{"w":"dance","t":"dans"}]},{"en":"When you play several notes at the same time, you make a **chord**.","tr":"Aynı anda birkaç nota çaldığında, bir akor oluşturursun.","words":[{"w":"play","t":"çalmak"},{"w":"several","t":"birkaç"},{"w":"same time","t":"aynı anda"},{"w":"chord","t":"akor"}]},{"en":"A row of notes going up or down is a **scale**.","tr":"Yukarı veya aşağı giden bir nota dizisi bir gamdır.","words":[{"w":"row","t":"dizi/sıra"},{"w":"up","t":"yukarı"},{"w":"down","t":"aşağı"},{"w":"scale","t":"gam"}]},{"en":"Each single sound is a **note**, and when you go from one note all the way up to the same note higher, that jump is an **octave**!","tr":"Her tek ses bir notadır ve bir notadan aynı notanın bir üst hâline kadar çıktığında, o sıçrama bir oktavdır!","words":[{"w":"single","t":"tek"},{"w":"sound","t":"ses"},{"w":"note","t":"nota"},{"w":"higher","t":"daha yüksek"},{"w":"jump","t":"sıçrama"},{"w":"octave","t":"oktav"}]}],"terms":[{"en":"rhythm","tr":"ritim"},{"en":"melody","tr":"melodi"},{"en":"harmony","tr":"armoni"},{"en":"tempo","tr":"tempo"},{"en":"chord","tr":"akor"},{"en":"scale","tr":"gam"},{"en":"note","tr":"nota"},{"en":"octave","tr":"oktav"}],"fact":"Our hearts naturally beat faster when we listen to fast, exciting music!"},{"title":"Music Genres","tr_title":"Müzik Türleri","sentences":[{"en":"There are so many kinds of music to enjoy!","tr":"Keyfini çıkaracağın o kadar çok müzik türü var ki!","words":[{"w":"kinds","t":"türler"},{"w":"music","t":"müzik"},{"w":"enjoy","t":"keyfini çıkarmak"}]},{"en":"**Classical** music, written long ago by composers like Mozart, is played by big orchestras.","tr":"Mozart gibi bestecilerin uzun zaman önce yazdığı klasik müzik, büyük orkestralar tarafından çalınır.","words":[{"w":"classical","t":"klasik"},{"w":"written","t":"yazılmış"},{"w":"long ago","t":"uzun zaman önce"},{"w":"composers","t":"besteciler"},{"w":"played","t":"çalınır"},{"w":"orchestras","t":"orkestralar"}]},{"en":"**Jazz** is full of fun surprises, where musicians make up music as they play.","tr":"Caz, eğlenceli sürprizlerle doludur, müzisyenler çalarken müziği oracıkta uydururlar.","words":[{"w":"jazz","t":"caz"},{"w":"full of","t":"dolu"},{"w":"fun","t":"eğlenceli"},{"w":"surprises","t":"sürprizler"},{"w":"musicians","t":"müzisyenler"},{"w":"make up","t":"uydurmak"}]},{"en":"**Pop** music has catchy songs you hear on the radio, and **rock** music is loud and full of energy with electric guitars.","tr":"Pop müzikte radyoda duyduğun akılda kalıcı şarkılar vardır ve rock müzik elektro gitarlarla yüksek sesli ve enerji doludur.","words":[{"w":"pop","t":"pop"},{"w":"catchy","t":"akılda kalıcı"},{"w":"radio","t":"radyo"},{"w":"rock","t":"rock"},{"w":"loud","t":"yüksek sesli"},{"w":"energy","t":"enerji"},{"w":"electric guitars","t":"elektro gitarlar"}]},{"en":"**Folk** music tells old stories from a country's past.","tr":"Halk müziği, bir ülkenin geçmişinden eski hikayeler anlatır.","words":[{"w":"folk","t":"halk"},{"w":"tells","t":"anlatır"},{"w":"old","t":"eski"},{"w":"stories","t":"hikayeler"},{"w":"past","t":"geçmiş"}]},{"en":"**Hip-hop** mixes rhythm and rhyming words.","tr":"Hip-hop, ritmi ve kafiyeli kelimeleri karıştırır.","words":[{"w":"hip-hop","t":"hip-hop"},{"w":"mixes","t":"karıştırır"},{"w":"rhythm","t":"ritim"},{"w":"rhyming","t":"kafiyeli"},{"w":"words","t":"kelimeler"}]},{"en":"An **opera** is a play where the actors sing every line, and a **symphony** is a long, grand piece for a whole orchestra!","tr":"Bir opera, oyuncuların her satırı söylediği bir oyundur ve bir senfoni, tüm bir orkestra için uzun, görkemli bir eserdir!","words":[{"w":"opera","t":"opera"},{"w":"play","t":"oyun"},{"w":"actors","t":"oyuncular"},{"w":"sing","t":"söylemek"},{"w":"line","t":"satır"},{"w":"symphony","t":"senfoni"},{"w":"grand","t":"görkemli"},{"w":"piece","t":"eser"},{"w":"whole","t":"tüm"}]}],"terms":[{"en":"classical","tr":"klasik"},{"en":"jazz","tr":"caz"},{"en":"pop","tr":"pop"},{"en":"rock","tr":"rock"},{"en":"folk","tr":"halk müziği"},{"en":"hip-hop","tr":"hip-hop"},{"en":"opera","tr":"opera"},{"en":"symphony","tr":"senfoni"}],"fact":"The longest opera in the world takes over five hours to perform!"},{"title":"Performing","tr_title":"Sahne ve Performans","sentences":[{"en":"When musicians play together, magic happens!","tr":"Müzisyenler birlikte çaldığında, sihir olur!","words":[{"w":"musicians","t":"müzisyenler"},{"w":"play","t":"çalmak"},{"w":"together","t":"birlikte"},{"w":"magic","t":"sihir"},{"w":"happens","t":"olur"}]},{"en":"A big group of players is an **orchestra**, and the person who leads them with a little stick is the **conductor**.","tr":"Büyük bir çalgıcı grubu bir orkestradır ve onları küçük bir değnekle yöneten kişi orkestra şefidir.","words":[{"w":"group","t":"grup"},{"w":"players","t":"çalgıcılar"},{"w":"orchestra","t":"orkestra"},{"w":"leads","t":"yönetir"},{"w":"stick","t":"değnek"},{"w":"conductor","t":"orkestra şefi"}]},{"en":"Before a big show, they all practise together in a **rehearsal**.","tr":"Büyük bir gösteriden önce, hepsi bir provada birlikte çalışır.","words":[{"w":"before","t":"önce"},{"w":"show","t":"gösteri"},{"w":"practise","t":"alıştırma yapmak"},{"w":"rehearsal","t":"prova"}]},{"en":"Then comes the exciting **concert**, where they play for everyone!","tr":"Sonra herkes için çaldıkları heyecan verici konser gelir!","words":[{"w":"exciting","t":"heyecan verici"},{"w":"concert","t":"konser"},{"w":"everyone","t":"herkes"}]},{"en":"Sometimes one person plays alone — this is a **solo**.","tr":"Bazen bir kişi tek başına çalar — bu bir solodur.","words":[{"w":"sometimes","t":"bazen"},{"w":"alone","t":"yalnız"},{"w":"solo","t":"solo"}]},{"en":"A group of singers all together is a **choir**.","tr":"Hep birlikte bir şarkıcı grubu bir korodur.","words":[{"w":"singers","t":"şarkıcılar"},{"w":"choir","t":"koro"}]},{"en":"The words of a song are its **lyrics**, and a brand-new piece of music that someone writes is a **composition**!","tr":"Bir şarkının kelimeleri onun sözleridir ve birinin yazdığı yepyeni bir müzik parçası bir bestedir!","words":[{"w":"words","t":"kelimeler"},{"w":"song","t":"şarkı"},{"w":"lyrics","t":"şarkı sözleri"},{"w":"brand-new","t":"yepyeni"},{"w":"writes","t":"yazar"},{"w":"composition","t":"beste"}]}],"terms":[{"en":"conductor","tr":"orkestra şefi"},{"en":"orchestra","tr":"orkestra"},{"en":"rehearsal","tr":"prova"},{"en":"concert","tr":"konser"},{"en":"solo","tr":"solo"},{"en":"choir","tr":"koro"},{"en":"lyrics","tr":"şarkı sözleri"},{"en":"composition","tr":"beste"}],"fact":"A conductor never makes a sound, yet leads over 100 musicians at once!"}]},{"title":"Beden Eğitimi","en_title":"Physical Education","emoji":"⚽","grade":"Tüm Sınıflar","desc":"Spor, sağlık, hareket ve takım ruhunu İngilizce öğren. Hadi aktif olalım!","color1":"#F2A23C","color2":"#c87f22","topics":[{"title":"Team Sports","tr_title":"Takım Sporları","sentences":[{"en":"Team sports are more fun with friends!","tr":"Takım sporları arkadaşlarla daha eğlencelidir!","words":[{"w":"team sports","t":"takım sporları"},{"w":"more fun","t":"daha eğlenceli"},{"w":"friends","t":"arkadaşlar"}]},{"en":"In **football**, two teams kick a ball and try to score.","tr":"Futbolda iki takım bir topa vurur ve gol atmaya çalışır.","words":[{"w":"football","t":"futbol"},{"w":"teams","t":"takımlar"},{"w":"kick","t":"vurmak/tekmelemek"},{"w":"ball","t":"top"},{"w":"score","t":"gol atmak/sayı yapmak"}]},{"en":"In **basketball**, players bounce the ball and throw it through a high hoop.","tr":"Basketbolda oyuncular topu sektirir ve yüksek bir potadan geçirir.","words":[{"w":"basketball","t":"basketbol"},{"w":"players","t":"oyuncular"},{"w":"bounce","t":"sektirmek"},{"w":"throw","t":"atmak"},{"w":"high","t":"yüksek"},{"w":"hoop","t":"pota/çember"}]},{"en":"**Volleyball** players hit the ball over a net, and **handball** is a fast game played with the hands.","tr":"Voleybol oyuncuları topu bir filenin üzerinden vurur ve hentbol ellerle oynanan hızlı bir oyundur.","words":[{"w":"volleyball","t":"voleybol"},{"w":"hit","t":"vurmak"},{"w":"net","t":"file/ağ"},{"w":"handball","t":"hentbol"},{"w":"fast","t":"hızlı"},{"w":"hands","t":"eller"}]},{"en":"The secret to winning is **teamwork** — helping each other!","tr":"Kazanmanın sırrı takım çalışmasıdır — birbirine yardım etmek!","words":[{"w":"secret","t":"sır"},{"w":"winning","t":"kazanmak"},{"w":"teamwork","t":"takım çalışması"},{"w":"helping","t":"yardım etmek"},{"w":"each other","t":"birbiri"}]},{"en":"The other team you play against is your **opponent**.","tr":"Karşı oynadığın diğer takım senin rakibindir.","words":[{"w":"other","t":"diğer"},{"w":"play against","t":"karşı oynamak"},{"w":"opponent","t":"rakip"}]},{"en":"A fair person called the **referee** makes sure everyone follows the rules.","tr":"Hakem denen adil bir kişi herkesin kurallara uymasını sağlar.","words":[{"w":"fair","t":"adil"},{"w":"referee","t":"hakem"},{"w":"makes sure","t":"sağlar/emin olur"},{"w":"follows","t":"uyar"},{"w":"rules","t":"kurallar"}]},{"en":"And if your team plays the best of all, you might win the **championship**!","tr":"Ve takımın hepsinden iyi oynarsa, şampiyonayı kazanabilirsin!","words":[{"w":"best","t":"en iyi"},{"w":"win","t":"kazanmak"},{"w":"championship","t":"şampiyona"}]}],"terms":[{"en":"football","tr":"futbol"},{"en":"basketball","tr":"basketbol"},{"en":"volleyball","tr":"voleybol"},{"en":"handball","tr":"hentbol"},{"en":"teamwork","tr":"takım çalışması"},{"en":"opponent","tr":"rakip"},{"en":"referee","tr":"hakem"},{"en":"championship","tr":"şampiyona"}],"fact":"Football is the most popular sport on Earth — billions of people love it!"},{"title":"Individual Sports","tr_title":"Bireysel Sporlar","sentences":[{"en":"Some sports you can do all by yourself!","tr":"Bazı sporları tamamen kendi başına yapabilirsin!","words":[{"w":"sports","t":"sporlar"},{"w":"by yourself","t":"kendi başına"}]},{"en":"**Swimming** in a pool makes your whole body strong.","tr":"Bir havuzda yüzmek tüm vücudunu güçlendirir.","words":[{"w":"swimming","t":"yüzme"},{"w":"pool","t":"havuz"},{"w":"whole","t":"tüm"},{"w":"body","t":"vücut"},{"w":"strong","t":"güçlü"}]},{"en":"**Athletics** includes running, jumping and throwing.","tr":"Atletizm koşmayı, atlamayı ve atmayı içerir.","words":[{"w":"athletics","t":"atletizm"},{"w":"includes","t":"içerir"},{"w":"running","t":"koşma"},{"w":"jumping","t":"atlama"},{"w":"throwing","t":"atma"}]},{"en":"In **gymnastics**, you bend, flip and balance like an acrobat.","tr":"Jimnastikte bir akrobat gibi eğilir, takla atar ve dengede durursun.","words":[{"w":"gymnastics","t":"jimnastik"},{"w":"bend","t":"eğilmek"},{"w":"flip","t":"takla atmak"},{"w":"balance","t":"denge"},{"w":"acrobat","t":"akrobat"}]},{"en":"**Cycling** is racing on a bicycle, and a **marathon** is a very, very long run of about 42 kilometres!","tr":"Bisiklet sürmek bir bisiklette yarışmaktır ve bir maraton yaklaşık 42 kilometrelik çok çok uzun bir koşudur!","words":[{"w":"cycling","t":"bisiklet sürme"},{"w":"racing","t":"yarışma"},{"w":"bicycle","t":"bisiklet"},{"w":"marathon","t":"maraton"},{"w":"long","t":"uzun"},{"w":"run","t":"koşu"}]},{"en":"If you run faster than anyone ever has, you set a new **record**.","tr":"Şimdiye dek herkesten daha hızlı koşarsan, yeni bir rekor kırarsın.","words":[{"w":"run","t":"koşmak"},{"w":"faster","t":"daha hızlı"},{"w":"anyone","t":"herhangi biri"},{"w":"set a record","t":"rekor kırmak"},{"w":"new","t":"yeni"},{"w":"record","t":"rekor"}]},{"en":"The winner often gets a shiny **medal** to wear.","tr":"Kazanan genellikle takmak için parlak bir madalya alır.","words":[{"w":"winner","t":"kazanan"},{"w":"shiny","t":"parlak"},{"w":"medal","t":"madalya"},{"w":"wear","t":"takmak"}]},{"en":"And in a short, super-fast race, athletes do a **sprint** to the finish line!","tr":"Ve kısa, süper hızlı bir yarışta, sporcular bitiş çizgisine kadar kısa mesafe koşusu yapar!","words":[{"w":"short","t":"kısa"},{"w":"race","t":"yarış"},{"w":"athletes","t":"sporcular"},{"w":"sprint","t":"kısa mesafe koşusu"},{"w":"finish line","t":"bitiş çizgisi"}]}],"terms":[{"en":"swimming","tr":"yüzme"},{"en":"athletics","tr":"atletizm"},{"en":"gymnastics","tr":"jimnastik"},{"en":"cycling","tr":"bisiklet"},{"en":"marathon","tr":"maraton"},{"en":"record","tr":"rekor"},{"en":"medal","tr":"madalya"},{"en":"sprint","tr":"kısa mesafe koşusu"}],"fact":"The marathon race is named after a town in Greece called Marathon!"},{"title":"Health & Fitness","tr_title":"Sağlık ve Form","sentences":[{"en":"Keeping your body happy and healthy is important!","tr":"Vücudunu mutlu ve sağlıklı tutmak önemlidir!","words":[{"w":"keeping","t":"tutmak"},{"w":"body","t":"vücut"},{"w":"happy","t":"mutlu"},{"w":"healthy","t":"sağlıklı"},{"w":"important","t":"önemli"}]},{"en":"When you do **exercise**, like running or jumping, your body gets stronger.","tr":"Koşmak veya atlamak gibi egzersiz yaptığında, vücudun güçlenir.","words":[{"w":"exercise","t":"egzersiz"},{"w":"running","t":"koşma"},{"w":"jumping","t":"atlama"},{"w":"stronger","t":"daha güçlü"}]},{"en":"Eating good food gives you **nutrition** to grow.","tr":"İyi yiyecek yemek, büyümen için sana besin verir.","words":[{"w":"eating","t":"yemek"},{"w":"good food","t":"iyi yiyecek"},{"w":"nutrition","t":"beslenme"},{"w":"grow","t":"büyümek"}]},{"en":"If you can run for a long time without stopping, you have great **stamina**.","tr":"Durmadan uzun süre koşabiliyorsan, harika bir dayanıklılığın var demektir.","words":[{"w":"run","t":"koşmak"},{"w":"long time","t":"uzun süre"},{"w":"without stopping","t":"durmadan"},{"w":"stamina","t":"dayanıklılık"}]},{"en":"When you can touch your toes easily, you have good **flexibility**.","tr":"Ayak parmaklarına kolayca dokunabildiğinde, iyi bir esnekliğin var demektir.","words":[{"w":"touch","t":"dokunmak"},{"w":"toes","t":"ayak parmakları"},{"w":"easily","t":"kolayca"},{"w":"flexibility","t":"esneklik"}]},{"en":"Lifting and pushing builds your **strength**.","tr":"Kaldırmak ve itmek gücünü artırır.","words":[{"w":"lifting","t":"kaldırma"},{"w":"pushing","t":"itme"},{"w":"builds","t":"inşa eder/artırır"},{"w":"strength","t":"güç"}]},{"en":"Always drink water — this is called **hydration**, and it keeps you cool.","tr":"Her zaman su iç — buna su alımı denir ve seni serin tutar.","words":[{"w":"always","t":"her zaman"},{"w":"drink","t":"içmek"},{"w":"water","t":"su"},{"w":"hydration","t":"su alımı"},{"w":"cool","t":"serin"}]},{"en":"After playing hard, your body needs **rest** to recover.","tr":"Sıkı oynadıktan sonra, vücudun iyileşmek için dinlenmeye ihtiyaç duyar.","words":[{"w":"playing hard","t":"sıkı oynamak"},{"w":"needs","t":"ihtiyaç duyar"},{"w":"rest","t":"dinlenme"},{"w":"recover","t":"iyileşmek"}]},{"en":"And sitting up straight gives you good **posture**!","tr":"Ve dik oturmak sana iyi bir duruş kazandırır!","words":[{"w":"sitting up straight","t":"dik oturmak"},{"w":"posture","t":"duruş"}]}],"terms":[{"en":"exercise","tr":"egzersiz"},{"en":"nutrition","tr":"beslenme"},{"en":"stamina","tr":"dayanıklılık"},{"en":"flexibility","tr":"esneklik"},{"en":"strength","tr":"güç"},{"en":"hydration","tr":"su alımı"},{"en":"rest","tr":"dinlenme"},{"en":"posture","tr":"duruş"}],"fact":"Laughing is good exercise too — it works the muscles in your tummy!"},{"title":"Rules & Fair Play","tr_title":"Kurallar ve Adil Oyun","sentences":[{"en":"Every game has rules that keep it fair and fun!","tr":"Her oyunun onu adil ve eğlenceli tutan kuralları vardır!","words":[{"w":"game","t":"oyun"},{"w":"rules","t":"kurallar"},{"w":"fair","t":"adil"},{"w":"fun","t":"eğlenceli"}]},{"en":"If a player breaks a rule, the referee calls a **foul**.","tr":"Bir oyuncu bir kuralı çiğnerse, hakem faul çalar.","words":[{"w":"player","t":"oyuncu"},{"w":"breaks","t":"çiğner/bozar"},{"w":"referee","t":"hakem"},{"w":"foul","t":"faul"}]},{"en":"A serious foul might give the other team a **penalty** — a special free kick or shot.","tr":"Ciddi bir faul, diğer takıma bir penaltı verebilir — özel bir serbest vuruş veya şut.","words":[{"w":"serious","t":"ciddi"},{"w":"other team","t":"diğer takım"},{"w":"penalty","t":"penaltı"},{"w":"free kick","t":"serbest vuruş"},{"w":"shot","t":"şut"}]},{"en":"In football, standing too close to the goal too early is called **offside**.","tr":"Futbolda, kaleye çok erken çok yakın durmaya ofsayt denir.","words":[{"w":"standing","t":"durmak"},{"w":"close","t":"yakın"},{"w":"goal","t":"kale"},{"w":"early","t":"erken"},{"w":"offside","t":"ofsayt"}]},{"en":"When the ball goes into the net, your team scores a **goal** and the **score** goes up!","tr":"Top filenin içine girdiğinde, takımın bir gol atar ve skor yükselir!","words":[{"w":"ball","t":"top"},{"w":"net","t":"file/ağ"},{"w":"scores","t":"atar/sayı yapar"},{"w":"goal","t":"gol"},{"w":"score","t":"skor"},{"w":"goes up","t":"yükselir"}]},{"en":"Sometimes the coach calls a **timeout** for a short rest, or makes a **substitution** to send in a fresh player.","tr":"Bazen antrenör kısa bir dinlenme için mola alır ya da dinç bir oyuncu sokmak için oyuncu değişikliği yapar.","words":[{"w":"coach","t":"antrenör"},{"w":"timeout","t":"mola"},{"w":"short rest","t":"kısa dinlenme"},{"w":"substitution","t":"oyuncu değişikliği"},{"w":"fresh","t":"dinç/taze"}]},{"en":"The most important rule of all is **sportsmanship** — playing kindly and respecting everyone, win or lose!","tr":"Hepsinin en önemli kuralı sportmenliktir — nazikçe oynamak ve kazansan da kaybetsen de herkese saygı göstermek!","words":[{"w":"important","t":"önemli"},{"w":"sportsmanship","t":"sportmenlik"},{"w":"kindly","t":"nazikçe"},{"w":"respecting","t":"saygı göstermek"},{"w":"win","t":"kazanmak"},{"w":"lose","t":"kaybetmek"}]}],"terms":[{"en":"foul","tr":"faul"},{"en":"penalty","tr":"penaltı"},{"en":"offside","tr":"ofsayt"},{"en":"goal","tr":"gol"},{"en":"score","tr":"skor"},{"en":"timeout","tr":"mola"},{"en":"substitution","tr":"oyuncu değişikliği"},{"en":"sportsmanship","tr":"sportmenlik"}],"fact":"Shaking hands with your opponent after a game is a sign of true sportsmanship!"}]},{"title":"Görsel Sanatlar","en_title":"Visual Arts","emoji":"🎨","grade":"Tüm Sınıflar","desc":"Renk, teknik, sanat tarihi ve tasarımı İngilizce keşfet. Hayal gücünü serbest bırak!","color1":"#ff6b9d","color2":"#c8256e","topics":[{"title":"Colour Theory","tr_title":"Renk Teorisi","sentences":[{"en":"Colours are like magic!","tr":"Renkler sihir gibidir!","words":[{"w":"colours","t":"renkler"},{"w":"magic","t":"sihir"}]},{"en":"There are three special colours we cannot mix from others — red, blue and yellow.","tr":"Başkalarından karıştıramayacağımız üç özel renk vardır — kırmızı, mavi ve sarı.","words":[{"w":"three","t":"üç"},{"w":"special","t":"özel"},{"w":"mix","t":"karıştırmak"},{"w":"red","t":"kırmızı"},{"w":"blue","t":"mavi"},{"w":"yellow","t":"sarı"}]},{"en":"These are the **primary** colours.","tr":"Bunlar ana renklerdir.","words":[{"w":"primary","t":"ana"},{"w":"colours","t":"renkler"}]},{"en":"When you mix two of them, you make a **secondary** colour: blue and yellow make green!","tr":"İkisini karıştırdığında, bir ara renk oluşturursun: mavi ve sarı yeşil yapar!","words":[{"w":"mix","t":"karıştırmak"},{"w":"secondary","t":"ara/ikincil"},{"w":"green","t":"yeşil"}]},{"en":"Colours that sit opposite each other and look great together are **complementary**, like blue and orange.","tr":"Birbirinin karşısında duran ve birlikte harika görünen renkler tamamlayıcıdır, mavi ve turuncu gibi.","words":[{"w":"opposite","t":"karşı"},{"w":"look great","t":"harika görünmek"},{"w":"complementary","t":"tamamlayıcı"},{"w":"orange","t":"turuncu"}]},{"en":"Reds and yellows feel like sunshine — we call them **warm** colours.","tr":"Kırmızılar ve sarılar güneş ışığı gibi hissettirir — onlara sıcak renkler deriz.","words":[{"w":"feel","t":"hissettirmek"},{"w":"sunshine","t":"güneş ışığı"},{"w":"warm","t":"sıcak"}]},{"en":"Blues and greens feel calm and cool — these are **cool** colours.","tr":"Maviler ve yeşiller sakin ve serin hissettirir — bunlar soğuk renklerdir.","words":[{"w":"calm","t":"sakin"},{"w":"cool","t":"serin/soğuk"}]},{"en":"The name of a pure colour is its **hue**.","tr":"Saf bir rengin adı onun renk tonudur.","words":[{"w":"name","t":"ad"},{"w":"pure","t":"saf"},{"w":"hue","t":"renk tonu"}]},{"en":"Add black to make a darker **shade**, or add white to make a softer **tint**!","tr":"Daha koyu bir ton yapmak için siyah ekle ya da daha yumuşak bir açık ton yapmak için beyaz ekle!","words":[{"w":"add","t":"eklemek"},{"w":"black","t":"siyah"},{"w":"darker","t":"daha koyu"},{"w":"shade","t":"koyu ton"},{"w":"white","t":"beyaz"},{"w":"softer","t":"daha yumuşak"},{"w":"tint","t":"açık ton"}]}],"terms":[{"en":"primary","tr":"ana renk"},{"en":"secondary","tr":"ara renk"},{"en":"complementary","tr":"tamamlayıcı"},{"en":"warm","tr":"sıcak"},{"en":"cool","tr":"soğuk"},{"en":"hue","tr":"renk tonu"},{"en":"shade","tr":"koyu ton"},{"en":"tint","tr":"açık ton"}],"fact":"The human eye can see about 10 million different colours!"},{"title":"Art Techniques","tr_title":"Sanat Teknikleri","sentences":[{"en":"Artists use clever tricks to make their work beautiful!","tr":"Sanatçılar eserlerini güzelleştirmek için akıllıca püf noktaları kullanır!","words":[{"w":"artists","t":"sanatçılar"},{"w":"clever","t":"akıllıca"},{"w":"tricks","t":"püf noktaları"},{"w":"work","t":"eser"},{"w":"beautiful","t":"güzel"}]},{"en":"First they draw a quick, light **sketch** to plan the picture.","tr":"Önce resmi planlamak için hızlı, hafif bir eskiz çizerler.","words":[{"w":"draw","t":"çizmek"},{"w":"quick","t":"hızlı"},{"w":"light","t":"hafif"},{"w":"sketch","t":"eskiz"},{"w":"plan","t":"planlamak"},{"w":"picture","t":"resim"}]},{"en":"They **blend** colours together so they melt softly into each other.","tr":"Renkleri birbirine yumuşakça karışacak şekilde harmanlarlar.","words":[{"w":"blend","t":"harmanlamak"},{"w":"colours","t":"renkler"},{"w":"melt","t":"erimek"},{"w":"softly","t":"yumuşakça"}]},{"en":"They add **texture** to make things look rough or smooth, like fur or glass.","tr":"Bir şeyleri pürüzlü ya da pürüzsüz göstermek için doku eklerler, kürk ya da cam gibi.","words":[{"w":"texture","t":"doku"},{"w":"rough","t":"pürüzlü"},{"w":"smooth","t":"pürüzsüz"},{"w":"fur","t":"kürk"},{"w":"glass","t":"cam"}]},{"en":"With **perspective**, faraway things look small and close things look big, so a flat paper looks deep!","tr":"Perspektifle, uzaktaki şeyler küçük, yakındaki şeyler büyük görünür, böylece düz bir kağıt derin görünür!","words":[{"w":"perspective","t":"perspektif"},{"w":"faraway","t":"uzaktaki"},{"w":"small","t":"küçük"},{"w":"close","t":"yakın"},{"w":"big","t":"büyük"},{"w":"flat","t":"düz"},{"w":"deep","t":"derin"}]},{"en":"The way everything is arranged on the page is the **composition**.","tr":"Sayfada her şeyin düzenlenme şekli kompozisyondur.","words":[{"w":"arranged","t":"düzenlenmiş"},{"w":"page","t":"sayfa"},{"w":"composition","t":"kompozisyon"}]},{"en":"Putting light next to dark makes a strong **contrast**.","tr":"Aydınlığı karanlığın yanına koymak güçlü bir kontrast oluşturur.","words":[{"w":"light","t":"aydınlık"},{"w":"next to","t":"yanına"},{"w":"dark","t":"karanlık"},{"w":"strong","t":"güçlü"},{"w":"contrast","t":"kontrast"}]},{"en":"When both sides of a picture match, that is **symmetry**.","tr":"Bir resmin iki tarafı birbirine uyduğunda, bu simetridir.","words":[{"w":"both sides","t":"iki taraf"},{"w":"match","t":"uymak/eşleşmek"},{"w":"symmetry","t":"simetri"}]},{"en":"And art with shapes and colours but no real objects is **abstract**!","tr":"Ve şekiller ve renkler içeren ama gerçek nesneler içermeyen sanat soyuttur!","words":[{"w":"art","t":"sanat"},{"w":"shapes","t":"şekiller"},{"w":"real","t":"gerçek"},{"w":"objects","t":"nesneler"},{"w":"abstract","t":"soyut"}]}],"terms":[{"en":"sketch","tr":"eskiz"},{"en":"blend","tr":"harmanlamak"},{"en":"texture","tr":"doku"},{"en":"perspective","tr":"perspektif"},{"en":"composition","tr":"kompozisyon"},{"en":"contrast","tr":"kontrast"},{"en":"symmetry","tr":"simetri"},{"en":"abstract","tr":"soyut"}],"fact":"Leonardo da Vinci often left his paintings unfinished to try new ideas!"},{"title":"Art History","tr_title":"Sanat Tarihi","sentences":[{"en":"Art has a long and exciting story!","tr":"Sanatın uzun ve heyecan verici bir hikayesi vardır!","words":[{"w":"art","t":"sanat"},{"w":"long","t":"uzun"},{"w":"exciting","t":"heyecan verici"},{"w":"story","t":"hikaye"}]},{"en":"Long ago, during the **Renaissance**, artists in Italy painted people and nature in amazing detail.","tr":"Uzun zaman önce, Rönesans sırasında, İtalya'daki sanatçılar insanları ve doğayı şaşırtıcı ayrıntılarla resmettiler.","words":[{"w":"long ago","t":"uzun zaman önce"},{"w":"Renaissance","t":"Rönesans"},{"w":"artists","t":"sanatçılar"},{"w":"Italy","t":"İtalya"},{"w":"painted","t":"resmetti"},{"w":"nature","t":"doğa"},{"w":"detail","t":"ayrıntı"}]},{"en":"Later, painters of **impressionism** used soft, quick brushstrokes to capture sunlight and movement.","tr":"Daha sonra, izlenimcilik ressamları güneş ışığını ve hareketi yakalamak için yumuşak, hızlı fırça darbeleri kullandı.","words":[{"w":"later","t":"daha sonra"},{"w":"painters","t":"ressamlar"},{"w":"impressionism","t":"izlenimcilik"},{"w":"soft","t":"yumuşak"},{"w":"brushstrokes","t":"fırça darbeleri"},{"w":"capture","t":"yakalamak"},{"w":"movement","t":"hareket"}]},{"en":"Some artists do not paint at all — they carve a **sculpture** from stone or wood.","tr":"Bazı sanatçılar hiç resim yapmaz — taştan ya da ahşaptan bir heykel yontarlar.","words":[{"w":"paint","t":"resim yapmak"},{"w":"carve","t":"yontmak"},{"w":"sculpture","t":"heykel"},{"w":"stone","t":"taş"},{"w":"wood","t":"ahşap"}]},{"en":"A painting of a person's face is a **portrait**, and a painting of nature, mountains and fields is a **landscape**.","tr":"Bir kişinin yüzünün resmi bir portredir ve doğanın, dağların ve tarlaların resmi bir manzaradır.","words":[{"w":"painting","t":"resim"},{"w":"face","t":"yüz"},{"w":"portrait","t":"portre"},{"w":"mountains","t":"dağlar"},{"w":"fields","t":"tarlalar"},{"w":"landscape","t":"manzara"}]},{"en":"We can see famous art in a **gallery** or a special show called an **exhibition**.","tr":"Ünlü sanatı bir galeride ya da sergi denen özel bir gösteride görebiliriz.","words":[{"w":"famous","t":"ünlü"},{"w":"gallery","t":"galeri"},{"w":"special","t":"özel"},{"w":"show","t":"gösteri"},{"w":"exhibition","t":"sergi"}]},{"en":"The very best artwork of all is called a **masterpiece**!","tr":"Hepsinin en iyisi olan sanat eserine başyapıt denir!","words":[{"w":"best","t":"en iyi"},{"w":"artwork","t":"sanat eseri"},{"w":"masterpiece","t":"başyapıt"}]}],"terms":[{"en":"Renaissance","tr":"Rönesans"},{"en":"impressionism","tr":"izlenimcilik"},{"en":"sculpture","tr":"heykel"},{"en":"portrait","tr":"portre"},{"en":"landscape","tr":"manzara"},{"en":"gallery","tr":"galeri"},{"en":"exhibition","tr":"sergi"},{"en":"masterpiece","tr":"başyapıt"}],"fact":"The famous painting the Mona Lisa is smaller than you might think — about the size of a poster!"},{"title":"Design","tr_title":"Tasarım","sentences":[{"en":"Design is art with a job to do!","tr":"Tasarım, yapacak bir işi olan sanattır!","words":[{"w":"design","t":"tasarım"},{"w":"art","t":"sanat"},{"w":"job","t":"iş"}]},{"en":"**Typography** is the art of arranging letters so they look nice and are easy to read.","tr":"Tipografi, harfleri güzel görünecek ve kolay okunacak şekilde düzenleme sanatıdır.","words":[{"w":"typography","t":"tipografi"},{"w":"arranging","t":"düzenleme"},{"w":"letters","t":"harfler"},{"w":"look nice","t":"güzel görünmek"},{"w":"easy to read","t":"kolay okunur"}]},{"en":"A **logo** is a small, special picture that helps you know a brand, like the bird on a famous app.","tr":"Bir logo, bir markayı tanımana yardım eden küçük, özel bir resimdir, ünlü bir uygulamadaki kuş gibi.","words":[{"w":"logo","t":"logo"},{"w":"small","t":"küçük"},{"w":"picture","t":"resim"},{"w":"brand","t":"marka"},{"w":"bird","t":"kuş"},{"w":"app","t":"uygulama"}]},{"en":"A repeating shape or design is a **pattern**, like spots on a scarf.","tr":"Tekrar eden bir şekil ya da tasarım bir desendir, bir atkıdaki benekler gibi.","words":[{"w":"repeating","t":"tekrar eden"},{"w":"shape","t":"şekil"},{"w":"pattern","t":"desen"},{"w":"spots","t":"benekler"},{"w":"scarf","t":"atkı"}]},{"en":"A **graphic** is a picture made on a computer, and a drawing for a book is an **illustration**.","tr":"Bir grafik, bilgisayarda yapılan bir resimdir ve bir kitap için yapılan çizim bir illüstrasyondur.","words":[{"w":"graphic","t":"grafik"},{"w":"computer","t":"bilgisayar"},{"w":"drawing","t":"çizim"},{"w":"book","t":"kitap"},{"w":"illustration","t":"illüstrasyon"}]},{"en":"Today, many artists work **digital** — on screens and tablets!","tr":"Bugün, birçok sanatçı dijital çalışır — ekranlarda ve tabletlerde!","words":[{"w":"today","t":"bugün"},{"w":"artists","t":"sanatçılar"},{"w":"digital","t":"dijital"},{"w":"screens","t":"ekranlar"},{"w":"tablets","t":"tabletler"}]},{"en":"Before making the real thing, designers build a test version called a **prototype**.","tr":"Gerçeğini yapmadan önce, tasarımcılar prototip denen bir test sürümü yapar.","words":[{"w":"before","t":"önce"},{"w":"real","t":"gerçek"},{"w":"designers","t":"tasarımcılar"},{"w":"build","t":"yapmak/inşa etmek"},{"w":"test version","t":"test sürümü"},{"w":"prototype","t":"prototip"}]},{"en":"When a design looks truly beautiful, we say it has good **aesthetic**!","tr":"Bir tasarım gerçekten güzel göründüğünde, iyi bir estetiği olduğunu söyleriz!","words":[{"w":"design","t":"tasarım"},{"w":"truly","t":"gerçekten"},{"w":"beautiful","t":"güzel"},{"w":"aesthetic","t":"estetik"}]}],"terms":[{"en":"typography","tr":"tipografi"},{"en":"logo","tr":"logo"},{"en":"pattern","tr":"desen"},{"en":"graphic","tr":"grafik"},{"en":"illustration","tr":"illüstrasyon"},{"en":"digital","tr":"dijital"},{"en":"prototype","tr":"prototip"},{"en":"aesthetic","tr":"estetik"}],"fact":"The '@' symbol we use in emails was once a rare sign almost no one used!"}]}];
 const GE_VOCAB = {"Welcome! 👋": [{"en": "Hello", "tr": "Merhaba", "emoji": "👋"}, {"en": "Goodbye", "tr": "Hoşça kal", "emoji": "🚪"}, {"en": "Please", "tr": "Lütfen", "emoji": "🙏"}, {"en": "Thank you", "tr": "Teşekkür ederim", "emoji": "💛"}, {"en": "Sorry", "tr": "Özür dilerim", "emoji": "😔"}, {"en": "Yes", "tr": "Evet", "emoji": "✅"}, {"en": "No", "tr": "Hayır", "emoji": "❌"}, {"en": "Name", "tr": "İsim", "emoji": "🏷️"}], "My Body 🧍": [{"en": "Head", "tr": "Baş", "emoji": "👤"}, {"en": "Eyes", "tr": "Gözler", "emoji": "👀"}, {"en": "Ears", "tr": "Kulaklar", "emoji": "👂"}, {"en": "Mouth", "tr": "Ağız", "emoji": "👄"}, {"en": "Hands", "tr": "Eller", "emoji": "🤲"}, {"en": "Legs", "tr": "Bacaklar", "emoji": "🦵"}, {"en": "Nose", "tr": "Burun", "emoji": "👃"}, {"en": "Heart", "tr": "Kalp", "emoji": "❤️"}], "Colors & Shapes 🌈": [{"en": "Red", "tr": "Kırmızı", "emoji": "🔴"}, {"en": "Blue", "tr": "Mavi", "emoji": "🔵"}, {"en": "Green", "tr": "Yeşil", "emoji": "🟢"}, {"en": "Yellow", "tr": "Sarı", "emoji": "🟡"}, {"en": "Circle", "tr": "Daire", "emoji": "⭕"}, {"en": "Square", "tr": "Kare", "emoji": "🟦"}, {"en": "Triangle", "tr": "Üçgen", "emoji": "🔺"}, {"en": "Star", "tr": "Yıldız", "emoji": "⭐"}], "Numbers & Math 🔢": [{"en": "One", "tr": "Bir", "emoji": "1️⃣"}, {"en": "Five", "tr": "Beş", "emoji": "5️⃣"}, {"en": "Ten", "tr": "On", "emoji": "🔟"}, {"en": "Twenty", "tr": "Yirmi", "emoji": "✌️"}, {"en": "Plus", "tr": "Artı", "emoji": "➕"}, {"en": "Minus", "tr": "Eksi", "emoji": "➖"}, {"en": "Equal", "tr": "Eşit", "emoji": "🟰"}, {"en": "Hundred", "tr": "Yüz", "emoji": "💯"}], "Animals 🐾": [{"en": "Cat", "tr": "Kedi", "emoji": "🐱"}, {"en": "Dog", "tr": "Köpek", "emoji": "🐶"}, {"en": "Lion", "tr": "Aslan", "emoji": "🦁"}, {"en": "Elephant", "tr": "Fil", "emoji": "🐘"}, {"en": "Bird", "tr": "Kuş", "emoji": "🐦"}, {"en": "Fish", "tr": "Balık", "emoji": "🐟"}, {"en": "Rabbit", "tr": "Tavşan", "emoji": "🐰"}, {"en": "Tiger", "tr": "Kaplan", "emoji": "🐯"}], "Food & Drinks 🍎": [{"en": "Apple", "tr": "Elma", "emoji": "🍎"}, {"en": "Bread", "tr": "Ekmek", "emoji": "🍞"}, {"en": "Milk", "tr": "Süt", "emoji": "🥛"}, {"en": "Water", "tr": "Su", "emoji": "💧"}, {"en": "Rice", "tr": "Pilav", "emoji": "🍚"}, {"en": "Egg", "tr": "Yumurta", "emoji": "🥚"}, {"en": "Chocolate", "tr": "Çikolata", "emoji": "🍫"}, {"en": "Orange", "tr": "Portakal", "emoji": "🍊"}], "My House 🏠": [{"en": "Kitchen", "tr": "Mutfak", "emoji": "🍳"}, {"en": "Bedroom", "tr": "Yatak odası", "emoji": "🛏️"}, {"en": "Bathroom", "tr": "Banyo", "emoji": "🚿"}, {"en": "Door", "tr": "Kapı", "emoji": "🚪"}, {"en": "Window", "tr": "Pencere", "emoji": "🪟"}, {"en": "Chair", "tr": "Sandalye", "emoji": "🪑"}, {"en": "Table", "tr": "Masa", "emoji": "🪑"}, {"en": "Garden", "tr": "Bahçe", "emoji": "🌱"}], "My Family 👨‍👩‍👧": [{"en": "Mother", "tr": "Anne", "emoji": "👩"}, {"en": "Father", "tr": "Baba", "emoji": "👨"}, {"en": "Sister", "tr": "Kız kardeş", "emoji": "👧"}, {"en": "Brother", "tr": "Erkek kardeş", "emoji": "👦"}, {"en": "Grandmother", "tr": "Büyükanne", "emoji": "👵"}, {"en": "Grandfather", "tr": "Büyükbaba", "emoji": "👴"}, {"en": "Baby", "tr": "Bebek", "emoji": "👶"}, {"en": "Family", "tr": "Aile", "emoji": "👨‍👩‍👧"}], "Days & Weather ⛅": [{"en": "Monday", "tr": "Pazartesi", "emoji": "📅"}, {"en": "Friday", "tr": "Cuma", "emoji": "🎉"}, {"en": "Sunday", "tr": "Pazar", "emoji": "☀️"}, {"en": "Sunny", "tr": "Güneşli", "emoji": "☀️"}, {"en": "Rainy", "tr": "Yağmurlu", "emoji": "🌧️"}, {"en": "Snowy", "tr": "Karlı", "emoji": "❄️"}, {"en": "Windy", "tr": "Rüzgarlı", "emoji": "💨"}, {"en": "Cloudy", "tr": "Bulutlu", "emoji": "☁️"}], "School Life 🏫": [{"en": "School", "tr": "Okul", "emoji": "🏫"}, {"en": "Teacher", "tr": "Öğretmen", "emoji": "👩‍🏫"}, {"en": "Student", "tr": "Öğrenci", "emoji": "🧑‍🎓"}, {"en": "Classroom", "tr": "Sınıf", "emoji": "🏫"}, {"en": "Homework", "tr": "Ödev", "emoji": "📝"}, {"en": "Pencil", "tr": "Kalem", "emoji": "✏️"}, {"en": "Book", "tr": "Kitap", "emoji": "📚"}, {"en": "Lesson", "tr": "Ders", "emoji": "📖"}], "Clothes & Fashion 👕": [{"en": "Shirt", "tr": "Gömlek", "emoji": "👕"}, {"en": "Trousers", "tr": "Pantolon", "emoji": "👖"}, {"en": "Dress", "tr": "Elbise", "emoji": "👗"}, {"en": "Shoes", "tr": "Ayakkabı", "emoji": "👟"}, {"en": "Jacket", "tr": "Ceket", "emoji": "🧥"}, {"en": "Hat", "tr": "Şapka", "emoji": "🎩"}, {"en": "Socks", "tr": "Çorap", "emoji": "🧦"}, {"en": "Scarf", "tr": "Atkı", "emoji": "🧣"}], "Transport 🚌": [{"en": "Bus", "tr": "Otobüs", "emoji": "🚌"}, {"en": "Car", "tr": "Araba", "emoji": "🚗"}, {"en": "Train", "tr": "Tren", "emoji": "🚆"}, {"en": "Plane", "tr": "Uçak", "emoji": "✈️"}, {"en": "Bicycle", "tr": "Bisiklet", "emoji": "🚲"}, {"en": "Boat", "tr": "Tekne", "emoji": "⛵"}, {"en": "Taxi", "tr": "Taksi", "emoji": "🚕"}, {"en": "Ship", "tr": "Gemi", "emoji": "🚢"}], "Sports & Hobbies ⚽": [{"en": "Football", "tr": "Futbol", "emoji": "⚽"}, {"en": "Swimming", "tr": "Yüzme", "emoji": "🏊"}, {"en": "Tennis", "tr": "Tenis", "emoji": "🎾"}, {"en": "Basketball", "tr": "Basketbol", "emoji": "🏀"}, {"en": "Running", "tr": "Koşu", "emoji": "🏃"}, {"en": "Cycling", "tr": "Bisiklet", "emoji": "🚴"}, {"en": "Dancing", "tr": "Dans", "emoji": "💃"}, {"en": "Reading", "tr": "Okuma", "emoji": "📖"}], "Nature & Seasons 🌸": [{"en": "Spring", "tr": "İlkbahar", "emoji": "🌸"}, {"en": "Summer", "tr": "Yaz", "emoji": "☀️"}, {"en": "Autumn", "tr": "Sonbahar", "emoji": "🍂"}, {"en": "Winter", "tr": "Kış", "emoji": "❄️"}, {"en": "Tree", "tr": "Ağaç", "emoji": "🌳"}, {"en": "Flower", "tr": "Çiçek", "emoji": "🌺"}, {"en": "River", "tr": "Nehir", "emoji": "🏞️"}, {"en": "Mountain", "tr": "Dağ", "emoji": "⛰️"}], "Shopping 🛍️": [{"en": "Shop", "tr": "Mağaza", "emoji": "🏪"}, {"en": "Money", "tr": "Para", "emoji": "💰"}, {"en": "Price", "tr": "Fiyat", "emoji": "🏷️"}, {"en": "Cheap", "tr": "Ucuz", "emoji": "💚"}, {"en": "Expensive", "tr": "Pahalı", "emoji": "💸"}, {"en": "Buy", "tr": "Satın almak", "emoji": "🛒"}, {"en": "Market", "tr": "Pazar", "emoji": "🏬"}, {"en": "Change", "tr": "Para üstü", "emoji": "🪙"}], "In the City 🏙️": [{"en": "Park", "tr": "Park", "emoji": "🌳"}, {"en": "Hospital", "tr": "Hastane", "emoji": "🏥"}, {"en": "Library", "tr": "Kütüphane", "emoji": "📚"}, {"en": "Bank", "tr": "Banka", "emoji": "🏦"}, {"en": "Restaurant", "tr": "Restoran", "emoji": "🍽️"}, {"en": "Hotel", "tr": "Otel", "emoji": "🏨"}, {"en": "Street", "tr": "Sokak", "emoji": "🛣️"}, {"en": "Bridge", "tr": "Köprü", "emoji": "🌉"}], "Daily Routine ⏰": [{"en": "Morning", "tr": "Sabah", "emoji": "🌅"}, {"en": "Evening", "tr": "Akşam", "emoji": "🌆"}, {"en": "Breakfast", "tr": "Kahvaltı", "emoji": "🍳"}, {"en": "Lunch", "tr": "Öğle yemeği", "emoji": "🥗"}, {"en": "Dinner", "tr": "Akşam yemeği", "emoji": "🍽️"}, {"en": "Sleep", "tr": "Uyumak", "emoji": "😴"}, {"en": "Shower", "tr": "Duş", "emoji": "🚿"}, {"en": "Exercise", "tr": "Egzersiz", "emoji": "🏋️"}], "My Friends 👫": [{"en": "Friend", "tr": "Arkadaş", "emoji": "👫"}, {"en": "Kind", "tr": "Nazik", "emoji": "💚"}, {"en": "Funny", "tr": "Komik", "emoji": "😄"}, {"en": "Clever", "tr": "Zeki", "emoji": "🧠"}, {"en": "Brave", "tr": "Cesur", "emoji": "🦁"}, {"en": "Shy", "tr": "Utangaç", "emoji": "🙈"}, {"en": "Happy", "tr": "Mutlu", "emoji": "😊"}, {"en": "Angry", "tr": "Kızgın", "emoji": "😠"}], "Health & Body 🏥": [{"en": "Doctor", "tr": "Doktor", "emoji": "👨‍⚕️"}, {"en": "Medicine", "tr": "İlaç", "emoji": "💊"}, {"en": "Headache", "tr": "Baş ağrısı", "emoji": "🤕"}, {"en": "Fever", "tr": "Ateş", "emoji": "🌡️"}, {"en": "Healthy", "tr": "Sağlıklı", "emoji": "💪"}, {"en": "Sick", "tr": "Hasta", "emoji": "🤒"}, {"en": "Hospital", "tr": "Hastane", "emoji": "🏥"}, {"en": "Nurse", "tr": "Hemşire", "emoji": "👩‍⚕️"}], "Jobs & Careers 👨‍⚕️": [{"en": "Doctor", "tr": "Doktor", "emoji": "👨‍⚕️"}, {"en": "Teacher", "tr": "Öğretmen", "emoji": "👩‍🏫"}, {"en": "Engineer", "tr": "Mühendis", "emoji": "👷"}, {"en": "Chef", "tr": "Aşçı", "emoji": "👨‍🍳"}, {"en": "Pilot", "tr": "Pilot", "emoji": "✈️"}, {"en": "Farmer", "tr": "Çiftçi", "emoji": "👨‍🌾"}, {"en": "Artist", "tr": "Sanatçı", "emoji": "🎨"}, {"en": "Police", "tr": "Polis", "emoji": "👮"}], "Travel & Tourism ✈️": [{"en": "Passport", "tr": "Pasaport", "emoji": "🛂"}, {"en": "Ticket", "tr": "Bilet", "emoji": "🎫"}, {"en": "Hotel", "tr": "Otel", "emoji": "🏨"}, {"en": "Suitcase", "tr": "Bavul", "emoji": "🧳"}, {"en": "Map", "tr": "Harita", "emoji": "🗺️"}, {"en": "Tourist", "tr": "Turist", "emoji": "🧳"}, {"en": "Beach", "tr": "Plaj", "emoji": "🏖️"}, {"en": "Camera", "tr": "Fotoğraf makinesi", "emoji": "📷"}], "Technology 💻": [{"en": "Computer", "tr": "Bilgisayar", "emoji": "💻"}, {"en": "Phone", "tr": "Telefon", "emoji": "📱"}, {"en": "Internet", "tr": "İnternet", "emoji": "🌐"}, {"en": "App", "tr": "Uygulama", "emoji": "📲"}, {"en": "Robot", "tr": "Robot", "emoji": "🤖"}, {"en": "Screen", "tr": "Ekran", "emoji": "🖥️"}, {"en": "Battery", "tr": "Pil", "emoji": "🔋"}, {"en": "Camera", "tr": "Kamera", "emoji": "📷"}], "Environment 🌍": [{"en": "Nature", "tr": "Doğa", "emoji": "🌿"}, {"en": "Pollution", "tr": "Kirlilik", "emoji": "🏭"}, {"en": "Recycle", "tr": "Geri dönüşüm", "emoji": "♻️"}, {"en": "Ocean", "tr": "Okyanus", "emoji": "🌊"}, {"en": "Forest", "tr": "Orman", "emoji": "🌲"}, {"en": "Climate", "tr": "İklim", "emoji": "🌡️"}, {"en": "Energy", "tr": "Enerji", "emoji": "⚡"}, {"en": "Planet", "tr": "Gezegen", "emoji": "🌍"}], "Celebrations 🎉": [{"en": "Birthday", "tr": "Doğum günü", "emoji": "🎂"}, {"en": "Party", "tr": "Parti", "emoji": "🎉"}, {"en": "Cake", "tr": "Pasta", "emoji": "🎂"}, {"en": "Present", "tr": "Hediye", "emoji": "🎁"}, {"en": "Candle", "tr": "Mum", "emoji": "🕯️"}, {"en": "Balloon", "tr": "Balon", "emoji": "🎈"}, {"en": "Festival", "tr": "Festival", "emoji": "🎪"}, {"en": "Firework", "tr": "Havai fişek", "emoji": "🎆"}], "Food Culture 🍜": [{"en": "Recipe", "tr": "Tarif", "emoji": "📋"}, {"en": "Ingredient", "tr": "Malzeme", "emoji": "🥕"}, {"en": "Spicy", "tr": "Acı", "emoji": "🌶️"}, {"en": "Sweet", "tr": "Tatlı", "emoji": "🍬"}, {"en": "Sour", "tr": "Ekşi", "emoji": "🍋"}, {"en": "Cook", "tr": "Pişirmek", "emoji": "👨‍🍳"}, {"en": "Dish", "tr": "Yemek", "emoji": "🍽️"}, {"en": "Flavour", "tr": "Tat", "emoji": "😋"}], "Past & History ⏳": [{"en": "Yesterday", "tr": "Dün", "emoji": "📅"}, {"en": "Ancient", "tr": "Antik", "emoji": "🏛️"}, {"en": "Castle", "tr": "Kale", "emoji": "🏰"}, {"en": "King", "tr": "Kral", "emoji": "👑"}, {"en": "War", "tr": "Savaş", "emoji": "⚔️"}, {"en": "Peace", "tr": "Barış", "emoji": "🕊️"}, {"en": "History", "tr": "Tarih", "emoji": "📜"}, {"en": "Discovery", "tr": "Keşif", "emoji": "🔭"}], "Future Plans 🚀": [{"en": "Dream", "tr": "Rüya/Hayal", "emoji": "💭"}, {"en": "Plan", "tr": "Plan", "emoji": "📋"}, {"en": "Career", "tr": "Kariyer", "emoji": "💼"}, {"en": "University", "tr": "Üniversite", "emoji": "🎓"}, {"en": "Travel", "tr": "Seyahat", "emoji": "✈️"}, {"en": "Invent", "tr": "İcat etmek", "emoji": "💡"}, {"en": "Future", "tr": "Gelecek", "emoji": "🚀"}, {"en": "Goal", "tr": "Hedef", "emoji": "🎯"}], "Feelings & Emotions 😊": [{"en": "Happy", "tr": "Mutlu", "emoji": "😊"}, {"en": "Sad", "tr": "Üzgün", "emoji": "😢"}, {"en": "Angry", "tr": "Kızgın", "emoji": "😠"}, {"en": "Scared", "tr": "Korkmuş", "emoji": "😨"}, {"en": "Excited", "tr": "Heyecanlı", "emoji": "🤩"}, {"en": "Nervous", "tr": "Gergin", "emoji": "😰"}, {"en": "Proud", "tr": "Gururlu", "emoji": "😤"}, {"en": "Bored", "tr": "Sıkılmış", "emoji": "😑"}], "Science Lab 🔬": [{"en": "Experiment", "tr": "Deney", "emoji": "🧪"}, {"en": "Hypothesis", "tr": "Hipotez", "emoji": "💡"}, {"en": "Microscope", "tr": "Mikroskop", "emoji": "🔬"}, {"en": "Atom", "tr": "Atom", "emoji": "⚛️"}, {"en": "Energy", "tr": "Enerji", "emoji": "⚡"}, {"en": "Gravity", "tr": "Yerçekimi", "emoji": "🌍"}, {"en": "Biology", "tr": "Biyoloji", "emoji": "🧬"}, {"en": "Result", "tr": "Sonuç", "emoji": "📊"}], "World Cultures 🎎": [{"en": "Culture", "tr": "Kültür", "emoji": "🎎"}, {"en": "Tradition", "tr": "Gelenek", "emoji": "🏛️"}, {"en": "Festival", "tr": "Festival", "emoji": "🎪"}, {"en": "Language", "tr": "Dil", "emoji": "🗣️"}, {"en": "Ceremony", "tr": "Tören", "emoji": "🎊"}, {"en": "Custom", "tr": "Adet", "emoji": "📜"}, {"en": "Heritage", "tr": "Miras", "emoji": "🏺"}, {"en": "Diversity", "tr": "Çeşitlilik", "emoji": "🌈"}], "Music & Art 🎵": [{"en": "Guitar", "tr": "Gitar", "emoji": "🎸"}, {"en": "Piano", "tr": "Piyano", "emoji": "🎹"}, {"en": "Violin", "tr": "Keman", "emoji": "🎻"}, {"en": "Drum", "tr": "Davul", "emoji": "🥁"}, {"en": "Painting", "tr": "Resim", "emoji": "🎨"}, {"en": "Concert", "tr": "Konser", "emoji": "🎤"}, {"en": "Singer", "tr": "Şarkıcı", "emoji": "🎤"}, {"en": "Melody", "tr": "Melodi", "emoji": "🎵"}], "Movies & Books 🎬": [{"en": "Film", "tr": "Film", "emoji": "🎬"}, {"en": "Novel", "tr": "Roman", "emoji": "📖"}, {"en": "Character", "tr": "Karakter", "emoji": "🧑"}, {"en": "Plot", "tr": "Olay örgüsü", "emoji": "📜"}, {"en": "Genre", "tr": "Tür", "emoji": "🎭"}, {"en": "Director", "tr": "Yönetmen", "emoji": "🎥"}, {"en": "Author", "tr": "Yazar", "emoji": "✍️"}, {"en": "Review", "tr": "Yorum", "emoji": "⭐"}], "Social Media 📱": [{"en": "Post", "tr": "Gönderi", "emoji": "📤"}, {"en": "Share", "tr": "Paylaşmak", "emoji": "🔄"}, {"en": "Follow", "tr": "Takip etmek", "emoji": "👥"}, {"en": "Like", "tr": "Beğeni", "emoji": "❤️"}, {"en": "Comment", "tr": "Yorum", "emoji": "💬"}, {"en": "Upload", "tr": "Yüklemek", "emoji": "⬆️"}, {"en": "Profile", "tr": "Profil", "emoji": "👤"}, {"en": "Message", "tr": "Mesaj", "emoji": "✉️"}], "Problem Solving 🧩": [{"en": "Problem", "tr": "Problem", "emoji": "❓"}, {"en": "Solution", "tr": "Çözüm", "emoji": "💡"}, {"en": "Strategy", "tr": "Strateji", "emoji": "♟️"}, {"en": "Teamwork", "tr": "Takım çalışması", "emoji": "🤝"}, {"en": "Creative", "tr": "Yaratıcı", "emoji": "🎨"}, {"en": "Challenge", "tr": "Zorluk", "emoji": "🏆"}, {"en": "Success", "tr": "Başarı", "emoji": "🌟"}, {"en": "Decision", "tr": "Karar", "emoji": "✅"}], "Space & Universe 🌌": [{"en": "Planet", "tr": "Gezegen", "emoji": "🌍"}, {"en": "Star", "tr": "Yıldız", "emoji": "⭐"}, {"en": "Moon", "tr": "Ay", "emoji": "🌙"}, {"en": "Sun", "tr": "Güneş", "emoji": "☀️"}, {"en": "Galaxy", "tr": "Galaksi", "emoji": "🌌"}, {"en": "Astronaut", "tr": "Astronot", "emoji": "👨‍🚀"}, {"en": "Rocket", "tr": "Roket", "emoji": "🚀"}, {"en": "Universe", "tr": "Evren", "emoji": "🌠"}], "Sports & Champions 🏆": [{"en": "Champion", "tr": "Şampiyon", "emoji": "🏆"}, {"en": "Medal", "tr": "Madalya", "emoji": "🥇"}, {"en": "Olympic", "tr": "Olimpik", "emoji": "🏅"}, {"en": "Stadium", "tr": "Stadyum", "emoji": "🏟️"}, {"en": "Coach", "tr": "Antrenör", "emoji": "🤸"}, {"en": "Tournament", "tr": "Turnuva", "emoji": "⚽"}, {"en": "Victory", "tr": "Zafer", "emoji": "🎉"}, {"en": "Athlete", "tr": "Sporcu", "emoji": "🏃"}], "News & Society 📰": [{"en": "News", "tr": "Haber", "emoji": "📰"}, {"en": "Article", "tr": "Makale", "emoji": "📄"}, {"en": "Opinion", "tr": "Görüş", "emoji": "💭"}, {"en": "Government", "tr": "Hükümet", "emoji": "🏛️"}, {"en": "Rights", "tr": "Haklar", "emoji": "✊"}, {"en": "Citizen", "tr": "Vatandaş", "emoji": "👤"}, {"en": "Election", "tr": "Seçim", "emoji": "🗳️"}, {"en": "Media", "tr": "Medya", "emoji": "📺"}], "Debate & Opinion 💬": [{"en": "Agree", "tr": "Katılmak", "emoji": "✅"}, {"en": "Disagree", "tr": "Katılmamak", "emoji": "❌"}, {"en": "Evidence", "tr": "Kanıt", "emoji": "🔍"}, {"en": "Argument", "tr": "Argüman", "emoji": "💬"}, {"en": "Support", "tr": "Desteklemek", "emoji": "🤝"}, {"en": "Claim", "tr": "İddia", "emoji": "📢"}, {"en": "Reason", "tr": "Neden", "emoji": "❓"}, {"en": "Conclusion", "tr": "Sonuç", "emoji": "✅"}], "Academic Words 📖": [{"en": "Research", "tr": "Araştırma", "emoji": "🔬"}, {"en": "Source", "tr": "Kaynak", "emoji": "📚"}, {"en": "Analyse", "tr": "Analiz etmek", "emoji": "🔍"}, {"en": "Summarise", "tr": "Özetlemek", "emoji": "📝"}, {"en": "Compare", "tr": "Karşılaştırmak", "emoji": "⚖️"}, {"en": "Define", "tr": "Tanımlamak", "emoji": "📖"}, {"en": "Evaluate", "tr": "Değerlendirmek", "emoji": "⭐"}, {"en": "Reference", "tr": "Kaynak göstermek", "emoji": "📌"}], "Business English 💼": [{"en": "Meeting", "tr": "Toplantı", "emoji": "🤝"}, {"en": "Email", "tr": "E-posta", "emoji": "✉️"}, {"en": "Client", "tr": "Müşteri", "emoji": "👔"}, {"en": "Deadline", "tr": "Son tarih", "emoji": "⏰"}, {"en": "Budget", "tr": "Bütçe", "emoji": "💰"}, {"en": "Contract", "tr": "Sözleşme", "emoji": "📜"}, {"en": "Manager", "tr": "Yönetici", "emoji": "👔"}, {"en": "Strategy", "tr": "Strateji", "emoji": "♟️"}], "Literature 📚": [{"en": "Poetry", "tr": "Şiir", "emoji": "📜"}, {"en": "Novel", "tr": "Roman", "emoji": "📖"}, {"en": "Character", "tr": "Karakter", "emoji": "🧑"}, {"en": "Theme", "tr": "Tema", "emoji": "💡"}, {"en": "Metaphor", "tr": "Metafor", "emoji": "🎭"}, {"en": "Narrative", "tr": "Anlatı", "emoji": "📝"}, {"en": "Author", "tr": "Yazar", "emoji": "✍️"}, {"en": "Imagery", "tr": "İmgelem", "emoji": "🖼️"}], "Philosophy & Ethics 🤔": [{"en": "Ethics", "tr": "Etik", "emoji": "⚖️"}, {"en": "Justice", "tr": "Adalet", "emoji": "⚖️"}, {"en": "Truth", "tr": "Gerçek", "emoji": "✨"}, {"en": "Freedom", "tr": "Özgürlük", "emoji": "🕊️"}, {"en": "Moral", "tr": "Ahlaki", "emoji": "💭"}, {"en": "Value", "tr": "Değer", "emoji": "💎"}, {"en": "Rights", "tr": "Haklar", "emoji": "✊"}, {"en": "Wisdom", "tr": "Bilgelik", "emoji": "🦉"}], "Research Skills 🔍": [{"en": "Source", "tr": "Kaynak", "emoji": "📚"}, {"en": "Evidence", "tr": "Kanıt", "emoji": "🔍"}, {"en": "Data", "tr": "Veri", "emoji": "📊"}, {"en": "Survey", "tr": "Anket", "emoji": "📋"}, {"en": "Report", "tr": "Rapor", "emoji": "📄"}, {"en": "Cite", "tr": "Alıntı yapmak", "emoji": "📌"}, {"en": "Analyse", "tr": "Analiz etmek", "emoji": "🔬"}, {"en": "Conclusion", "tr": "Sonuç", "emoji": "✅"}], "Global Issues 🌐": [{"en": "Poverty", "tr": "Yoksulluk", "emoji": "😔"}, {"en": "Climate", "tr": "İklim", "emoji": "🌡️"}, {"en": "Inequality", "tr": "Eşitsizlik", "emoji": "⚖️"}, {"en": "Refugee", "tr": "Mülteci", "emoji": "🏕️"}, {"en": "Sustainability", "tr": "Sürdürülebilirlik", "emoji": "♻️"}, {"en": "Cooperation", "tr": "İşbirliği", "emoji": "🤝"}, {"en": "Rights", "tr": "Haklar", "emoji": "✊"}, {"en": "Solution", "tr": "Çözüm", "emoji": "💡"}], "Mastery Test 🎓": [{"en": "Vocabulary", "tr": "Kelime bilgisi", "emoji": "📚"}, {"en": "Grammar", "tr": "Dilbilgisi", "emoji": "📝"}, {"en": "Reading", "tr": "Okuma", "emoji": "📖"}, {"en": "Writing", "tr": "Yazma", "emoji": "✍️"}, {"en": "Listening", "tr": "Dinleme", "emoji": "👂"}, {"en": "Speaking", "tr": "Konuşma", "emoji": "🗣️"}, {"en": "Fluency", "tr": "Akıcılık", "emoji": "💬"}, {"en": "Comprehension", "tr": "Anlama", "emoji": "🧠"}]};
@@ -3922,6 +4746,193 @@ var currentQuizAnswers = {};
 // ── DIALOGUE GENERATOR ──────────────
 function generateDialogue(unitTitle) {
   var dialogues = {
+"Science Lab 🔬": [
+  {speaker:'A', text:'Look! In this experiment, water <strong>is heated</strong> until it boils!'},
+  {speaker:'B', text:'Wow! And what <strong>is added</strong> next?'},
+  {speaker:'A', text:'Salt <strong>is added</strong>, and then the water <strong>is stirred</strong>.'},
+  {speaker:'B', text:'That is so cool! What <strong>is made</strong> at the end?'},
+  {speaker:'A', text:'Crystals <strong>are made</strong>! They look like tiny diamonds!'},
+  {speaker:'B', text:'Amazing! Are these crystals <strong>used</strong> for anything?'},
+  {speaker:'A', text:'Yes! They <strong>are studied</strong> by scientists to learn about salt.'},
+  {speaker:'B', text:'Science is incredible! I want to be a scientist too!'},
+  {speaker:'A', text:'You can! Every great discovery <strong>is made</strong> by a curious mind! 🔬'}
+],
+"World Cultures 🎎": [
+  {speaker:'A', text:'In India, the Holi festival is <strong>more colourful</strong> than any other!'},
+  {speaker:'B', text:'Really? Is it <strong>bigger</strong> than the festivals in Japan?'},
+  {speaker:'A', text:'Yes! But Japanese festivals are <strong>more peaceful</strong> and quiet.'},
+  {speaker:'B', text:'Interesting! Which food is <strong>spicier</strong> — Indian or Japanese?'},
+  {speaker:'A', text:'Indian food is much <strong>spicier</strong>! Japanese food is <strong>milder</strong>.'},
+  {speaker:'B', text:'I think learning about cultures is <strong>more fun</strong> than reading textbooks!'},
+  {speaker:'A', text:'I agree! The world is <strong>more interesting</strong> when we share traditions.'},
+  {speaker:'B', text:'Let us learn a festival dance together!'},
+  {speaker:'A', text:'Great idea! Dancing is the <strong>happiest</strong> way to celebrate! 🎉'}
+],
+"Music & Art 🎵": [
+  {speaker:'A', text:'Did you <strong>use to</strong> play any instrument when you were little?'},
+  {speaker:'B', text:'Yes! I <strong>used to</strong> play the violin, but now I play guitar.'},
+  {speaker:'A', text:'Cool! I <strong>used to</strong> draw cartoons every day.'},
+  {speaker:'B', text:'Really? Do you still draw?'},
+  {speaker:'A', text:'Not much. But I <strong>used to</strong> fill whole notebooks with drawings!'},
+  {speaker:'B', text:'My sister <strong>used to</strong> sing all the time. She had a beautiful voice.'},
+  {speaker:'A', text:'Music and art bring people together. We <strong>used to</strong> have art class together!'},
+  {speaker:'B', text:'Those were happy days! Let us start a band!'},
+  {speaker:'A', text:'Yes! You play guitar, I will draw the posters! 🎨🎸'}
+],
+"Movies & Books 🎬": [
+  {speaker:'A', text:'What <strong>were you doing</strong> last night? I called you!'},
+  {speaker:'B', text:'Sorry! I <strong>was watching</strong> an amazing adventure movie.'},
+  {speaker:'A', text:'Cool! What <strong>was</strong> it about?'},
+  {speaker:'B', text:'A young hero <strong>was searching</strong> for a magic stone.'},
+  {speaker:'A', text:'Exciting! While he <strong>was looking</strong>, did he find any clues?'},
+  {speaker:'B', text:'Yes! And a dragon <strong>was guarding</strong> the cave!'},
+  {speaker:'A', text:'Wow! I <strong>was reading</strong> a similar story yesterday.'},
+  {speaker:'B', text:'Books and movies are the best adventures!'},
+  {speaker:'A', text:'Let us write our own hero story together! 🎬'}
+],
+"Social Media 📱": [
+  {speaker:'A', text:'I want to play a new online game. What <strong>should</strong> I do first?'},
+  {speaker:'B', text:'You <strong>should</strong> ask your parents before you download it.'},
+  {speaker:'A', text:'Good idea! <strong>Should</strong> I use my real name?'},
+  {speaker:'B', text:'No, you <strong>shouldn\'t</strong>! You <strong>should</strong> use a nickname to stay safe.'},
+  {speaker:'A', text:'What about my password? Can I tell my best friend?'},
+  {speaker:'B', text:'You <strong>shouldn\'t</strong> share your password with anyone — not even friends!'},
+  {speaker:'A', text:'Okay! And if someone is mean in the chat?'},
+  {speaker:'B', text:'You <strong>should</strong> tell an adult and block that person.'},
+  {speaker:'A', text:'Thank you! Now I know how to be safe and smart online! 🛡️'}
+],
+"Problem Solving 🧩": [
+  {speaker:'A', text:'This puzzle is so hard! I cannot solve it.'},
+  {speaker:'B', text:'Do not worry! If you <strong>stay calm</strong>, you <strong>will find</strong> the answer.'},
+  {speaker:'A', text:'Okay. If I <strong>look</strong> at the clues again, what <strong>will</strong> happen?'},
+  {speaker:'B', text:'If you <strong>read</strong> them slowly, you <strong>will see</strong> a pattern!'},
+  {speaker:'A', text:'Oh! I think I see it now. If I <strong>move</strong> this piece here...'},
+  {speaker:'B', text:'Yes! If you <strong>turn</strong> it, it <strong>will fit</strong> perfectly!'},
+  {speaker:'A', text:'It worked! We solved it together!'},
+  {speaker:'B', text:'See? If we <strong>work</strong> as a team, we <strong>will solve</strong> anything!'},
+  {speaker:'A', text:'Teamwork is the best solution! 🧩'}
+],
+"Space & Universe 🌌": [
+  {speaker:'A', text:'Do you think we <strong>will</strong> travel to other planets one day?'},
+  {speaker:'B', text:'Of course! I think we <strong>will</strong> live on Mars in the future!'},
+  {speaker:'A', text:'That is exciting! But it <strong>won\'t</strong> be easy, right?'},
+  {speaker:'B', text:'No, it <strong>won\'t</strong>. But brave astronauts <strong>will</strong> find a way!'},
+  {speaker:'A', text:'What <strong>will</strong> we eat in space?'},
+  {speaker:'B', text:'Scientists say we <strong>will</strong> grow plants inside spaceships!'},
+  {speaker:'A', text:'Amazing! <strong>Will</strong> robots help the astronauts?'},
+  {speaker:'B', text:'Yes! Robots <strong>won\'t</strong> get tired, so they <strong>will</strong> do hard jobs.'},
+  {speaker:'A', text:'The future of space is going to be incredible! 🚀'}
+],
+"Sports & Champions 🏆": [
+  {speaker:'A', text:'Congratulations! I heard your team <strong>has won</strong> the championship!'},
+  {speaker:'B', text:'Thank you! We <strong>have practised</strong> every day for months!'},
+  {speaker:'A', text:'Amazing! How many goals <strong>have</strong> you scored this year?'},
+  {speaker:'B', text:'I <strong>have scored</strong> fifteen goals! My best year ever!'},
+  {speaker:'A', text:'Incredible! <strong>Has</strong> your coach been proud?'},
+  {speaker:'B', text:'Yes! He says we <strong>have become</strong> real champions.'},
+  {speaker:'A', text:'<strong>Have</strong> you celebrated yet?'},
+  {speaker:'B', text:'Not yet! But we <strong>have planned</strong> a big party!'},
+  {speaker:'A', text:'You deserve it! Hard work has brought you victory! 🏆'}
+],
+"News & Society 📰": [
+  {speaker:'A', text:'I read some news today. <strong>Although</strong> it was sad, it taught me something.'},
+  {speaker:'B', text:'What happened?'},
+  {speaker:'A', text:'A town had a flood. <strong>However</strong>, everyone helped each other!'},
+  {speaker:'B', text:'That is wonderful! <strong>Although</strong> bad things happen, people are kind.'},
+  {speaker:'A', text:'Exactly! The news showed children sharing food. <strong>However</strong>, they had little themselves.'},
+  {speaker:'B', text:'That is true kindness! <strong>Although</strong> they were young, they were heroes.'},
+  {speaker:'A', text:'I think we should help our community too.'},
+  {speaker:'B', text:'Yes! <strong>However</strong> small our help is, it matters!'},
+  {speaker:'A', text:'Let us start a kindness club at school! 🌟'}
+],
+"Debate & Opinion 💬": [
+  {speaker:'A', text:'I <strong>think</strong> dogs are better than cats <strong>because</strong> they are loyal.'},
+  {speaker:'B', text:'That is a good point! <strong>But</strong> I <strong>think</strong> cats are better <strong>because</strong> they are independent.'},
+  {speaker:'A', text:'I <strong>agree</strong> that cats are clever. <strong>However</strong>, dogs play with you more!'},
+  {speaker:'B', text:'True! <strong>In my opinion</strong>, both pets are wonderful.'},
+  {speaker:'A', text:'I <strong>agree</strong> with you! <strong>But</strong> which is easier to take care of?'},
+  {speaker:'B', text:'I <strong>believe</strong> cats are easier <strong>because</strong> they clean themselves!'},
+  {speaker:'A', text:'Good reason! See, we can <strong>disagree</strong> and still be friends!'},
+  {speaker:'B', text:'Exactly! A good debate respects every <strong>opinion</strong>.'},
+  {speaker:'A', text:'Let us debate a new topic tomorrow! 💬'}
+],
+"Academic Words 📖": [
+  {speaker:'A', text:'I read a book <strong>which</strong> explains how volcanoes work!'},
+  {speaker:'B', text:'Cool! Was it the book <strong>which</strong> you got from the library?'},
+  {speaker:'A', text:'Yes! The library <strong>where</strong> we study has amazing science books.'},
+  {speaker:'B', text:'The librarian <strong>who</strong> works there helped me find great books too!'},
+  {speaker:'A', text:'She is the lady <strong>who</strong> always smiles, right?'},
+  {speaker:'B', text:'Exactly! I love places <strong>where</strong> we can learn new things.'},
+  {speaker:'A', text:'Me too! Research is the key <strong>which</strong> opens many doors.'},
+  {speaker:'B', text:'Let us find a topic <strong>which</strong> we both want to explore!'},
+  {speaker:'A', text:'Great! Knowledge is a treasure <strong>which</strong> no one can take away! 📖'}
+],
+"Business English 💼": [
+  {speaker:'A', text:'I have a great idea for an invention!'},
+  {speaker:'B', text:'Really? My friend <strong>said that</strong> you were very creative!'},
+  {speaker:'A', text:'Thank you! I want to build a robot that helps with homework.'},
+  {speaker:'B', text:'Our teacher <strong>said that</strong> robots will be everywhere soon.'},
+  {speaker:'A', text:'Yes! She also <strong>said that</strong> we should learn to code.'},
+  {speaker:'B', text:'My dad <strong>told me that</strong> coding is like solving puzzles.'},
+  {speaker:'A', text:'Let us make a plan! I <strong>said that</strong> I would draw the design.'},
+  {speaker:'B', text:'And I <strong>said that</strong> I would help build it!'},
+  {speaker:'A', text:'Together we will be amazing young inventors! 🔧'}
+],
+"Literature 📚": [
+  {speaker:'A', text:'Let us write a story together! How should it start?'},
+  {speaker:'B', text:'How about: \'Once there was a girl <strong>who</strong> could talk to animals.\''},
+  {speaker:'A', text:'I love it! She lived in a forest <strong>where</strong> magic was everywhere.'},
+  {speaker:'B', text:'One day she found a stone <strong>which</strong> glowed in the dark!'},
+  {speaker:'A', text:'A wolf <strong>who</strong> was lost asked her for help.'},
+  {speaker:'B', text:'She used the stone <strong>which</strong> showed the way home!'},
+  {speaker:'A', text:'The wolf <strong>who</strong> was once scared became her best friend.'},
+  {speaker:'B', text:'And they lived in the forest <strong>where</strong> they were always happy!'},
+  {speaker:'A', text:'What a wonderful story we created! 📚'}
+],
+"Philosophy & Ethics 🤔": [
+  {speaker:'A', text:'Here is a question: if you <strong>found</strong> a wallet, what <strong>would</strong> you do?'},
+  {speaker:'B', text:'If I <strong>found</strong> it, I <strong>would</strong> give it to a teacher to find the owner.'},
+  {speaker:'A', text:'That is honest! If you <strong>were</strong> the owner, you <strong>would</strong> be happy!'},
+  {speaker:'B', text:'Exactly! What <strong>would</strong> you do if you <strong>saw</strong> someone being unkind?'},
+  {speaker:'A', text:'If I <strong>saw</strong> that, I <strong>would</strong> help the person and tell an adult.'},
+  {speaker:'B', text:'Good choice! If everyone <strong>were</strong> kind, school <strong>would</strong> be wonderful.'},
+  {speaker:'A', text:'If I <strong>made</strong> a mistake, I <strong>would</strong> always say sorry.'},
+  {speaker:'B', text:'Being honest and fair makes us good people.'},
+  {speaker:'A', text:'Thinking about right and wrong makes us wise! 🤔'}
+],
+"Research Skills 🔍": [
+  {speaker:'A', text:'Look at this fossil! How old do you think it is?'},
+  {speaker:'B', text:'It <strong>must be</strong> millions of years old — look at the rock layers!'},
+  {speaker:'A', text:'That <strong>can\'t be</strong> a dinosaur bone, can it?'},
+  {speaker:'B', text:'It <strong>might be</strong>! But we need more evidence to be sure.'},
+  {speaker:'A', text:'Where can we find good information?'},
+  {speaker:'B', text:'The science book <strong>must be</strong> a reliable source. Let us check it!'},
+  {speaker:'A', text:'This website says it is 5 days old. That <strong>can\'t be</strong> right!'},
+  {speaker:'B', text:'Good thinking! A real researcher always checks the evidence.'},
+  {speaker:'A', text:'We make a great research team! 🔍'}
+],
+"Global Issues 🌐": [
+  {speaker:'A', text:'Our school beach clean-up collected so much plastic yesterday!'},
+  {speaker:'B', text:'Amazing! If we <strong>hadn\'t helped</strong>, the animals <strong>would have been</strong> in danger.'},
+  {speaker:'A', text:'True! If people <strong>had recycled</strong> more, there <strong>would have been</strong> less rubbish.'},
+  {speaker:'B', text:'My grandma says if everyone <strong>had cared</strong>, the world <strong>would have been</strong> cleaner.'},
+  {speaker:'A', text:'We can still change things! Small actions matter.'},
+  {speaker:'B', text:'Yes! If I <strong>had known</strong> earlier, I <strong>would have started</strong> recycling sooner.'},
+  {speaker:'A', text:'Let us teach others too. Heroes inspire heroes!'},
+  {speaker:'B', text:'Together we will protect our beautiful planet!'},
+  {speaker:'A', text:'Every hero of the world starts with one kind act! 🌍'}
+],
+"Mastery Test 🎓": [
+  {speaker:'A', text:'This is the final test! Are you ready, champion?'},
+  {speaker:'B', text:'Yes! I am excited <strong>because</strong> I have learned so much!'},
+  {speaker:'A', text:'If you stay calm, you <strong>will</strong> do great!'},
+  {speaker:'B', text:'I think this journey was <strong>more amazing</strong> than I expected!'},
+  {speaker:'A', text:'You <strong>have completed</strong> every single unit! That is incredible!'},
+  {speaker:'B', text:'If I <strong>hadn\'t tried</strong> hard, I <strong>wouldn\'t have</strong> come this far.'},
+  {speaker:'A', text:'You <strong>should</strong> be very proud of yourself!'},
+  {speaker:'B', text:'I am! I have become a real English Champion!'},
+  {speaker:'A', text:'Congratulations, explorer! Your adventure never truly ends! 🏆🎓'}
+],
 "Feelings & Emotions 😊": [
   {speaker:'A', text:'Hi Lily! You look <strong>sad</strong> today. Are you okay?'},
   {speaker:'B', text:'Hi Sam... I feel sad <strong>because</strong> I lost my favourite pencil.'},
@@ -5052,112 +6063,116 @@ function showToast(title, message, color) {
 // ══════════════════════════════════════════════════════════════════
 // ROZET KONTROLÜ — her önemli olaydan sonra çalıştır
 // ══════════════════════════════════════════════════════════════════
+// Aynı anda birden fazla rozet kontrolünü engelleyen kilit (yarış durumu önleme)
+window._badgeCheckRunning = false;
+
 async function checkAndAwardBadges() {
   var uid = window.geCurrentUser && window.geCurrentUser.uid;
   if (!uid) { console.warn('Rozet: uid yok'); return; }
 
-  // Mevcut istatistikleri topla
-  var xp = 0, streak = 0, totalLogins = 0, correctAnswers = 0, perfectQuizzes = 0;
-  var totalGemsEarned = 0, uniqueGamesPlayed = 0;
-  try {
-    xp = parseInt(localStorage.getItem('ge_xp') || '0');
-    streak = parseInt(localStorage.getItem('ge_streak') || '0');
-  } catch(e) {}
-
-  // Firestore'dan tam istatistikleri çek
-  try {
-    var doc = await firebase.firestore().collection('users').doc(uid).get();
-    if (doc.exists) {
-      var d = doc.data();
-      xp = (d.xp != null ? d.xp : xp);
-      streak = (d.streak != null ? d.streak : streak);
-      totalLogins = d.totalLogins || 0;
-      correctAnswers = d.correctAnswers || 0;
-      perfectQuizzes = d.perfectQuizzes || 0;
-      totalGemsEarned = d.totalGemsEarned || 0;
-      uniqueGamesPlayed = (d.gamesPlayed ? Object.keys(d.gamesPlayed).length : 0);
-      // Firestore'daki mevcut rozetleri de senkronla (başka cihazdan kazanılmış olabilir)
-      if (d.badges && typeof d.badges === 'object') {
-        Object.keys(d.badges).forEach(function(k){ if (d.badges[k]) _userEarnedBadges[k] = true; });
-      }
-    }
-  } catch(e) { console.warn('Rozet: Firestore okuma hatası', e); }
-
-  // Giriş yapmış kullanıcı en az 1 kez giriş yapmıştır (race condition koruması)
-  if (totalLogins < 1) totalLogins = 1;
-
-  // Tamamlanan ünite ve harita sayısı
-  var completedUnits = Object.keys(window._userCompletedUnits || {}).length;
-  var completedMaps = 0;
-  if (window.GE_MAPS) {
-    GE_MAPS.forEach(function(map) {
-      var mapKey = map.id || map.title;
-      var done = map.units.filter(function(u, i) {
-        return !!(window._userCompletedUnits && window._userCompletedUnits[mapKey + '__' + i]);
-      }).length;
-      if (done === map.units.length && map.units.length > 0) completedMaps++;
-    });
+  // KİLİT: bir kontrol çalışıyorsa, kısa süre sonra tekrar dene (kazanım kaçmasın)
+  if (window._badgeCheckRunning) {
+    setTimeout(function(){ checkAndAwardBadges(); }, 1200);
+    return;
   }
+  window._badgeCheckRunning = true;
 
-  var stats = {
-    xp: xp,
-    level: getLevelFromXP(xp),
-    streak: streak,
-    totalLogins: totalLogins,
-    completedUnits: completedUnits,
-    completedMaps: completedMaps,
-    correctAnswers: correctAnswers,
-    perfectQuizzes: perfectQuizzes,
-    totalGemsEarned: totalGemsEarned,
-    uniqueGamesPlayed: uniqueGamesPlayed,
-  };
-
-  // Yeni kazanılan rozetleri bul (meta-rozetler için 2 tur: 10-rozet gibi)
-  var newlyEarned = [];
-  for (var pass = 0; pass < 2; pass++) {
-    GE_BADGE_DEFS.forEach(function(badge) {
-      if (!_userEarnedBadges[badge.id]) {
-        var passed = false;
-        try { passed = !!badge.check(stats); } catch(e) {}
-        if (passed) {
-          _userEarnedBadges[badge.id] = true;
-          newlyEarned.push(badge);
-        }
-      }
-    });
-  }
-
-  // Rozet rafını HER durumda güncelle (kazanım olsun olmasın)
-  renderBadgeShelf();
-  updateStatPills();
-
-  if (newlyEarned.length > 0) {
-    // Firestore'a kaydet (kalıcı) — nested obje olarak (dot-notation yerine, daha güvenli merge)
-    var badgesObj = {};
-    newlyEarned.forEach(function(b) { badgesObj[b.id] = true; });
-    try {
-      await firebase.firestore().collection('users').doc(uid).set({ badges: badgesObj }, { merge: true });
-    } catch(e) { console.warn('Rozet: Firestore yazma hatası', e); }
-
-    // Daha önce BİLDİRİMİ gösterilmiş rozetleri localStorage'dan oku (cihaz bazlı güvenlik)
+  try {
+    // ─── BİLDİRİM GEÇMİŞİ: tamamen localStorage'da, cihaz bazlı, kesin ───
     var notifiedKey = 'ge_notified_badges_' + uid;
     var notified = {};
-    try { notified = JSON.parse(localStorage.getItem(notifiedKey) || '{}'); } catch(e) {}
+    try { notified = JSON.parse(localStorage.getItem(notifiedKey) || '{}'); } catch(e) { notified = {}; }
 
-    // Sadece HİÇ bildirim gösterilmemiş rozetler için pencere çıkar
-    var toNotify = newlyEarned.filter(function(b) { return !notified[b.id]; });
+    // İstatistikleri topla
+    var xp = 0, streak = 0, totalLogins = 0, correctAnswers = 0, perfectQuizzes = 0;
+    var totalGemsEarned = 0, uniqueGamesPlayed = 0;
+    try {
+      xp = parseInt(localStorage.getItem('ge_xp') || '0');
+      streak = parseInt(localStorage.getItem('ge_streak') || '0');
+    } catch(e) {}
 
-    toNotify.forEach(function(badge, i) {
-      notified[badge.id] = true; // bildirim gösterildi olarak işaretle
-      setTimeout(function() { showBadgeEarnedModal(badge); }, i * 3500);
-    });
+    try {
+      var doc = await firebase.firestore().collection('users').doc(uid).get();
+      if (doc.exists) {
+        var d = doc.data();
+        xp = (d.xp != null ? d.xp : xp);
+        streak = (d.streak != null ? d.streak : streak);
+        totalLogins = d.totalLogins || 0;
+        correctAnswers = d.correctAnswers || 0;
+        perfectQuizzes = d.perfectQuizzes || 0;
+        totalGemsEarned = d.totalGemsEarned || 0;
+        uniqueGamesPlayed = (d.gamesPlayed ? Object.keys(d.gamesPlayed).length : 0);
+        if (d.badges && typeof d.badges === 'object') {
+          Object.keys(d.badges).forEach(function(k){ if (d.badges[k]) _userEarnedBadges[k] = true; });
+        }
+      }
+    } catch(e) { console.warn('Rozet: Firestore okuma hatası', e); }
 
-    // İşaretlemeyi kaydet (bir daha bildirim çıkmasın)
-    try { localStorage.setItem(notifiedKey, JSON.stringify(notified)); } catch(e) {}
+    if (totalLogins < 1) totalLogins = 1;
 
-    // Raf tekrar güncelle (yeni kazanılanlarla)
+    var completedUnits = Object.keys(window._userCompletedUnits || {}).length;
+    var completedMaps = 0;
+    if (window.GE_MAPS) {
+      GE_MAPS.forEach(function(map) {
+        var mapKey = map.id || map.title;
+        var done = map.units.filter(function(u, i) {
+          return !!(window._userCompletedUnits && window._userCompletedUnits[mapKey + '__' + i]);
+        }).length;
+        if (done === map.units.length && map.units.length > 0) completedMaps++;
+      });
+    }
+
+    var stats = {
+      xp: xp, level: getLevelFromXP(xp), streak: streak, totalLogins: totalLogins,
+      completedUnits: completedUnits, completedMaps: completedMaps,
+      correctAnswers: correctAnswers, perfectQuizzes: perfectQuizzes,
+      totalGemsEarned: totalGemsEarned, uniqueGamesPlayed: uniqueGamesPlayed,
+    };
+
+    // Kazanılmış olması gereken rozetleri işaretle (2 tur: meta-rozetler için)
+    var earnedNow = [];
+    for (var pass = 0; pass < 2; pass++) {
+      GE_BADGE_DEFS.forEach(function(badge) {
+        if (!_userEarnedBadges[badge.id]) {
+          var passed = false;
+          try { passed = !!badge.check(stats); } catch(e) {}
+          if (passed) {
+            _userEarnedBadges[badge.id] = true;
+            earnedNow.push(badge);
+          }
+        }
+      });
+    }
+
     renderBadgeShelf();
     updateStatPills();
+
+    // Yeni kazanılanları Firestore'a kaydet
+    if (earnedNow.length > 0) {
+      var badgesObj = {};
+      earnedNow.forEach(function(b) { badgesObj[b.id] = true; });
+      try {
+        await firebase.firestore().collection('users').doc(uid).set({ badges: badgesObj }, { merge: true });
+      } catch(e) { console.warn('Rozet: Firestore yazma hatası', e); }
+    }
+
+    // ─── BİLDİRİM: kazanılmış AMA bu cihazda hiç bildirilmemiş rozetler ───
+    var toNotify = GE_BADGE_DEFS.filter(function(b) {
+      return _userEarnedBadges[b.id] && !notified[b.id];
+    });
+
+    if (toNotify.length > 0) {
+      // ÖNCE hepsini "bildirildi" işaretle ve HEMEN kaydet (await beklemeden)
+      toNotify.forEach(function(b) { notified[b.id] = true; });
+      try { localStorage.setItem(notifiedKey, JSON.stringify(notified)); } catch(e) {}
+
+      // Sonra pencereleri sırayla göster
+      toNotify.forEach(function(badge, i) {
+        setTimeout(function() { showBadgeEarnedModal(badge); }, i * 3500);
+      });
+    }
+  } finally {
+    window._badgeCheckRunning = false;
   }
 }
 
